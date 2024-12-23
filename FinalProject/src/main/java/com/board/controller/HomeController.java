@@ -10,7 +10,7 @@ public class HomeController {
 	@RequestMapping("/")
 	public  String   home() {
 
-		return "users/popup/home";
+		return "users/popup/info";
 		//return "/WEB-INF/views/home.jsp";
 	}
 	

@@ -65,6 +65,7 @@
 
                     // 지도 중심을 마커 위치로 이동
                     map.setCenter(coords);
+                    map.setZoom(14);
                     
                     
                     
