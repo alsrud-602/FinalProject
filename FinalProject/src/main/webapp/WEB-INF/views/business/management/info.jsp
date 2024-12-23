@@ -110,7 +110,16 @@ padding-left: 10px;
 </div>	
 <%@include file="/WEB-INF/include/footer_company.jsp" %>
 </body>
- 
+  <script>
+ const container = document.querySelector('.container');
+ const mainTag = document.querySelector('main');
+ const mainHeight = mainTag.offsetHeight;
+ const viewportHeight = window.innerHeight - 204;
+ console.log(viewportHeight);
+
+ // 조건에 따라 container의 높이를 설정
+ container.style.height = `\${Math.max(mainHeight, viewportHeight)}px`;
+ </script>
 </html>
 
 
