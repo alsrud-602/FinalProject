@@ -69,11 +69,9 @@ public class SecurityConfig {
                 	    .clearAuthentication(true)
                 	    .permitAll()
                 )
-                .sessionManagement(configurer -> configurer
-                		.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // 세션 필요 시 생성
+                        .sessionFixation().none())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-;
-
 
         http.cors().configurationSource(request -> {
             CorsConfiguration config = new CorsConfiguration();

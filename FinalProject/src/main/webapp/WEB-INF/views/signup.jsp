@@ -113,16 +113,19 @@
                     <label for="nickname">닉네임</label>
                     <input type="text" id="nickname" name="nickname" placeholder="*2자 이상 입력해 주세요" required>
                     <div class="note">*2자 이상 입력해 주세요</div>
+                    <div id="errorMessages" style="color: red;"></div>
                 </div>
                 <div class="input-group">
                     <label for="username">아이디</label>
                     <input type="text" id="username" name="id" placeholder="*5~20자 영문 소문자, 숫자 사용" required>
                     <div class="note">*5~20자의 영문 소문자, 숫자와 특수기호(_),(-)만 사용 가능합니다.</div>
+                    <div id="errorMessages" style="color: red;"></div>
                 </div>
                 <div class="input-group">
                     <label for="password">비밀번호</label>
                     <input type="password" id="password" name="password" placeholder="*8~16자 영문 대/소문자, 숫자 사용" required>
                     <div class="note">*8~16자의 영문 대/소문자, 숫자, 특수문자를 사용해 주세요.</div>
+                    <div id="errorMessages" style="color: red;"></div>
                 </div>
                 <div class="input-group">
                     <label for="confirm-password">비밀번호 확인</label>
@@ -153,23 +156,23 @@
 				</div>
 				<div class="checkbox-group">
 				    <label for="compulsoryAgreement">
-				        <input type="checkbox" id="compulsoryAgreement" name="compulsoryAgreement" required>
+				        <input type="checkbox" id="compulsoryAgreement" name="compulsoryAgreement" value="Y" required>
 				        <span style="color: #00FF84;">(필수)</span>&nbsp;POPCORN 이용약관 동의&nbsp;&nbsp; <span style="color: #767676; border-bottom: 1px solid #767676">자세히</span>
 				    </label>
 				    <label for="infoAgreement">
-				        <input type="checkbox" id="infoAgreement" name="infoAgreement" required>
+				        <input type="checkbox" id="infoAgreement" name="infoAgreement" value="Y" required>
 				        <span style="color: #00FF84;">(필수)</span>&nbsp;개인정보 수집 및 이용 동의&nbsp;&nbsp;<span style="color: #767676; border-bottom: 1px solid #767676">자세히</span>
 				    </label>
 				    <label for="messageAgreement">
-				        <input type="checkbox" id="messageAgreement" name="messageAgreement" required>
+				        <input type="checkbox" id="messageAgreement" name="messageAgreement" value="Y" required>
 				        <span style="color: #00FF84;">(필수)</span>&nbsp;SMS/E-MAIL 수신 동의&nbsp;&nbsp;<span style="color: #767676; border-bottom: 1px solid #767676">자세히</span>
 				    </label>
 				    <label for="marketingAgreement">
-				        <input type="checkbox" id="marketingAgreement" name="marketingAgreement">
+				        <input type="checkbox" id="marketingAgreement" name="marketingAgreement" value="Y" >
 				        <span style="color: #767676;">(선택)</span>&nbsp;마케팅 목적의 개인정보 수집 및 이용 동의&nbsp;&nbsp;<span style="color: #767676; border-bottom: 1px solid #767676">자세히</span>
 				    </label>
 				    <label for="alertAgreement">
-				        <input type="checkbox" id="alertAgreement" name="alertAgreement">
+				        <input type="checkbox" id="alertAgreement" name="alertAgreement" value="Y" >
 				        <span style="color: #767676;">(선택)</span>&nbsp;광고성 정보 수신 동의&nbsp;&nbsp;<span style="color: #767676; border-bottom: 1px solid #767676">자세히</span>
 				    </label>
 				</div>
@@ -177,7 +180,7 @@
                 <button type="submit">가입하기</button>
             </form>
         </div>
-<script>
+<!-- <script>
 document.getElementById('signupForm').addEventListener('submit', function(event) {
     event.preventDefault(); // 기본 제출 동작 방지
     const username = document.getElementById('username').value;
@@ -185,15 +188,15 @@ document.getElementById('signupForm').addEventListener('submit', function(event)
     const errorMessages = [];
 
     // 아이디 유효성 검사
-    const usernameRegex = /^[a-z0-9_-]{5,20}$/;
+    const usernameRegex = /^[a-z0-9_-]{3,20}$/;
     if (!usernameRegex.test(username)) {
-        errorMessages.push("아이디는 5~20자의 영문 소문자, 숫자와 특수기호(_),(-)만 사용 가능합니다.");
+        errorMessages.push("아이디는 3~20자의 영문 소문자, 숫자와 특수기호(_),(-)만 사용 가능합니다.");
     }
 
     // 비밀번호 유효성 검사
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{};:,<.>])[A-Za-z\d!@#$%^&*()\-_=+{};:,<.>]{8,16}$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{};:,<.>])[A-Za-z\d!@#$%^&*()\-_=+{};:,<.>]{3,16}$/;
     if (!passwordRegex.test(password)) {
-        errorMessages.push("비밀번호는 8~16자의 영문 대/소문자, 숫자, 특수문자를 사용해야 합니다.");
+        errorMessages.push("비밀번호는 3~16자의 영문 대/소문자, 숫자, 특수문자를 사용해야 합니다.");
     }
 
     // 에러 메시지 출력
@@ -207,6 +210,9 @@ document.getElementById('signupForm').addEventListener('submit', function(event)
         });
     }
 });
+</script>
+-->
+<script>
 function updateEmail() {
     var emailInput = document.getElementById('email');
     var domainSelect = document.getElementById('email_domain');

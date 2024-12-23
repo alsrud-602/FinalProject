@@ -60,6 +60,9 @@ dependencies {
 
     // Spring Security Taglibs
     implementation 'org.springframework.security:spring-security-taglibs'
+    
+    //OAuth2
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
 }
 

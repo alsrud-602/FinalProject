@@ -25,7 +25,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RestUserSignController {
 
-    private final UserService userService;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final Logger logger = LoggerFactory.getLogger(RestUserSignController.class);
@@ -42,9 +41,8 @@ public class RestUserSignController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             String jwt = jwtUtil.generateToken(authentication.getName());
-            String id = jwtUtil.generateToken(loginRequest.getId());
-            System.out.println("jwt"+jwt);
-            System.out.println("id"+id);
+            logger.info("JWT 생성 성공: {}", jwt);
+
             return ResponseEntity.ok(Map.of("token", jwt));
         } catch (Exception e) {
             logger.error("인증 실패: {}", e.getMessage());
@@ -52,4 +50,5 @@ public class RestUserSignController {
                                  .body(Map.of("error", "Authentication failed"));
         }
     }
+
 }
