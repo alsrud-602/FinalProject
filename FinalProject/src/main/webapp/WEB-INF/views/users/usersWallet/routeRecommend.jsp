@@ -161,7 +161,7 @@
 
 </div>
 
-<%@include file="/WEB-INF/include/footer.jsp" %>
+<%-- <%@include file="/WEB-INF/include/footer.jsp" %> --%>
 
 <script>
     let selectedAddresses = []; // 선택된 주소 목록

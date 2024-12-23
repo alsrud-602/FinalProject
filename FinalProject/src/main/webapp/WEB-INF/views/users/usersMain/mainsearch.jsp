@@ -13,7 +13,6 @@ body{
   background-color:#121212;
   color:white;
   font-family:'Pretendard';
-  padding-bottom:200px;
 }
 /*---------------------------------------*/
 /*검색창*/

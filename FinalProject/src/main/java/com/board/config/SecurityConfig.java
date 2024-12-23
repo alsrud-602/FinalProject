@@ -1,5 +1,9 @@
 package com.board.config;
 
+import com.board.users.jwt.JwtUtil;
+
+import jakarta.servlet.DispatcherType;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,10 +16,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
-
-import jakarta.servlet.DispatcherType;
 
 @Configuration
 @EnableWebSecurity
@@ -24,30 +27,35 @@ public class SecurityConfig {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         http.csrf().disable()
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/**", "/Users/Signup", "/Users/Login", "/Users/LoginForm", "/Users/SignupForm", "/resources/**", "/WEB-INF/view/**").permitAll()
-                .requestMatchers("/css/**", "/images/**", "/img/**", "/static/**").permitAll()
-                .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-                .dispatcherTypeMatchers(DispatcherType.INCLUDE).permitAll()
-                .anyRequest().authenticated()
-            )
-            .formLogin(form -> form
-                .loginPage("/Users/LoginForm")
-                .loginProcessingUrl("/Users/Login")
-                .usernameParameter("id")
-                .passwordParameter("password")
-                .defaultSuccessUrl("/")
-                .failureUrl("/Users/LoginForm?error")
-                .permitAll()
-            )
-            .logout(logout -> logout
-                .logoutUrl("/Logout")
-                .logoutSuccessUrl("/")
-                .permitAll()
-            );
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/**", "/Users/Signup", "/Users/Login", "/Users/LoginForm", "/Users/SignupForm", "/resources/**", "/WEB-INF/view/**").permitAll()
+                        .requestMatchers("/css/**", "/images/**", "/img/**", "/static/**").permitAll()
+                        .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
+                        .dispatcherTypeMatchers(DispatcherType.INCLUDE).permitAll()
+                        .anyRequest().authenticated()
+                )
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .formLogin(form -> form
+                        .loginPage("/Users/LoginForm")
+                        .loginProcessingUrl("/Users/Login")
+                        .usernameParameter("id")
+                        .passwordParameter("password")
+                        .defaultSuccessUrl("/")
+                        .failureUrl("/Users/LoginForm?error")
+                        .permitAll()
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/Users/Logout")
+                        .logoutSuccessUrl("/")
+                        .permitAll()
+                );
+
 
         return http.build();
     }
@@ -78,3 +86,4 @@ public class SecurityConfig {
         return (web) -> web.httpFirewall(allowDoubleSlashFirewall());
     }
 }
+

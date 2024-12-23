@@ -5,17 +5,18 @@
   box-sizing: border-box;
 }
 .footer {
-  background: #202020;
+  background: #949494;
   height: 93px;
   left: 0;
   width: 100%;
   position: relative; /* 고정 위치로 변경 */
   bottom: 0; /* 화면 하단에 고정 */
-  padding: 10px 34px; /* 패딩 추가 */
+  margin-top: 20px;
+  z-index: 1000;
 }
 
 .zetciti-zetciti-com-894-88-02003-2024-0235 {
-  color: #848484;
+  color: #ffffff;
   text-align: left;
   font-size: 12px;
   line-height: 140%;
@@ -30,7 +31,7 @@
   justify-content: flex-start;
 }
 .popcorn-corp-all-rights-reserved {
-  color: #ffffff;
+  color: #000000;
   text-align: left;
   font-size: 12px;
   line-height: 140%;
@@ -57,7 +58,7 @@
   
 }
 .footer-content {
-  color: #ffffff;
+  color: #000000;
   text-align: left;
   font-family: "ABeeZee-Regular", sans-serif;
   font-size: 12px;
@@ -70,7 +71,7 @@
   justify-content: flex-start;
 }
 ._09-00-18-00 {
-  color: #ffffff;
+  color: #000000;
   text-align: left;
   font-family: "ABeeZee-Regular", sans-serif;
   font-size: 12px;
@@ -103,7 +104,7 @@
     <div class="footer-content">|</div>
     <a href="#"><div class="_09-00-18-00">고객 센터(09:00 ~ 18:00)</div></a>
     <div class="footer-content">|</div>
-    <a href="#"><div class="footer-content">비즈니스</div></a>
+    <a href="/Business"><div class="footer-content">비즈니스</div></a>
   </div>
 </div>
    </footer>

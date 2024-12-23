@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
+<%@taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 	<style>
 	.header, .header * {
 		box-sizing: border-box;
@@ -389,9 +389,11 @@
                 </a>
             </div>
 			<div class="header-util">
-			    <sec:authorize access="isAuthenticated()">
-			        <a href="/Logout"><div class="div3">로그아웃</div></a>
-			    </sec:authorize>
+<form id="logoutForm" method="POST" action="/Users/Logout">
+    <sec:authorize access="isAuthenticated()">
+        <button id="logout-button" type="button">로그아웃</button>
+    </sec:authorize>
+</form>
 			    <sec:authorize access="isAnonymous()">
 			        <a href="/Users/LoginForm"><div class="div3">로그인</div></a>
 			        <img class="line-1" src="/images/header/line-1.svg" alt="구분선" />
@@ -413,7 +415,7 @@
                     <div class="thick"></div>
                 </div>
             </div>
-            <img class="arrow0" src="/images/header/arrow0.svg" />
+            <img class="arrow0" src="/images/header/arrow0.png" />
         </div>
         <a href="#">
         <div class="menu-2066">
@@ -483,5 +485,24 @@
             }
         });
     });
+    
+    </script>
+    
+
+
+<script type="text/javascript">
+    /* 로그아웃 */
+document.getElementById('logout-button').addEventListener('click', function(event) {
+    event.preventDefault();
+
+    fetch('/Users/Logout', { method: 'POST' })
+        .then(() => {
+            // 로컬 스토리지에서 토큰 제거
+            localStorage.removeItem('token');
+            // 메인 페이지로 리다이렉트
+            window.location.href = '/';
+        })
+        .catch(error => console.error('Error:', error));
+});
 
     </script>

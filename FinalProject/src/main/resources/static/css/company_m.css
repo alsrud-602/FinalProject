@@ -308,6 +308,9 @@ box-sizing: border-box;
 font-size: 20px;
 background: #00FF84;
     border: 1px solid #9A9A9A; 
+    display:flex;
+    justify-content:center;
+    align-items:center;
 &:hover{
 background: #DFDFDF;
 }    

@@ -84,20 +84,52 @@
     <main>
         <div class="user-login">
             <a href="/"><img class="_32" src="/images/mainlogo.png" /></a>
-    <form method="POST" action="/Users/Login">
-            <input type="text" name="id" placeholder="아이디" />
-            <input type="password" name="password" placeholder="비밀번호" />
-            <button type="submit">로그인</button>
-            <c:if test="${param.error != null}">
-			    <p style="color: red;">아이디 또는 비밀번호가 잘못되었습니다.</p>
-			</c:if>
-    </form>
+<form id="loginForm">
+    <input type="text" id="id" name="id" placeholder="아이디" />
+    <input type="password" id="password" name="password" placeholder="비밀번호" />
+    <button type="submit">로그인</button>
+    <c:if test="${param.error != null}">
+        <p style="color: red;">아이디 또는 비밀번호가 잘못되었습니다.</p>
+    </c:if>
+</form>
             <div class="sub-login">
             <a href="#" class="link">아이디 찾기</a> |
             <a href="#" class="link">비밀번호 찾기</a> |
             <a href="#" class="link">회원가입</a>
             </div>
         </div>
+<script type="text/javascript">
+document.getElementById('loginForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    var id = document.getElementById('id').value;
+    var password = document.getElementById('password').value;
+    var userData = { id: id, password: password };
+
+    fetch('/Users/Login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData),
+    })
+        .then(response => {
+            if (!response.headers.get('Content-Type').includes('application/json')) {
+                throw new Error('Invalid response format');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.token) {
+                localStorage.setItem('token', data.token);
+                window.location.href = '/';
+            } else {
+                console.error('Authentication failed');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+
+
+});
+</script>
     </main>
     <%@include file="/WEB-INF/include/footer.jsp" %>
 </body>

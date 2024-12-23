@@ -22,6 +22,7 @@
 <link rel="icon" type="image/png" href="/img/favicon.png" />
 <link rel="stylesheet"  href="/css/common.css" />
 <link rel="stylesheet"  href="/css/company_m.css" />
+<script src="https://cdn.jsdelivr.net/npm/browser-scss@1.0.3/dist/browser-scss.min.js"></script>
 <style>
 
 </style>
@@ -29,6 +30,7 @@
 <body>
 <%@include file="/WEB-INF/include/header_company.jsp" %>
 <div class="container">
+ <form action="/upload" enctype="multipart/form-data">
   <img id="icon_back" src="/images/icon/back2.png" alt="뒤로가기" onclick="goBack()">
   <main>
     <div class="title">
@@ -36,7 +38,7 @@
    <p>팝업스토어 수정</p>
    </div>  
    <p id="title_guide">*수정 불가 항목은 관리자요청 부탁드립니다.</p>
-  <form action="/upload" method="post" enctype="multipart/form-data"></form>
+
   
   <div class="content_body">
     <div class="sub_title">기본정보</div>
@@ -95,7 +97,7 @@
              <p>-</p>&nbsp;&nbsp;
              <input type="time"   id="FULL_END"
              onchange="validateTimes(document.getElementById('FULL_START'), this)">
-             <button class="btn3" onclick="applyAllTimes()">일괄적용</button>
+             <div class="btn3" onclick="applyAllTimes()">일괄적용</div>
              </div>
              <div class="sub_day_full">
              <input class="sub_note"type="text" placeholder="특이사항이 있으면 남겨주세요">
@@ -130,12 +132,12 @@
       <table class="sub_table">
        <tr>
          <td>소개 한 줄</td>      
-         <td><input class="sub_link"type="text" placeholder="팝업을 소개할 문구를 완성해 보세요">
-         <p class="sub_guide">소개 한줄은 목록상단에 기재되어 고객들에게 안내될 예정입니다</p></td>      
+         <td><input class="sub_link"  type="text" placeholder="팝업을 소개할 문구를 완성해 보세요">
+         <p class="sub_guide" >소개 한줄은 목록상단에 기재되어 고객들에게 안내될 예정입니다</p></td>      
        </tr>
        <tr >
          <td>상세내용</td>      
-         <td><textarea>팝업스토에 구체적인 내용을 작성하세요</textarea></td>      
+         <td><textarea id="sub_textarea" placeholder="팝업스토어에 구체적인 내용을 작성하세요" ></textarea></td>      
        </tr>
        <tr>
          <td>팝업환경</td>      
@@ -190,6 +192,7 @@
   
 
   </main>
+   </form>
  </div>	
  <script>
 function goBack() {
@@ -308,6 +311,18 @@ function updateFileInput() {
     fileInput.files = dataTransfer.files;     
 	console.log(fileInput.files)
 }
+
+//변수
+const formEl = document.getElementsByTagName('form')[0];	
+//폼 제출 시 Enter 키 입력방치처리
+$(formEl).on('keydown', function(event) {
+ if (event.keyCode === 13) {
+	   const textarea = document.querySelector('#sub_textarea'); // textarea의 id를 사용하여 선택
+	    if (event.key === 'Enter' && document.activeElement !== textarea) {
+	        event.preventDefault(); // textarea가 아닌 경우에만 기본 동작 방지
+	    }
+ }
+});
 </script>
 </body>
 </html>

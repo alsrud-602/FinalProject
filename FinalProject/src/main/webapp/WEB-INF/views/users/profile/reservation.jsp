@@ -10,9 +10,9 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <style>
 
-body {
+main {
   background-color:#121212;
-  padding-bottom:200px;
+  padding-bottom:400px;
 }
 
 

@@ -8,6 +8,7 @@
 <link rel="icon" type="image/png" href="/img/favicon.png" />
 <link rel="stylesheet"  href="/css/common.css" />
 <link rel="stylesheet"  href="/css/company_m.css" />
+<script src="https://cdn.jsdelivr.net/npm/browser-scss@1.0.3/dist/browser-scss.min.js"></script>
 <style>
 
 </style>

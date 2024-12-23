@@ -410,7 +410,7 @@
             </div>
             <img class="arrow0" src="/images/header/arrow0.svg" />
         </div>
-        <a href="#">
+        <a href="/Operation">
         <div class="menu-2066">
             <img class="personal-collection0" src="/images/icon/operation.png" />
             <div class="menu-list">운영</div>
@@ -434,7 +434,7 @@
             <div class="menu-list">고객센터</div>
         </div>
         </a>
-        <a href="#">
+        <a href="/">
         <div class="menu-2070">
             <img class="shopping-mall0" src="/images/icon/homepage.png" />
             <div class="menu-list">팝업스토어 홈페이지</div>
@@ -480,3 +480,4 @@
     });
 
     </script>
+

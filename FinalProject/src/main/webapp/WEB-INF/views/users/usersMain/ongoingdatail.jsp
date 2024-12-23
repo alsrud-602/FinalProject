@@ -12,7 +12,6 @@
    body{
    background-color: #121212 !important;
     color: white !important;
-    padding-bottom: 200px;
    }
    .container {
     display: grid;

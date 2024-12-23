@@ -18,7 +18,6 @@
   body {
     background-color: #121212 !important;
     color: white !important;
-    padding-bottom: 200px;
     padding-top:200px;
               
               
@@ -33,7 +32,7 @@
   }
   /*--------------------------------------------------------------*/
   /*검색창*/
-  .search-container {
+.search-container {
     position: relative;
     width: 100%;
     max-width: 1250px; /* 최대 너비 */
@@ -49,9 +48,6 @@
     color: white; /* 글자색 */
 }
 
-.search-input::placeholder {
-    color: #00ff84; /* 플레이스홀더 색상 */
-}
 
 .search-button {
     position: absolute;

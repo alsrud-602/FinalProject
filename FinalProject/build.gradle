@@ -33,35 +33,35 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
     
-    // 수동 추가
-    // jdk 17, jsp , jstl
+    // JSP 및 JSTL 관련
     implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'   
-    implementation 'jakarta.servlet:jakarta.servlet-api' //스프링부트 3.0 이상
+    implementation 'jakarta.servlet:jakarta.servlet-api' // 스프링부트 3.0 이상
     implementation 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api' // 스프링부트 3.0 이상
-    implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl' //스프링부트 3.0 이상
+    implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl' // 스프링부트 3.0 이상
+
+    // JSON 관련
+    implementation 'org.json:json:20230227'
 
     // junit
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	
-
-	
-	
-
-	  //json
-	  implementation 'org.json:json:20230227'
     
-    // 추가된 의존성
-    implementation 'org.springframework.boot:spring-boot-starter-security' // 추가
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa' // 추가
-    implementation 'io.jsonwebtoken:jjwt-api:0.11.5' // 추가
-    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5' // 추가
-    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5' // 추가
-    compileOnly 'javax.servlet:javax.servlet-api:4.0.1' // 추가
+    // Spring Security 및 JPA
+    implementation 'org.springframework.boot:spring-boot-starter-security' 
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     
+    // JJWT 라이브러리 최신 버전으로 변경
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5' // API
+    implementation 'io.jsonwebtoken:jjwt-impl:0.11.5' // 구현체
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5' // Jackson 지원
+
+    // JAXB 의존성
+    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.0'
+    implementation 'org.glassfish.jaxb:jaxb-runtime:4.0.0'
+
+    // Spring Security Taglibs
     implementation 'org.springframework.security:spring-security-taglibs'
 
 }
-
 
 tasks.named('bootBuildImage') {
     builder = 'paketobuildpacks/builder-jammy-base:latest'
