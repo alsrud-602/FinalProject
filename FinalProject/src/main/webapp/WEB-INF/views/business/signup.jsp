@@ -11,7 +11,6 @@
     <style type="text/css">
 
         main{
-            color: #00ff84;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -21,9 +20,8 @@
         .container {
             width: 600px;
             padding: 30px;
-            border: 2px solid #00ff84;
+            border: 2px solid #121212;
             border-radius: 20px;
-            background-color: #121212;
             margin-bottom:100px;
         }
         h1 {
@@ -42,20 +40,14 @@
         input {
             width: 100%;
             padding: 10px;
-            border: 1px solid #00ff84;
+            border: 1px solid #121212;
             border-radius: 5px;
-            background-color: #1c1c1c;
-            color: #fff;
             font-size: 16px;
         }
         input[name="birthdate"]{
         	z-index: 1000;
-	        background: url('/images/calendar.svg') no-repeat right 10px center; 
-	        color: #fff; 
         }
         input[name="birthdate"]::-webkit-calendar-picker-indicator, input[name="birthdate"]::-webkit-inner-spin-button { 
-        	opacity: 0; 
-        	appearance: none; 
         	cursor: pointer;
         }
         
@@ -73,17 +65,15 @@
             align-items: center; /* 수직 중앙 정렬 */
             width: calc(100% - 500px); /* 레이블 너비 조정 (체크박스 너비 고려) */
             margin-bottom: 10px; /* 간격 추가 */
-            padding-left: 10px; /* 왼쪽 패딩 추가 */
             white-space: nowrap; /* 줄 바꿈 방지 */
             cursor: pointer;
         }
         .checkbox-group input {
             margin-right: 10px; /* 체크박스와 텍스트 사이 간격 */
-            flex-shrink: 0; /* 체크박스가 줄어들지 않도록 설정 */
         }
         button {
             width: 100%;
-            padding: 10px;
+            padding: 15px;
             border: none;
             border-radius: 5px;
             background-color: #00ff84;
@@ -94,12 +84,14 @@
         button:hover {
             background-color: #00e676;
         }
-        .mainlogo {
-            width: 400px; /* 원하는 너비로 조정 */
-            height: auto; /* 비율에 맞춰 자동 크기 조정 */
-            display: block; /* 이미지가 블록 요소로 표시되도록 설정 */
-            margin: 0 auto; /* 가운데 정렬 */
+        h2 {
+        	width: 300px;
+        	height: auto;
+        	margin: 0 auto; /* 가운데 정렬 */
             margin-bottom: 20px;
+            margin-left: 150px;
+            font-size: 40px;
+            color: #00FF84;
         }
     </style>
 </head>
@@ -109,7 +101,7 @@
     <main>
         <div class="container">
             <form method="POST" action="/Users/Signup" id="signupForm">
-                <a href="/"><img class="mainlogo" src="/images/mainlogo.png" /></a>
+                <a href="/Business"><h2>POPCORN.Biz</h2></a>
                 <div class="input-group">
                     <label for="nickname">닉네임</label>
                     <input type="text" id="nickname" name="nickname" placeholder="*2자 이상 입력해 주세요" required>
@@ -155,23 +147,23 @@
 				<div class="checkbox-group">
 				    <label for="compulsoryAgreement">
 				        <input type="checkbox" id="compulsoryAgreement" name="compulsoryAgreement" required>
-				        (필수) POPCORN 이용약관 동의
+				        <span style="color: #00FF84;">(필수)</span>&nbsp;POPCORN 이용약관 동의&nbsp;&nbsp; <span style="color: #767676; border-bottom: 1px solid #767676">자세히</span>
 				    </label>
 				    <label for="infoAgreement">
 				        <input type="checkbox" id="infoAgreement" name="infoAgreement" required>
-				        (필수) 개인정보 수집 및 이용 동의
+				        <span style="color: #00FF84;">(필수)</span>&nbsp;개인정보 수집 및 이용 동의&nbsp;&nbsp;<span style="color: #767676; border-bottom: 1px solid #767676">자세히</span>
 				    </label>
 				    <label for="messageAgreement">
 				        <input type="checkbox" id="messageAgreement" name="messageAgreement" required>
-				        (필수) SMS/E-MAIL 수신 동의
+				        <span style="color: #00FF84;">(필수)</span>&nbsp;SMS/E-MAIL 수신 동의&nbsp;&nbsp;<span style="color: #767676; border-bottom: 1px solid #767676">자세히</span>
 				    </label>
 				    <label for="marketingAgreement">
 				        <input type="checkbox" id="marketingAgreement" name="marketingAgreement">
-				        (선택) 마케팅 목적의 개인정보 수집 및 이용 동의
+				        <span style="color: #767676;">(선택)</span>&nbsp;마케팅 목적의 개인정보 수집 및 이용 동의&nbsp;&nbsp;<span style="color: #767676; border-bottom: 1px solid #767676">자세히</span>
 				    </label>
 				    <label for="alertAgreement">
 				        <input type="checkbox" id="alertAgreement" name="alertAgreement">
-				        (선택) 광고성 정보 수신 동의
+				        <span style="color: #767676;">(선택)</span>&nbsp;광고성 정보 수신 동의&nbsp;&nbsp;<span style="color: #767676; border-bottom: 1px solid #767676">자세히</span>
 				    </label>
 				</div>
 

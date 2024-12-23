@@ -79,7 +79,6 @@
         }
         .checkbox-group input {
             margin-right: 10px; /* 체크박스와 텍스트 사이 간격 */
-            flex-shrink: 0; /* 체크박스가 줄어들지 않도록 설정 */
         }
         button {
             width: 100%;
@@ -155,23 +154,23 @@
 				<div class="checkbox-group">
 				    <label for="compulsoryAgreement">
 				        <input type="checkbox" id="compulsoryAgreement" name="compulsoryAgreement" required>
-				        (필수) POPCORN 이용약관 동의
+				        <span style="color: #00FF84;">(필수)</span>&nbsp;POPCORN 이용약관 동의&nbsp;&nbsp; <span style="color: #767676; border-bottom: 1px solid #767676">자세히</span>
 				    </label>
 				    <label for="infoAgreement">
 				        <input type="checkbox" id="infoAgreement" name="infoAgreement" required>
-				        (필수) 개인정보 수집 및 이용 동의
+				        <span style="color: #00FF84;">(필수)</span>&nbsp;개인정보 수집 및 이용 동의&nbsp;&nbsp;<span style="color: #767676; border-bottom: 1px solid #767676">자세히</span>
 				    </label>
 				    <label for="messageAgreement">
 				        <input type="checkbox" id="messageAgreement" name="messageAgreement" required>
-				        (필수) SMS/E-MAIL 수신 동의
+				        <span style="color: #00FF84;">(필수)</span>&nbsp;SMS/E-MAIL 수신 동의&nbsp;&nbsp;<span style="color: #767676; border-bottom: 1px solid #767676">자세히</span>
 				    </label>
 				    <label for="marketingAgreement">
 				        <input type="checkbox" id="marketingAgreement" name="marketingAgreement">
-				        (선택) 마케팅 목적의 개인정보 수집 및 이용 동의
+				        <span style="color: #767676;">(선택)</span>&nbsp;마케팅 목적의 개인정보 수집 및 이용 동의&nbsp;&nbsp;<span style="color: #767676; border-bottom: 1px solid #767676">자세히</span>
 				    </label>
 				    <label for="alertAgreement">
 				        <input type="checkbox" id="alertAgreement" name="alertAgreement">
-				        (선택) 광고성 정보 수신 동의
+				        <span style="color: #767676;">(선택)</span>&nbsp;광고성 정보 수신 동의&nbsp;&nbsp;<span style="color: #767676; border-bottom: 1px solid #767676">자세히</span>
 				    </label>
 				</div>
 

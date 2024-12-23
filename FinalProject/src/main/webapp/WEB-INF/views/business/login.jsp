@@ -19,10 +19,9 @@
             border-radius: 10px;
             padding: 40px;
             width: 400px;
-            
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
             text-align: center;
-            border: 4px solid #00FF84;
+            border: 2px solid #121212;
         }
 
         h2 {
