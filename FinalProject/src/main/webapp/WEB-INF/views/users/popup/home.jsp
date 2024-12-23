@@ -18,7 +18,10 @@
 	<%@include file="/WEB-INF/include/header.jsp" %>
   <main>
     <div id="map"></div>
+    <input type="text" id="address" placeholder="주소 입력">
+    <button onclick="geocodeAddress()">주소 검색</button>
 
+    <div id="result"></div>
 
 
   </main>	
@@ -28,20 +31,31 @@
  // 네이버 지도 API가 로드된 후 실행되는 코드
     document.addEventListener("DOMContentLoaded", function() {
         // 네이버 지도 API가 로드되었는지 확인
-        if (typeof naver !== 'undefined' && naver.maps) {
+     
             var map = new naver.maps.Map('map', {
                 center: new naver.maps.LatLng(37.553216, 127.033440), // 기본 위치 (서울 성동구)
                 zoom: 15
             });
             
 
-            console.log(naver.maps.services); // 서비스 확인
-            var geocoder = new naver.maps.services.Geocoder();
+
 
             // 주소로 좌표 변환
-            geocoder.addressSearch('서울특별시 성동구 연무장길 20-1', function(result, status) {
-                if (status === naver.maps.services.Status.OK) {
-                    var coords = new naver.maps.LatLng(result[0].y, result[0].x);
+    	var adddd ='서울특별시 성동구 아차산로 3';
+        var address = document.getElementById('address').value;
+        var add = encodeURIComponent(adddd);
+        console.log(add);
+
+        var url = 'https://nominatim.openstreetmap.org/search?format=json&q='+add;
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.length > 0) {
+                    var lat = data[0].lat;
+                    var lon = data[0].lon;
+                    document.getElementById('result').innerHTML = '위도: ' + lat + ', 경도: ' + lon;
+                    
+                    var coords = new naver.maps.LatLng(lat, lon);
 
                     // 마커 표시
                     var marker = new naver.maps.Marker({
@@ -51,14 +65,20 @@
 
                     // 지도 중심을 마커 위치로 이동
                     map.setCenter(coords);
+                    
+                    
+                    
                 } else {
-                    console.error('주소 검색 실패');
+                    alert('주소를 찾을 수 없습니다.');
                 }
-            });
-        } else {
-            console.error('네이버 지도 API가 로드되지 않았습니다.');
-        }
+            })
+            .catch(error => console.error('Error:', error));
+        
+        
+
+      
     });
+
     </script>
 </body>
 </html>
