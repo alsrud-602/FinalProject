@@ -19,7 +19,7 @@
 <body>
   <%@include file="/WEB-INF/include/admin-header.jsp" %>
   <div class="container">  
-  <%@include file="/WEB-INF/include/admin-slidebar.jsp" %>
+  <%@include file="/WEB-INF/include/admin-slidebar2.jsp" %>
   <main>
   <div class="content_box">
      <table id ="box_table">
