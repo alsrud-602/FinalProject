@@ -7,7 +7,7 @@
 }
 
 .footer {
-  background: #F3F9F3; /* 배경 색상 */
+  background: #121212; /* 배경 색상 */
   height: 94px; /* 높이 */
   left: 0;
   width: 100%; /* 너비 */
@@ -22,7 +22,7 @@
 .frame-32,
 .footer-content,
 ._09-00-18-00 {
-  color: black; /* 글자 색상 */
+  color:white;
   text-align: left; /* 텍스트 정렬 */
   font-family: "ABeeZee-Regular", sans-serif; /* 폰트 설정 */
   font-size: 12px; /* 폰트 크기 */
@@ -40,9 +40,11 @@
   left: 34px; /* 왼쪽 위치 */
   top: 30px; /* 위쪽 위치 */
   width: 550px; /* 너비 */
+  color: #848484;
 }
 
 .popcorn-corp-all-rights-reserved {
+  color:white;
   position: absolute;
   left: 34px; /* 왼쪽 위치 */
   top: 70px; /* 위쪽 위치 */
@@ -56,6 +58,8 @@
   position: absolute;
   left: 34px; /* 왼쪽 위치 */
   top: 7px; /* 위쪽 위치 */
+  color:white;
+  text-decoration: none;
 }
 
 .footer-a {

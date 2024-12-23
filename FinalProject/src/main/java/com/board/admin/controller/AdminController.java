@@ -13,10 +13,25 @@ public class AdminController {
 	@RequestMapping("/User")
 	public  ModelAndView  user() {
 		ModelAndView mv = new ModelAndView();
-		mv.setViewName("/admin/user");
+		mv.setViewName("/admin/user/user");
 		return mv;
-		//return "/WEB-INF/views/users/Wallet/wallet.jsp";
 	}
 	
+	@RequestMapping("/Userdetail")
+	public  ModelAndView  userdetail() {
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("/admin/user/userdetail");
+		return mv;
+		
+	}
+	
+	// 테스트용 페이지
+	@RequestMapping("/Test")
+	public  ModelAndView  test() {
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("/admin/user/test");
+		return mv;
+		
+	}
 	
 }
