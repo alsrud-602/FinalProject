@@ -10,7 +10,7 @@ public class HomeController {
 	@RequestMapping("/")
 	public  String   home() {
 
-		return "home";
+		return "admin/store/list";
 		//return "/WEB-INF/views/home.jsp";
 	}
 	

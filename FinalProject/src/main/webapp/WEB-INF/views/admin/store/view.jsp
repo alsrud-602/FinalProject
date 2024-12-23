@@ -11,23 +11,26 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/browser-scss@1.0.3/dist/browser-scss.min.js"></script>
 <style>
-#view_header  {
-p:first-child {
-font-size: 26px;
-font-weight: 700;
+#btn5{
+padding: 10px 20px;
+background: #121212;
+color: white;
+border-radius: 5px;
+font-size: 20px;
+cursor: pointer;
 }
-}
-
 </style>
 </head>
 <body>
+  <%@include file="/WEB-INF/include/admin-header.jsp" %>
 <div class="container">
+  <%@include file="/WEB-INF/include/admin-slidebar.jsp" %>
+
   <main>
 
 
      <div id="view_header">
      <p>키스톤 마케팅</p>
-     <p>부산광역시 부산진구</p>
      </div>
      <div id="line_white"></div>
      
@@ -172,5 +175,105 @@ font-weight: 700;
  </div> 
   </main>	
 </div>
+
+<!-- 모달 배경 -->
+<div id="modalBg" class="modal-bg">
+    <!-- 모달 창 -->
+    <div id="reserveModal" class="modal">
+    <div class="modal_layout_header">
+       <h2>요청 내역</h2>
+
+<div class="dropdown">
+
+    <div class="dropdown-toggle" id="dropdown-toggle">
+      리스트를 확인후 요청을 처리하세요 <img src="/images/icon/select.png">
+    </div>
+
+   
+    <div class="dropdown-menu" id="dropdown-menu">
+      <div class="custom-option" data-value="1">
+        <div class="option_left-align">팝업명 변경</div>
+        <div class="option_right-align">
+          <div class="status-pre">미완</div>
+          <div class="option_date">2024.12.13</div>
+        </div>
+      </div>
+      <div class="custom-option" data-value="2">
+        <div class="option_left-align">다른 작업</div>
+        <div class="option_right-align">
+          <div class="status-con">완료</div>
+          <div class="option_date">2024.12.14</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+       <img id="btnClose" src="/images/icon/delete2.png" alt="삭제">
+    </div>
+    
+     <div class="size_box2"></div>
+     <div class="modal_box">
+     
+
+      <h2>요청 내역</h2>
+      <div class="modeal_area">요청 수락해주세요요청 
+수락해주세요요청 수락해주세요요청 수락해주세요요청 수락해주세요요청 수락해주세요요청 수락해주세요요청 수락해주세요요청 수락해주세요요청 수락해주세요요청 수락해주세요요청 수락해주세요
+        </div>
+     <div class="modal_box">
+      <h2>답변하기</h2>
+          <textarea class="model_textarea" rows="" cols="" placeholder="요청처리에 대한 답변을 입력하세요">답변입력하기</textarea>
+     </div>
+     
+      <div class="modal_layout_confirm" >
+      <div id="btn5" onclick="requestConfirm()">확인</div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+<%@include file="/WEB-INF/include/admin-footer.jsp" %>
 </body>
+<script>
+//예약하기 버튼 클릭 시 모달 열기
+document.getElementById('btn_blue').addEventListener('click', function() {
+    document.getElementById('modalBg').style.display = 'block';
+});
+
+// 모달 닫기 버튼
+document.getElementById('btnClose').addEventListener('click', function() {
+    document.getElementById('modalBg').style.display = 'none';
+});
+
+const dropdownToggle = document.getElementById('dropdown-toggle');
+const dropdownMenu = document.getElementById('dropdown-menu');
+const options = document.querySelectorAll('.custom-option');
+
+// 드롭다운 메뉴 보이기
+dropdownToggle.addEventListener('click', () => {
+  dropdownMenu.classList.toggle('show');
+});
+
+// 드롭다운 메뉴 안보이기
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.dropdown')) {
+    dropdownMenu.classList.remove('show');
+  }
+});
+
+// 드롭다운 리스트 클릭시 이동 코딩 
+options.forEach(option => {
+  option.addEventListener('click', () => {
+      const selectedText = option.querySelector('.option_left-align').textContent;
+      dropdownToggle.textContent = selectedText; 
+    dropdownMenu.classList.remove('show'); // Close dropdown
+  });
+});
+
+function requestConfirm(){
+	//restAPI 로 구현 하기~
+	
+}
+
+</script>
 </html>
