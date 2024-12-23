@@ -13,10 +13,9 @@
 		margin: 0;
 		padding: 20px 20px 20px 0;
 		width: 1200px;
-		    position: relative;
-    height: 100vh; /* 전체 화면 높이 */
+		position: relative;
 		left: 50%; 
-		transform: translateX(-50%); 
+		transform: translateX(-50%);
 
 	}
 
@@ -569,32 +568,74 @@ button:hover{
     align-items: center; /* 수직 중앙 정렬 */
     margin-bottom: 10px;
 }
-/* 현장대기 사이드바 */
-body{
-        }
+/* 현장대기 상세관리*/
+.notification, .notification-delete {
+    display: none; /* 기본적으로 숨김 */
+    position: absolute;
+    top: 50%; /* 중앙에 위치 */
+    left: 50%; /* 중앙에 위치 */
+    transform: translate(-50%, -50%); /* 중앙 정렬 */
+    width: 333px; /* 팝업 너비 */
+    height: 238px;
+    background-color: white;
+    border: 1px solid #ccc; /* 테두리 색상 */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
+    border-radius: 8px; /* 모서리 둥글게 */
+    padding: 20px; /* 내부 여백 */
+}
 
-        aside {
-            width: 300px;
-            background-color: #f8f8f8;
-            padding: 20px;
-            position: absolute;
-            margin-left: 1800px;
-            bottom:50px; /* 화면 하단 */
-        }
-        .section {
-            margin-bottom: 20px;
-            padding: 20px;
-            border: 1px solid #9a9a9a;
-        }
-        .section h3 {
-            margin: 0 0 10px 0;
-        }
-        .section select, .section button {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            box-sizing: border-box;
-        }
+.n-header, .n-d-header {
+    display: flex;
+    font-size: 24px;
+    justify-content: space-between;
+    align-items: center; /* 수직 정렬 */
+}
+
+.overlay h3 {
+    margin: 0; /* 기본 마진 제거 */
+    font-size: 20px; /* 제목 크기 */
+    color: #333; /* 제목 색상 */
+}
+
+.overlay select {
+    width: 100%; /* 드롭다운 너비 */
+    padding: 20px; /* 내부 여백 */
+    font-size: 20px;
+    margin: 15px 0; /* 위아래 여백 */
+    border: 1px solid #9a9a9a; /* 테두리 색상 */
+    border-radius: 4px; /* 모서리 둥글게 */
+}
+
+.overlay button {
+    width: 100%; /* 버튼 너비 */
+    padding: 15px; /* 내부 여백 */
+    background-color: #ffffff; /* 버튼 배경색 */
+    border: 1px solid #9a9a9a;
+    color: black;
+    border-radius: 4px; /* 모서리 둥글게 */
+    margin: 5px 0; /* 위쪽 여백 */
+    cursor: pointer; /* 커서 모양 변경 */
+    font-size: 20px; /* 글자 크기 */
+}
+
+
+.overlay button:hover {
+    background-color: #dddddd; /* 버튼 호버 색상 */
+}
+
+.close-btn, .close-delete-btn {
+    cursor: pointer;
+    font-weight: 300;
+    font-size: 30px;
+    color: #999; /* 닫기 버튼 색상 */
+}
+
+.close-btn:hover, .close-delete-btn:hover {
+    color: #333; /* 호버 시 색상 변화 */
+}
+.complete-delete-btn{
+background-color: #FFC9C9;
+}
 	</style>
 </head>
 
@@ -815,10 +856,35 @@ body{
             <td><button class="delete-btn">삭제하기</button></td>
         </tr>
     </table>
+    <div class="overlay">
+    <div class="notification">
+    <div class="n-header">
+        <h3>알림보내기</h3>
+        <span class="close-btn">x</span>
+     </div>
+        <select>
+            <option>현재순번</option>
+            <option>기타</option>
+        </select>
+        <button class="complete-btn">완료</button>
+    </div>
+    
+    <div class="notification-delete">
+     <div class="n-d-header">
+        <h3>삭제사유</h3>
+        <span class="close-delete-btn">x</span>
+     </div>
+        <select>
+            <option>방문완료</option>
+            <option>노쇼</option>
+            <option>고객요청</option>
+            <option>기타</option>
+        </select>
+        <button class="complete-delete-btn">완료</button>
+    </div>
+    </div>
 
 </section>
-
-<%-- </c:if> --%>
 
         <div class="buttons-footer">
 		    <button>예약 일정 수정하기</button>
@@ -832,30 +898,6 @@ body{
         </div>
     </main>
         <%@include file="/WEB-INF/include/footer_company.jsp" %>
-    <!-- 사이드 바 -->
-<%--     <c:choose>
- --%>    
-    <aside class="asidebar">
-        <div class="section">
-            <h3>알림보내기</h3>
-            <select>
-                <option>현재순번</option>
-                <option>기타</option>
-            </select>
-            <button>완료</button>
-        </div>
-        <div class="section">
-            <h3>삭제사유</h3>
-            <select>
-                <option>방문완료</option>
-                <option>노쇼</option>
-                <option>고객요청</option>
-                <option>기타</option>
-            </select>
-            <button>완료</button>
-        </div>
-    </aside>
-    <%-- </c:choose> --%>
 
     
     <script>
@@ -1341,6 +1383,43 @@ function showReservationList(reservationId) {
             }
         });
     }
+    /* 현장대기예약 상세 */
+$(function() {
+    // 팝업 버튼 클릭 이벤트
+    $('.notify-btn').on('click', function() {
+        $('.notification').show(); // 알림 보내기 팝업 보여주기
+        $('.overlay').show(); // overlay 보여주기
+    });
+
+    $('.delete-btn').on('click', function() {
+        $('.notification-delete').show(); // 삭제 팝업 보여주기
+        $('.overlay').show(); // overlay 보여주기
+    });
+
+    // 팝업 닫기
+    $('.complete-btn, .close-btn').on('click', function() {
+        $('.notification').hide(); // 알림 보내기 팝업 숨기기
+        $('.overlay').hide(); // overlay 숨기기
+    });
+    
+    $('.complete-delete-btn, .close-delete-btn').on('click', function() {
+        $('.notification-delete').hide(); // 삭제 팝업 숨기기
+        $('.overlay').hide(); // overlay 숨기기
+    });
+    // Overlay 클릭 시 팝업 닫기
+    $('.overlay').on('click', function() {
+        $('.notification').hide(); // 알림 보내기 팝업 숨기기
+        $('.notification-delete').hide(); // 삭제 팝업 숨기기
+        $('.overlay').hide(); // overlay 숨기기
+    });
+    // 팝업 내부 클릭 시 이벤트 전파 차단
+    $('.notification, .notification-delete').on('click', function(e) {
+        e.stopPropagation(); // 이벤트 전파 차단
+    });
+})
+
+
+
     </script>
 
 </body>

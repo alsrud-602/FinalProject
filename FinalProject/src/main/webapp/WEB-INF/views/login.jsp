@@ -92,6 +92,7 @@
         <p style="color: red;">아이디 또는 비밀번호가 잘못되었습니다.</p>
     </c:if>
 </form>
+<a href="/oauth2/authorization/kakao">카카오로 로그인</a>
             <div class="sub-login">
             <a href="#" class="link">아이디 찾기</a> |
             <a href="#" class="link">비밀번호 찾기</a> |
@@ -99,7 +100,7 @@
             </div>
         </div>
 <script type="text/javascript">
-document.getElementById('loginForm').addEventListener('submit', async function(event) {
+document.getElementById('loginForm').addEventListener('submit', function(event) {
     event.preventDefault();
 
     const id = document.getElementById('id').value.trim();
@@ -110,29 +111,61 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         return;
     }
 
-    try {
-        const response = await fetch('/Users/Login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id, password }),
-        });
-
-        if (!response.ok) {
+    fetch('/Users/Login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: id, password: password })
+    })
+    .then(function(response) {
+        if (response.status === 401) {
             alert('아이디 또는 비밀번호가 잘못되었습니다.');
             return;
         }
 
-        const data = await response.json();
-        if (data.token) {
-            localStorage.setItem('token', data.token);
+        if (!response.ok) {
+            console.error('오류 상태 코드:', response.status);
+            alert('로그인 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.');
+            return;
+        }
+
+        return response.json(); // JSON 응답 파싱
+    })
+    .then(function(data) {
+        if (data && data.token) {
+            // JWT 토큰 저장
+            // 로그인 성공 후, JWT를 Authorization 헤더에 추가
+			localStorage.setItem('token', data.token);
+			fetch('/', {
+			    method: 'GET',
+			    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+			})
+			.then(function(response) {
+			    if (!response.ok) {
+			        alert('홈 페이지 로드 중 문제가 발생했습니다.');
+			        return;
+			    }
+
+			    // 홈 페이지가 정상적으로 로드되면 리다이렉션
+			    window.location.href = '/';
+			})
+			.catch(function(error) {
+			    console.error('홈 페이지 요청 중 오류:', error);
+			    alert('홈 페이지 로드 중 오류가 발생했습니다.');
+			});
+
+            console.log('JWT 토큰 저장 완료:', data.token);
+
+            // 홈 화면으로 리다이렉션
             window.location.href = '/';
         } else {
-            alert('로그인에 실패했습니다.');
+            alert('로그인에 실패했습니다. 서버 응답을 확인하세요.');
+            console.error('서버 응답 데이터:', data);
         }
-    } catch (error) {
+    })
+    .catch(function(error) {
         console.error('로그인 요청 중 오류:', error);
         alert('로그인 중 문제가 발생했습니다.');
-    }
+    });
 });
 
 </script>

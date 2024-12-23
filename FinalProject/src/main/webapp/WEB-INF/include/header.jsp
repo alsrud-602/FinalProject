@@ -81,6 +81,7 @@
 		font-weight: 900;
 		display: flex;
 		align-items: center;
+		cursor: pointer;
 	}
 	.div3:hover{
 		color: #00FF84;
@@ -390,9 +391,9 @@
                 </a>
             </div>
 			<div class="header-util">
-				<form id="logoutForm" method="POST" action="/Users/Logout">
+				<form id="logoutForm">
 				    <sec:authorize access="isAuthenticated()">
-				        <button id="logout-button" type="button">로그아웃</button>
+				        <div id="logout-button" class="div3">로그아웃</div>
 				    </sec:authorize>
 				</form>
 			    <sec:authorize access="isAnonymous()">
@@ -491,37 +492,29 @@
     
 
 
-<script type="text/javascript">
+<script>
     /* 로그아웃 */
-// DOMContentLoaded로 페이지가 로드된 후 실행
 document.addEventListener('DOMContentLoaded', function() {
-    // 로컬 스토리지에서 토큰 확인하여 로그인 상태에 따른 폼 표시
-    if (localStorage.getItem('token')) {
-        document.getElementById('logoutForm').style.display = 'block'; // 로그아웃 폼 표시
-    } else {
-        document.getElementById('logoutForm').style.display = 'none'; // 숨김
-    }
-
-    // 로그아웃 버튼 클릭 이벤트 리스너
-    const logoutButton = document.getElementById('logout-button');
+    const logoutButton = document.querySelector('#logout-button'); // 수정된 선택자
     if (logoutButton) {
         logoutButton.addEventListener('click', function(event) {
             event.preventDefault(); // 기본 폼 서브미션 방지
 
             fetch('/Users/Logout', { method: 'POST' })
-            .then(response => {
-                if (response.ok) {
-                    localStorage.removeItem('token'); // 토큰 삭제
-                    window.location.href = '/';
-                } else {
-                    console.error('Failed to log out');
-                }
-            })
-            .catch(error => console.error('Error during logout:', error));
-
+                .then(response => {
+                    if (response.ok) {
+                        localStorage.removeItem('token'); // 토큰 삭제
+                        window.location.href = '/'; // 리다이렉션
+                    } else {
+                        console.error('Failed to log out');
+                        alert('로그아웃에 실패했습니다. 다시 시도해주세요.');
+                    }
+                })
+                .catch(error => console.error('Error during logout:', error));
         });
     }
 });
 
 
     </script>
+    
