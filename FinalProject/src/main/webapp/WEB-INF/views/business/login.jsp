@@ -3,36 +3,34 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>POP CORN - 로그인</title>
+    <title>POP CORN.biz - 로그인</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link rel="stylesheet" href="/css/common.css" />
+    <link rel="stylesheet" href="/css/common-company.css" />
     <style type="text/css">
         main {
-            background-color: #121212;
-            color: #ffffff;
-            font-family: "Pretendard", sans-serif;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            margin: 0;
             height: 75vh;
         }
 
         .user-login {
-            background-color: #121212;
             border-radius: 10px;
             padding: 40px;
             width: 400px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
             text-align: center;
-            border: 4px solid #00FF84;
+            border: 2px solid #121212;
         }
 
-        ._32 {
+        h2 {
         	width: 300px;
         	height: auto;
         	margin: 0 auto; /* 가운데 정렬 */
             margin-bottom: 20px;
+            font-size: 40px;
+            color: #00FF84;
         }
 
         input[name="id"] {
@@ -57,7 +55,6 @@
             background-color: #00FF84; /* 초록색 */
             border: none;
             border-radius: 5px;
-            color: #000000;
             font-size: 18px;
             font-weight:bold;
             cursor: pointer;
@@ -65,7 +62,6 @@
         }
 
         .link {
-            color: #ffffff;
             font-size: 14px;
             text-decoration: none;
         }
@@ -80,10 +76,10 @@
 </head>
 
 <body>
-    <%@include file="/WEB-INF/include/header.jsp" %>
+    <%@include file="/WEB-INF/include/header_company.jsp" %>
     <main>
         <div class="user-login">
-            <a href="/"><img class="_32" src="/images/mainlogo.png" /></a>
+            <a href="/Business"><h2>POPCORN.Biz</h2></a>
 <form id="loginForm">
     <input type="text" id="id" name="id" placeholder="아이디" />
     <input type="password" id="password" name="password" placeholder="비밀번호" />
@@ -92,7 +88,6 @@
         <p style="color: red;">아이디 또는 비밀번호가 잘못되었습니다.</p>
     </c:if>
 </form>
-<a href="/oauth2/authorization/kakao">카카오로 로그인</a>
             <div class="sub-login">
             <a href="#" class="link">아이디 찾기</a> |
             <a href="#" class="link">비밀번호 찾기</a> |
@@ -100,7 +95,7 @@
             </div>
         </div>
 <script type="text/javascript">
-document.getElementById('loginForm').addEventListener('submit', function(event) {
+document.getElementById('loginForm').addEventListener('submit', async function(event) {
     event.preventDefault();
 
     const id = document.getElementById('id').value.trim();
@@ -111,65 +106,33 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         return;
     }
 
-    fetch('/Users/Login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: id, password: password })
-    })
-    .then(function(response) {
-        if (response.status === 401) {
+    try {
+        const response = await fetch('/Companys/Login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, password }),
+        });
+
+        if (!response.ok) {
             alert('아이디 또는 비밀번호가 잘못되었습니다.');
             return;
         }
 
-        if (!response.ok) {
-            console.error('오류 상태 코드:', response.status);
-            alert('로그인 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.');
-            return;
-        }
-
-        return response.json(); // JSON 응답 파싱
-    })
-    .then(function(data) {
-        if (data && data.token) {
-            // JWT 토큰 저장
-            // 로그인 성공 후, JWT를 Authorization 헤더에 추가
-			localStorage.setItem('token', data.token);
-			fetch('/', {
-			    method: 'GET',
-			    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
-			})
-			.then(function(response) {
-			    if (!response.ok) {
-			        alert('홈 페이지 로드 중 문제가 발생했습니다.');
-			        return;
-			    }
-
-			    // 홈 페이지가 정상적으로 로드되면 리다이렉션
-			    window.location.href = '/';
-			})
-			.catch(function(error) {
-			    console.error('홈 페이지 요청 중 오류:', error);
-			    alert('홈 페이지 로드 중 오류가 발생했습니다.');
-			});
-
-            console.log('JWT 토큰 저장 완료:', data.token);
-
-            // 홈 화면으로 리다이렉션
+        const data = await response.json();
+        if (data.token) {
+            localStorage.setItem('token', data.token);
             window.location.href = '/';
         } else {
-            alert('로그인에 실패했습니다. 서버 응답을 확인하세요.');
-            console.error('서버 응답 데이터:', data);
+            alert('로그인에 실패했습니다.');
         }
-    })
-    .catch(function(error) {
+    } catch (error) {
         console.error('로그인 요청 중 오류:', error);
         alert('로그인 중 문제가 발생했습니다.');
-    });
+    }
 });
 
 </script>
     </main>
-    <%@include file="/WEB-INF/include/footer.jsp" %>
+    <%@include file="/WEB-INF/include/footer_company.jsp" %>
 </body>
 </html>

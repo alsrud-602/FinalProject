@@ -1,4 +1,4 @@
-package com.board.users.controller;
+package com.board.business.controller;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -32,8 +32,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
-@RequestMapping("/Users")
-public class UserSignController {
+@RequestMapping("/Companys")
+public class CompanySignController {
 
     @Autowired
     private UserService userService;
@@ -41,7 +41,7 @@ public class UserSignController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
-    public UserSignController(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
+    public CompanySignController(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
     }
@@ -49,7 +49,7 @@ public class UserSignController {
 	/* 회원가입 */
     @GetMapping("/SignupForm")
     public String signupForm() {
-        return "signup"; // 회원가입 폼 JSP 페이지로 이동
+        return "business/signup"; // 회원가입 폼 JSP 페이지로 이동
     }
 
     //날짜 변환
@@ -62,13 +62,13 @@ public class UserSignController {
     @PostMapping("/Signup")
     public String registerUser(@ModelAttribute User user) {
         userService.registerUser(user);
-        return "redirect:/Users/LoginForm";
+        return "redirect:/Companys/LoginForm";
     }
     
     /* 로그인/로그아웃 */
 	@RequestMapping("/LoginForm")
 	public  String   loginform() {
-		return "login";
+		return "business/login";
 	}
 	/*
     @GetMapping("/Login/{id}")

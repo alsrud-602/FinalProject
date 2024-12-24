@@ -111,7 +111,7 @@
 	
 #hamburger-menu span {
     width: 36px;
-    height: 2px;
+    height: 2.5px;
     background-color: #00FF84; /* 색상 변경 */
     position: absolute;
     margin-right: 4 30px;
@@ -366,9 +366,9 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <header>
         <div class="header">
-            <a href="/"><img class="logo" src="/images/icon/logo_company.png" alt="로고" /></a>
+            <a href="/Business"><img class="logo" src="/images/icon/logo_company.png" alt="로고" /></a>
             <div class="header-nav">
-                <a href="#">
+                <a href="/Operation">
                     <div class="frame-2066">
                         <div class="div1">운영</div>
                     </div>
@@ -390,9 +390,9 @@
                 </a>
             </div>
             <div class="header-util">
-                <a href="/login"><div class="div3">로그인</div></a>
+                <a href="/Companys/LoginForm"><div class="div3">로그인</div></a>
                 <img class="line-1" src="/images/header/line-1.svg" alt="구분선" />
-                <a href="/register"><div class="div3">회원가입</div></a>
+                <a href="/Companys/SignupForm"><div class="div3">회원가입</div></a>
             </div>
 			<div id="hamburger-menu">
 				<span></span> 

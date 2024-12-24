@@ -10,7 +10,6 @@
     <title>팝업스토어 등록</title>
 
 <link rel="icon" type="image/png" href="/img/favicon.png" />
-<link rel="stylesheet"  href="/css/common.css" />
 <link rel="stylesheet"  href="/css/company_m.css" />
     <style>
     

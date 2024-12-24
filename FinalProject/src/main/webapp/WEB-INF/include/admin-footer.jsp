@@ -8,7 +8,7 @@
 
 .footer {
   background: #F3F9F3; /* 배경 색상 */
-  height: 94px; /* 높이 */
+  height: 90px; /* 높이 */
   left: 0;
   width: 100%; /* 너비 */
   position: relative; /* 상대 위치로 변경 */
@@ -25,7 +25,7 @@
   color: black; /* 글자 색상 */
   text-align: left; /* 텍스트 정렬 */
   font-family: "ABeeZee-Regular", sans-serif; /* 폰트 설정 */
-  font-size: 12px; /* 폰트 크기 */
+  font-size: 10px; /* 폰트 크기 */
   line-height: 140%; /* 줄 높이 */
   letter-spacing: -0.025em; /* 글자 간격 */
   font-weight: 400; /* 글자 두께 */

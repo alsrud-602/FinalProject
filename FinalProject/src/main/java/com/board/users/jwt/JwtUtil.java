@@ -29,4 +29,11 @@ public class JwtUtil {
         final String username = extractUsername(token);
         return username.equals(userDetails.getUsername());
     }
+    private boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new Date());
+    }
+
+    private Date extractExpiration(String token) {
+        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody().getExpiration();
+    }
 }

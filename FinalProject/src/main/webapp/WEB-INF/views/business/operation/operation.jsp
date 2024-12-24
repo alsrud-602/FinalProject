@@ -8,19 +8,17 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style type="text/css">
-    body{
-    
-    }
+
 	main {
 		margin: 0;
 		padding: 20px 20px 20px 0;
 		width: 1200px;
-		position: absolute;
+		position: relative;
 		left: 50%; 
-		transform: translateX(-50%); 
-		margin-bottom: 93px;
+		transform: translateX(-50%);
+
 	}
-	
+
 	/* 제목 */
 	.title {
 		border: 2px solid #9A9A9A;
@@ -122,7 +120,10 @@
 		justify-content: space-between;
 	}
 	/* ------------------------------------------ */
-	
+	h3 {
+    font-size: 28px;
+    margin: 0; /* 기본 마진 제거 */
+}
 	/* 정보 */
 .info {
     display: flex;
@@ -202,16 +203,17 @@
 button.use-btn {
     margin-left: 10px; /* 레이블과의 간격 */
     padding: 10px 15px; /* 버튼 패딩 */
-    background-color: #007bff; /* 버튼 배경색 */
-    color: white; /* 버튼 텍스트 색상 */
-    border: none; /* 테두리 제거 */
-    border-radius: 5px; /* 모서리 둥글게 */
-    cursor: pointer; /* 마우스 포인터 변경 */
+    background-color: #91FFCD; /* 버튼 배경색 */
+    color: black;
+    width: 131px;
+    height: 46px;
+    font-size: 20px;
+    border: 1px solid #9A9A9A;
     transition: background-color 0.3s; /* 배경색 변화 애니메이션 */
 }
 
 button.use-btn:hover {
-    background-color: #0056b3; /* 호버 시 배경색 변화 */
+    background-color: #80E2B6; /* 호버 시 배경색 변화 */
 }
 
 #traffic-range {
@@ -418,7 +420,7 @@ canvas {
 		font-size: 20px; /* 원하는 글자 크기로 설정 */
 	}
 	
-	.reservation {
+	.pre-reservation {
 	margin-top: 20px;
     border: 2px solid #9a9a9a;
     padding: 20px;
@@ -428,7 +430,7 @@ canvas {
     background-color: #fff; /* 배경색 추가 */
 	}
 	
-.reservation-container {
+.pre-reservation-container {
     display: flex; /* Flexbox 사용 */
     justify-content: space-between; /* 요소 간의 간격을 조정 */
     align-items: flex-start; /* 상단 정렬 */
@@ -441,45 +443,199 @@ canvas {
     margin-right: 20px; 
 }
 
-.reservations {
+.pre-reservations {
     flex: 2; /* 예약 현황이 더 넓게 차지하도록 설정 */
     text-align: center;
 }
 
 h4{
-
+font-size: 24px;
 margin-bottom: 20px;
 }
+/* 테이블 스타일 */
 table {
     width: 100%; /* 테이블이 부모 요소의 너비를 가득 채우도록 설정 */
     border-collapse: collapse; /* 테이블 경계선 겹침 방지 */
 }
 
 th, td {
-    border: 1px solid #ccc; /* 경계선 스타일 */
-    padding: 8px; /* 패딩 추가 */
+    border: 1px solid #ddd; /* 경계선 스타일 */
+    padding: 10px; /* 패딩 추가 */
     text-align: center; /* 텍스트 중앙 정렬 */
 }
-	
-	.buttons {
-		display: flex;
-		justify-content: space-between;
-		margin-top: 20px;
-	}
-	
-	button {
-		background-color: #4CAF50;
-		color: white;
-		border: none;
-		padding: 10px 15px;
-		border-radius: 5px;
-		cursor: pointer;
-		transition: background-color 0.3s;
-	}
-	
-	button:hover {
-		background-color: #45a049;
-	}
+
+th {
+    background-color: #f2f2f2; /* 헤더 배경색 */
+}
+
+/* 행 hover 효과 */
+tr:hover {
+    background-color: #f1f1f1; /* 마우스 오버 시 색상 변경 */
+}
+
+/* 버튼 스타일 */
+button, .notify-btn, .delete-btn {
+    background-color: #4CAF50; /* 기본 버튼 배경색 */
+    color: white;
+    border: 1px solid #9A9A9A;
+    padding: 10px 15px;
+    transition: background-color 0.3s;
+}
+.notify-btn{
+background-color: #F1FFDF;
+color: black;
+&:hover{
+background-color: #DFF4C3;
+}
+}
+.delete-btn{
+background-color: #FFC9C9;
+color: black;
+&:hover{
+background-color: #EEBBBB;
+}
+}
+
+button:hover{
+    background-color: #45a049; /* 호버 시 색상 변경 */
+}
+
+/* 버튼 간격 및 스타일 */
+.buttons-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.buttons-footer button {
+    flex: 1;
+    margin: 0 10px; /* 버튼 간의 간격 */
+    color: black;
+    width: 318px;
+    height: 87px;
+    font-size: 22px;
+    background-color: #fff; /* 버튼 배경색 */
+    border: 1px solid black;
+}
+
+.notify-all-btn {
+    width: 164px;
+    height: 46px;
+    font-size: 20px;
+    background-color: #8BC34A; /* 전체 알림 버튼 색상 */
+}
+
+/* 현장예약 */
+.reservation-status {
+	margin-top: 20px;
+    border: 2px solid #9a9a9a;
+    padding: 20px;
+    height: auto;
+    position: relative;
+    overflow: hidden;
+    background-color: #fff; /* 배경색 추가 */
+    width: 100%;
+    left: -20px;
+    box-sizing: border-box; /* 패딩과 경계선을 포함하여 전체 너비 계산 */
+}
+
+.warning-message {
+    color: red; /* 경고 메시지 색상 */
+    margin-bottom: 15px;
+    font-size: 20px;
+}
+
+/* 컨트롤 스타일 */
+.reservation-list {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.reservation-list select, .reservation-list input {
+    padding: 8px;
+}
+
+/* 예약 섹션 스타일 */
+.pre-reservation-list, .reservation-status {
+    margin: 20px;
+}
+
+.pre-reservation-header, .reservation-header {
+    display: flex;
+    justify-content: space-between; /* 제목과 버튼을 양쪽으로 정렬 */
+    align-items: center; /* 수직 중앙 정렬 */
+    margin-bottom: 10px;
+}
+/* 현장대기 상세관리*/
+.notification, .notification-delete {
+    display: none; /* 기본적으로 숨김 */
+    position: absolute;
+    top: 50%; /* 중앙에 위치 */
+    left: 50%; /* 중앙에 위치 */
+    transform: translate(-50%, -50%); /* 중앙 정렬 */
+    width: 333px; /* 팝업 너비 */
+    height: 238px;
+    background-color: white;
+    border: 1px solid #ccc; /* 테두리 색상 */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
+    border-radius: 8px; /* 모서리 둥글게 */
+    padding: 20px; /* 내부 여백 */
+}
+
+.n-header, .n-d-header {
+    display: flex;
+    font-size: 24px;
+    justify-content: space-between;
+    align-items: center; /* 수직 정렬 */
+}
+
+.overlay h3 {
+    margin: 0; /* 기본 마진 제거 */
+    font-size: 20px; /* 제목 크기 */
+    color: #333; /* 제목 색상 */
+}
+
+.overlay select {
+    width: 100%; /* 드롭다운 너비 */
+    padding: 20px; /* 내부 여백 */
+    font-size: 20px;
+    margin: 15px 0; /* 위아래 여백 */
+    border: 1px solid #9a9a9a; /* 테두리 색상 */
+    border-radius: 4px; /* 모서리 둥글게 */
+}
+
+.overlay button {
+    width: 100%; /* 버튼 너비 */
+    padding: 15px; /* 내부 여백 */
+    background-color: #ffffff; /* 버튼 배경색 */
+    border: 1px solid #9a9a9a;
+    color: black;
+    border-radius: 4px; /* 모서리 둥글게 */
+    margin: 5px 0; /* 위쪽 여백 */
+    cursor: pointer; /* 커서 모양 변경 */
+    font-size: 20px; /* 글자 크기 */
+}
+
+
+.overlay button:hover {
+    background-color: #dddddd; /* 버튼 호버 색상 */
+}
+
+.close-btn, .close-delete-btn {
+    cursor: pointer;
+    font-weight: 300;
+    font-size: 30px;
+    color: #999; /* 닫기 버튼 색상 */
+}
+
+.close-btn:hover, .close-delete-btn:hover {
+    color: #333; /* 호버 시 색상 변화 */
+}
+.complete-delete-btn{
+background-color: #FFC9C9;
+}
 	</style>
 </head>
 
@@ -555,10 +711,10 @@ th, td {
 		        <p>일주일 평균</p>
 		    </div>
 		</section>
-
-<section class="reservation">
+<%-- <c:if test=""> choose쓰면 될듯--%>
+<section class="pre-reservation">
     <h3>사전예약명단</h3>
-    <div class="reservation-container">
+    <div class="pre-reservation-container">
         <div class="calendar">
             <div class="sec_cal">
                 <div class="cal_nav">
@@ -599,73 +755,151 @@ th, td {
 
             </div>
         </div>
-        <div class="reservations">
+        <div class="pre-reservations">
             <h4>[예약 현황]</h4>
-            <table>
+            <table id="pre-reservation-table">
                 <tr>
                     <th>순번</th>
                     <th>시간</th>
                     <th>예약 현황</th>
                     <th>상세보기</th>
                 </tr>
-                <tr>
-                    <td>2차</td>
-                    <td>11:30 - 12:00</td>
-                    <td>27명 예약</td>
-                    <td><button>명단보기</button></td>
-                </tr>
-                <tr>
-                    <td>3차</td>
-                    <td>11:30 - 12:00</td>
-                    <td>24명 예약</td>
-                    <td><button>명단보기</button></td>
-                </tr>
-                <tr>
-                    <td>4차</td>
-                    <td>11:30 - 12:00</td>
-                    <td>10명 예약</td>
-                    <td><button>명단보기</button></td>
-                </tr>
-                <tr>
-                    <td>5차</td>
-                    <td>11:30 - 12:00</td>
-                    <td>6명 예약</td>
-                    <td><button>명단보기</button></td>
-                </tr>
+                <!-- 동적으로 업데이트 될 부분 -->
             </table>
         </div>
     </div>
-            <section class="first-reservation">
-            <h3>2차 명단</h3>
-            <table>
-                <tr>
-                    <th>순번</th>
-                    <th>이름</th>
-                    <th>ID</th>
-                    <th>연락처</th>
-                    <th>상세보기</th>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>김진환</td>
-                    <td>bange</td>
-                    <td>전화번호</td>
-                    <td><button>상세보기</button></td>
-                </tr>
-                <!-- 추가 명단 -->
-            </table>
-        </section>
+<section class="pre-reservation-list">
+    <div class="pre-reservation-header">
+        <h4>2차 명단</h4>
+        <button class="notify-all-btn">전체알림보내기</button>
+    </div>
+    <table>
+        <tr>
+            <th>순번</th>
+            <th>이름</th>
+            <th>ID</th>
+            <th>인원수</th>
+            <th>알림 보내기</th>
+        </tr>
+    </table>
+    
 </section>
 
+</section>
+<%-- </c:if> --%>
+<%-- <c:if test=""> --%>
+<section class="reservation-status">
+    <div class="reservation-header">
+        <h3>현장예약대기</h3>
+        <button class="use-btn">사용하기</button>
+    </div>
+    
+    <div class="warning-message">
+        <p>현장예약대기 인원이 있다면 사용기능을 해제할 수 없습니다.</p>
+    </div>
+    <br>
+    <div class="reservation-list">
+        <select id="status-filter" onchange="filterReservations()">
+            <option value="all">전체</option>
+            <option value="current">현재 순번</option>
+            <option value="completed">방문 완료</option>
+            <option value="no-show">노쇼</option>
+            <option value="customer-request">고객 요청</option>
+            <option value="etc">기타</option>
+        </select>
+        <p>대기 2팀</p>
+    </div>
+    <table id="reservation-table">
+        <tr>
+            <th>순번</th>
+            <th>이름</th>
+            <th>ID</th>
+            <th>인원수</th>
+            <th>알림 보내기</th>
+            <th>상태</th>
+            <th>삭제하기</th>
+        </tr>
+        <tr data-status="current">
+            <td>1</td>
+            <td>김방글</td>
+            <td>bange</td>
+            <td>3명</td>
+            <td><button class="notify-btn">알림보내기</button></td>
+            <td>현재순번</td>
+            <td><button class="delete-btn">삭제하기</button></td>
+        </tr>
+        <tr data-status="waiting">
+            <td>2</td>
+            <td>김싱글</td>
+            <td>singe</td>
+            <td>3명</td>
+            <td><button class="notify-btn">알림보내기</button></td>
+            <td>대기</td>
+            <td><button class="delete-btn">삭제하기</button></td>
+        </tr>
+        <tr data-status="waiting">
+            <td>3</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td><button class="notify-btn">알림보내기</button></td>
+            <td>대기</td>
+            <td><button class="delete-btn">삭제하기</button></td>
+        </tr>
+        <tr data-status="waiting">
+            <td>4</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td><button class="notify-btn">알림보내기</button></td>
+            <td>대기</td>
+            <td><button class="delete-btn">삭제하기</button></td>
+        </tr>
+    </table>
+    <div class="overlay">
+    <div class="notification">
+    <div class="n-header">
+        <h3>알림보내기</h3>
+        <span class="close-btn">x</span>
+     </div>
+        <select>
+            <option>현재순번</option>
+            <option>기타</option>
+        </select>
+        <button class="complete-btn">완료</button>
+    </div>
+    
+    <div class="notification-delete">
+     <div class="n-d-header">
+        <h3>삭제사유</h3>
+        <span class="close-delete-btn">x</span>
+     </div>
+        <select>
+            <option>방문완료</option>
+            <option>노쇼</option>
+            <option>고객요청</option>
+            <option>기타</option>
+        </select>
+        <button class="complete-delete-btn">완료</button>
+    </div>
+    </div>
 
+</section>
 
-        <div class="buttons">
-            <button>예약 일자 수정하기</button>
-            <button>기본 정보 수정하기</button>
-            <button>팝업 페이지 이동하기</button>
+        <div class="buttons-footer">
+		    <button>예약 일정 수정하기</button>
+		    <button>기본정보 수정하기</button>
+		    <button>팝업 페이지 이동하기</button>
+		    <c:if test="">
+		   	<button>예약 기능 사용하기</button>
+		    <button>기본정보 수정하기</button>
+		    <button>팝업 페이지 이동하기</button>
+		    </c:if>
         </div>
-    <%@include file="/WEB-INF/include/footer_company.jsp" %>
     </main>
+        <%@include file="/WEB-INF/include/footer_company.jsp" %>
+
+    
     <script>
 	    /* 혼잡도 그래프 */
 	    const ctx = document.getElementById('trafficChart').getContext('2d');
@@ -881,10 +1115,28 @@ function jump() {
     const selectedMonthDate = new Date(year, month, 1);
     renderCalender(selectedMonthDate);
 }
+//현재 날짜의 예약 현황을 기본으로 표시
+function displayCurrentReservations() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    const day = today.getDate();
+
+    // 선택된 날짜 객체 생성
+    const selectedDate = new Date(year, month, day);
+    updateReservationHeader(selectedDate);
+    updateReservationList(year, month, day);
+}
+//예약 현황 헤더 업데이트
+function updateReservationHeader(date) {
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'long' };
+    const formattedDate = date.toLocaleDateString('ko-KR', options);
+    document.querySelector('.pre-reservations h4').textContent = "[" + formattedDate + " 예약 현황]";
+}
 
 function addDateSelection(currentYear, currentMonth) {
     const calendarDays = document.querySelectorAll('.dates .day.current');
-    const reservationHeader = document.querySelector('.reservations h4'); // <h4> 요소 선택
+    const reservationHeader = document.querySelector('.pre-reservations h4'); // <h4> 요소 선택
 
     calendarDays.forEach(day => {
         day.addEventListener('click', function() {
@@ -904,9 +1156,17 @@ function addDateSelection(currentYear, currentMonth) {
             // 선택된 날짜 표시
             calendarDays.forEach(d => d.classList.remove('selected'));
             this.classList.add('selected');
+            
+         // 예약 목록 업데이트
+            updateReservationList(currentYear, currentMonth, dayNumber);
         });
     });
 }
+
+// 초기화
+$(document).ready(function() {
+    displayCurrentReservations(); // 기본 예약 현황 표시
+});
 
 
 function renderCalender(thisMonth) {
@@ -949,11 +1209,218 @@ function renderCalender(thisMonth) {
     }
 
     addDateSelection(currentYear, currentMonth); // 날짜 선택 기능 추가 // 날짜 선택 기능 추가
+    
+}
+/* 예약 현황 목록 */
+// 예약 현황 목록 업데이트 함수
+function updateReservationList(year, month, day) {
+    // 예시 데이터
+    const data = [
+        { id: 2, time: "11:30 - 12:00", status: "27명 예약", shift: "2차" },
+        { id: 3, time: "11:30 - 12:00", status: "24명 예약", shift: "3차" },
+        { id: 4, time: "11:30 - 12:00", status: "10명 예약", shift: "4차" },
+        { id: 5, time: "11:30 - 12:00", status: "6명 예약", shift: "5차" }
+    ];
+
+    const tableBody = document.querySelector("#pre-reservation-table");
+
+    // 기본 테이블 헤더 설정
+    tableBody.innerHTML = `
+        <tr>
+            <th>순번</th>
+            <th>시간</th>
+            <th>예약 현황</th>
+            <th>상세보기</th>
+        </tr>
+    `;
+
+    // 예시 데이터가 없을 경우 처리
+    if (data.length === 0) {
+        tableBody.innerHTML += `
+            <tr>
+                <td colspan="4" style="text-align:center;">예약된 정보가 없습니다.</td>
+            </tr>
+        `;
+        return;
+    }
+
+    // 데이터 순회하여 예약 테이블에 추가
+    data.forEach((item, index) => {
+        tableBody.innerHTML += `
+            <tr>
+                <td>\${index + 1}차</td>
+                <td>\${item.time}</td>
+                <td>\${item.status}</td>
+                <td><button class="view-reservation-btn" data-id="${index + 1}">명단보기</button></td>
+            </tr>
+        `;
+    });
+    
+    // 명단보기 버튼 클릭 이벤트
+    document.querySelectorAll('.view-reservation-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const reservationId = this.getAttribute('data-id');
+            showReservationList(reservationId); // 예약 명단 보기
+        });
+    });
 }
 
+function showReservationList(reservationId) {
+    const reservationListData = {
+        1: [
+            { id: 1, name: "김진환", userId: "bange", person: "3" },
+            { id: 2, name: "이하늘", userId: "sunny", person: "5" }
+        ],
+        2: [
+            { id: 1, name: "박지민", userId: "jimin", person: "6" },
+            { id: 2, name: "김수연", userId: "sooyeon", person: "2" }
+        ],
+        // 다른 예약 ID에 대한 데이터 추가
+    };
+
+    const reservationSection = document.querySelector('.pre-reservation-list');
+    const reservationTableBody = reservationSection.querySelector('table');
+
+    // 예약 리스트 데이터 확인
+    const reservationData = reservationListData[reservationId] || [];
+
+    // 예약 명단을 테이블에 업데이트
+    reservationTableBody.innerHTML = `
+        <tr>
+            <th>순번</th>
+            <th>이름</th>
+            <th>ID</th>
+            <th>인원수</th>
+            <th>알림보내기</th>
+        </tr>
+    `;
+
+    if (reservationData.length === 0) {
+        reservationTableBody.innerHTML += `
+            <tr>
+                <td colspan="5" style="text-align:center;">명단이 없습니다.</td>
+            </tr>
+        `;
+    } else {
+    	const reservationlistHeader = document.querySelector('.pre-reservation-header h4');
+    	reservationlistHeader.textContent = `\${reservationListData.item + 1}차 명단`;
+        reservationData.forEach((item, index) => {
+            reservationTableBody.innerHTML += `
+                <tr>
+                    <td>\${index + 1}</td>
+                    <td>\${item.name}</td>
+                    <td>\${item.userId}</td>
+                    <td>\${item.person}명</td>
+                    <td><button class="notify-btn">알림보내기</button></td>
+                </tr>
+            `;
+        });
+    }
+
+    // 명단 섹션 보이기
+    reservationSection.style.display = 'block';
+}
+
+
+/*      $.ajax({
+        url: `/getReservations`, // 예약 데이터 요청 API 엔드포인트
+        method: 'GET',
+        data: {
+            year: year,
+            month: month + 1, // 0부터 시작하므로 1을 더합니다.
+            day: day
+        },
+        success: function(data) {
+            const tableBody = document.querySelector("#pre-reservation-table");
+            tableBody.innerHTML = `
+                <tr>
+                    <th>순번</th>
+                    <th>시간</th>
+                    <th>예약 현황</th>
+                    <th>상세보기</th>
+                </tr>
+            `;
+
+            // 데이터가 비어있을 경우 처리
+            if (data.length === 0) {
+                tableBody.innerHTML += `
+                    <tr>
+                        <td colspan="4" style="text-align:center;">예약된 정보가 없습니다.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            // 데이터를 순회하며 테이블에 추가
+            data.forEach((item, index) => {
+                tableBody.innerHTML += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${item.time}</td>
+                        <td>${item.status}</td>
+                        <td><a href="/reservationDetails?id=${item.id}">보기</a></td>
+                    </tr>
+                `;
+            });
+        },
+        error: function(error) {
+            console.error("예약 데이터를 가져오는 중 오류 발생:", error);
+        }
+    }); */
+    </script>
+    <!-- 현장예약 -->
+    <script type="text/javascript">
+    function filterReservations() {
+        const filterValue = document.getElementById("status-filter").value;
+        const rows = document.querySelectorAll("#reservation-table tr[data-status]");
+
+        rows.forEach(row => {
+            const status = row.getAttribute("data-status");
+            if (filterValue === "all" || status === filterValue) {
+                row.style.display = ""; // 보이기
+            } else {
+                row.style.display = "none"; // 숨기기
+            }
+        });
+    }
+    /* 현장대기예약 상세 */
+$(function() {
+    // 팝업 버튼 클릭 이벤트
+    $('.notify-btn').on('click', function() {
+        $('.notification').show(); // 알림 보내기 팝업 보여주기
+        $('.overlay').show(); // overlay 보여주기
+    });
+
+    $('.delete-btn').on('click', function() {
+        $('.notification-delete').show(); // 삭제 팝업 보여주기
+        $('.overlay').show(); // overlay 보여주기
+    });
+
+    // 팝업 닫기
+    $('.complete-btn, .close-btn').on('click', function() {
+        $('.notification').hide(); // 알림 보내기 팝업 숨기기
+        $('.overlay').hide(); // overlay 숨기기
+    });
+    
+    $('.complete-delete-btn, .close-delete-btn').on('click', function() {
+        $('.notification-delete').hide(); // 삭제 팝업 숨기기
+        $('.overlay').hide(); // overlay 숨기기
+    });
+    // Overlay 클릭 시 팝업 닫기
+    $('.overlay').on('click', function() {
+        $('.notification').hide(); // 알림 보내기 팝업 숨기기
+        $('.notification-delete').hide(); // 삭제 팝업 숨기기
+        $('.overlay').hide(); // overlay 숨기기
+    });
+    // 팝업 내부 클릭 시 이벤트 전파 차단
+    $('.notification, .notification-delete').on('click', function(e) {
+        e.stopPropagation(); // 이벤트 전파 차단
+    });
+})
 
 
 
     </script>
+
 </body>
 </html>
