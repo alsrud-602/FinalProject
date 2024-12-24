@@ -91,8 +91,12 @@
     <c:if test="${param.error != null}">
         <p style="color: red;">아이디 또는 비밀번호가 잘못되었습니다.</p>
     </c:if>
+    <c:if test="${not empty message}">
+    <div class="alert alert-warning" style="color: aqua;">${message}</div>
+	</c:if>
 </form>
-<a href="/oauth2/authorization/kakao">카카오로 로그인</a>
+<a href="/oauth2/authorization/kakao" id="kakaoLogin"><button>카카오로 로그인</button></a>
+
             <div class="sub-login">
             <a href="#" class="link">아이디 찾기</a> |
             <a href="#" class="link">비밀번호 찾기</a> |
@@ -167,6 +171,43 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         alert('로그인 중 문제가 발생했습니다.');
     });
 });
+/*
+//페이지 로드 시 Authorization Code 처리
+window.onload = function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const authorizationCode = urlParams.get('code'); // URL에서 code 추출
+
+    if (authorizationCode) {
+        console.log('Authorization Code:', authorizationCode);
+
+        // 서버로 Authorization Code 전달
+        fetch(`/oauth2/callback/kakao?code=${authorizationCode}`, {
+            method: 'GET'
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Authorization failed');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.token) {
+                // JWT 저장
+                localStorage.setItem('token', data.token);
+                // 인증 성공 시 홈 화면으로 리다이렉트
+                window.location.href = '/';
+            } else {
+                alert('Authentication failed');
+                console.error('Server response:', data);
+            }
+        })
+        .catch(error => {
+            console.error('Error during Kakao login:', error);
+            alert('카카오 로그인 처리 중 오류가 발생했습니다.');
+        });
+    }
+};
+*/
 
 </script>
     </main>

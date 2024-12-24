@@ -22,6 +22,6 @@
 
   </main>	
  <%@include file="/WEB-INF/include/footer.jsp" %>
-<script src="/js/auth.js" defer></script>
+<!-- <script src="/js/auth.js" defer></script> -->
 </body>
 </html>

@@ -4,10 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <title>POP CORN - 회원가입</title>
-    <link rel="stylesheet" href="/css/common.css" />
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="/css/common.css" />
     <style type="text/css">
 
         main{
@@ -133,16 +133,29 @@
                     <div class="note">*비밀번호와 동일하게 입력해주세요</div>
                 </div>
 	            <div class="input-group">
-	             	<label for="email">이메일</label>
-		            <input type="email" id="email" name="email" placeholder="이메일 입력" />
-	                <select id="email_domain" onchange="updateEmail()">
-	                	<option value="" selected>직접입력</option>
-	                    <option value="gmail.com">gmail.com</option>
-	                    <option value="naver.com">naver.com</option>
-	                    <option value="kakao.com">kakao.com</option>
-	                    <option value="yahoo.com">yahoo.com</option>
-	                    <option value="outlook.com">outlook.com</option>
-	                </select>
+	                <c:choose>
+				        <c:when test="${not empty user.email}">
+				            <input type="hidden" name="socialId" value="${user.socialId}" />
+				            <input type="hidden" name="socialType" value="${user.socialType}" />
+				            <input type="hidden" name="role" value="${user.role}" />
+				            <div>
+				                <label for="email">이메일</label>
+				                <input type="text" id="email" name="email" value="${user.email}" readonly />
+				            </div>
+				        </c:when>
+				        <c:otherwise>
+			             	<label for="email">이메일</label>
+				            <input type="email" id="email" name="email" placeholder="이메일 입력" />
+			                <select id="email_domain" onchange="updateEmail()">
+			                	<option value="" selected>직접입력</option>
+			                    <option value="gmail.com">gmail.com</option>
+			                    <option value="naver.com">naver.com</option>
+			                    <option value="kakao.com">kakao.com</option>
+			                    <option value="yahoo.com">yahoo.com</option>
+			                    <option value="outlook.com">outlook.com</option>
+			                </select>
+	                    </c:otherwise>
+    				</c:choose>
 	             </div>
                 <div class="input-group">
                     <label for="phone">전화번호</label>

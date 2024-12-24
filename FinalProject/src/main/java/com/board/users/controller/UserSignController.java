@@ -14,6 +14,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.board.users.dto.User;
@@ -48,8 +50,9 @@ public class UserSignController {
     
 	/* 회원가입 */
     @GetMapping("/SignupForm")
-    public String signupForm() {
-        return "signup"; // 회원가입 폼 JSP 페이지로 이동
+    public String signupForm(@RequestParam(required = false) String email, Model model) {
+        model.addAttribute("email", email);
+        return "signup";
     }
 
     //날짜 변환
@@ -70,19 +73,14 @@ public class UserSignController {
 	public  String   loginform() {
 		return "login";
 	}
-	/*
-    @GetMapping("/Login/{id}")
-    public User getUser(@PathVariable String id) {
-        return userService.findByUserId(id)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-    }
-    */
 
 	@PostMapping("/Logout")
 	public ResponseEntity<String> logout() {
 	    SecurityContextHolder.clearContext();
 	    return ResponseEntity.ok("Logout successful");
 	}
+	
+	
     
     
 
