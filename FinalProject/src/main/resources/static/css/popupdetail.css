@@ -325,6 +325,26 @@ color: white;
    }
    
 /* 네비게이션 버튼의 기본 스타일 */
+   .swiper-container2 {
+       width: 1000px;
+       height: 500px;
+       background-color: black;
+       overflow: hidden; /* 오버플로우 숨김 */
+       position: relative;
+       margin: 20px auto;
+   }
+
+.ss {
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    background-color: black;
+    img{
+    max-width: 100%; /* 컨테이너 너비에 맞춤 */
+    max-height: 100%; 
+    object-fit: contain;
+    }
+}
 .swiper-button-prev,
 .swiper-button-next {
   position: absolute; /* swiper-wrapper 기준으로 위치 */
@@ -536,26 +556,11 @@ font-weight:400;
 
 }
 #map {
-      width: 100%;
+      width: 1200px;
       height: 600px;
   }
 /* 캐러셀 전체 컨테이너 스타일 */
-   .swiper-container2 {
-       width: 1000px;
-       height: 500px;
-       background-color: black;
-       overflow: hidden; /* 오버플로우 숨김 */
-       position: relative;
-       margin: 20px auto;
-   }
 
-.ss {
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    background-color: black;
-    object-fit: contain !important;
-}
 .review_score2{
   width: 550px;
   height: 100px;
