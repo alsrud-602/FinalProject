@@ -32,70 +32,13 @@ body {
   margin-left: 45px;
 }
 
-/*-----------------------------------------*/
-/*메뉴바*/
-.slidebar {
-    background: #353535;
-    width: 300px;
-    height: 420px; /* 필요에 따라 조정 */
-    font-family: 'Pretendard';
-    font-weight: 800;
-    font-size: 18px;
-    border-radius: 15px;
-    color: white;
-    padding : 30px 50px 50px 50px;
-    margin-top: 100px;
-    
-}
 
-.admin-slide {
-    
-    width : 180px;
-    height: 40px;
-    text-align: left;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
-.admin-slide:hover {
-    background: #EAFFDC;
-}
-
-.admin {
-    background: #00522B;
-    padding: 20px;
-    border-radius: 15px;
-    width:180px;
-    height:120px;
-    text-align: center;
-    font-family: 'Pretendard';
-    font-size: 24px;
-    
-}
-
-.admin-slidesite {
-    width:100px;
-    height:30px;
-    margin-left: 80px;
-}
-
-.admin-slidesite img {
-    margin-right: 10px; /* 이미지와 텍스트 사이의 여백 */
-}
-.admin-slide-href{
-    text-decoration: none; /* 링크 장식 제거 */
-    color: white; /* 글자 색상 */
-    font-size: 12px;
-}
 /*---------------------------------------------------*/
 /*유저관리*/
 .content {
     flex: 1; /* 남은 공간을 차지하도록 설정 */
     padding: 20px; /* 콘텐츠에 패딩 추가 */
     background: #E8EEE7;
-    height:1000px;
     margin-left: 30px;
     width:1600px;
     height: 100%;
@@ -105,14 +48,14 @@ body {
 
 h2{
     font-family: 'Pretendard';
-    font-size: 40px; 
-    padding : 20px 20px 10px 20px;
+    padding : 40px 20px 40px 20px;
 }
-hr {
-    width: 90%; 
+.hr {
+    width: 98%; 
     margin: 0 auto; 
-    border: 3px solid black; /* 흰색으로 설정 */
+    border: 3px solid white;; /* 흰색으로 설정 */
     border-radius: 50px; /* 모서리를 둥글게 */
+    margin-bottom: 30px;
 }
 /*---------------------------------------------------*/
 /*유저+팝콘*/
@@ -342,29 +285,13 @@ span.center {
 
 <body>
 <%@include file="/WEB-INF/include/admin-header.jsp" %>
-<div class="container"> 
-  <aside class="slidebar">
-    <div class="admin">
-      <p>관리자</p>
-      <p>못난이 감자빵</p>
-    </div>
-    <div class="admin-slide"><img src="/images/admin/user/admin-slidebar1.png">&nbsp;&nbsp;&nbsp;대시보드</div>
-    <div class="admin-slide"><img src="/images/admin/user/admin-slidebar2.png">&nbsp;&nbsp;&nbsp;스토어 관리</div>
-    <div class="admin-slide"><img src="/images/admin/user/admin-slidebar3.png">&nbsp;&nbsp;&nbsp;유저 관리</div>
-    <div class="admin-slide"><img src="/images/admin/user/admin-slidebar4.png">&nbsp;&nbsp;&nbsp;광고 관리</div>
-    <div class="admin-slidesite">
-        <a href="/"  class="admin-slide-href">
-            <img src="/images/admin/user/admin-slidebar5.png">
-            사이트 바로가기
-        </a>
-    </div>
-  </aside>
-
+<div class="container" style="margin-left: 300px;"> 
+  <%@include file="/WEB-INF/include/admin-slidebar.jsp" %>
 
       <div>
     <div class="content">
-      <h2>유저 상세 정보</h2>
-      <hr style="width: 80%; margin: 0 auto; border: 1px solid black;">      
+      <h2 style="font-size: 40px; ">유저 상세 정보</h2>
+      <div class="hr"></div>      
     
     <div class="userdetail">
 	    <div class="user">

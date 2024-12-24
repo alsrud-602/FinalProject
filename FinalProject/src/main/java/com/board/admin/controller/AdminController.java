@@ -2,7 +2,6 @@ package com.board.admin.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -10,6 +9,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class AdminController {
 	
 	// http://localhost:9090
+	// 유저관리
 	@RequestMapping("/User")
 	public  ModelAndView  user() {
 		ModelAndView mv = new ModelAndView();
@@ -17,6 +17,7 @@ public class AdminController {
 		return mv;
 	}
 	
+	//유저관리 상세
 	@RequestMapping("/Userdetail")
 	public  ModelAndView  userdetail() {
 		ModelAndView mv = new ModelAndView();
@@ -25,13 +26,13 @@ public class AdminController {
 		
 	}
 	
-	// 테스트용 페이지
-	@RequestMapping("/Test")
-	public  ModelAndView  test() {
+	
+	// 스토어관리 - 담당자관리
+	@RequestMapping("/Managerlist")
+	public  ModelAndView  managerlist() {
 		ModelAndView mv = new ModelAndView();
-		mv.setViewName("/admin/user/test");
+		mv.setViewName("/admin/manager/managerlist");
 		return mv;
-		
 	}
 	
 }

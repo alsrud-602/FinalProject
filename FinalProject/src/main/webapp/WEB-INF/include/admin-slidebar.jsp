@@ -1,5 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
 <style>
 /*-----------------------------------------*/
 /*메뉴바*/
@@ -27,10 +30,18 @@
     padding-bottom: 10px;
     margin-top: 10px;
     margin-bottom: 10px;
+    border: none;
+    background: #353535;
+    font-family: 'Pretendard';
+    font-weight: 800;
+    font-size: 18px;
+    color:white;
 }
+
 
 .admin-slide:hover {
     background: #EAFFDC;
+    color:#121212;
 }
 
 .admin {
@@ -65,6 +76,23 @@
     color: white; /* 글자 색상 */
     font-size: 12px;
 }
+/*드롭다운*/
+.dropdown-menu{
+    padding:0px;
+    }
+.dropdown-menu a{
+    width : 210px;
+    height: 40px;
+    border: none;
+    background: #353535;
+
+}
+.dropdown-item{
+    font-family: 'Pretendard';
+    font-weight: 800;
+    font-size: 18px;
+    color:#EAFFDC;
+}
 </style>
 
 <footer>
@@ -73,8 +101,20 @@
       <p style="font-size: 26px; margin-bottom: 0px;">관리자</p>
       <p style="font-size: 32px;">못난이 감자빵</p>
     </div>
+    
     <div class="admin-slide"><img src="/images/admin/user/admin-slidebar1.png">&nbsp;&nbsp;&nbsp;대시보드</div>
-    <div class="admin-slide"><img src="/images/admin/user/admin-slidebar2.png">&nbsp;&nbsp;&nbsp;스토어 관리</div>
+    <div class="dropdown">
+		  <!-- 버튼 -->
+		  <button class="admin-slide" type="button" data-toggle="dropdown" id="dropdownBtn">
+		    <img src="/images/admin/user/admin-slidebar1.png">&nbsp;&nbsp;&nbsp;스토어 관리
+		  </button>
+		  <!-- 드롭다운 -->
+		  <div class="dropdown-menu">
+		    <a class="dropdown-item" href="/">-&nbsp;&nbsp;스토어 승인 관리</a>
+		    <a class="dropdown-item" href="/">-&nbsp;&nbsp;스토어 통계</a>
+		    <a class="dropdown-item" href="/">-&nbsp;&nbsp;스토어 담당자 관리</a>
+		  </div>
+    </div>
     <div class="admin-slide"><img src="/images/admin/user/admin-slidebar3.png">&nbsp;&nbsp;&nbsp;유저 관리</div>
     <div class="admin-slide"><img src="/images/admin/user/admin-slidebar4.png">&nbsp;&nbsp;&nbsp;광고 관리</div>
     <div class="admin-slidesite">
@@ -83,5 +123,8 @@
             사이트 바로가기
         </a>
     </div>
+    
+
+
   </aside>
 </footer>
