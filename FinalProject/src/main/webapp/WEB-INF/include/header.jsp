@@ -81,6 +81,7 @@
 		font-weight: 900;
 		display: flex;
 		align-items: center;
+		cursor: pointer;
 	}
 	.div3:hover{
 		color: #00FF84;
@@ -364,6 +365,7 @@
 	</style>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="/css/common.css" />
 
     <header>
         <div class="header">
@@ -389,9 +391,11 @@
                 </a>
             </div>
 			<div class="header-util">
-			    <sec:authorize access="isAuthenticated()">
-			        <a href="/Logout"><div class="div3">로그아웃</div></a>
-			    </sec:authorize>
+				<form id="logoutForm">
+				    <sec:authorize access="isAuthenticated()">
+				        <div id="logout-button" class="div3">로그아웃</div>
+				    </sec:authorize>
+				</form>
 			    <sec:authorize access="isAnonymous()">
 			        <a href="/Users/LoginForm"><div class="div3">로그인</div></a>
 			        <img class="line-1" src="/images/header/line-1.svg" alt="구분선" />
@@ -413,7 +417,7 @@
                     <div class="thick"></div>
                 </div>
             </div>
-            <img class="arrow0" src="/images/header/arrow0.svg" />
+            <img class="arrow0" src="/images/header/arrow0.png" />
         </div>
         <a href="#">
         <div class="menu-2066">
@@ -483,5 +487,34 @@
             }
         });
     });
+    
+    </script>
+    
+
+
+<script>
+    /* 로그아웃 */
+document.addEventListener('DOMContentLoaded', function() {
+    const logoutButton = document.querySelector('#logout-button'); // 수정된 선택자
+    if (logoutButton) {
+        logoutButton.addEventListener('click', function(event) {
+            event.preventDefault(); // 기본 폼 서브미션 방지
+
+            fetch('/Users/Logout', { method: 'POST' })
+                .then(response => {
+                    if (response.ok) {
+                        localStorage.removeItem('token'); // 토큰 삭제
+                        window.location.href = '/'; // 리다이렉션
+                    } else {
+                        console.error('Failed to log out');
+                        alert('로그아웃에 실패했습니다. 다시 시도해주세요.');
+                    }
+                })
+                .catch(error => console.error('Error during logout:', error));
+        });
+    }
+});
+
 
     </script>
+    

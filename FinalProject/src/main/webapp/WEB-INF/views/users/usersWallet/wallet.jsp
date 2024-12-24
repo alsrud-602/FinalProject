@@ -388,7 +388,7 @@ th {
 	  </div>
 	
     </div>
-<%@include file="/WEB-INF/include/footer.jsp" %>
+<%-- <%@include file="/WEB-INF/include/footer.jsp" %> --%>
 
 
 

@@ -8,70 +8,28 @@
 <link rel="icon" type="image/png" href="/img/favicon.png" />
 <link rel="stylesheet"  href="/css/common.css" />
 <link rel="stylesheet"  href="/css/company_m.css" />
+<script src="https://cdn.jsdelivr.net/npm/browser-scss@1.0.3/dist/browser-scss.min.js"></script>
 <style>
- .content_field{
- display: flex;
- justify-content: flex-start;
- align-items:center;
- gap:80px;
 
- p{
- font-size:22px;
- font-weight: 700;
- padding-left: 20px;
- }
- select{
-font-size:20px;
- font-weight: 500; 
-border: 1px solid #767676;
-border-radius: 5px;
-width: 156px;
-height: 43px;
-padding-left: 10px;
- }
- }
- .content_cover{
- p{
- font-size:22px;
- font-weight: 700;
- padding-left: 20px;
- }
- textarea{
- margin-top:23px;
- margin-bottom:26px;
-width: 90%;
-height: 400px; 
-font-size: 16px;
- 
- }
- } 
-.cover_layout{
-display: flex;
-justify-content: center;
-} 
-.btn2{
-width: 157px;
-height: 80px;
-background: white;
-font-size: 24px;
-font-weight: 600px;
-border: 1px solid #121212;
-margin-bottom: 40px;
-} 
 </style>
 </head>
 <body>
 <%@include file="/WEB-INF/include/header_company.jsp" %>
 <div class="container">
+  <img id="icon_back" src="/images/icon/back2.png" alt="뒤로가기" onclick="goBack()">
   <main>
     <div class="title">
    <p>수정으로 변경 불가한 사항을 관리자에게 문의하세요</p>
    <p>팝업스토어 관리자요청</p>
    </div>
    
-   <div class="content_body">
+   <div class="content_body content_guide">
+   <p>관리자요청기능이란?</p>
+   <p>수정으로 변경이 불가한 팝업삭제, 팝업명 변경,승인결과 변경 등 관리자에게 원하는 요청이 있을때 남길 수 있는기능 입니다.
+</p>
    </div>
    
+    <form action=""> 
    <h2 class="content_title">요청 팝업스토어</h2>
   <div class="content_body">
   <div class="content_header">
@@ -82,7 +40,7 @@ margin-bottom: 40px;
   <p>사전예약&nbsp;&nbsp;|&nbsp;&nbsp;잡화&nbsp;&nbsp;|&nbsp;&nbsp;스포츠</p>
   </div>
    </div>
- 
+
     <h2 class="content_title">요청 내용</h2>
   <div class="content_body">
  <div class="content_field">
@@ -107,8 +65,15 @@ margin-bottom: 40px;
  <div class="cover_layout">
  <input class="btn2" type="submit" value="등록">
   </div>
+  
+  </form>
   </main>
  </div>	
+ <script>
+function goBack() {
+    window.history.back();  // 이전 페이지로 돌아가기
+}
+</script>
 </body>
 </html>
 
