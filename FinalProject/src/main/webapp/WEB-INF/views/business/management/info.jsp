@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <link rel="icon" type="image/png" href="/img/favicon.png" />
-<link rel="stylesheet"  href="/css/common.css" />
+<link rel="stylesheet"  href="/css/common-company.css" />
 <link rel="stylesheet"  href="/css/company_m.css" />
 <script src="https://cdn.jsdelivr.net/npm/browser-scss@1.0.3/dist/browser-scss.min.js"></script>
 <style>
@@ -108,6 +108,7 @@ padding-left: 10px;
   </aside>
   
 </div>	
+<%@include file="/WEB-INF/include/footer_company.jsp" %>
 </body>
  
 </html>

@@ -7,27 +7,25 @@
 <meta charset="UTF-8">
 <title>진행 중</title>
 <link rel="icon" type="image/png" href="/img/favicon.png" />
-<link rel="stylesheet"  href="/css/common.css" />
 
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+<link rel="stylesheet"  href="/css/common.css" />
 <style>
 
   body {
     background-color: #121212 !important;
-    color: white !important;
-    padding-top:200px;
-              
-              
+    color: white;
   }
 
-  * { margin: 0; padding: 0; }
-  li { list-style: none; }
+  li { list-style: none; 
+  }
   h2 {text-align : center;
-      padding-top : 50px;}
+      padding-top : 50px;
+      }
   a  {text-align : center;
       color: #00ff84;
   }
@@ -379,9 +377,9 @@
 	    
 	    
 	  </div>
-	  <%@include file="/WEB-INF/include/footer.jsp" %>
 	</div>
 </div>
+	  <%@include file="/WEB-INF/include/footer.jsp" %>
 </body>
 <script>
     const carousels = document.querySelectorAll('.carousel1');

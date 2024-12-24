@@ -3,15 +3,14 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>POP CORN - 회원가입</title>
-    <link rel="stylesheet" href="/css/common.css" />
+    <title>POP CORN.biz - 회원가입</title>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="/css/common-company.css" />
     <style type="text/css">
 
         main{
-                    color: #00ff84;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -21,9 +20,8 @@
         .container {
             width: 600px;
             padding: 30px;
-            border: 2px solid #00ff84;
+            border: 2px solid #121212;
             border-radius: 20px;
-            background-color: #121212;
             margin-bottom:100px;
         }
         h1 {
@@ -42,20 +40,14 @@
         input {
             width: 100%;
             padding: 10px;
-            border: 1px solid #00ff84;
+            border: 1px solid #121212;
             border-radius: 5px;
-            background-color: #1c1c1c;
-            color: #fff;
             font-size: 16px;
         }
         input[name="birthdate"]{
         	z-index: 1000;
-	        background: url('/images/calendar.svg') no-repeat right 10px center; 
-	        color: #fff; 
         }
         input[name="birthdate"]::-webkit-calendar-picker-indicator, input[name="birthdate"]::-webkit-inner-spin-button { 
-        	opacity: 0; 
-        	appearance: none; 
         	cursor: pointer;
         }
         
@@ -73,7 +65,6 @@
             align-items: center; /* 수직 중앙 정렬 */
             width: calc(100% - 500px); /* 레이블 너비 조정 (체크박스 너비 고려) */
             margin-bottom: 10px; /* 간격 추가 */
-            padding-left: 10px; /* 왼쪽 패딩 추가 */
             white-space: nowrap; /* 줄 바꿈 방지 */
             cursor: pointer;
         }
@@ -82,7 +73,7 @@
         }
         button {
             width: 100%;
-            padding: 10px;
+            padding: 15px;
             border: none;
             border-radius: 5px;
             background-color: #00ff84;
@@ -93,39 +84,38 @@
         button:hover {
             background-color: #00e676;
         }
-        .mainlogo {
-            width: 400px; /* 원하는 너비로 조정 */
-            height: auto; /* 비율에 맞춰 자동 크기 조정 */
-            display: block; /* 이미지가 블록 요소로 표시되도록 설정 */
-            margin: 0 auto; /* 가운데 정렬 */
+        h2 {
+        	width: 300px;
+        	height: auto;
+        	margin: 0 auto; /* 가운데 정렬 */
             margin-bottom: 20px;
+            margin-left: 150px;
+            font-size: 40px;
+            color: #00FF84;
         }
     </style>
 </head>
 
-<%@include file="/WEB-INF/include/header.jsp" %>
+<%@include file="/WEB-INF/include/header_company.jsp" %>
 <body>
     <main>
         <div class="container">
             <form method="POST" action="/Users/Signup" id="signupForm">
-                <a href="/"><img class="mainlogo" src="/images/mainlogo.png" /></a>
+                <a href="/Business"><h2>POPCORN.Biz</h2></a>
                 <div class="input-group">
                     <label for="nickname">닉네임</label>
                     <input type="text" id="nickname" name="nickname" placeholder="*2자 이상 입력해 주세요" required>
                     <div class="note">*2자 이상 입력해 주세요</div>
-                    <div id="errorMessages" style="color: red;"></div>
                 </div>
                 <div class="input-group">
                     <label for="username">아이디</label>
                     <input type="text" id="username" name="id" placeholder="*5~20자 영문 소문자, 숫자 사용" required>
                     <div class="note">*5~20자의 영문 소문자, 숫자와 특수기호(_),(-)만 사용 가능합니다.</div>
-                    <div id="errorMessages" style="color: red;"></div>
                 </div>
                 <div class="input-group">
                     <label for="password">비밀번호</label>
                     <input type="password" id="password" name="password" placeholder="*8~16자 영문 대/소문자, 숫자 사용" required>
                     <div class="note">*8~16자의 영문 대/소문자, 숫자, 특수문자를 사용해 주세요.</div>
-                    <div id="errorMessages" style="color: red;"></div>
                 </div>
                 <div class="input-group">
                     <label for="confirm-password">비밀번호 확인</label>
@@ -156,23 +146,23 @@
 				</div>
 				<div class="checkbox-group">
 				    <label for="compulsoryAgreement">
-				        <input type="checkbox" id="compulsoryAgreement" name="compulsoryAgreement" value="Y" required>
+				        <input type="checkbox" id="compulsoryAgreement" name="compulsoryAgreement" required>
 				        <span style="color: #00FF84;">(필수)</span>&nbsp;POPCORN 이용약관 동의&nbsp;&nbsp; <span style="color: #767676; border-bottom: 1px solid #767676">자세히</span>
 				    </label>
 				    <label for="infoAgreement">
-				        <input type="checkbox" id="infoAgreement" name="infoAgreement" value="Y" required>
+				        <input type="checkbox" id="infoAgreement" name="infoAgreement" required>
 				        <span style="color: #00FF84;">(필수)</span>&nbsp;개인정보 수집 및 이용 동의&nbsp;&nbsp;<span style="color: #767676; border-bottom: 1px solid #767676">자세히</span>
 				    </label>
 				    <label for="messageAgreement">
-				        <input type="checkbox" id="messageAgreement" name="messageAgreement" value="Y" required>
+				        <input type="checkbox" id="messageAgreement" name="messageAgreement" required>
 				        <span style="color: #00FF84;">(필수)</span>&nbsp;SMS/E-MAIL 수신 동의&nbsp;&nbsp;<span style="color: #767676; border-bottom: 1px solid #767676">자세히</span>
 				    </label>
 				    <label for="marketingAgreement">
-				        <input type="checkbox" id="marketingAgreement" name="marketingAgreement" value="Y" >
+				        <input type="checkbox" id="marketingAgreement" name="marketingAgreement">
 				        <span style="color: #767676;">(선택)</span>&nbsp;마케팅 목적의 개인정보 수집 및 이용 동의&nbsp;&nbsp;<span style="color: #767676; border-bottom: 1px solid #767676">자세히</span>
 				    </label>
 				    <label for="alertAgreement">
-				        <input type="checkbox" id="alertAgreement" name="alertAgreement" value="Y" >
+				        <input type="checkbox" id="alertAgreement" name="alertAgreement">
 				        <span style="color: #767676;">(선택)</span>&nbsp;광고성 정보 수신 동의&nbsp;&nbsp;<span style="color: #767676; border-bottom: 1px solid #767676">자세히</span>
 				    </label>
 				</div>
@@ -180,7 +170,7 @@
                 <button type="submit">가입하기</button>
             </form>
         </div>
-<!-- <script>
+<script>
 document.getElementById('signupForm').addEventListener('submit', function(event) {
     event.preventDefault(); // 기본 제출 동작 방지
     const username = document.getElementById('username').value;
@@ -188,15 +178,15 @@ document.getElementById('signupForm').addEventListener('submit', function(event)
     const errorMessages = [];
 
     // 아이디 유효성 검사
-    const usernameRegex = /^[a-z0-9_-]{3,20}$/;
+    const usernameRegex = /^[a-z0-9_-]{5,20}$/;
     if (!usernameRegex.test(username)) {
-        errorMessages.push("아이디는 3~20자의 영문 소문자, 숫자와 특수기호(_),(-)만 사용 가능합니다.");
+        errorMessages.push("아이디는 5~20자의 영문 소문자, 숫자와 특수기호(_),(-)만 사용 가능합니다.");
     }
 
     // 비밀번호 유효성 검사
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{};:,<.>])[A-Za-z\d!@#$%^&*()\-_=+{};:,<.>]{3,16}$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{};:,<.>])[A-Za-z\d!@#$%^&*()\-_=+{};:,<.>]{8,16}$/;
     if (!passwordRegex.test(password)) {
-        errorMessages.push("비밀번호는 3~16자의 영문 대/소문자, 숫자, 특수문자를 사용해야 합니다.");
+        errorMessages.push("비밀번호는 8~16자의 영문 대/소문자, 숫자, 특수문자를 사용해야 합니다.");
     }
 
     // 에러 메시지 출력
@@ -210,9 +200,6 @@ document.getElementById('signupForm').addEventListener('submit', function(event)
         });
     }
 });
-</script>
--->
-<script>
 function updateEmail() {
     var emailInput = document.getElementById('email');
     var domainSelect = document.getElementById('email_domain');
@@ -235,6 +222,6 @@ birthdate.addEventListener('change', function() {
 });
 </script>
     </main>
-<%@include file="/WEB-INF/include/footer.jsp" %>
+<%@include file="/WEB-INF/include/footer_company.jsp" %>
 </body>
 </html>
