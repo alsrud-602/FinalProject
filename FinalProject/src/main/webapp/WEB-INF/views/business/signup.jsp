@@ -103,7 +103,7 @@
             <form method="POST" action="/Users/Signup" id="signupForm">
                 <a href="/Business"><h2>POPCORN.Biz</h2></a>
                 <div class="input-group">
-                    <label for="nickname">닉네임</label>
+                    <label for="nickname">담당자명</label>
                     <input type="text" id="nickname" name="nickname" placeholder="*2자 이상 입력해 주세요" required>
                     <div class="note">*2자 이상 입력해 주세요</div>
                 </div>
@@ -122,6 +122,11 @@
                     <input type="password" id="confirm-password" placeholder="*비밀번호 확인" required>
                     <div class="note">*비밀번호와 동일하게 입력해주세요</div>
                 </div>
+                <div class="input-group">
+                    <label for="code">사업자 코드</label>
+                    <input type="text" id="code" placeholder="" required>
+                    <div class="note">*-빼고 10자 입력해주세요</div>
+                </div>
 	            <div class="input-group">
 	             	<label for="email">이메일</label>
 		            <input type="email" id="email" name="email" placeholder="이메일 입력" />
@@ -139,11 +144,6 @@
                     <input type="text" id="phone" name="phone" placeholder="01011111111" required>
                     <div class="note">*숫자만 입력해주세요</div>
                 </div>
-                <div class="input-group">
-				    <label for="birthdate">생일</label>
-				    <input type="date" id="birthdate" name="birthdate" required>
-				    <div class="note">*오른쪽 달력 이모티콘을 클릭해주세요</div>
-				</div>
 				<div class="checkbox-group">
 				    <label for="compulsoryAgreement">
 				        <input type="checkbox" id="compulsoryAgreement" name="compulsoryAgreement" required>

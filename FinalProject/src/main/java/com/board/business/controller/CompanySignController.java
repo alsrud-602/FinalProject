@@ -31,6 +31,7 @@ import com.board.users.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+
 @Controller
 @RequestMapping("/Companys")
 public class CompanySignController {
@@ -46,13 +47,11 @@ public class CompanySignController {
         this.jwtUtil = jwtUtil;
     }
     
-	/* 회원가입 */
     @GetMapping("/SignupForm")
     public String signupForm() {
         return "business/signup"; // 회원가입 폼 JSP 페이지로 이동
     }
 
-    //날짜 변환
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -65,18 +64,10 @@ public class CompanySignController {
         return "redirect:/Companys/LoginForm";
     }
     
-    /* 로그인/로그아웃 */
 	@RequestMapping("/LoginForm")
 	public  String   loginform() {
 		return "business/login";
 	}
-	/*
-    @GetMapping("/Login/{id}")
-    public User getUser(@PathVariable String id) {
-        return userService.findByUserId(id)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-    }
-    */
 
 	@PostMapping("/Logout")
 	public ResponseEntity<String> logout() {
@@ -87,3 +78,4 @@ public class CompanySignController {
     
 
 }
+
