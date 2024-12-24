@@ -52,9 +52,8 @@
   justify-content: flex-start;
   width: 500px;
   position: absolute;
-  left: 34px;
-  top: 7px;
-  
+  color:white;
+  text-decoration: none;
 }
 .footer-content {
   color: #ffffff;

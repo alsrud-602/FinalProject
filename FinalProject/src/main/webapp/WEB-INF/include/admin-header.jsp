@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
+<%@taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 	<style>
 	.header, .header * {
 		box-sizing: border-box;
@@ -15,6 +15,18 @@
 	    right: 0;
 	    z-index: 1000; /* 다른 요소들 위에 표시 */
 	}
+
+	
+	.header-nav {
+		display: flex;
+		gap: 32px;
+		align-items: center;
+		justify-content: center;
+		width: 514px;
+		position: absolute;
+		left: calc(50% - 257px);
+		top: 34px;
+	}
 	
 	
 	.logo {
@@ -25,10 +37,12 @@
 		top: 10px;
 	}
 	
-	.search-container{
+
+/*검색바*/
+.search-container{
 	    height: 80px;
 	    position: fixed; /* 고정 위치 */
-	    top: 5px; /* 상단에 고정 */
+	    top: -25px; /* 상단에 고정 */
 	    margin : 0 auto;
 	    right: 0;
 	    z-index: 1000; /* 다른 요소들 위에 표시 */
@@ -70,13 +84,20 @@
 
     <header>
         <div class="header">
+        
             <a href="/Users/Main"><img class="logo" src="/images/header/logo.png" alt="로고" /></a>
+            
+            <div class="header-nav">
+              <div class="search-container">
+                <input type="text" class="search-input" placeholder="찾고싶은 기능을 검색하세요!">
+		            <button class="search-button" type="submit">
+		              <img class="imgsearch" src="/images/main/search.png" alt="검색">
+		        </button>
+		      </div>
+            </div>
+			
+
+
 		</div>
-		<div class="search-container">
-           <input type="text" class="search-input" placeholder="찾고싶은 기능을 검색하세요!">
-            <button class="search-button" type="submit">
-              <img class="imgsearch" src="/images/main/search.png" alt="검색">
-        </button>
-    </div>
     </header>
 
