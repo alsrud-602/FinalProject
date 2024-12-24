@@ -64,7 +64,7 @@ dependencies {
     //OAuth2
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
-}
+
 
 tasks.named('bootBuildImage') {
     builder = 'paketobuildpacks/builder-jammy-base:latest'
