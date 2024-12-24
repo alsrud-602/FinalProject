@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.board.business.mapper.BusinessMapper">  
+
+	<insert id="insertStore">
+    INSERT INTO STORES (STORE_IDX,COMPANY_IDX,TITLE,AGE,BRAND1,BRAND2)
+    VALUES ( STORES_SEQ.NEXTVAL, #{company_idx}, #{title}, #{age}, #{brand1}, #{brand2})
+	</insert>
+    
+	<insert id="insertStoreDetail">
+     INSERT INTO STORES_DETAIL 
+     ( DETAIL_IDX,STORE_IDX, ADDRESS,START_DATE, END_DATE,HOMEPAGE,SNS, 
+     INTRODUCTION,CONTENT,PARKING, FARE,AGE_LIMIT,SHOOTING,GOODS
+     ) VALUES ( STORES_DETAIL_SEQ.NEXTVAL,(SELECT MAX(STORE_IDX) FROM STORES),
+                #{address}, #{start_date},#{end_date},#{homepage},#{sns},#{introduction},
+                #{content},#{parking},#{fare},#{age_limit},#{shooting},#{goods}
+        )
+	</insert>
+	
+	<!-- tag 여러개 저장 -->
+  <insert id="insertStoreTage">
+  <foreach collection="tagList" item="tag" index="i" 
+         open="INSERT ALL" 
+         close="SELECT * FROM DUAL" 
+         separator="">
+    INTO STORES_TAG VALUES (
+       (SELECT NVL(MAX(TAGE_IDX), 0) FROM STORES_TAG) + #{i} + 1,
+        (SELECT MAX(STORE_IDX) FROM STORES),#{tag.tag_name} )
+  </foreach>
+  </insert>
+
+ 
+  
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
