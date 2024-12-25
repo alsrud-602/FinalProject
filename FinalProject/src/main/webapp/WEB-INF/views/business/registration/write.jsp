@@ -188,9 +188,10 @@ color:red;
            <select name="category_id" class="sub_select">
              <option>10</option>
            </select>
-           <select class="category_id">
+           <select name="category_id" class="sub_select">
              <option>10</option>
-           </select></td>
+           </select>
+           </td>
         </tr>        
         <tr>
            <td>브랜드</td>
@@ -369,9 +370,10 @@ color:red;
 		<td>예약기능</td>
 		<td>    
            <div class="button-container" >
-          <a href="#" class="button" onclick="toggleContent('content1', ['content2', 'content3'], this)">현장문의</a>
-    	  <a href="#" class="button" onclick= "toggleContent('content2', ['content3', 'content1'], this)">사전예약</a>
-   		  <a href="#" class="button" onclick="toggleContent('content3', ['content1', 'content2'], this)">현장대기예약</a>
+          <a href="#" class="button" onclick="toggleContent('content1', ['content2', 'content3'], this)" data-status ="현장문의">현장문의</a>
+    	  <a href="#" class="button" onclick= "toggleContent('content2', ['content3', 'content1'], this)"data-status ="사전예약">사전예약</a>
+   		  <a href="#" class="button" onclick="toggleContent('content3', ['content1', 'content2'], this)"data-status ="현장대기예약">현장대기예약</a>
+   		  <input type="hidden" name="status" id="statusInput" value="">
            </div>
         </td> 
       </tr> 
@@ -445,7 +447,7 @@ color:red;
         <tr>
            <td>예약 오픈 일자</td>
            <td>
-           <input type="date" style="width: 600px;">
+           <input name="open_date"  type="date" style="width: 600px;">
            <p class="sub_guide" style="font-size: 16px; font-weight: 300 ;margin-bottom: -19px;">사전예약을 오픈할 날짜를 지정해주세요! 이미오픈된 예약은 변경 불가합니다.</p>
            </td>
           </tr>
@@ -457,7 +459,7 @@ color:red;
         <table class="sub_table">
         <tr>
            <td>예약시 주의 사항</td>
-           <td><input class="sub_link"  type="text" placeholder="예약시 주의사항을 입력하세요"></td>
+           <td><input class="sub_link"  name="notes" type="text" placeholder="예약시 주의사항을 입력하세요"></td>
           </tr>
           </table> 
         </div>
@@ -474,7 +476,7 @@ color:red;
          <table class="sub_table">     
          <tr>
            <td>예약시스템링크</td>
-           <td><input class="sub_link" type="text" placeholder="예약 홈페이지 링크를 복사해주세요"></td>
+           <td><input class="sub_link" name="link" type="text" placeholder="예약 홈페이지 링크를 복사해주세요"></td>
 	     </tr>
 	     </table>
 	     </div>
@@ -662,7 +664,10 @@ function toggleContent(currentId, otherIds, button) {
         button.classList.add('active'); 
     }
 
-   
+    //status 값 넣기
+    const statusValue = button.getAttribute('data-status');
+    document.getElementById('statusInput').value = statusValue;
+
     const subContents = ['content4', 'content5'];
     subContents.forEach(id => {
         const subDiv = document.getElementById(id);
@@ -797,17 +802,31 @@ function resetSubButtons() {
             const stepLabel = document.createElement('p');
             stepLabel.innerText = subDayIndex+'차';
 
+            
+           //PlAN db 용 input
+            let rpIndex = subDayIndex - 1;
+            const planName = document.createElement('input'); 
+            planName.type='hidden';
+            planName.name='rpList['+rpIndex+'].plan';
+            planName.value= 'P'+ planCount;
+           
+            console.log(planName.name);
+            //
+            
             const timeStart = document.createElement('input');
             timeStart.type = 'time';
-            timeStart.className = 'time_start';
+            timeStart.className = 'start_time';
+            timeStart.name = 'rpList['+rpIndex+'].time_start';
             timeStart.onchange = function() { validateTimes(this, this.nextElementSibling); };
 
             const timeEnd = document.createElement('input');
             timeEnd.type = 'time';
             timeEnd.className = 'time_end';
+            timeEnd.name ='rpList['+rpIndex+'].end_time';
             timeEnd.onchange = function() { validateTimes(this.previousElementSibling, this); };
 
             const numberOfPeopleSelect = document.createElement('select');
+            numberOfPeopleSelect.name ='rpList['+rpIndex+'].max_number';
             const option1 = document.createElement('option');
             option1.textContent = '인원수';
             numberOfPeopleSelect.appendChild(option1); // 기본 옵션 추가
@@ -821,6 +840,7 @@ function resetSubButtons() {
 
             
             subDay.appendChild(stepLabel);
+            subDay.appendChild(planName);
             subDay.appendChild(timeStart);
             subDay.appendChild(timeEnd);
             subDay.appendChild(numberOfPeopleSelect);
@@ -833,9 +853,13 @@ function resetSubButtons() {
             const subContentDiv = button.nextElementSibling; 
             const subDays = subContentDiv.querySelectorAll('.sub_day');
             const newSubDayIndex = subDays.length + 1;
-
+            
+            const text = button.previousSibling.innerText; 
+            const number = text.match(/\d+/);
+            console.log(number[0]);
             // 새로운 sub_day 요소 생성하여 추가
-            const newSubDay = createSubDayElement(parseInt(button.previousSibling.innerText.split(' ')[1]), newSubDayIndex);
+            const newSubDay = createSubDayElement(number[0], newSubDayIndex);
+            //parseInt(button.previousSibling.innerText.split(' ')[1])
             subContentDiv.appendChild(newSubDay); // sub_content에 추가
         }
 

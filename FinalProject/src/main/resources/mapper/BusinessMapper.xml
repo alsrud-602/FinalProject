@@ -29,7 +29,49 @@
   </foreach>
   </insert>
 
+
+   <insert id="insertStoreOperation">
+   INSERT INTO STORES_OPERATION (OPERATION_IDX,STORE_IDX,SMON,STUE,SWED,STHU,SFRI,SSAT,SSUN,EMON,ETUE,EWED,ETHU,EFRI,ESAT,ESUN,ONOTES
+   ) VALUES (STORES_OPERATION_SEQ.NEXTVAL,(SELECT MAX(STORE_IDX) FROM STORES),
+       TO_TIMESTAMP(TO_CHAR(SYSDATE, 'YYYY-MM-DD') || ' ' || #{SMON}, 'YYYY-MM-DD HH24:MI'),
+       TO_TIMESTAMP(TO_CHAR(SYSDATE, 'YYYY-MM-DD') || ' ' || #{STUE}, 'YYYY-MM-DD HH24:MI'),
+       TO_TIMESTAMP(TO_CHAR(SYSDATE, 'YYYY-MM-DD') || ' ' || #{SWED}, 'YYYY-MM-DD HH24:MI'),
+       TO_TIMESTAMP(TO_CHAR(SYSDATE, 'YYYY-MM-DD') || ' ' || #{STHU}, 'YYYY-MM-DD HH24:MI'),
+       TO_TIMESTAMP(TO_CHAR(SYSDATE, 'YYYY-MM-DD') || ' ' || #{SFRI}, 'YYYY-MM-DD HH24:MI'),
+       TO_TIMESTAMP(TO_CHAR(SYSDATE, 'YYYY-MM-DD') || ' ' || #{SSAT}, 'YYYY-MM-DD HH24:MI'),
+       TO_TIMESTAMP(TO_CHAR(SYSDATE, 'YYYY-MM-DD') || ' ' || #{SSUN}, 'YYYY-MM-DD HH24:MI'),
+       TO_TIMESTAMP(TO_CHAR(SYSDATE, 'YYYY-MM-DD') || ' ' || #{EMON}, 'YYYY-MM-DD HH24:MI'),
+       TO_TIMESTAMP(TO_CHAR(SYSDATE, 'YYYY-MM-DD') || ' ' || #{ETUE}, 'YYYY-MM-DD HH24:MI'),
+       TO_TIMESTAMP(TO_CHAR(SYSDATE, 'YYYY-MM-DD') || ' ' || #{EWED}, 'YYYY-MM-DD HH24:MI'),
+       TO_TIMESTAMP(TO_CHAR(SYSDATE, 'YYYY-MM-DD') || ' ' || #{ETHU}, 'YYYY-MM-DD HH24:MI'),
+       TO_TIMESTAMP(TO_CHAR(SYSDATE, 'YYYY-MM-DD') || ' ' || #{EFRI}, 'YYYY-MM-DD HH24:MI'),
+       TO_TIMESTAMP(TO_CHAR(SYSDATE, 'YYYY-MM-DD') || ' ' || #{ESAT}, 'YYYY-MM-DD HH24:MI'),
+       TO_TIMESTAMP(TO_CHAR(SYSDATE, 'YYYY-MM-DD') || ' ' || #{ESUN}, 'YYYY-MM-DD HH24:MI'),
+   #{onotes})
+   </insert>
  
+  <insert id="insertReservationStore">
+  INSERT INTO RESERVATION_STORES (RS_IDX,STORE_IDX,NOTES,OPEN_DATE,STATUS,LINK
+) VALUES (RESERVATION_STORES_SEQ.NEXTVAL,(SELECT MAX(STORE_IDX) FROM STORES),
+#{notes},#{open_date},#{status},#{link})  
+  </insert>
+  
+  	<!-- plan 여러개 저장 -->
+    <insert id="insertReservationPlan">
+  <foreach collection="rpList" item="rp" index="i" 
+         open="INSERT ALL" 
+         close="SELECT * FROM DUAL" 
+         separator="">
+		INSERT INTO RESERVATION_PLANS (RP_IDX,PLAN,START_TIME,END_TIME,MAX_NUMBER
+		) VALUES ((SELECT NVL(MAX(RP_IDX), 0) FROM RESERVATION_PLANS) + #{i} + 1,
+		S ||(SELECT MAX(STORE_IDX) FROM STORES) || #{rp.plan},
+		#{rp.start_datetime},
+		#{rp.end_datetime},	 
+		#{rp.max_number}
+		);
+  </foreach>
+  </insert>
+  
   
 
 </mapper>

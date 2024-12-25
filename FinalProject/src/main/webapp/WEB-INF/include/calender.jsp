@@ -72,9 +72,9 @@
             <table id="calendar">
                 <thead>
                     <tr height="70px">
-                        <td><label onclick="prev()" style="color: #ccc;"><</label></td>
+                        <td><label onclick="prev()" style="color: #ccc;"></label></td>
                         <td colspan="5" id="monthTable"></td>
-                        <td><label onclick="next()" style="color: #ccc;">></label></td>
+                        <td><label onclick="next()" style="color: #ccc;"></label></td>
                     </tr>
                     <tr id="dateHead">
                         <td>일</td>
