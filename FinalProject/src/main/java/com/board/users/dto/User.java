@@ -33,6 +33,9 @@ public class User {
     @Column(name = "NIKNAME", length = 30)
     private String nickname; // 닉네임
 
+    @Column(name = "NAME", length=30)
+    private String name; //이름
+    
     @Column(name = "ID", length = 30)
     private String id; // 아이디
 

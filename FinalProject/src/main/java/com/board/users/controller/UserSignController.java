@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -54,6 +55,17 @@ public class UserSignController {
         model.addAttribute("email", email);
         return "signup";
     }
+    @GetMapping( "/CheckDuplication" )
+    @ResponseBody
+    public String checkDuplication(@RequestParam(value="id") String id ) {
+      
+       Optional<User> user = userService.findByUserId(id);
+        if (user.isEmpty()) {
+            return "가능";  // 아이디가 존재하지 않으면 가능
+        }
+        return "불가능";  // 아이디가 존재하면 불가능
+    }
+    
 
     //날짜 변환
     @InitBinder
@@ -67,6 +79,7 @@ public class UserSignController {
         userService.registerUser(user);
         return "redirect:/Users/LoginForm";
     }
+    /*========================================================*/
     
     /* 로그인/로그아웃 */
 	@RequestMapping("/LoginForm")

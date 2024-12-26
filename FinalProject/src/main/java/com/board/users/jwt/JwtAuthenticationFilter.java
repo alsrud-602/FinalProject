@@ -6,6 +6,7 @@ import java.util.Collections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -72,17 +73,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 logger.error("JWT 필터 처리 중 오류 발생: {}", e.getMessage());
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authentication Failed");
             }
-        } // OAuth2 인증된 사용자가 있을 경우
-        if (request.getRequestURI().startsWith("/oauth2/callback")) {
-            OAuth2User oauthUser = (OAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(oauthUser, null, oauthUser.getAuthorities());
-            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authToken);
-
-            logger.info("OAuth2 인증 후 사용자 정보: {}", oauthUser);
-            String jwt = jwtUtil.generateToken(oauthUser.getName());
-            response.addHeader("Authorization", "Bearer " + jwt);
-
+        } else if (request.getRequestURI().startsWith("/oauth2/callback")) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.getPrincipal() instanceof OAuth2User) {
+                OAuth2User oauthUser = (OAuth2User) authentication.getPrincipal();
+                String userId = (String) oauthUser.getAttributes().get("userId");
+                if (userId != null) {
+                    String jwt = jwtUtil.generateToken(userId);
+                    response.addHeader("Authorization", "Bearer " + jwt);
+                    logger.info("OAuth2 인증 후 JWT 생성 완료: {}", jwt);
+                } else {
+                    logger.error("OAuth2 인증 정보에 userId가 없습니다.");
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid OAuth2 User");
+                }
+            } else {
+                logger.error("OAuth2 인증 정보가 SecurityContext에 없습니다.");
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid OAuth2 Callback");
+            }
         } else if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             String jwt = authorizationHeader.substring(7);
             String username = jwtUtil.extractUsername(jwt);
@@ -122,7 +129,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
 	    String path = request.getServletPath();
 	    boolean shouldExclude = path.equals("/error") || path.startsWith("/css/") || path.startsWith("/images/") || path.startsWith("/img/") ||
-	                            path.startsWith("/static/") || path.endsWith(".js") || path.startsWith("/Users/LoginForm") || path.startsWith("/Users/SignupForm") || path.startsWith("/Users/Signup") ||
+	                            path.startsWith("/static/") || path.endsWith(".js") || path.startsWith("/Users/LoginForm") || 
+	                            path.startsWith("/Users/SignupForm") || path.startsWith("/Users/Signup") || path.startsWith("/Users/CheckDuplication") ||
 	                            path.startsWith("/oauth2/") || path.startsWith("/oauth2/callback");
 	    //System.out.println("필터 제외 여부: " + shouldExclude + ", 경로: " + path);
 	    logger.debug("필터 제외 여부: {}, 경로: {}", shouldExclude, path);
