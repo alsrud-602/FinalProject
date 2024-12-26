@@ -390,18 +390,9 @@
                     </div>
                 </a>
             </div>
-			<div class="header-util">
-				<form id="logoutForm">
-				    <sec:authorize access="isAuthenticated()">
-				        <div id="logout-button" class="div3">로그아웃</div>
-				    </sec:authorize>
-				</form>
-			    <sec:authorize access="isAnonymous()">
-			        <a href="/Users/LoginForm"><div class="div3">로그인</div></a>
-			        <img class="line-1" src="/images/header/line-1.svg" alt="구분선" />
-			        <a href="/Users/SignupForm"><div class="div3">회원가입</div></a>
-			    </sec:authorize>
-			</div>
+<div class="header-util">
+
+</div>
 
 			<div id="hamburger-menu">
 				<span></span> 
@@ -491,7 +482,35 @@
     </script>
     
 
+<script>
 
+document.addEventListener('DOMContentLoaded', function() {
+    const authContent = document.querySelector('.header-util');
+    const token = localStorage.getItem('token');
+
+    if (token) {
+        // 토큰이 있는 경우 (인증된 사용자)
+        authContent.innerHTML = `
+            <form id="logoutForm">
+                <div id="logout-button" class="div3">로그아웃</div>
+            </form>
+        `;
+        
+        // 로그아웃 버튼 이벤트 리스너
+        document.getElementById('logout-button').addEventListener('click', function() {
+            localStorage.removeItem('token');
+            window.location.href = '/Users/Logout';
+        });
+    } else {
+        // 토큰이 없는 경우 (인증되지 않은 사용자)
+        authContent.innerHTML = `
+            <a href="/Users/LoginForm"><div class="div3">로그인</div></a>
+            <img class="line-1" src="/images/header/line-1.svg" alt="구분선" />
+            <a href="/Users/SignupForm"><div class="div3">회원가입</div></a>
+        `;
+    }
+});
+</script>
 <script>
     /* 로그아웃 */
 document.addEventListener('DOMContentLoaded', function() {

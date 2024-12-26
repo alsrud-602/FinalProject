@@ -50,7 +50,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         http.csrf().disable()
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/**", "/Users/Signup", "/Users/Login", "/Users/LoginForm", "/Users/SignupForm", "/resources/**", "/WEB-INF/view/**").permitAll()
+                        .requestMatchers("/**", "/Users/Signup","/Users/CheckDuplication", "/Users/Login", "/Users/LoginForm", "/Users/SignupForm", "/resources/**", "/WEB-INF/view/**").permitAll()
                         .requestMatchers("/css/**", "/images/**", "/img/**", "/static/**").permitAll()
                         .requestMatchers("/oauth2/**","/error").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
@@ -67,15 +67,11 @@ public class SecurityConfig {
                 	    .successHandler((request, response, authentication) -> {
                 	        // SecurityContext 설정
                 	        SecurityContextHolder.getContext().setAuthentication(authentication);
-
                 	        // 리다이렉트
                 	        response.sendRedirect("/");
                 	    })
                 	    .defaultSuccessUrl("/")
-                	    .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
-
                 	)
-
                 .logout(logout -> logout
                 	    .logoutUrl("/Users/Logout")
                 	    .logoutSuccessUrl("/")

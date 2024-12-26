@@ -16,33 +16,8 @@ public class HomeController {
     private RedisTemplate<String, String> redisTemplate;
 	// http://localhost:9090
 	@RequestMapping("/")
-	public  String   home(HttpServletRequest request, HttpServletResponse response) {
+	public  String   home() {
 		
-	    Cookie[] cookies = request.getCookies();
-	    if (cookies != null) {
-	        for (Cookie cookie : cookies) {
-	            if ("temp_token".equals(cookie.getName())) {
-	                String tempToken = cookie.getValue();
-	                String jwt = redisTemplate.opsForValue().get(tempToken);
-	                if (jwt != null) {
-	                    // JWT를 쿠키에 저장
-	                    Cookie jwtCookie = new Cookie("token", jwt);
-	                    jwtCookie.setHttpOnly(true);
-	                    jwtCookie.setSecure(true);
-	                    jwtCookie.setPath("/");
-	                    jwtCookie.setMaxAge(7 * 24 * 60 * 60); // 7일
-	                    response.addCookie(jwtCookie);
-
-	                    // 임시 토큰 삭제
-	                    redisTemplate.delete(tempToken);
-	                    cookie.setMaxAge(0);
-	                    response.addCookie(cookie);
-
-	                    break;
-	                }
-	            }
-	        }
-	    }
 		return "home";
 		//return "/WEB-INF/views/home.jsp";
 	}
@@ -63,10 +38,7 @@ public class HomeController {
 		//return "/WEB-INF/views/home.jsp";
 	}
 	
-	
 
-
-	
 	
 	@RequestMapping("/Business")
 	public String businesshome() {
