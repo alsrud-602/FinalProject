@@ -21,7 +21,6 @@ public class HomeController {
 		return "home";
 
 		return "users/popup/info";
-
 		//return "/WEB-INF/views/home.jsp";
 	}
 	
