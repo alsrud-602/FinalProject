@@ -86,6 +86,44 @@
   </foreach>
   </insert> 
  
+ <select id="getCategoryList">
+  SELECT * FROM CATEGORY
+ </select>
+
+    	<!-- 카테고리 여러개 저장 -->
+   <insert id="insertStoreCategoryList">
+   <foreach collection="scList" item="sc" index="i" 
+         open="INSERT ALL" 
+         close="SELECT * FROM DUAL" 
+         separator="">
+   INTO STORES_CATEGORY ( SC_IDX,STORE_IDX,CATEGORY_ID
+   ) VALUES ((SELECT NVL(MAX(SC_IDX), 0) FROM STORES_CATEGORY) + #{i} + 1,
+   (SELECT MAX(STORE_IDX) FROM STORES),#{sc.category_id} )
+  </foreach>
+  </insert> 
+ 
+ 
+ 
+ 
+ <select id="getStoreIdxMax">
+ SELECT MAX(STORE_IDX)
+ FROM STORES
+ </select>
+ 
+    <!-- 이미지파일  여러개 저장 -->
+  <insert id="setFileWriter">
+  <foreach collection="fileList" item="file" index="i" 
+         open="INSERT ALL" 
+         close="SELECT * FROM DUAL" 
+         separator="">
+    INTO IMAGE_STORE VALUES (
+        (SELECT NVL(MAX(IS_IDX), 0) FROM IMAGE_STORE) + #{i} + 1,
+        #{file.imagename},
+        #{file.imageext},
+        #{file.image_path},
+        #{file.store_idx} )
+  </foreach>
+  </insert>
 
 </mapper>
 

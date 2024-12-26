@@ -429,8 +429,9 @@ function updatePlanSelectOptions() {
     if (subPlanSelects.length > 0) {
         subPlanSelects.forEach(subPlanSelect => { // 각 요소에 대해 반복
             // 기존 옵션을 모두 제거
+            let presnetValue = subPlanSelect.value;
             subPlanSelect.innerHTML = '';
-
+  
             const option1 = document.createElement('option');
             option1.textContent = '플랜선택';
             subPlanSelect.appendChild(option1);
@@ -443,6 +444,11 @@ function updatePlanSelectOptions() {
                 let planName = '플랜' + plan;
                 option2.value = planValue; 
                 option2.textContent = planName; 
+                
+                if(presnetValue == planValue){
+                 option2.selected = true;
+                }
+                
                 subPlanSelect.appendChild(option2); 
             });
             console.log(subPlanSelect);

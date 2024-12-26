@@ -188,11 +188,17 @@ color:red;
            <td>  
            <select id ="popup_cg1" name="category_id" class="sub_select" required >
              <option>카테고리1</option>
-             <option>10</option>
+           
+           <c:forEach var="c" items="${cList}">
+           <option value="${c.category_id}">${c.category_name}</option>
+           </c:forEach>
+           
            </select>
            <select id ="popup_cg2" name="category_id" class="sub_select">
              <option>카테고리2</option>
-             <option>10</option>
+           <c:forEach var="c" items="${cList}">
+           <option value="${c.category_id}">${c.category_name}</option>
+           </c:forEach>
            </select>
            </td>
         </tr>        
@@ -241,9 +247,9 @@ color:red;
         <td>운영기간</td>
          <td> 
          <div class="sub_day">
-          <input   value="2024-12-01" name="start_date" required onchange="vailddateOperation(this,document.getElementById('pop_end'))"  id="pop_start"class="sub_input_date"type="date" placeholder="시작날짜"> 
+          <input   value="2024-12-30" name="start_date" required onchange="vailddateOperation(this,document.getElementById('pop_end'))"  id="pop_start"class="sub_input_date"type="date" placeholder="시작날짜"> 
           &nbsp;&nbsp;<p>-</p>&nbsp;&nbsp;
-           <input   value="2024-12-28" name="end_date" required onchange="vailddateOperation(document.getElementById('pop_start'),this)"  id="pop_end"class="sub_input_date"type="date" placeholder="마감날짜">
+           <input   value="2025-01-15" name="end_date" required onchange="vailddateOperation(document.getElementById('pop_start'),this)"  id="pop_end"class="sub_input_date"type="date" placeholder="마감날짜">
                
              
                </div> 
@@ -353,7 +359,7 @@ color:red;
 		    <label for="file-input" class="btn4">
 		        파일 선택
 		    </label>
-           <input id="file-input" type="file" accept="image/*" style="display: none;" multiple  />
+           <input id="file-input" name="upfile" type="file" accept=".jpg, .jpeg, .png" style="display: none;" multiple  />
          </div>
     <div id="file-name-container">
     </div>
@@ -453,7 +459,7 @@ color:red;
         <tr>
            <td>예약 오픈 일자</td>
            <td>
-           <input name="open_date"  type="date" style="width: 600px;">
+           <input name="open_date" type="date" style="width: 600px;"onchange=vaildOpendate(this)>
            <p class="sub_guide" style="font-size: 16px; font-weight: 300 ;margin-bottom: -19px;">사전예약을 오픈할 날짜를 지정해주세요! 이미오픈된 예약은 변경 불가합니다.</p>
            </td>
           </tr>
@@ -506,11 +512,18 @@ const linkElement = document.querySelector('input[name="link"]');
 
 function vailddateOperation(startDate, endDate){
 
-	const start = startDate.value;
-	const end = endDate.value;
-	
-	if(start && end && start >= end){
-		alert("시작 날짜는 종료 날짜보다 나중이어야 합니다");	
+    const start = new Date(startDate.value);
+    const end = new Date(endDate.value);
+    const today = new Date(); // 현재 날짜
+    // 시작 날짜가 현재 날짜보다 미래인 경우 시작 날짜 비우기
+    if (start < today) {
+        alert("선택 날짜는 현재 날짜보다 이후여야 합니다.");
+        startDate.value = "";
+    }else if (end < today) {
+        alert("선택 날짜는 현재 날짜보다 이후여야 합니다.");
+        endDate.value = "";
+    }else if(start && end && start  >= end){
+		alert("시작 날짜는 종료 날짜보다 빨라야 합니다");	
 		startDate.value ="";
 		endDate.value ="";	
 	}
@@ -646,7 +659,15 @@ $(formEl).on('keydown', function(event) {
  }
 });
 
-
+function vaildOpendate(date){
+    const open = new Date(date.value);
+    const today = new Date(); // 현재 날짜
+	 
+	if(open<today){
+		date.value = "";
+		alert('현재날짜보다 이전에 예약을 오픈할 수 없습니다');		
+	}
+}
 //null 값 유효성 검사
 
 
@@ -663,8 +684,8 @@ function validateForm() {
     const cg2Element = document.querySelector('#popup_cg2');
     const aiElement = document.querySelector('#advanceInput');
     const reservationEndDates = document.getElementsByName('reservation_end_date');
-    const planSelects = document.getElementsByName('sub_plan_select');
-    
+    const planSelects = document.querySelectorAll('.sub_plan_select'); 
+    const openDateElement = document.querySelector('input[name="open_date"]');
     
     const inputsToValidate = [
         { element: ageElement, defaultValue: '연령대', message: '연령대를 선택하세요' },
@@ -695,23 +716,18 @@ function validateForm() {
       if (reservationEndDates.length === 0){
          alert('예약날짜와 플랜을 설정하세요');	
     	return false;
+      }else if(openDateElement.value == ''){
+    	  alert('오픈 날짜를 설정하세요');	
+    	  return false;
+    	  
       }else{
     	  
-    	  let allPlansSelected = true;
-          // 각 플랜 선택 요소를 확인
           for (let i = 0; i < planSelects.length; i++) {
               if (planSelects[i].value === '플랜선택') {
-                  allPlansSelected = false; // 하나라도 '플랜 선택'이면 false로 설정
-                  break; // 더 이상 확인할 필요 없음
+            	  alert('플랜을 선택해주세요')
+            	  return false;
               }
-          }
-
-          if (!allPlansSelected) {
-              alert('플랜을 선택하세요');
-              return false;
-          }
-  
-    	
+          }     	
       }
     }
     
@@ -964,14 +980,14 @@ function resetSubButtons() {
             
             const timeStart = document.createElement('input');
             timeStart.type = 'time';
-            timeStart.className = 'time_start';
+            timeStart.className = 'time_start2';
             timeStart.name = 'start_time';
             timeStart.setAttribute('required', 'required');
             timeStart.onchange = function() { validateTimes(this, this.nextElementSibling); };
 
             const timeEnd = document.createElement('input');
             timeEnd.type = 'time';
-            timeEnd.className = 'time_end';
+            timeEnd.className = 'time_end2';
             timeEnd.name ='end_time';
             timeEnd.setAttribute('required', 'required');
             timeEnd.onchange = function() { validateTimes(this.previousElementSibling, this); };

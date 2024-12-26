@@ -13,9 +13,12 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.board.business.dto.CategoryDto;
 import com.board.business.dto.ReservationDateDto;
 import com.board.business.dto.ReservationPlanDto;
+import com.board.business.dto.StoreCategoryDto;
 import com.board.business.dto.StoreTagDto;
 import com.board.business.mapper.BusinessMapper;
 
@@ -30,7 +33,7 @@ public class BusinessServiceimpl  implements BusinessService{
 	private BusinessMapper businessMapper;
 	
 	@Override
-	public void setRegistration(HashMap<String, Object> map, String[] tag_name) {
+	public void setRegistration(HashMap<String, Object> map, String[] tag_name,String[] category_id) {
 	
 	//1. 기본정보	
     businessMapper.insertStore(map);
@@ -46,6 +49,12 @@ public class BusinessServiceimpl  implements BusinessService{
 	//4. 운영정보
     businessMapper.insertStoreOperation(map);
     //5. 카테고리
+	List<StoreCategoryDto> scList = new ArrayList<>();
+    for (String id : category_id) {
+    	StoreCategoryDto scDto = new StoreCategoryDto(Integer.parseInt(id));
+    	scList.add(scDto);       
+    }   
+    businessMapper.insertStoreCategoryList(scList);
     
     //6. 파일정보
     
@@ -57,7 +66,15 @@ public class BusinessServiceimpl  implements BusinessService{
     //1. 기본정보
     businessMapper.insertReservationStore(map);
     
-    // 2. 플랜별 시간대
+    
+    System.out.println("확인용1"+ rd_plan);
+    System.out.println("확인용2"+ rp_plan);
+    System.out.println("확인용3"+ max_number);
+    System.out.println("확인용4"+ reservation_end_date);
+    
+    
+    // 2. 플랜별 시간대   
+   if(rd_plan != null && rd_plan.length > 0) {
 	List<ReservationPlanDto> rpList = new ArrayList<>();
    for (int i = 0; i < rp_plan.length; i++) {
 	   
@@ -82,9 +99,11 @@ public class BusinessServiceimpl  implements BusinessService{
 	   
 	   
     }   
-    
     businessMapper.insertReservationPlan(rpList);
+    }
+    
     // 3. 예약 날짜별 플랜
+   if(reservation_start_date != null && reservation_start_date.length > 0) {
     List<ReservationDateDto> rdList = new ArrayList<>();
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     for (int i = 0; i < reservation_start_date.length; i++) {
@@ -122,10 +141,16 @@ public class BusinessServiceimpl  implements BusinessService{
     }
     
     businessMapper.insertReservationDate(rdList);
-    
+   }
     
     
 		
+	}
+
+	@Override
+	public List<CategoryDto> getCategoryList() {
+		List<CategoryDto> cList = businessMapper.getCategoryList();
+		return cList;
 	}
 	
 	
