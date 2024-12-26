@@ -99,10 +99,16 @@
   <a class="btn1">수정</a>
   <a class="btn1">관리자 요청</a>
   </div>
-  </div>   
+  </div>
+  
+  
+  
+     
    
    </div>
    </div>
+   
+   
  
 
   </main>
@@ -116,9 +122,19 @@
     </div>
   </aside>
   
-</div>	
+</div>
+<%@include file="/WEB-INF/include/footer_company.jsp" %>	
 </body>
- 
+ <script>
+ const container = document.querySelector('.container');
+ const mainTag = document.querySelector('main');
+ const mainHeight = mainTag.offsetHeight;
+ const viewportHeight = window.innerHeight - 204;
+ console.log(viewportHeight);
+
+ // 조건에 따라 container의 높이를 설정
+ container.style.height = `\${Math.max(mainHeight, viewportHeight)}px`;
+ </script>
 </html>
 
 

@@ -19,6 +19,9 @@ public class HomeController {
 	public  String   home() {
 		
 		return "home";
+
+		return "users/popup/info";
+
 		//return "/WEB-INF/views/home.jsp";
 	}
 	

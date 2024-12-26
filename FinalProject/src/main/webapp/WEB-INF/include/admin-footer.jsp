@@ -11,8 +11,8 @@
   height: 90px; /* 높이 */
   left: 0;
   width: 100%; /* 너비 */
-  position: fixed; /* 고정 위치로 변경 */
-  bottom: 0; /* 화면 하단에 고정 */
+  position: relative; /* 상대 위치로 변경 */
+  margin-top: auto; /* 자동 여백으로 아래로 밀리도록 설정 */
   padding: 10px 34px; /* 패딩 추가 */
   z-index: 1000; /* 다른 요소 위에 표시되도록 z-index 추가 */
 }

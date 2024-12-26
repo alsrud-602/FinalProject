@@ -10,8 +10,9 @@
 }
 
 #calendar {
-    width: 300px;
-    text-align: center;
+    width: 350px;
+    height:80px;
+    text-align:center;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     overflow: hidden;
@@ -28,17 +29,17 @@
 }
 
 #calendar tbody td {
-    width: 40px; /* 셀 너비 조정 */
-    height: 40px; /* 셀 높이 조정 */
+    width: 40px;
+    height: 40px;
     padding: 5px;
-    font-size: 14px; /* 글자 크기 조정 */
+    font-size: 14px;
     font-weight: 400;
-    color: #333; /* 기본 글자 색상 */
-    transition: background-color 0.3s; /* 배경색 변화 시 애니메이션 */
+    color: #333;
+    transition: background-color 0.3s;
 }
 
 #calendar tbody td:hover {
-    background-color: #f1f1f1; /* 마우스 오버 시 배경색 변화 */
+    background-color: #f1f1f1;
 }
 
 #dateHead {
@@ -47,7 +48,6 @@
     text-align: center;
 }
 
-
 .color1 { background-color: #ffeb3b; }
 .color2 { background-color: #ffccbc; }
 .color3 { background-color: #c5e1a5; }
@@ -55,46 +55,58 @@
 .color5 { background-color: #ffe57f; }
 .color6 { background-color: #f8bbd0; }
 
+.start-date {
+    border-top-left-radius: 50%;
+    border-bottom-left-radius: 50%;
+}
 
+.end-date {
+    border-top-right-radius: 50%;
+    border-bottom-right-radius: 50%;
+}
 </style>
 
-<div class="no-drag">
-    <table id="calendar">
-        <thead>
-            <tr height="35px">
-                <td><label onclick="prev()" style="color: #ccc;"><</label></td>
-                <td colspan="5" id="monthTable"></td>
-                <td><label onclick="next()" style="color: #ccc;">></label></td>
-            </tr>
-            <tr id="dateHead">
-                <td>일</td>
-                <td>월</td>
-                <td>화</td>
-                <td>수</td>
-                <td>목</td>
-                <td>금</td>
-                <td>토</td>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+<div class="content" id="periodContainer" style="display: flex; align-items: flex-start;">
+    <div class="calendar-container" style="flex: 1;  margin-top: 10px;">
+        <div class="no-drag">
+            <table id="calendar">
+                <thead>
+                    <tr height="70px">
+                        <td><label onclick="prev()" style="color: #ccc;"><</label></td>
+                        <td colspan="5" id="monthTable"></td>
+                        <td><label onclick="next()" style="color: #ccc;">></label></td>
+                    </tr>
+                    <tr id="dateHead">
+                        <td>일</td>
+                        <td>월</td>
+                        <td>화</td>
+                        <td>수</td>
+                        <td>목</td>
+                        <td>금</td>
+                        <td>토</td>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="sub_content" style="flex: 1; margin-right:10%">
+        <div class="sub_day" id="plansContainer">
+            <div id="periods">
+                <!-- 기간 설정 입력 폼이 여기에 추가됩니다. -->
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
-
-// 달력
-
- let periodCount = 0; // 기간 수 초기화
+let coloredDays = []; // 색칠된 날짜를 저장할 배열
 let today = new Date();
-let final = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-
-// 윤년 계산
-if (today.getFullYear() % 4 === 0 && (today.getFullYear() % 100 !== 0 || today.getFullYear() % 400 === 0)) {
-    final = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-}
-
+let periods = []; // 선택된 기간을 저장할 배열
 let selectedStartDate = null;
 let selectedEndDate = null;
+let periodCount = 0;
 
 function prev() {
     today = new Date(today.getFullYear(), today.getMonth() - 1, 1);
@@ -107,33 +119,26 @@ function next() {
 }
 
 function makeArray() {
-    let first = new Date(today.getFullYear(), today.getMonth(), 1); // 해당 월의 첫 번째 날
-    let startDay = new Date(first);
-    startDay.setDate(first.getDate() - first.getDay()); // 해당 월의 첫 번째 날이 포함된 주의 일요일
+    let firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    let lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    let startDay = new Date(firstDayOfMonth);
+    startDay.setDate(firstDayOfMonth.getDate() - firstDayOfMonth.getDay());
 
-    let cal = new Array(6).fill(null).map(() => new Array(7).fill("")); // 6주, 7일 초기화
-    let day = 1;
+    let cal = [];
+    let week = [];
 
-    // 날짜 배열 채우기
-    for (let week = 0; week < 6; week++) {
-        for (let dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
-            if (startDay.getMonth() === today.getMonth()) {
-                // 현재 월의 날짜
-                if (day <= final[today.getMonth()]) {
-                    cal[week][dayOfWeek] = { day: day, isCurrentMonth: true }; // 현재 월의 날짜
-                    day++;
-                } else {
-                    cal[week][dayOfWeek] = { day: "", isCurrentMonth: false }; // 빈 칸
-                }
-            } else if (startDay.getMonth() === today.getMonth() - 1) {
-                // 이전 달의 날짜
-                cal[week][dayOfWeek] = { day: startDay.getDate(), isCurrentMonth: false }; // 이전 달의 날짜
-            } else {
-                // 다음 달의 날짜
-                cal[week][dayOfWeek] = { day: startDay.getDate(), isCurrentMonth: false }; // 다음 달의 날짜
-            }
-            startDay.setDate(startDay.getDate() + 1); // 다음 날로 이동
+    while (startDay <= lastDayOfMonth || week.length > 0) {
+        week.push({
+            day: startDay.getDate(),
+            isCurrentMonth: startDay.getMonth() === today.getMonth(),
+        });
+
+        if (week.length === 7) {
+            cal.push(week);
+            week = [];
         }
+
+        startDay.setDate(startDay.getDate() + 1);
     }
 
     arrayToTable(cal);
@@ -145,162 +150,262 @@ function arrayToTable(arr) {
         "<span style='font-weight:800;'>" + (today.getMonth() < 9 ? "0" + (today.getMonth() + 1) : today.getMonth() + 1) + "</span>";
 
     let calendar = document.getElementById("calendar").getElementsByTagName("tbody")[0];
-
-    // 기존의 달력 내용 삭제
     while (calendar.rows.length > 0) {
         calendar.deleteRow(0);
     }
 
-    // 새로운 주 추가
-    for (let week = 0; week < 6; week++) {
+    for (let week = 0; week < 5; week++) {
         let row = calendar.insertRow();
         for (let dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
             let cell = row.insertCell();
             const cellData = arr[week][dayOfWeek];
 
-            if (cellData.day !== "") {
+            if (cellData.day !== "" && cellData.isCurrentMonth) {
                 cell.innerHTML = cellData.day;
-                // 현재 월의 날짜 강조
-                if (cellData.isCurrentMonth) {
-                    cell.style.fontWeight = "bold"; // 현재 월의 날짜는 굵게
+                cell.classList.add("clickable");
+
+                // 오늘 이전 날짜는 클릭 불가
+                   let currentDate = new Date(today.getFullYear(), today.getMonth(), cellData.day);
+                if (currentDate < new Date(new Date().setHours(0, 0, 0, 0))) {
+                    cell.classList.remove("clickable");
+                    cell.style.color = "gray"; // 비활성화 스타일
                 } else {
-                    cell.style.color = "gray"; // 이전 달과 다음 달의 날짜는 회색으로 표시
+                    // 유효한 날짜에만 클릭 이벤트 추가
+                    cell.addEventListener("click", function () {
+                        handleDateClick(cellData.day, cellData.isCurrentMonth, cell);
+                    });
                 }
             } else {
-                cell.innerHTML = ""; // 빈 칸 처리
+                cell.innerHTML = "";
             }
         }
     }
 
-    // 강조할 날짜 범위 설정
-    if (selectedStartDate && selectedEndDate) {
-        highlightDates();
-    }
+    highlightDates(); // 색상 강조 호출
 }
 
 
-function updateCalendarHighlight() {
-    const startDateInput = document.getElementById(`dateStart`);
-    const endDateInput = document.getElementById(`dateEnd`);
+function handleDateClick(day, isCurrentMonth, cell) {
+    let clickedDate;
 
-    const startDate = new Date(startDateInput.value);
-    const endDate = new Date(endDateInput.value);
-
-    // 유효한 날짜인지 체크
-    if (isNaN(startDate) || isNaN(endDate) || startDate > endDate) {
-        console.log("유효하지 않은 날짜 범위입니다.");
-        return;
+    if (isCurrentMonth) {
+        clickedDate = new Date(today.getFullYear(), today.getMonth(), day);
+    } else if (day < 15) {
+        clickedDate = new Date(today.getFullYear(), today.getMonth() + 1, day);
+    } else {
+        clickedDate = new Date(today.getFullYear(), today.getMonth() - 1, day);
     }
 
-    selectedStartDate = startDate;
-    selectedEndDate = endDate;
+    
 
-    // 날짜 강조
+ 
+    // 시작일과 종료일을 설정
+    if (!selectedStartDate || (selectedEndDate && clickedDate < selectedStartDate)) {
+        selectedStartDate = clickedDate;
+        selectedEndDate = null; // 종료일 초기화
+    } else if (!selectedEndDate && clickedDate >= selectedStartDate) {
+        selectedEndDate = clickedDate;
+    } else {
+        selectedStartDate = clickedDate;
+        selectedEndDate = null; // 종료일 초기화
+    }
+
+    // 선택하려는 범위의 셀을 조회
+    const cells = document.querySelectorAll("#calendar tbody td");
+    let isConflict = false;
+
+    if (selectedStartDate && selectedEndDate) {
+        let currentDate = new Date(selectedStartDate);
+        while (currentDate <= selectedEndDate) {
+            const cell = Array.from(cells).find(c => {
+                return parseInt(c.innerHTML) === currentDate.getDate() &&
+                       today.getMonth() === currentDate.getMonth() &&
+                       today.getFullYear() === currentDate.getFullYear();
+            });
+            if (cell && cell.style.backgroundColor) {
+                isConflict = true; // 충돌 발생
+                break;
+            }
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+
+        if (isConflict) {
+            alert("선택한 날짜 범위에 이미 선택된 날짜가 포함되어 있습니다.");
+            selectedStartDate = null;
+            selectedEndDate = null;
+            return;
+        }
+
+        periods.push({ start: selectedStartDate, end: selectedEndDate });
+        periodCount++;
+        addNewPeriodForm();
+    }
+
     highlightDates();
 }
 
-// 강조할 날짜 범위 설정
 function highlightDates() {
     const calendarCells = document.querySelectorAll("#calendar tbody td");
-
-    // 모든 셀의 배경색 초기화
     calendarCells.forEach(cell => {
-        cell.style.backgroundColor = ""; // 초기화
+        cell.style.backgroundColor = "";
+        cell.classList.remove("start-date", "end-date"); // 기존 클래스를 제거
     });
 
-    const startDay = selectedStartDate.getDate();
-    const endDay = selectedEndDate.getDate();
-    const startMonth = selectedStartDate.getMonth();
-    const endMonth = selectedEndDate.getMonth();
-    const currentYear = today.getFullYear();
+    periods.forEach((period, index) => {
+        let startDate = period.start;
+        let endDate = period.end;
 
-    // 같은 월인 경우
-    if (startMonth === endMonth) {
-        calendarCells.forEach(cell => {
-            const day = parseInt(cell.innerHTML, 10);
-            const cellDate = new Date(currentYear, startMonth, day);
+        let currentDate = new Date(startDate);
+        while (currentDate <= endDate) {
+            const cell = Array.from(calendarCells).find(cell => {
+                return parseInt(cell.innerHTML) === currentDate.getDate() &&
+                       today.getMonth() === currentDate.getMonth() &&
+                       today.getFullYear() === currentDate.getFullYear();
+            });
+            if (cell) {
+                cell.style.backgroundColor = getColorForPeriod(index);
 
-            // 강조할 날짜가 현재 월에 속하는지 확인
-            if (day >= startDay && day <= endDay && cell.style.color !== "gray" 
-                && selectedStartDate.getMonth() === today.getMonth()) {
-                cell.style.backgroundColor = "#ffeb3b"; // 강조 색상
+                // 시작점과 도착점에 스타일 추가
+                if (currentDate.getTime() === startDate.getTime()) {
+                    cell.classList.add("start-date");
+                }
+                if (currentDate.getTime() === endDate.getTime()) {
+                    cell.classList.add("end-date");
+                }
+
+                cell.classList.remove("clickable");
             }
-        });
-    } else {
-        // 서로 다른 월인 경우
-        calendarCells.forEach(cell => {
-            const day = parseInt(cell.innerHTML, 10);
-            const cellDate = new Date(currentYear, today.getMonth(), day);
-
-            // 시작일 강조
-            if ((cell.style.color === "gray" && day === startDay && selectedStartDate.getMonth() === today.getMonth() - 1) || 
-                (cell.style.color !== "gray" && day === startDay && selectedStartDate.getMonth() === today.getMonth())) {
-                cell.style.backgroundColor = "#ffeb3b"; // 시작일 강조 색상
-            }
-            // 종료일 강조
-            if (cell.style.color !== "gray" && day === endDay 
-                && selectedEndDate.getMonth() === today.getMonth() + 1) {
-                cell.style.backgroundColor = "#ffeb3b"; // 종료일 강조 색상
-            }
-
-            // 선택한 기간에 포함된 날짜 강조 (이전 달의 회색 날짜)
-            if (cell.style.color === "gray" && cellDate >= selectedStartDate && cellDate <= selectedEndDate && selectedStartDate.getMonth() === today.getMonth() - 1) {
-                cell.style.backgroundColor = "#ffeb3b"; // 이전 달의 회색 날짜 강조
-            }
-
-            // 선택한 기간에 포함된 날짜 강조 (다음 달의 회색 날짜)
-            if (cell.style.color === "gray" && cellDate >= selectedStartDate && cellDate <= selectedEndDate && selectedEndDate.getMonth() === today.getMonth() + 1) {
-                cell.style.backgroundColor = "#ffeb3b"; // 다음 달의 회색 날짜 강조
-            }
-
-            // 선택한 기간에 포함된 날짜 강조 (회색도 포함)
-            if (cell.style.color !== "gray" && cellDate >= selectedStartDate && cellDate <= selectedEndDate) {
-                cell.style.backgroundColor = "#ffeb3b"; // 강조 색상
-            }
-        });
-    }
-}
-
- //날짜 범위를 강조하는 함수
-function updateCalendarHighlights(${uniqueId}) {
-    const calendarCells = document.querySelectorAll("#calendar tbody td");
-
-    // 모든 셀의 배경색 초기화
-    calendarCells.forEach(cell => {
-        cell.style.backgroundColor = ""; // 초기화
-    });
-
-    // periodCount를 사용하여 각 기간을 처리
-    for (let i = 0; i < periodCount; i++) {
-        const startDateInput = document.getElementById(`dateStart-${i}`);
-        const endDateInput = document.getElementById(`dateEnd-${i}`);
-
-        const startDate = new Date(startDateInput.value);
-        const endDate = new Date(endDateInput.value);
-
-        // 유효한 날짜인지 체크
-        if (isNaN(startDate) || isNaN(endDate) || startDate > endDate) {
-            console.log("유효하지 않은 날짜 범위입니다.");
-            continue; // 잘못된 날짜 범위는 건너뜀
+            currentDate.setDate(currentDate.getDate() + 1);
         }
+    });
 
-        // 캘린더에서 날짜 강조
-        calendarCells.forEach(cell => {
-            const day = parseInt(cell.innerHTML, 10);
-            const cellDate = new Date(today.getFullYear(), today.getMonth(), day);
-
-            // 강조할 날짜 범위 확인
-            if (cellDate >= startDate && cellDate <= endDate && cell.style.color !== "gray") {
-                cell.style.backgroundColor = colors[i % colors.length]; // 색상 배열에서 순환
-            }
-        });
-    }
-} 
-
-// 페이지 로드 시 달력 초기화
-window.onload = function() {
-    makeArray();
+    updateColorCircles(); 
 }
+
+function getColorForPeriod(periodCount) {
+	const colors = [
+	    "#90caf9", // 연한 파랑
+	    "#ffeb3b", // 밝은 노랑
+	    "#ffccbc", // 연한 주황
+	    "#c5e1a5", // 연한 초록
+	    "#ffe082", // 연한 금색
+	    "#81d4fa", // 하늘색
+	    "#ffab91", // 연한 복숭아색
+	    "#a5d6a7"  // 연한 민트색
+	];
+    return colors[periodCount % colors.length];
+}
+
+function addNewPeriodForm() {
+    const periodContainer = document.getElementById('periods');
+    const newPeriod = document.createElement('div');
+    newPeriod.classList.add('period');
+    
+    // 현재 기간의 시작일과 종료일에 1일 추가 이유 : 지금 현재 선택한 날짜가 UTC 형식이라 값이  하루씩 적어진다고 함 
+    const adjustedStartDate = new Date(selectedStartDate);
+    adjustedStartDate.setDate(adjustedStartDate.getDate() + 1);
+
+    const adjustedEndDate = new Date(selectedEndDate);
+    adjustedEndDate.setDate(adjustedEndDate.getDate() + 1);
+    
+    
+    // 현재 기간의 시작일과 종료일
+    const startDateStr = adjustedStartDate.toISOString().split('T')[0];
+    const endDateStr = adjustedEndDate.toISOString().split('T')[0];
+
+    // 현재 기간에 대응하는 색상
+    const color = getColorForPeriod(periodCount - 1);
+
+    // 색상 동그라미
+    const colorCircle = document.createElement('div');
+    colorCircle.style.width = '20px';
+    colorCircle.style.height = '20px';
+    colorCircle.style.borderRadius = '50%';
+    colorCircle.style.backgroundColor = color;
+    colorCircle.style.marginRight = '10px';
+
+    // 시작 날짜 입력
+    const startDateInput = document.createElement('input');
+    startDateInput.type = 'date';
+    startDateInput.classList.add('time_start');
+    startDateInput.value = startDateStr;
+    startDateInput.style.marginRight = '10px';
+    startDateInput.style.pointerEvents = 'none'; // 클릭 불가
+    
+    // 종료 날짜 입력
+    const endDateInput = document.createElement('input');
+    endDateInput.type = 'date';
+    endDateInput.classList.add('time_end');
+    endDateInput.value = endDateStr;
+    endDateInput.style.marginRight = '10px';
+    endDateInput.style.pointerEvents = 'none'; // 클릭 불가
+    
+    // 플랜 선택
+    const planSelect = document.createElement('select');
+    planSelect.classList.add('sub_select');
+    planSelect.style.marginRight = '10px';
+    const option = document.createElement('option');
+    option.textContent = '플랜';
+    planSelect.appendChild(option);
+
+    // 삭제 버튼
+    const deleteButton = document.createElement('button');
+    deleteButton.textContent = 'X';
+    deleteButton.classList.add('delete-btn');
+    deleteButton.style.color = 'red';
+    deleteButton.style.border = '1px solid red';
+    deleteButton.style.borderRadius = '50%'
+    deleteButton.style.background = 'white';
+    deleteButton.style.padding = '5px 10px';
+    deleteButton.style.cursor = 'pointer';
+    deleteButton.onclick = function () {
+        removePeriod(deleteButton);
+    };
+
+    // 레이아웃 설정
+    const subDayContainer = document.createElement('div');
+    subDayContainer.classList.add('sub_day');
+    subDayContainer.style.display = 'flex';
+    subDayContainer.style.alignItems = 'center';
+    subDayContainer.style.marginBottom = '10px';
+
+    // 자식 요소 추가
+    subDayContainer.appendChild(colorCircle);
+    subDayContainer.appendChild(startDateInput);
+    subDayContainer.appendChild(endDateInput);
+    subDayContainer.appendChild(planSelect);
+    subDayContainer.appendChild(deleteButton);
+
+    newPeriod.appendChild(subDayContainer);
+    periodContainer.appendChild(newPeriod);
+}
+
+
+function updateColorCircles() {
+    const periodElements = document.querySelectorAll('#periods .period');
+    periodElements.forEach((periodElement, index) => {
+        // 동그라미를 나타내는 요소를 정확히 선택
+        const colorCircle = periodElement.querySelector('.sub_day > div:first-child'); // 첫 번째 동그라미
+        const color = getColorForPeriod(index); // 새롭게 계산된 색상
+        if (colorCircle) {
+            colorCircle.style.backgroundColor = color; // 동그라미의 색상만 변경
+        }
+    });
+}
+
+function removePeriod(button) {
+    const periodElement = button.closest('.period');
+    const periodIndex = Array.from(periodElement.parentElement.children).indexOf(periodElement);
+    periods.splice(periodIndex, 1); // 배열에서 해당 기간을 제거
+    periodCount--;
+    periodElement.remove(); // DOM에서 해당 기간을 제거
+
+    highlightDates(); // 색상 업데이트
+}
+
+makeArray();
+
+
 
 
 </script>

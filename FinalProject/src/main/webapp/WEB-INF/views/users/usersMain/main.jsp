@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -366,97 +367,15 @@
 	  </div>
 	  
 	  <div class="container">
+	   <c:forEach var="popup" items="${popuplist}">
 	    <div class="card">
 	      <img src="/images/main/popup1.png" alt="/images/main/popup1.png">
-	      <div class="title">내 이름</div>
+	      <div class="title">${popup.title}</div>
 	      <div class="info">서울 서초구 강남대로 429 영남빌 1-26<br>기간: 2024.11.16 - 2024.12.25</div>
 	    </div>
-	    <div class="card">
-	      <img src="/images/main/popup2.png" alt="/images/main/popup2.png">
-	      <div class="title">내 이름</div>
-	      <div class="info">서울 서초구 강남대로 429 영남빌 1-26<br>기간: 2024.11.16 - 2024.12.25</div>
-	    </div>
-	    <div class="card">
-	      <img src="/images/main/popup1.png" alt="/images/main/popup1.png">
-	      <div class="title">내 이름</div>
-	      <div class="info">서울 서초구 강남대로 429 영남빌 1-26<br>기간: 2024.11.16 - 2024.12.25</div>
-	    </div>
-	    <!-- 추가 카드 -->
-	    <div class="card">
-	      <img src="/images/main/popup2.png" alt="/images/main/popup2.png">
-	      <div class="title">내 이름</div>
-	      <div class="info">서울 서초구 강남대로 429 영남빌 1-26<br>기간: 2024.11.16 - 2024.12.25</div>
-	    </div>
-	    <div class="card">
-	      <img src="/images/main/popup1.png" alt="/images/main/popup1.png">
-	      <div class="title">내 이름</div>
-	      <div class="info">서울 서초구 강남대로 429 영남빌 1-26<br>기간: 2024.11.16 - 2024.12.25</div>
-	    </div>
-	    <div class="card">
-	      <img src="/images/main/popup2.png" alt="/images/main/popup2.png">
-	      <div class="title">내 이름</div>
-	      <div class="info">서울 서초구 강남대로 429 영남빌 1-26<br>기간: 2024.11.16 - 2024.12.25</div>
-	    </div>
-	    <div class="card">
-	      <img src="/images/main/popup1.png" alt="/images/main/popup1.png">
-	      <div class="title">내 이름</div>
-	      <div class="info">서울 서초구 강남대로 429 영남빌 1-26<br>기간: 2024.11.16 - 2024.12.25</div>
-	    </div>
-	    <div class="card">
-	      <img src="/images/main/popup2.png" alt="/images/main/popup2.png">
-	      <div class="title">내 이름</div>
-	      <div class="info">서울 서초구 강남대로 429 영남빌 1-26<br>기간: 2024.11.16 - 2024.12.25</div>
-	    </div>
-	      <div class="card">
-	      <img src="/images/main/popup1.png" alt="/images/main/popup1.png">
-	      <div class="title">내 이름</div>
-	      <div class="info">서울 서초구 강남대로 429 영남빌 1-26<br>기간: 2024.11.16 - 2024.12.25</div>
-	    </div>
-	      <div class="card">
-	      <img src="/images/main/popup1.png" alt="/images/main/popup1.png">
-	      <div class="title">내 이름</div>
-	      <div class="info">서울 서초구 강남대로 429 영남빌 1-26<br>기간: 2024.11.16 - 2024.12.25</div>
-	    </div>
-	      <div class="card">
-	      <img src="/images/main/popup1.png" alt="/images/main/popup1.png">
-	      <div class="title">내 이름</div>
-	      <div class="info">서울 서초구 강남대로 429 영남빌 1-26<br>기간: 2024.11.16 - 2024.12.25</div>
-	    </div>
-	      <div class="card">
-	      <img src="/images/main/popup1.png" alt="/images/main/popup1.png">
-	      <div class="title">내 이름</div>
-	      <div class="info">서울 서초구 강남대로 429 영남빌 1-26<br>기간: 2024.11.16 - 2024.12.25</div>
-	    </div>
-	      <div class="card">
-	      <img src="/images/main/popup1.png" alt="/images/main/popup1.png">
-	      <div class="title">내 이름</div>
-	      <div class="info">서울 서초구 강남대로 429 영남빌 1-26<br>기간: 2024.11.16 - 2024.12.25</div>
-	    </div>
-	      <div class="card">
-	      <img src="/images/main/popup1.png" alt="/images/main/popup1.png">
-	      <div class="title">내 이름</div>
-	      <div class="info">서울 서초구 강남대로 429 영남빌 1-26<br>기간: 2024.11.16 - 2024.12.25</div>
-	    </div>
-	      <div class="card">
-	      <img src="/images/main/popup1.png" alt="/images/main/popup1.png">
-	      <div class="title">내 이름</div>
-	      <div class="info">서울 서초구 강남대로 429 영남빌 1-26<br>기간: 2024.11.16 - 2024.12.25</div>
-	    </div>
-	      <div class="card">
-	      <img src="/images/main/popup1.png" alt="/images/main/popup1.png">
-	      <div class="title">내 이름</div>
-	      <div class="info">서울 서초구 강남대로 429 영남빌 1-26<br>기간: 2024.11.16 - 2024.12.25</div>
-	    </div>
-	      <div class="card">
-	      <img src="/images/main/popup1.png" alt="/images/main/popup1.png">
-	      <div class="title">내 이름</div>
-	      <div class="info">서울 서초구 강남대로 429 영남빌 1-26<br>기간: 2024.11.16 - 2024.12.25</div>
-	    </div>
-	      <div class="card">
-	      <img src="/images/main/popup1.png" alt="/images/main/popup1.png">
-	      <div class="title">내 이름</div>
-	      <div class="info">서울 서초구 강남대로 429 영남빌 1-26<br>기간: 2024.11.16 - 2024.12.25</div>
-	    </div>
+	    </c:forEach>
+	    
+	    
 	  </div>
 	</div>
 </div>
