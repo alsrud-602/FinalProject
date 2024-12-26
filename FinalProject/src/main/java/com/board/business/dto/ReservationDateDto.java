@@ -1,7 +1,6 @@
 package com.board.business.dto;
 
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.util.Date;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,14 +11,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReservationPlanDto {
-
+public class ReservationDateDto {
 	
-	private int rp_idx;
+	private int rd_idx;
+	private int rs_idx;
 	private String plan;
-	private LocalDateTime  start_time;
-	private LocalDateTime  end_time;
-	private Integer max_number;
-	
-
+	private Date reservation_start_date;
+	private Date reservation_end_date;
 }

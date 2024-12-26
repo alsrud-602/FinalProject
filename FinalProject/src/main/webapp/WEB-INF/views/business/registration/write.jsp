@@ -161,7 +161,8 @@ color:red;
 <body>
 <%@include file="/WEB-INF/include/header_company.jsp" %> 
  <img id="icon_back" src="/images/icon/back2.png" alt="뒤로가기" onclick="goBack()">
- <form action="/Business/Registraion/Write" method="POST" enctype="multipart/form-data">
+ <form action="/Business/Registraion/Write" method="POST" enctype="multipart/form-data" 
+       onsubmit="return validateForm()">
     <main>
 
 
@@ -180,15 +181,17 @@ color:red;
       <table class="sub_table">
         <tr>
            <td>팝업스토어명칭</td>
-           <td><input type="text" name="title" class="sub_link" placeholder="팝업스토어명을 입력하세요"></td>
+           <td><input value="스텐리x메시"type="text" required name="title" class="sub_link" placeholder="팝업스토어명을 입력하세요"></td>
         </tr>
         <tr>
            <td>카테고리</td>
            <td>  
-           <select name="category_id" class="sub_select">
+           <select id ="popup_cg1" name="category_id" class="sub_select" required >
+             <option>카테고리1</option>
              <option>10</option>
            </select>
-           <select name="category_id" class="sub_select">
+           <select id ="popup_cg2" name="category_id" class="sub_select">
+             <option>카테고리2</option>
              <option>10</option>
            </select>
            </td>
@@ -198,16 +201,16 @@ color:red;
            <td>
              메인 
              <span id="brand_red">*</span>
-             <input name="brand1" type="text" class="sub_brand" placeholder="메인브랜드를 작성하세요" >
+             <input value="스텐리"name="brand1"  required type="text" class="sub_brand" placeholder="메인브랜드를 작성하세요" >
              콜라보 브랜드
              <input name="brand2" type="text"  class="sub_brand" placeholder="콜라보 브랜드를 작성하세요" ></td>
         </tr>        
         <tr>
            <td>주 타겟 연령대</td>
-           <td><select name="age" class="sub_select">
+           <td><select name="age" class="sub_select" required>
              <option>연령대</option>
              <option>어린이</option>
-             <option>10대</option>
+             <option selected="selected">10대</option>
              <option>10~20대</option>
              <option>20~30대</option>
              <option>30대~40대</option>
@@ -228,19 +231,19 @@ color:red;
            <td>
            
            <div id="sub_adress">
-             <input name="address"  type="text"  class="sub_link" placeholder="주소검색 버튼을 눌러주세요" style="width:620px; margin: 0 10px 0 0;">
+             <input value="서울 성수동"name="address"  required type="text"  class="sub_link" placeholder="주소검색 버튼을 눌러주세요" style="width:620px; margin: 0 10px 0 0;">
              <div class="btn3">주소검색</div>
            </div>
-           <input type="text"  class="sub_link" placeholder="상세주소를 입력하세요" style="margin: 10px 0;" >
+           <input type="text"  id="address_detail" required class="sub_link" placeholder="상세주소를 입력하세요" style="margin: 10px 0;" >
            </td>
         </tr>
         <tr>
         <td>운영기간</td>
          <td> 
          <div class="sub_day">
-          <input  name="start_date" onchange="vailddateOperation(this,document.getElementById('pop_end'))"  id="pop_start"class="sub_input_date"type="date" placeholder="시작날짜"> 
+          <input   value="2024-12-01" name="start_date" required onchange="vailddateOperation(this,document.getElementById('pop_end'))"  id="pop_start"class="sub_input_date"type="date" placeholder="시작날짜"> 
           &nbsp;&nbsp;<p>-</p>&nbsp;&nbsp;
-           <input  name="end_date" onchange="vailddateOperation(document.getElementById('pop_start'),this)"  id="pop_end"class="sub_input_date"type="date" placeholder="마감날짜">
+           <input   value="2024-12-28" name="end_date" required onchange="vailddateOperation(document.getElementById('pop_start'),this)"  id="pop_end"class="sub_input_date"type="date" placeholder="마감날짜">
                
              
                </div> 
@@ -253,35 +256,35 @@ color:red;
             <c:forEach var="entry" items="${daysOfWeek}">
             <div class="sub_day">
                <p>${entry.value}</p>
-               <input name="S${entry.key}" type="time" id="${entry.key}_START" class="time_start" 
+               <input name="S${entry.key}" required type="time" id="${entry.key}_START" class="time_start" 
                 onchange="validateTimes(this,document.getElementById('${entry.key}_END') )">
                <p>-</p>&nbsp;&nbsp;
-               <input  name="E${entry.key}" type="time" id="${entry.key}_END" class="time_end" 
+               <input  name="E${entry.key}" required type="time" id="${entry.key}_END" class="time_end" 
                  onchange="validateTimes(document.getElementById('${entry.key}_START'), this)">
              </div>
              </c:forEach>
             
              <div class="sub_day_full">
              <p>전체</p>
-             <input  type="time" id="FULL_START"
+             <input  type="time" id="FULL_START" 
              onchange="validateTimes( this,document.getElementById('FULL_END'))">
              <p>-</p>&nbsp;&nbsp;
-             <input type="time"   id="FULL_END"
+             <input type="time"   id="FULL_END" 
              onchange="validateTimes(document.getElementById('FULL_START'), this)">
              <div class="btn3" onclick="applyAllTimes()">일괄적용</div>
              </div>
              <div class="sub_day_full">
-             <input name="onotes" class="sub_note"type="text" placeholder="특이사항이 있으면 남겨주세요">
+             <input name="onotes"  class="sub_note"type="text" placeholder="특이사항이 있으면 남겨주세요">
              </div>
            </td>
         </tr>        
         <tr>
            <td>홈페이지 링크</td>
-           <td><input name="homepage" class="sub_link"type="text" placeholder="홈페이지 링크를 복사해 주세요"></td>
+           <td><input value="https"name="homepage" class="sub_link"type="text" placeholder="홈페이지 링크를 복사해 주세요"></td>
         </tr>        
         <tr>
            <td>SNS 링크</td>
-           <td><input name="sns" class="sub_link"type="text" placeholder="SNS 링크를 복사해 주세요"></td>
+           <td><input value="https"name="sns" class="sub_link"type="text" placeholder="SNS 링크를 복사해 주세요"></td>
         </tr>        
         <tr>
            <td>해시태그</td>
@@ -305,16 +308,16 @@ color:red;
       <table class="sub_table">
        <tr>
          <td>소개 한 줄</td>      
-         <td><input name="introduction" class="sub_link"  type="text" placeholder="팝업을 소개할 문구를 완성해 보세요">
+         <td><input value="하하" required name="introduction" class="sub_link"  type="text" placeholder="팝업을 소개할 문구를 완성해 보세요">
          <p class="sub_guide" >소개 한줄은 목록상단에 기재되어 고객들에게 안내될 예정입니다</p></td>      
        </tr>
        <tr >
          <td>상세내용</td>      
-         <td><textarea name="content" id="sub_textarea" placeholder="팝업스토어에 구체적인 내용을 작성하세요" ></textarea></td>      
+         <td><textarea name="content" required id="sub_textarea" placeholder="팝업스토어에 구체적인 내용을 작성하세요" >상세내용 입력</textarea></td>      
        </tr>
        <tr>
          <td>굿즈 특이사항</td>      
-         <td><input name="goods" class="sub_link"  type="text" placeholder="강조하고 싶은 굿즈가 있다면 작성하세요"></td>      
+         <td><input value="하하" name="goods" class="sub_link"  type="text" placeholder="강조하고 싶은 굿즈가 있다면 작성하세요"></td>      
        </tr>
        <tr>
          <td>팝업환경</td>      
@@ -350,7 +353,7 @@ color:red;
 		    <label for="file-input" class="btn4">
 		        파일 선택
 		    </label>
-           <input id="file-input" type="file" accept="image/*" style="display: none;" multiple />
+           <input id="file-input" type="file" accept="image/*" style="display: none;" multiple  />
          </div>
     <div id="file-name-container">
     </div>
@@ -407,8 +410,11 @@ color:red;
 	   <table class="sub_table">
 	   	<tr>
  		<td>
- 		<a href="#" class="button" onclick="toggleSubContent('content4', 'content2', this)"  style="font-size: 16px; margin-left: 250px;">네! 플랫폼 기능을 사용할래요</a>
-        <a href="#" class="button" onclick="toggleSubContent('content5', 'content2', this)"  style="font-size: 16px; margin-left: 30px;">아니요! 다른 자체적인 사전예약 시스템이 있습니다</a></td>
+ 		<a href="#" class="button" onclick="toggleSubContent('content4', 'content2', this)" data-rq ="사용가능" style="font-size: 16px; margin-left: 250px;">네! 플랫폼 기능을 사용할래요</a>
+        <a href="#" class="button" onclick="toggleSubContent('content5', 'content2', this)"  data-rq ="사용불가" style="font-size: 16px; margin-left: 30px;">아니요! 다른 자체적인 사전예약 시스템이 있습니다</a>
+         <input type="hidden" id="advanceInput" value="">
+        </td>
+        
          </tr>
          </table>
          
@@ -425,7 +431,7 @@ color:red;
     </div>
     
     <div id="plansContainer" style="width:1000px;"> 
-            <div id="plansContainer" style="width:1000px;"></div>
+      <div id="plansContainer" style="width:1000px;"></div>
         </div>
   
 
@@ -495,7 +501,7 @@ color:red;
     
    </form> 
 <script>
-
+const linkElement = document.querySelector('input[name="link"]');
 
 
 function vailddateOperation(startDate, endDate){
@@ -640,6 +646,100 @@ $(formEl).on('keydown', function(event) {
  }
 });
 
+
+//null 값 유효성 검사
+
+
+function validateForm() {
+    const statusElement = document.querySelector('input[name="status"]');
+    const ageElement = document.querySelector('select[name="age"]');
+    const brand1Element = document.querySelector('select[name="brand1"]');
+    const brand2Element = document.querySelector('select[name="brand2"]');
+    const parkingElement = document.querySelector('select[name="parking"]');
+    const fareElement = document.querySelector('select[name="fare"]');
+    const ageLimitElement = document.querySelector('select[name="age_limit"]');
+    const shootingElement = document.querySelector('select[name="shooting"]');
+    const cg1Element = document.querySelector('#popup_cg1');
+    const cg2Element = document.querySelector('#popup_cg2');
+    const aiElement = document.querySelector('#advanceInput');
+    const reservationEndDates = document.getElementsByName('reservation_end_date');
+    const planSelects = document.getElementsByName('sub_plan_select');
+    
+    
+    const inputsToValidate = [
+        { element: ageElement, defaultValue: '연령대', message: '연령대를 선택하세요' },
+        { element: cg1Element, defaultValue: '카테고리1', message: '카테고리를 선택하세요' },
+        { element: cg2Element, defaultValue: '카테고리2', message: '카테고리를 선택하세요' },
+        { element: parkingElement, defaultValue: '주차정보', message: '주차정보를 선택하세요' },
+        { element: fareElement, defaultValue: '요금', message: '요금정보를 선택하세요' },
+        { element: ageLimitElement, defaultValue: '연령제한', message: '연령제한 정보를 선택하세요' },
+        { element: shootingElement, defaultValue: '사진촬영여부', message: '사진촬영여부를 선택하세요' }
+       
+    ];       
+    
+    console.log(reservationEndDates.length);
+    console.log(planSelects.length);
+    console.log(planSelects);
+    
+    if(statusElement.value == '') {
+        alert('예약기능을 선택하세요');
+        return false; // 폼 제출을 방지
+    }else if (statusElement.value === '사전예약'){
+    	if(aiElement.value == ''){
+    		alert('사전예약기능 종류를 선택하세요');	
+    		return false;	
+    	}    	
+    }
+    
+    if (aiElement.value === '사용가능'){
+      if (reservationEndDates.length === 0){
+         alert('예약날짜와 플랜을 설정하세요');	
+    	return false;
+      }else{
+    	  
+    	  let allPlansSelected = true;
+          // 각 플랜 선택 요소를 확인
+          for (let i = 0; i < planSelects.length; i++) {
+              if (planSelects[i].value === '플랜선택') {
+                  allPlansSelected = false; // 하나라도 '플랜 선택'이면 false로 설정
+                  break; // 더 이상 확인할 필요 없음
+              }
+          }
+
+          if (!allPlansSelected) {
+              alert('플랜을 선택하세요');
+              return false;
+          }
+  
+    	
+      }
+    }
+    
+    	
+    
+
+    
+    if (!validateInputs(inputsToValidate)) {
+        return false; // 폼 제출을 방지
+    }
+    
+    
+    return true; // 폼 제출 허용
+}
+
+function validateInputs(inputs) {
+    for (const { element, defaultValue, message } of inputs) {
+        if (element.value === defaultValue) {
+            alert(message);
+            element.focus();
+            return false; // 유효하지 않음
+        }
+    }
+    return true; // 모든 입력값이 유효함
+}
+
+
+
 ////////////////////////////////////////////////////////////////////////
 
 
@@ -667,6 +767,28 @@ function toggleContent(currentId, otherIds, button) {
     //status 값 넣기
     const statusValue = button.getAttribute('data-status');
     document.getElementById('statusInput').value = statusValue;
+    
+    if(statusValue === '현장문의' ||  statusValue === '현장대기예약'){
+    	
+    	console.log(document.getElementById('advanceInput').value);
+    	document.getElementById('advanceInput').value  ="";
+    	console.log(document.getElementById('advanceInput').value);
+    	
+    	
+	    if (linkElement.hasAttribute('required')) {
+            linkElement.removeAttribute('required'); 
+            
+            console.log('예약기능에 의해 required 속성이 제거되었습니다.');
+            console.log(linkElement);
+        } else {
+            console.log('처음부터 required 속성이 없습니다.');  
+            console.log('linkElement');
+        }
+    	
+    }
+  
+    
+    
 
     const subContents = ['content4', 'content5'];
     subContents.forEach(id => {
@@ -680,7 +802,28 @@ function toggleSubContent(subContentId, parentContentId, button) {
 	 event.preventDefault();
     const subContentDiv = document.getElementById(subContentId);
     const isCurrentlyVisible = subContentDiv.style.display === 'block';
-
+    
+  
+    const rqValue = button.getAttribute('data-rq');
+    document.getElementById('advanceInput').value = rqValue;
+    
+    
+    
+    console.log(rqValue);
+    if(rqValue === '사용불가'){
+    	linkElement.setAttribute('required', 'required');
+    console.log(linkElement);	
+    }else if (rqValue === '사용가능'){
+    	
+    	    if (linkElement.hasAttribute('required')) {
+            linkElement.removeAttribute('required'); 
+            console.log('required 속성이 제거되었습니다.');
+        } else {
+            console.log('required 속성이 없습니다.'); 
+        }
+    	    console.log(linkElement);
+    }
+    
     
     const subContents = ['content4', 'content5'];
     subContents.forEach(id => {
@@ -735,11 +878,11 @@ function resetSubButtons() {
             // 새로운 플랜 요소 생성 후 DOM에 추가
             const newPlanElement = createPlanElement(planCount);
             document.getElementById('plansContainer').appendChild(newPlanElement);
+
+            plans.push(planCount);
             planCount++; // 플랜 수 증가
-            
             // 새로운 플랜을 plans 배열에 추가
-            plans.push(newPlanNumber);
-            updatePlanSelectOptions(); // 플랜 선택 옵션 업데이트
+            updatePlanSelectOptions();
         });
             
 
@@ -764,6 +907,12 @@ function resetSubButtons() {
             closeButton.style.fontSize = '20px'; // 폰트 크기 증가
             closeButton.style.cursor = 'pointer'; // 커서 포인터로 변경
             closeButton.onclick = function() {
+            	
+            	
+            	console.log(planCount);
+            	plans = plans.filter(plan => plan !== planCount);
+            	console.log(plans);
+            	updatePlanSelectOptions();
                 newPlan.remove(); // 플랜 삭제
             };
 
@@ -807,7 +956,7 @@ function resetSubButtons() {
             let rpIndex = subDayIndex - 1;
             const planName = document.createElement('input'); 
             planName.type='hidden';
-            planName.name='rpList['+rpIndex+'].plan';
+            planName.name='rp_plan';
             planName.value= 'P'+ planCount;
            
             console.log(planName.name);
@@ -815,35 +964,33 @@ function resetSubButtons() {
             
             const timeStart = document.createElement('input');
             timeStart.type = 'time';
-            timeStart.className = 'start_time';
-            timeStart.name = 'rpList['+rpIndex+'].time_start';
+            timeStart.className = 'time_start';
+            timeStart.name = 'start_time';
+            timeStart.setAttribute('required', 'required');
             timeStart.onchange = function() { validateTimes(this, this.nextElementSibling); };
 
             const timeEnd = document.createElement('input');
             timeEnd.type = 'time';
             timeEnd.className = 'time_end';
-            timeEnd.name ='rpList['+rpIndex+'].end_time';
+            timeEnd.name ='end_time';
+            timeEnd.setAttribute('required', 'required');
             timeEnd.onchange = function() { validateTimes(this.previousElementSibling, this); };
 
-            const numberOfPeopleSelect = document.createElement('select');
-            numberOfPeopleSelect.name ='rpList['+rpIndex+'].max_number';
-            const option1 = document.createElement('option');
-            option1.textContent = '인원수';
-            numberOfPeopleSelect.appendChild(option1); // 기본 옵션 추가
-
             
-            for (let i = 1; i <= 10; i++) {
-                const option = document.createElement('option');
-                option.textContent = i; // 1, 2, ..., 10
-                numberOfPeopleSelect.appendChild(option);
-            }
+            const numberMax = document.createElement('input');
+            numberMax.type = 'number';
+            numberMax.className ='sub_brand';
+            numberMax.name ='max_number';
+            numberMax.setAttribute('required', 'required');
+            numberMax.placeholder = '인원수';
+           
 
             
             subDay.appendChild(stepLabel);
             subDay.appendChild(planName);
             subDay.appendChild(timeStart);
             subDay.appendChild(timeEnd);
-            subDay.appendChild(numberOfPeopleSelect);
+            subDay.appendChild(numberMax);
             
             return subDay; 
         }
@@ -863,9 +1010,14 @@ function resetSubButtons() {
             subContentDiv.appendChild(newSubDay); // sub_content에 추가
         }
 
-        // 시간 유효성 검사 함수 (추가 필요)
-       
-       // 시간 유효성 검사 로직 구현
+      //////////////////////////////////////////////////////////////////  
+        
+
+   
+     
+     
+     
+     // 운영시간 - 예약시간 - 예약 오픈 시간 유효성 검사
     </script>
     
 </body>

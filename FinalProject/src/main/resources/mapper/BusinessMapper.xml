@@ -62,17 +62,30 @@
          open="INSERT ALL" 
          close="SELECT * FROM DUAL" 
          separator="">
-		INSERT INTO RESERVATION_PLANS (RP_IDX,PLAN,START_TIME,END_TIME,MAX_NUMBER
-		) VALUES ((SELECT NVL(MAX(RP_IDX), 0) FROM RESERVATION_PLANS) + #{i} + 1,
-		S ||(SELECT MAX(STORE_IDX) FROM STORES) || #{rp.plan},
-		#{rp.start_datetime},
-		#{rp.end_datetime},	 
-		#{rp.max_number}
-		);
+		    INTO RESERVATION_PLANS (RP_IDX, PLAN, START_TIME, END_TIME, MAX_NUMBER)
+    VALUES ((SELECT NVL(MAX(RP_IDX), 0) FROM RESERVATION_PLANS) + #{i} + 1,
+            'S' || (SELECT MAX(STORE_IDX) FROM STORES) || #{rp.plan},
+            #{rp.start_time},
+            #{rp.end_time},
+            #{rp.max_number})
   </foreach>
   </insert>
   
-  
+   	<!-- date 여러개 저장 -->
+    <insert id="insertReservationDate">
+  <foreach collection="rdList" item="rd" index="i" 
+         open="INSERT ALL" 
+         close="SELECT * FROM DUAL" 
+         separator="">
+		    INTO RESERVATION_DATES (RD_IDX, RS_IDX, PLAN, RESERVATION_START_DATE, RESERVATION_END_DATE)
+           VALUES ((SELECT NVL(MAX(RD_IDX), 0) FROM RESERVATION_DATES) + #{i} + 1,
+            (SELECT NVL(MAX(RS_IDX), 1) FROM RESERVATION_STORES),
+            'S' || (SELECT MAX(STORE_IDX) FROM STORES) || #{rd.plan},
+            #{rd.reservation_start_date},
+            #{rd.reservation_end_date})
+  </foreach>
+  </insert> 
+ 
 
 </mapper>
 
