@@ -17,6 +17,7 @@ public class ImageStoreDTO {
 		this.imagename = fileName;
 		this.store_idx = store_idx;
 	}
+	
 	private int is_idx;
 	private String imagename;
 	private String imageext;

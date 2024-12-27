@@ -125,6 +125,135 @@
   </foreach>
   </insert>
 
+<!-- 관리 리스트 가져오기 -->
+ <select id="getStoreHistoryList">
+ SELECT S.STORE_IDX, 
+       S.TITLE, 
+       TO_CHAR(SD.START_DATE, '""YYYY"."MM"."DD""') AS START_DATE,  
+       TO_CHAR(SD.END_DATE, '""YYYY"."MM"."DD""') AS END_DATE, 
+       CASE 
+           WHEN SD.START_DATE &gt; SYSDATE THEN '예정' 
+           WHEN SD.END_DATE &lt; SYSDATE THEN '마감'   
+           ELSE '진행중'       
+       END AS LABEL  ,
+       S.STATUS, 
+       S.BAN, 
+       RS.STATUS AS RSTATUS,
+       LISTAGG(DISTINCT C.CATEGORY_NAME, '  |  ') WITHIN GROUP (ORDER BY C.CATEGORY_NAME) AS CATEGORY_NAME
+FROM STORES S 
+JOIN STORES_DETAIL SD ON S.STORE_IDX = SD.STORE_IDX
+JOIN RESERVATION_STORES RS ON S.STORE_IDX = RS.STORE_IDX
+JOIN STORES_CATEGORY SC ON S.STORE_IDX = SC.STORE_IDX
+JOIN CATEGORY C ON C.CATEGORY_ID = SC.CATEGORY_ID
+WHERE S.COMPANY_IDX = #{company_idx}
+GROUP BY S.STORE_IDX, 
+         S.TITLE, 
+         SD.START_DATE, 
+         SD.END_DATE, 
+         S.STATUS, 
+         S.BAN, 
+         RS.STATUS
+ </select>
+
+<select id="getStoreOpertaionList">
+ SELECT S.STORE_IDX, 
+       S.TITLE, 
+       TO_CHAR(SD.START_DATE, '""YYYY"."MM"."DD""') AS START_DATE,  
+       TO_CHAR(SD.END_DATE, '""YYYY"."MM"."DD""') AS END_DATE, 
+       CASE 
+           WHEN SD.START_DATE &gt; SYSDATE THEN '예정' 
+           WHEN SD.END_DATE &lt; SYSDATE THEN '마감'   
+           ELSE '진행중'       
+       END AS LABEL  ,
+       S.STATUS, 
+       S.BAN, 
+       RS.STATUS AS RSTATUS,
+       LISTAGG(DISTINCT C.CATEGORY_NAME, '  |  ') WITHIN GROUP (ORDER BY C.CATEGORY_NAME) AS CATEGORY_NAME
+FROM STORES S 
+JOIN STORES_DETAIL SD ON S.STORE_IDX = SD.STORE_IDX
+JOIN RESERVATION_STORES RS ON S.STORE_IDX = RS.STORE_IDX
+JOIN STORES_CATEGORY SC ON S.STORE_IDX = SC.STORE_IDX
+JOIN CATEGORY C ON C.CATEGORY_ID = SC.CATEGORY_ID
+WHERE S.COMPANY_IDX = #{company_idx} 
+AND  S.STATUS ='승인' AND S.BAN ='N'
+ <if test="company_idx != null">
+  AND SD.START_DATE &lt; SYSDATE
+</if>
+GROUP BY S.STORE_IDX, 
+         S.TITLE, 
+         SD.START_DATE, 
+         SD.END_DATE, 
+         S.STATUS, 
+         S.BAN, 
+         RS.STATUS
+</select>
+
+<select id="getStoreRequest">
+SELECT S.STORE_IDX, 
+       S.TITLE, 
+       TO_CHAR(SD.START_DATE, '""YYYY"."MM"."DD""') AS START_DATE,  
+       TO_CHAR(SD.END_DATE, '""YYYY"."MM"."DD""') AS END_DATE, 
+       S.STATUS, 
+       S.BAN, 
+       RS.STATUS AS RSTATUS,
+       LISTAGG(DISTINCT C.CATEGORY_NAME, '  |  ') WITHIN GROUP (ORDER BY C.CATEGORY_NAME) AS CATEGORY_NAME
+FROM STORES S 
+JOIN STORES_DETAIL SD ON S.STORE_IDX = SD.STORE_IDX
+JOIN RESERVATION_STORES RS ON S.STORE_IDX = RS.STORE_IDX
+JOIN STORES_CATEGORY SC ON S.STORE_IDX = SC.STORE_IDX
+JOIN CATEGORY C ON C.CATEGORY_ID = SC.CATEGORY_ID
+WHERE S.STORE_IDX = #{store_idx}
+GROUP BY S.STORE_IDX, 
+         S.TITLE, 
+         SD.START_DATE, 
+         SD.END_DATE, 
+         S.STATUS, 
+         S.BAN, 
+         RS.STATUS
+
+</select>
+
+<insert id="insertRequest">
+  INSERT INTO REQUESTS (REQUEST_IDX,STORE_IDX,FIELD,CONTENT
+  ) VALUES (REQUESTS_SEQ.NEXTVAL , #{store_idx},#{field},#{content})
+ 
+
+</insert>
+
+<select id="getStoreRequestList">
+SELECT S.STORE_IDX, 
+       S.TITLE, 
+       TO_CHAR(SD.START_DATE, '""YYYY"."MM"."DD""') AS START_DATE,  
+       TO_CHAR(SD.END_DATE, '""YYYY"."MM"."DD""') AS END_DATE, 
+       S.STATUS, 
+       S.BAN, 
+       R.FIELD,
+       R.RESPONSE,
+       R.REQUEST_IDX
+FROM STORES S 
+JOIN STORES_DETAIL SD ON S.STORE_IDX = SD.STORE_IDX
+JOIN REQUESTS R ON S.STORE_IDX = R.STORE_IDX
+
+WHERE S.COMPANY_IDX = #{company_idx}
+</select>
+
+<select id="getRequest">
+SELECT * FROM REQUESTS WHERE request_idx = #{request_idx}
+</select>
+
+<select id="getCompany">
+SELECT * FROM COMPANYS WHERE COMPANY_IDX = #{company_idx}
+</select>
+
+<select id="getCompanyIdxByStoreIdx">
+SELECT  COMPANY_IDX FROM STORES WHERE STORE_IDX = #{store_idx}
+</select>
+<update id="updateCompany">
+UPDATE COMPANYS
+SET EMAIL = #{email},PHONE = #{phone}
+WHERE  COMPANY_IDX = #{company_idx}
+</update>
+
 </mapper>
 
 

@@ -34,11 +34,11 @@
    <h2 class="content_title">요청 팝업스토어</h2>
   <div class="content_body">
   <div class="content_header">
-  <p>2024.12.14 ~ 2014.12.30</p>
+  <p>${store.start_date} ~ ${store.end_date}</p>
   </div>
-  <p class="content_store">메시X스텐리 1942 콜라보 팝업스토어</p>
+  <p class="content_store">${store.title}</p>
   <div class ="content_bottom">
-  <p>사전예약&nbsp;&nbsp;|&nbsp;&nbsp;잡화&nbsp;&nbsp;|&nbsp;&nbsp;스포츠</p>
+  <p>${store.rstatus}&nbsp;|&nbsp;${store.category_name}</p>
   </div>
    </div>
 
@@ -46,22 +46,26 @@
   <div class="content_body">
  <div class="content_field">
  <p>요청분야</p>
- <p>팝업삭제</p>
+ <p>${request.field}</p>
  </div>
  <hr>
  <div class="content_cover">
  <p>요청 상세내용</p>
  <div class="cover_layout">
- <textarea rows="" cols="" readonly="readonly">상세 내용을 입력하시오</textarea>
+ <textarea rows="" cols="" readonly="readonly">${request.content}</textarea>
  </div>
  <hr>
  <div class="content_response">
  <p>담당자 답변</p> 
  <div id="response_detail">
- 이것저것 해서 승인되었습니다 감사합니다:)
- 너무 너무너무
- 너무 너무너므
- 감사합니다 자주 이용하세요
+ <c:choose>
+ <c:when test="${not empty request.response}">
+  ${request.response}
+  </c:when>
+ <c:otherwise>
+  아직 처리되지 못한 요청 사항입니다.
+ </c:otherwise>
+ </c:choose>
 </div>
  </div>
 
@@ -70,6 +74,16 @@
   
   </form>
   </main>
+  
+    <aside>
+    <div id="side_title"><p>관리메뉴</p></div>
+    <div id="side_layout">
+    <a href="/Business/Management/Main/List?company_idx=${company_idx}"><div class="side_menu">스토어 관리</div></a>
+    <a href="/Business/Management/Request/List?company_idx=${company_idx}"><div class="side_menu">요청 관리</div></a>
+    <a href="/Business/Management/Info?company_idx=${company_idx}"><div class="side_menu">회원정보 관리</div></a>
+    </div>
+  </aside>
+  
  </div>
  <%@include file="/WEB-INF/include/footer_company.jsp" %>		
  <script>

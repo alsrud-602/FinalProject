@@ -38,6 +38,7 @@
    <p>팝업스토어 수정</p>
    </div>  
    <p id="title_guide">*수정 불가 항목은 관리자요청 부탁드립니다.</p>
+   <a href ="/Business/Management/Main/List?company_idx=1">개발자용</a>
 
   
   <div class="content_body">

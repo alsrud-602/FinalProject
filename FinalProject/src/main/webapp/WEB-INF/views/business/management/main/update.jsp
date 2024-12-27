@@ -19,7 +19,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>팝업스토어 등록</title>
+<title>팝업스토어 수정</title>
 
 <link rel="icon" type="image/png" href="/img/favicon.png" />
 <link rel="stylesheet"  href="/css/company_m.css" />
@@ -168,9 +168,9 @@ color:red;
 
 
 
- <div class="title_write">
-   <p>홍보 및 예약서비스를 이용할 팝업스토어를 등록하세요</p>
-   <p>팝업스토어 등록</p>
+ <div class="title">
+   <p>입점 전 필요한 팝업정보를 수정하세요</p>
+   <p>팝업스토어 수정</p>
  </div>  
    <p id="title_guide">*수정 불가 항목은 관리자요청 부탁드립니다.</p>
 
@@ -181,7 +181,7 @@ color:red;
       <table class="sub_table">
         <tr>
            <td>팝업스토어명칭</td>
-           <td><input value="스텐리x메시"type="text" required name="title" class="sub_link" placeholder="팝업스토어명을 입력하세요"></td>
+           <td></td>
         </tr>
         <tr>
            <td>카테고리</td>
