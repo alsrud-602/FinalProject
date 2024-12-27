@@ -12,7 +12,7 @@ public class HomeController {
 	public  String   home() {
 		
 
-		return "users/popup/info";
+		return "business/management/main/updatebasic";
 		//return "/WEB-INF/views/home.jsp";
 	}
 	
@@ -20,6 +20,7 @@ public class HomeController {
 	@RequestMapping("/Ho")
 	public  String   test() {
 		return "business/registration/write";
+		
 
 		//return "/WEB-INF/views/home.jsp";
 	}
