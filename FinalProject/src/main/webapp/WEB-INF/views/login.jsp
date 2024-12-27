@@ -91,8 +91,13 @@
     <c:if test="${param.error != null}">
         <p style="color: red;">아이디 또는 비밀번호가 잘못되었습니다.</p>
     </c:if>
+    <div id="errorMessages" style="color: red;"></div>
+    <c:if test="${not empty message}">
+    <div class="alert alert-warning" style="color: aqua;">${message}</div>
+	</c:if>
 </form>
-<a href="/oauth2/authorization/kakao">카카오로 로그인</a>
+<a href="/oauth2/authorization/kakao" id="kakao-login-button"><button>카카오로 로그인</button></a>
+
             <div class="sub-login">
             <a href="#" class="link">아이디 찾기</a> |
             <a href="#" class="link">비밀번호 찾기</a> |
@@ -118,7 +123,18 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     })
     .then(function(response) {
         if (response.status === 401) {
-            alert('아이디 또는 비밀번호가 잘못되었습니다.');
+            const errorMessages = [];
+            errorMessages.push("아이디 또는 비밀번호가 잘못되었습니다.");
+
+            const errorMessagesDiv = document.getElementById('errorMessages');
+            errorMessagesDiv.innerHTML = ''; // 이전 메시지 제거
+            if (errorMessages.length > 0) {
+                errorMessages.forEach(function(message) {
+                    const p = document.createElement('p');
+                    p.textContent = message;
+                    errorMessagesDiv.appendChild(p);
+                });
+            }
             return;
         }
 
@@ -158,8 +174,24 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
             // 홈 화면으로 리다이렉션
             window.location.href = '/';
         } else {
+            if (data === undefined) {
+                const errorMessages = [];
+                errorMessages.push("아이디 또는 비밀번호가 잘못되었습니다.");
+
+                const errorMessagesDiv = document.getElementById('errorMessages');
+                errorMessagesDiv.innerHTML = ''; // 이전 메시지 제거
+                if (errorMessages.length > 0) {
+                    errorMessages.forEach(function(message) {
+                        const p = document.createElement('p');
+                        p.textContent = message;
+                        errorMessagesDiv.appendChild(p);
+                    });
+                }
+                return;
+            }else {
             alert('로그인에 실패했습니다. 서버 응답을 확인하세요.');
             console.error('서버 응답 데이터:', data);
+            }
         }
     })
     .catch(function(error) {
@@ -167,6 +199,45 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         alert('로그인 중 문제가 발생했습니다.');
     });
 });
+
+//카카오로그인
+//페이지 로드 시 Authorization Code 처리
+document.getElementById("kakao-login-button").addEventListener("click", function() {
+    // 카카오 로그인 버튼 클릭 후 리다이렉트된 후에 처리될 부분
+    console.log(window.location.search)
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code'); // URL에서 code 파라미터를 읽음
+    console.log(code);
+
+    if (code) {
+        // 서버에 'code'를 보내서 JWT 토큰을 받음
+        fetch("/oauth2/callback/kakao?code="+code)
+            .then(response => response.json())  // 응답을 JSON으로 파싱
+            .then(data => {
+                const token = data.token;  // 서버에서 받은 토큰
+                console.log('Token from server:', token);  // 토큰 확인
+
+                if (token) {
+                    localStorage.setItem('access_token', token);  // localStorage에 저장
+                    window.location.href = '/';  // 홈 화면으로 리다이렉트
+                } else {
+                    console.error('토큰이 없어요.');
+                }
+            })
+            .catch(error => {
+                console.error('로그인 처리 중 오류가 발생했습니다:', error);
+                window.location.href = '/Users/LoginForm?error=true';  // 오류 시 로그인 화면으로 리다이렉트
+            });
+    } else {
+        console.error('code 파라미터가 존재하지 않습니다.');
+        window.location.href = '/Users/LoginForm?error=true';  // code가 없으면 로그인 화면으로 리다이렉트
+    }
+});
+
+
+
+
+
 
 </script>
     </main>

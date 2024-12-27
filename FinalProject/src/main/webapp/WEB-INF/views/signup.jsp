@@ -4,10 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <title>POP CORN - 회원가입</title>
-    <link rel="stylesheet" href="/css/common.css" />
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="/css/common.css" />
     <style type="text/css">
 
         main{
@@ -48,6 +48,41 @@
             color: #fff;
             font-size: 16px;
         }
+        .id-input-wrapper {
+		    display: flex;
+		}
+		.id-input {
+		    flex: 4; /* 가변 넓이 */
+		    padding: 10px;
+		    border-radius: 5px; /* 왼쪽 모서리 둥글게 */
+		    margin-right: 10px;
+		}
+		.id-dupcheck-btn {
+		    padding: 10px;
+		    width:130px;
+		    border: 1px solid #00ff84;
+		    border-radius: 5px;
+		    background-color: #00ff84;
+            color: #1c1c1c;
+            font-size: 16px;
+		}
+        .email-input-wrapper {
+		    display: flex;
+		}
+		.email-input {
+		    flex: 1; /* 가변 넓이 */
+		    padding: 10px;
+		    border-radius: 5px 0 0 5px; /* 왼쪽 모서리 둥글게 */
+		    outline: none;
+		}
+		.email-domain-select {
+		    padding: 10px;
+		    border: 1px solid #00ff84;
+		    border-radius: 0 5px 5px 0; /* 오른쪽 모서리 둥글게 */
+		    background-color: #1c1c1c;
+            color: #fff;
+            font-size: 16px;
+		}
         input[name="birthdate"]{
         	z-index: 1000;
 	        background: url('/images/calendar.svg') no-repeat right 10px center; 
@@ -58,7 +93,6 @@
         	appearance: none; 
         	cursor: pointer;
         }
-        
         .note {
             font-size: 12px;
             color: #767676;
@@ -100,6 +134,16 @@
             margin: 0 auto; /* 가운데 정렬 */
             margin-bottom: 20px;
         }
+        #dupResult {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .green {
+            color: green; /* Success color */
+        }
+        .red {
+            color: red; /* Error color */
+        }
     </style>
 </head>
 
@@ -111,21 +155,38 @@
                 <a href="/"><img class="mainlogo" src="/images/mainlogo.png" /></a>
                 <div class="input-group">
                     <label for="nickname">닉네임</label>
-                    <input type="text" id="nickname" name="nickname" placeholder="*2자 이상 입력해 주세요" required>
+                    <input type="text" id="nickname" name="nickname" placeholder="" required>
                     <div class="note">*2자 이상 입력해 주세요</div>
-                    <div id="errorMessages" style="color: red;"></div>
+                </div>
+                <div class="input-group">
+                	<c:choose>
+				        <c:when test="${not empty user.name}">
+				            <div>
+				                <label for="name">이름</label>
+				                <input type="text" id="name" name="name" value="${user.name}" readonly />
+				            </div>
+				        </c:when>
+				        <c:otherwise>
+		                    <label for="name">이름</label>
+		                    <input type="text" id="name" name="name" placeholder="성함을 입력해주세요" required>
+		                </c:otherwise>
+		             </c:choose>
                 </div>
                 <div class="input-group">
                     <label for="username">아이디</label>
-                    <input type="text" id="username" name="id" placeholder="*5~20자 영문 소문자, 숫자 사용" required>
+                    <div class="id-input-wrapper">
+	                    <input type="text" id="username" name="id" class="id-input" placeholder="*5~20자 영문 소문자, 숫자 사용" required>
+	                    <input type="button" id="checkDuplication" class="id-dupcheck-btn" value="중복확인" required/>
+	                </div>
                     <div class="note">*5~20자의 영문 소문자, 숫자와 특수기호(_),(-)만 사용 가능합니다.</div>
-                    <div id="errorMessages" style="color: red;"></div>
+					<span id="dupResult"></span>
+                    <div id="idErrorMessages" style="color: red;"></div>
                 </div>
                 <div class="input-group">
                     <label for="password">비밀번호</label>
                     <input type="password" id="password" name="password" placeholder="*8~16자 영문 대/소문자, 숫자 사용" required>
                     <div class="note">*8~16자의 영문 대/소문자, 숫자, 특수문자를 사용해 주세요.</div>
-                    <div id="errorMessages" style="color: red;"></div>
+                    <div id="psErrorMessages" style="color: red;"></div>
                 </div>
                 <div class="input-group">
                     <label for="confirm-password">비밀번호 확인</label>
@@ -133,16 +194,31 @@
                     <div class="note">*비밀번호와 동일하게 입력해주세요</div>
                 </div>
 	            <div class="input-group">
-	             	<label for="email">이메일</label>
-		            <input type="email" id="email" name="email" placeholder="이메일 입력" />
-	                <select id="email_domain" onchange="updateEmail()">
-	                	<option value="" selected>직접입력</option>
-	                    <option value="gmail.com">gmail.com</option>
-	                    <option value="naver.com">naver.com</option>
-	                    <option value="kakao.com">kakao.com</option>
-	                    <option value="yahoo.com">yahoo.com</option>
-	                    <option value="outlook.com">outlook.com</option>
-	                </select>
+	                <c:choose>
+				        <c:when test="${not empty user.email}">
+				            <input type="hidden" name="socialId" value="${user.socialId}" />
+				            <input type="hidden" name="socialType" value="${user.socialType}" />
+				            <input type="hidden" name="role" value="${user.role}" />
+				            <div>
+				                <label for="email">이메일</label>
+				                <input type="text" id="email" name="email" value="${user.email}" readonly />
+				            </div>
+				        </c:when>
+				        <c:otherwise>
+			             	<label for="email">이메일</label>
+			             	<div class="email-input-wrapper">
+					            <input type="email" id="email" name="email" class="email-input" placeholder="이메일 입력" />
+				                <select id="email_domain" class="email-domain-select" onchange="updateEmail()">
+				                	<option value="" selected>직접입력</option>
+				                    <option value="gmail.com">gmail.com</option>
+				                    <option value="naver.com">naver.com</option>
+				                    <option value="kakao.com">kakao.com</option>
+				                    <option value="yahoo.com">yahoo.com</option>
+				                    <option value="outlook.com">outlook.com</option>
+				                </select>
+				            </div>
+	                    </c:otherwise>
+    				</c:choose>
 	             </div>
                 <div class="input-group">
                     <label for="phone">전화번호</label>
@@ -186,12 +262,17 @@ document.getElementById('signupForm').addEventListener('submit', function(event)
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
     const errorMessages = [];
+    const checkDuplicationEl = document.getElementById('checkDuplication').value'
 
     // 아이디 유효성 검사
     const usernameRegex = /^[a-z0-9_-]{3,20}$/;
     if (!usernameRegex.test(username)) {
         errorMessages.push("아이디는 3~20자의 영문 소문자, 숫자와 특수기호(_),(-)만 사용 가능합니다.");
     }
+ 	if(checkDuplicationEl.onclick == false){
+		alert("아이디중복확인을 해주세요")
+		return false;
+	}
 
     // 비밀번호 유효성 검사
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{};:,<.>])[A-Za-z\d!@#$%^&*()\-_=+{};:,<.>]{3,16}$/;
@@ -200,13 +281,13 @@ document.getElementById('signupForm').addEventListener('submit', function(event)
     }
 
     // 에러 메시지 출력
-    const errorMessagesDiv = document.getElementById('errorMessages');
-    errorMessagesDiv.innerHTML = ''; // 이전 메시지 제거
+    const psErrorMessagesDiv = document.getElementById('psErrorMessages');
+    psErrorMessagesDiv.innerHTML = ''; // 이전 메시지 제거
     if (errorMessages.length > 0) {
         errorMessages.forEach(function(message) {
             const p = document.createElement('p');
             p.textContent = message;
-            errorMessagesDiv.appendChild(p);
+            psErrorMessagesDiv.appendChild(p);
         });
     }
 });
@@ -233,6 +314,61 @@ birthdate.addEventListener('change', function() {
 
     console.log(typeof(selectedDate.value), selectedDate.value)
 });
+</script>
+<script>
+ $(function() {
+     $('#checkDuplication').on('click', function() {
+         const inputId = $('[name=id]').val().trim(); // 사용자 입력 아이디 가져오기
+
+         if (inputId === '') {
+             alert("아이디를 입력하세요.");
+             inputId.focus();
+             return;
+         }
+
+         $.ajax({
+             url: '/Users/CheckDuplication',
+             method: 'GET',
+             data: { id: inputId }
+         })
+         .done(function(data) {
+             console.log("Duplication Check Response:", data); // 서버 응답 확인
+             if (data.trim() === "가능") {
+                 $('#dupResult').html(inputId + '은(는) 사용 가능한 아이디입니다.').removeClass('red').addClass('green');
+             } else {
+                 $('#dupResult').html(inputId + '은(는) 사용할 수 없는 아이디입니다.').removeClass('green').addClass('red');
+             }
+         })
+         .fail(function(err) {
+             console.error("Error during duplication check:", err);
+             alert("중복 확인 중 오류가 발생했습니다.");
+         });
+     });
+
+  // 아이디 유효성 검사
+       $('[name=id]').on('keyup', function() {
+    	   const username = document.getElementById('username').value;
+           const errorMessages = [];
+
+           // 아이디 유효성 검사
+           const usernameRegex = /^[a-z0-9_-]{3,20}$/;
+           if (!usernameRegex.test(username)) {
+               errorMessages.push("아이디는 3~20자의 영문 소문자, 숫자와 특수기호(_),(-)만 사용 가능합니다.");
+           }
+
+           const idErrorMessagesDiv = document.getElementById('idErrorMessages');
+           idErrorMessagesDiv.innerHTML = ''; // 이전 메시지 제거
+           if (errorMessages.length > 0) {
+               errorMessages.forEach(function(message) {
+                   const p = document.createElement('p');
+                   p.textContent = message;
+                   idErrorMessagesDiv.appendChild(p);
+               });
+           }
+       });
+   });
+ 
+
 </script>
     </main>
 <%@include file="/WEB-INF/include/footer.jsp" %>
