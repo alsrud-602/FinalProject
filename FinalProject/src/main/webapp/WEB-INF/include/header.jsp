@@ -371,7 +371,7 @@
         <div class="header">
             <a href="/Users/Main"><img class="logo" src="/images/header/logo.png" alt="로고" /></a>
             <div class="header-nav">
-                <a href="#">
+                <a href="/Users/Profile">
                     <div class="frame-2066">
                         <div class="div1">프로필</div>
                         <img class="personal-collection" src="/images/header/personal-collection.svg" alt="프로필 아이콘" />

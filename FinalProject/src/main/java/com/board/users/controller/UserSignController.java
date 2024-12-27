@@ -33,6 +33,7 @@ import com.board.users.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/Users")
@@ -92,9 +93,7 @@ public class UserSignController {
 	    SecurityContextHolder.clearContext();
 	    return ResponseEntity.ok("Logout successful");
 	}
-	
-	
-    
+
     
 
 }
