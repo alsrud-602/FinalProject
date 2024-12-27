@@ -7,10 +7,8 @@
 .footer {
   background: #949494;
   height: 90px;
-  left: 0;
   width: 100%;
-  position: relative; /* 고정 위치로 변경 */
-  bottom: 0; /* 화면 하단에 고정 */
+  position: relative; 
   margin-top: 20px;
   z-index: 1000;
 }

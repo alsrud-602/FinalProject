@@ -20,6 +20,7 @@ import com.board.users.jwt.JwtUtil;
 import com.board.users.service.UserService;
 
 import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping("/Companys")
 @RequiredArgsConstructor

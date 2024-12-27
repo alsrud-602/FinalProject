@@ -20,6 +20,7 @@
    <div class="title">
    <p>입점현황부터 여러 팝업스토어를 한번에 관리하세요</p>
    <p>팝업스토어 관리</p>
+   
 
    </div>
    <div class="content">
@@ -75,7 +76,7 @@
   <div class="ing_basic">결과</div>
   </div>
   <div class="detail_btn">
-  <a class="btn1">수정</a>
+  <a class="btn1"  href="/Business/Registraion/Writefrom">수정</a>
   <a class="btn1">관리자 요청</a>
   </div>
   </div>
@@ -99,10 +100,16 @@
   <a class="btn1">수정</a>
   <a class="btn1">관리자 요청</a>
   </div>
-  </div>   
+  </div>
+  
+  
+  
+     
    
    </div>
    </div>
+   
+   
  
 
   </main>
@@ -116,9 +123,19 @@
     </div>
   </aside>
   
-</div>	
+</div>
+<%@include file="/WEB-INF/include/footer_company.jsp" %>	
 </body>
- 
+ <script>
+ const container = document.querySelector('.container');
+ const mainTag = document.querySelector('main');
+ const mainHeight = mainTag.offsetHeight;
+ const viewportHeight = window.innerHeight - 204;
+ console.log(viewportHeight);
+
+ // 조건에 따라 container의 높이를 설정
+ container.style.height = `\${Math.max(mainHeight, viewportHeight)}px`;
+ </script>
 </html>
 
 

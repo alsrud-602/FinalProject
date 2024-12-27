@@ -26,12 +26,27 @@ public class AdminController {
 		
 	}
 	
+	@RequestMapping("/M1")
+	public  ModelAndView  M1() {
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("/admin/manager/detail");
+		return mv;
+		//return "/WEB-INF/views/users/Wallet/wallet.jsp";
+	}
+	
 	
 	// 스토어관리 - 담당자관리
 	@RequestMapping("/Managerlist")
 	public  ModelAndView  managerlist() {
 		ModelAndView mv = new ModelAndView();
 		mv.setViewName("/admin/manager/managerlist");
+		return mv;
+	}
+	
+	@RequestMapping("/Advertise")
+	public ModelAndView advertise() {
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("/admin/manager/advertise");
 		return mv;
 	}
 	
