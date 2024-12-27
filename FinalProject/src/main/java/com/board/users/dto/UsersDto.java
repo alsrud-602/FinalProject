@@ -19,4 +19,23 @@ public class UsersDto {
 	private String cdate;
 	private String status;
 	private String ban;
+	
+	private int detail_idx;
+	private String address;
+	private String start_date;
+	private String end_date;
+	private String homepage;
+	private String sns;
+	private String introduction;
+	private String content;
+	private String parking;
+	private String fare;
+	private String age_limit;
+	private String shooting;
+	private int like;
+	private int hit;
+    private String goods;
+    
+
+    private String user_id;
 }

@@ -1,3 +1,4 @@
+
 package com.board.users.dto;
 
 import java.util.Date;
@@ -18,7 +19,8 @@ import lombok.Setter;
 
 
 @Entity
-@Getter@Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")
