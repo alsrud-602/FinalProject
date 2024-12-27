@@ -38,4 +38,15 @@ public class UsersDto {
     
 
     private String user_id;
+    private int user_idx;
+    private String nickname;
+    private String id;
+    private String password;
+    private String email;
+    private String birthdate;
+    private String phone;
+    private String social_id;
+    private String social_type;
+    private String name;
+    
 }
