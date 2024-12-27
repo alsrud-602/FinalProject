@@ -1,4 +1,4 @@
-package com.board.business.controller;
+package com.board.companys.controller;
 
 import java.util.Map;
 
@@ -9,43 +9,63 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.board.users.dto.LoginRequest;
-import com.board.users.jwt.JwtUtil;
-import com.board.users.service.UserService;
+import com.board.companys.dto.LoginRequest;
+import com.board.jwt.JwtUtil;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/Companys")
+@RequestMapping
 @RequiredArgsConstructor
 public class RestCompanySignController {
 
-    private final UserService userService;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final Logger logger = LoggerFactory.getLogger(RestCompanySignController.class);
+    
 
     
-    @PostMapping("/Login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest loginRequest) {
+    @PostMapping("/CompanyAuth/Login")
+    public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getId(), loginRequest.getPassword())
             );
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+            // 역할(Role) 확인
+            boolean isCompanyRole = userDetails.getAuthorities().stream()
+                .anyMatch(authority -> "ROLE_company".equals(authority.getAuthority()));
+            
+            if (!isCompanyRole) {
+                logger.info("로그인 실패: company 역할이 아님");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                                     .body(Map.of("error", "Not authorized for company role"));
+            }
             logger.info("인증 성공: {}", authentication);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            String jwt = jwtUtil.generateToken(authentication.getName());
-            String id = jwtUtil.generateToken(loginRequest.getId());
-            System.out.println("jwt"+jwt);
-            System.out.println("id"+id);
+            String jwt = jwtUtil.generateToken(authentication.getName(),"company");
+            logger.info("JWT 생성 성공: {}", jwt);
+            // JWT를 쿠키에 저장
+            Cookie jwtCookie = new Cookie("jwt", jwt);
+            jwtCookie.setHttpOnly(true);
+            jwtCookie.setSecure(true); // HTTPS에서만 사용
+            jwtCookie.setMaxAge(60 * 120); // 2시간
+            jwtCookie.setPath("/Business");
+            response.addCookie(jwtCookie);
+
             return ResponseEntity.ok(Map.of("token", jwt));
         } catch (Exception e) {
             logger.error("인증 실패: {}", e.getMessage());
@@ -53,4 +73,7 @@ public class RestCompanySignController {
                                  .body(Map.of("error", "Authentication failed"));
         }
     }
+
+ 
+
 }

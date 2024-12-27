@@ -1,4 +1,4 @@
-package com.board.users.controller;
+package com.board.companys.controller;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -16,33 +16,29 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.board.companys.dto.Company;
+import com.board.companys.service.CompanyService;
 import com.board.jwt.JwtUtil;
 import com.board.users.dto.User;
-import com.board.users.service.UserService;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 @Controller
-@RequestMapping("/Users")
-public class UserSignController {
+@RequestMapping("/CompanyAuth")
+public class CompanysSignController {
 
     @Autowired
-    private UserService userService;
+    private CompanyService companyService;
     
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
-    public UserSignController(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
+    public CompanysSignController(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
     }
@@ -51,59 +47,31 @@ public class UserSignController {
     @GetMapping("/SignupForm")
     public String signupForm(@RequestParam(required = false) String email, Model model) {
         model.addAttribute("email", email);
-        return "signup";
+        return "business/signup";
     }
     @GetMapping( "/CheckDuplication" )
     @ResponseBody
     public String checkDuplication(@RequestParam(value="id") String id ) {
       
-       Optional<User> user = userService.findByUserId(id);
-        if (user.isEmpty()) {
+       Optional<Company> company = companyService.findByUserId(id);
+        if (company.isEmpty()) {
             return "가능";  // 아이디가 존재하지 않으면 가능
         }
         return "불가능";  // 아이디가 존재하면 불가능
     }
     
-
-    //날짜 변환
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        dateFormat.setLenient(false);
-        binder.registerCustomEditor(Date.class, "birthdate", new CustomDateEditor(dateFormat, true));
-    }
     @PostMapping("/Signup")
-    public String registerUser(@ModelAttribute User user) {
-        userService.registerUser(user);
-        return "redirect:/Users/LoginForm";
+    public String registerUser(@ModelAttribute Company company) {
+    	companyService.registerUser(company);
+        return "redirect:/CompanyAuth/LoginForm";
     }
     /*========================================================*/
     
     /* 로그인/로그아웃 */
 	@RequestMapping("/LoginForm")
 	public  String   loginform() {
-		return "login";
+		return "business/login";
 	}
-	@GetMapping("/KakaoCallBack")
-	public String kakaoCallBack(HttpSession session, HttpServletResponse response, Model model) {
-	    String jwt = (String) session.getAttribute("jwt");
-	    String accessToken = (String) session.getAttribute("accessToken");
-
-	    // 세션에서 제거 (선택 사항)
-	    session.removeAttribute("jwt");
-	    session.removeAttribute("accessToken");
-
-	    // JWT를 응답 헤더에 추가
-	    response.setHeader("Authorization", "Bearer " + jwt);
-
-	    // 필요한 작업 수행
-	    model.addAttribute("jwt", jwt);
-	    model.addAttribute("accessToken", accessToken);
-
-	    return "callback"; // 반환할 뷰 이름
-	}
-
-
 	
 
 	@PostMapping("/Logout")
@@ -117,6 +85,11 @@ public class UserSignController {
 	    SecurityContextHolder.clearContext();
 	    return ResponseEntity.ok().build();
 	}
-
+	
+	
+	
+	
+    
+    
 
 }

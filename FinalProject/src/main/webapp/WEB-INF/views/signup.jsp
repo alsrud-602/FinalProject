@@ -222,7 +222,7 @@
 	             </div>
                 <div class="input-group">
                     <label for="phone">전화번호</label>
-                    <input type="text" id="phone" name="phone" placeholder="01011111111" required>
+                    <input type="text" id="phone" name="phone"  maxlength="11" pattern="[0-9]{2,3}[0-9]{3,4}[0-9]{4}" placeholder="01011111111" required>
                     <div class="note">*숫자만 입력해주세요</div>
                 </div>
                 <div class="input-group">

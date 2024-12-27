@@ -74,7 +74,12 @@
             text-decoration: underline;
         }
         .sub-login{
-        	
+        	margin-top: 10px;
+        }
+        .kakaoLogin{
+        width:220px;
+        height: 55px;;
+        
         }
     </style>
 </head>
@@ -96,7 +101,7 @@
     <div class="alert alert-warning" style="color: aqua;">${message}</div>
 	</c:if>
 </form>
-<a href="/oauth2/authorization/kakao" id="kakao-login-button"><button>카카오로 로그인</button></a>
+<a href="/oauth2/authorization/kakao" id="kakaoLogin"><img src="/images/header/kakao_login_large_narrow.png" class="kakaoLogin"></a>
 
             <div class="sub-login">
             <a href="#" class="link">아이디 찾기</a> |
@@ -151,24 +156,6 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
             // JWT 토큰 저장
             // 로그인 성공 후, JWT를 Authorization 헤더에 추가
 			localStorage.setItem('token', data.token);
-			fetch('/', {
-			    method: 'GET',
-			    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
-			})
-			.then(function(response) {
-			    if (!response.ok) {
-			        alert('홈 페이지 로드 중 문제가 발생했습니다.');
-			        return;
-			    }
-
-			    // 홈 페이지가 정상적으로 로드되면 리다이렉션
-			    window.location.href = '/';
-			})
-			.catch(function(error) {
-			    console.error('홈 페이지 요청 중 오류:', error);
-			    alert('홈 페이지 로드 중 오류가 발생했습니다.');
-			});
-
             console.log('JWT 토큰 저장 완료:', data.token);
 
             // 홈 화면으로 리다이렉션
@@ -200,46 +187,45 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     });
 });
 
-//카카오로그인
-//페이지 로드 시 Authorization Code 처리
-document.getElementById("kakao-login-button").addEventListener("click", function() {
-    // 카카오 로그인 버튼 클릭 후 리다이렉트된 후에 처리될 부분
-    console.log(window.location.search)
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code'); // URL에서 code 파라미터를 읽음
-    console.log(code);
+window.onload = function() {
+    console.log('window.onload 실행됨'); // 디버깅 로그 추가
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code'); // 인가 코드 가져오기
+
+    console.log('인가 코드:', code); // 인가 코드 로그 추가
 
     if (code) {
-        // 서버에 'code'를 보내서 JWT 토큰을 받음
-        fetch("/oauth2/callback/kakao?code="+code)
-            .then(response => response.json())  // 응답을 JSON으로 파싱
-            .then(data => {
-                const token = data.token;  // 서버에서 받은 토큰
-                console.log('Token from server:', token);  // 토큰 확인
-
-                if (token) {
-                    localStorage.setItem('access_token', token);  // localStorage에 저장
-                    window.location.href = '/';  // 홈 화면으로 리다이렉트
+        // 액세스 토큰 요청
+        fetch('http://localhost:9090/oauth2/callback/kakao?code=' + code)
+            .then(response => {
+                console.log('응답:', response); // 응답 로그 추가
+                if (response.ok) {
+                    return response.json();
                 } else {
-                    console.error('토큰이 없어요.');
+                    throw new Error('Failed to fetch access token');
                 }
             })
+            .then(data => {
+                const accessToken = data.access_token; // 백엔드에서 반환한 토큰
+                localStorage.setItem('kakaoAccessToken', accessToken); // localStorage에 저장
+                console.log('토큰이 localStorage에 저장되었습니다:', accessToken);
+                // 홈 화면으로 리다이렉트 (필요 시)
+                window.location.href = "/";
+            })
             .catch(error => {
-                console.error('로그인 처리 중 오류가 발생했습니다:', error);
-                window.location.href = '/Users/LoginForm?error=true';  // 오류 시 로그인 화면으로 리다이렉트
+                console.error('토큰 요청 실패:', error);
             });
     } else {
-        console.error('code 파라미터가 존재하지 않습니다.');
-        window.location.href = '/Users/LoginForm?error=true';  // code가 없으면 로그인 화면으로 리다이렉트
+        console.log('인가 코드가 없습니다.');
     }
-});
-
-
-
-
-
+};
 
 </script>
+
+
+
+
+
     </main>
     <%@include file="/WEB-INF/include/footer.jsp" %>
 </body>

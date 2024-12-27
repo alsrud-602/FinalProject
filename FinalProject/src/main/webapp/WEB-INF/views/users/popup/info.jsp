@@ -22,10 +22,14 @@
 </head>
 <body>
 <%@include file="/WEB-INF/include/header.jsp" %>
+
 <div class="container">
   <img id="icon_back" src="/images/icon/back.png" alt="뒤로가기">
   <main>
-  
+      <h1>사용자 정보</h1>
+    <p style="color:white;">이름: ${name}</p>
+    <p style="color:white;">이메일: ${email}</p>
+    <p style="color:white;">아이디: ${user.id}</p>
     <div class="swiper-container">
   <div class="swiper-wrapper">
     <div class="swiper-slide"><img src="/images/example/exampleimg1.png" alt="1"></div>
@@ -517,7 +521,65 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 
     <script>
-      
+    document.addEventListener("DOMContentLoaded", () => {
+        const token = localStorage.getItem("token");
+        const kakaoAccessToken = localStorage.getItem("kakaoAccessToken");
+
+        if (!token&&!kakaoAccessToken) {
+            alert("로그인이 필요합니다.");
+            window.location.href = "/Users/LoginForm"; // 로그인 페이지로 이동
+            return;
+        }
+        
+        if (token){
+        // 사용자 정보 요청
+        fetch("/Users/user-info", {
+            method: "GET",
+            headers: {
+                "Authorization": "Bearer "+token, //일반 로그인 하셨을경우
+                "Token-Type": "UserToken"
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("사용자 정보를 가져오지 못했습니다.");
+                }
+                // 서버에서 렌더링된 HTML 출력
+                return response.text();
+            })
+            .then(html => {
+            	document.querySelector("main").innerHTML = html; // main 요소에 HTML 렌더링 이게 있어야 달러 안의 값을 불러옵니다.
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("사용자 정보를 불러오지 못했습니다.");
+            });
+        }
+        if (kakaoAccessToken){
+        // 사용자 정보 요청
+        fetch("/Users/user-info", {
+            method: "GET",
+            headers: {
+                "Authorization": "Bearer "+kakaoAccessToken, //카카오 로그인 하셨을 경우
+                "Token-Type": "KakaoToken"
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("사용자 정보를 가져오지 못했습니다.");
+                }
+                // 서버에서 렌더링된 HTML 출력
+                return response.text();
+            })
+            .then(html => {
+            	document.querySelector("main").innerHTML = html; // main 요소에 HTML 렌더링 이게 있어야 달러 안의 값을 불러옵니다.
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("사용자 정보를 불러오지 못했습니다.");
+            });
+        }
+    });
     </script>
 </body>
 
