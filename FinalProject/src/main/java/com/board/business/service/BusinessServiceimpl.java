@@ -23,6 +23,7 @@ import com.board.business.dto.ReservationPlanDto;
 import com.board.business.dto.StoreCategoryDto;
 import com.board.business.dto.StoreListDto;
 import com.board.business.dto.StoreTagDto;
+import com.board.business.dto.StoreUpdateDto;
 import com.board.business.mapper.BusinessMapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -212,7 +213,11 @@ public class BusinessServiceimpl  implements BusinessService{
 	}
 
 	@Override
-	public void getStoreUpdateinfo(HashMap<String, Object> map) {
+	public void getStoreUpdateinfo(HashMap<String, Object> map, int store_idx) {
+		
+		StoreUpdateDto suDto = businessMapper.getStoreUpdateInfo(store_idx);
+		map.put("suDto", suDto);
+		System.out.println(suDto);
 		// updateinfo
 		//List<STORES_TAG>
 		//List<STORES_CATEGORY>

@@ -46,7 +46,7 @@
       <table class="sub_table">
         <tr>
            <td>팝업스토어명칭</td>
-           <td>메시X스텐리1942 콜라보 팝업스토어</td>
+           <td>${suDto.title}</td>
         </tr>
         <tr>
            <td>카테고리</td>

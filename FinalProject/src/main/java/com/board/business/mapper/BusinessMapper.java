@@ -14,6 +14,7 @@ import com.board.business.dto.ReservationPlanDto;
 import com.board.business.dto.StoreCategoryDto;
 import com.board.business.dto.StoreListDto;
 import com.board.business.dto.StoreTagDto;
+import com.board.business.dto.StoreUpdateDto;
 
 @Mapper
 public interface BusinessMapper {
@@ -57,6 +58,8 @@ public interface BusinessMapper {
 	int getCompanyIdxByStoreIdx(int store_idx);
 
 	void updateCompany(CompanyDto companydto);
+
+	StoreUpdateDto getStoreUpdateInfo(int store_idx);
 
 
 	

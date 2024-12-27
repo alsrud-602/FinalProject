@@ -35,6 +35,6 @@ public interface BusinessService {
 
 	void updateCompany(CompanyDto companydto);
 
-	void getStoreUpdateinfo(HashMap<String, Object> map);
+	void getStoreUpdateinfo(HashMap<String, Object> map, int store_idx);
 
 }

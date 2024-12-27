@@ -7,7 +7,7 @@ public class StoreUpdateDto {
 	   private int store_idx;         
 	    private int company_idx;       
 	    private String title;          
-	    private int age;                
+	    private String age;                
 	    private String brand1;          
 	    private String brand2;         
 	    private String cdate;          

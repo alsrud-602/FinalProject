@@ -1,5 +1,6 @@
 package com.board.business.controller;
 
+import java.io.Console;
 import java.util.HashMap;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import com.board.business.dto.CategoryDto;
 import com.board.business.dto.CompanyDto;
 import com.board.business.dto.RequestDto;
 import com.board.business.dto.StoreListDto;
+import com.board.business.dto.StoreUpdateDto;
 import com.board.business.service.BusinessService;
 import com.board.business.service.PdsService;
 
@@ -98,10 +100,11 @@ public class BusinessController {
 	public ModelAndView managementMupdateFrom( int store_idx) {
 	
 	HashMap<String, Object> map	 = new HashMap<>();
-	businessService.getStoreUpdateinfo(map);
-	
-		
+	businessService.getStoreUpdateinfo(map,store_idx);
+	StoreUpdateDto suDto =(StoreUpdateDto) map.get("suDto");
+	System.out.println(suDto);	
 	ModelAndView mv = new ModelAndView();
+	mv.addObject("suDto", suDto);	
 	mv.setViewName("business/management/main/update");
 	return mv;
 				
