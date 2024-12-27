@@ -1,4 +1,4 @@
-package com.board.users.dto;
+package com.board.companys.dto;
 
 import java.util.Date;
 
@@ -21,33 +21,29 @@ import lombok.Setter;
 @Getter@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "users")
-public class User {
+@Table(name = "companys")
+public class Company {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq_gen")
-    @SequenceGenerator(name = "user_seq_gen", sequenceName = "USER_SEQ", allocationSize = 1)
-    @Column(name = "USER_IDX", length = 10)
-    private Long userIdx; // 유저 ID
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "company_seq_gen")
+    @SequenceGenerator(name = "company_seq_gen", sequenceName = "COMPANY_SEQ", allocationSize = 1)
+    @Column(name = "COMPANY_IDX", length = 10)
+    private Long companyIdx; // 유저 ID
 
-    @Column(name = "NIKNAME", length = 30)
-    private String nickname; // 닉네임
-
-    @Column(name = "NAME", length=30)
-    private String name; //이름
+    @Column(name = "NAME", length=100)
+    private String name; //기업명
     
-    @Column(name = "ID", length = 30)
+    @Column(name = "ID", length = 100)
     private String id; // 아이디
 
-    @Column(name = "PASSWORD", length = 30)
+    @Column(name = "PASSWORD", length = 100)
     private String password; // 비밀번호
 
     @Column(name = "EMAIL", nullable = false, length = 500)
     private String email; // 이메일
 
-    @Column(name = "BIRTHDATE")
-    @Temporal(TemporalType.DATE)
-    private Date birthdate; // 생일
+    @Column(name = "CODE", length = 30)
+    private String code; // 사업자 등록 번호
 
     @Column(name = "PHONE", length = 20)
     private String phone; // 번호
@@ -72,7 +68,7 @@ public class User {
     private Date cdate; // 가입일
 
     @Column(name = "STATUS", length = 20)
-    private String status; // 블락 상태
+    private String status; // 블락 상태 또는 우수 회원 또는 null(일반)
     
     @Column
     private Boolean enabled = false;
@@ -84,16 +80,15 @@ public class User {
     private String socialId; // 소셜 로그인 ID
 
     @Column(name = "ROLE", length = 20)
-    private String role; // 기본 역할 USER
+    private String role="company";
     
     // 약관 유효성 검사
     public boolean isValidAgreement(String agreement) {
         return "N".equals(agreement) || "Y".equals(agreement);
     }
     
-    // 사용자 유형 결정 메소드
     public String determineUserType() {
-        return "user"; // 기본 사용자 유형
+        return "company"; // 회사 사용자 유형
     }
 
 

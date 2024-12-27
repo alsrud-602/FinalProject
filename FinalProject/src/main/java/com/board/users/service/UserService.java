@@ -47,4 +47,8 @@ public class UserService {
 
         userRepository.save(user);
     }
+
+	public Optional<User> findBySocialId(String id) {
+        return userRepository.findBySocialId(id);
+	}
 }

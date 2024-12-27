@@ -390,9 +390,7 @@
                 </a>
             </div>
             <div class="header-util">
-                <a href="/Companys/LoginForm"><div class="div3">로그인</div></a>
-                <img class="line-1" src="/images/header/line-1.svg" alt="구분선" />
-                <a href="/Companys/SignupForm"><div class="div3">회원가입</div></a>
+
             </div>
 			<div id="hamburger-menu">
 				<span></span> 
@@ -408,7 +406,6 @@
                     <div class="thick"></div>
                 </div>
             </div>
-            <img class="arrow0" src="/images/header/arrow0.svg" />
         </div>
         <a href="/Operation">
         <div class="menu-2066">
@@ -478,6 +475,68 @@
             }
         });
     });
+
+    </script>
+    <script>
+
+
+ document.addEventListener('DOMContentLoaded', function() {
+    const authContent = document.querySelector('.header-util');
+    const token = localStorage.getItem('token');
+    if (token) {
+        // 토큰이 있는 경우 (인증된 사용자)
+        authContent.innerHTML = `
+            <form id="logoutForm">
+                <div id="logout-button" class="div3">로그아웃</div>
+            </form>
+        `;
+        
+        // 로그아웃 버튼 이벤트 리스너
+        document.getElementById('logout-button').addEventListener('click', function() {
+        	sessionStorage.removeItem('token');
+            window.location.href = '/CompanyAuth/Logout';
+        });
+    } else {
+        // 토큰이 없는 경우 (인증되지 않은 사용자)
+        authContent.innerHTML = `
+            <a href="/CompanyAuth/LoginForm"><div class="div3">로그인</div></a>
+            <img class="line-1" src="/images/header/line-1.svg" alt="구분선" />
+            <a href="/CompanyAuth/SignupForm"><div class="div3">회원가입</div></a>
+        `;
+    }
+}); 
+
+
+</script>
+    <script>
+    /* 로그아웃 */
+document.addEventListener('DOMContentLoaded', function() {
+    const logoutButton = document.querySelector('#logout-button'); // 수정된 선택자
+    if (logoutButton) {
+        logoutButton.addEventListener('click', function(event) {
+            event.preventDefault(); // 기본 폼 서브미션 방지
+
+            /*
+            fetch('/Users/Logout', { method: 'POST' })
+                .then(response => {
+                    if (response.ok) {
+                    	sessionStorage.removeItem('token'); // 토큰 삭제
+                        window.location.href = '/'; // 리다이렉션
+                    } else {
+                        console.error('Failed to log out');
+                        alert('로그아웃에 실패했습니다. 다시 시도해주세요.');
+                    }
+                })
+                .catch(error => console.error('Error during logout:', error));*/
+            fetch('/CompanyAuth/Logout', { method: 'POST', credentials: 'include' })
+            .then(() => {
+                window.location.reload(); // 페이지 새로고침
+            })
+            .catch(error => console.error('로그아웃 중 오류:', error));
+        });
+    }
+});
+
 
     </script>
 

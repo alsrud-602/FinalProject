@@ -6,8 +6,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -18,9 +16,9 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import com.board.handle.UserAlreadyLinkedToSocialException;
+import com.board.handle.UserNotFoundOAuth2Exception;
 import com.board.users.dto.User;
-import com.board.users.handle.UserAlreadyLinkedToSocialException;
-import com.board.users.handle.UserNotFoundOAuth2Exception;
 import com.board.users.repo.UserRepository;
 @Service
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
@@ -34,7 +32,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = new DefaultOAuth2UserService().loadUser(userRequest);
         Map<String, Object> attributes = oAuth2User.getAttributes();
-        System.out.println(String.format("이게뭐야젠장",attributes));
 
         String socialType = userRequest.getClientRegistration().getRegistrationId().toUpperCase(); // KAKAO
         String socialId = attributes.get("id").toString();
@@ -87,17 +84,12 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         // 4. 프로필에서 카카오 로그인 연동
         //"카카오로그인과 연동하려면 기존계정으로 로그인해주세요~ 로그인화면으로 보내는데 카카오이메일,소셜아이디,타입 전달"
         //카카오 아이디와 연동하기
+        //if (kakaouser.getSocialType() == null || kakaouser.getSocialId() == null) {
+        //if (!kakaouser.getEmail().equals(email)) {}}
 
 
-        // 4. SecurityContext에 Authentication 설정
-        /*UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-        		kakaouser.getId(), //유저 엔티티의 id값을 인증주체로 사용
-        		null, Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"))
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);*/
         System.out.println("카카오 유저 아이디 기반 아이디"+kakaouser.getId());
-        //System.out.println(String.format("SecurityContext 인증 정보2: {}"+ authentication));
-        System.out.println(String.format("SecurityContext 인증 정보: {}", SecurityContextHolder.getContext().getAuthentication()));
+        logger.info("SecurityContext 인증 정보: {}", SecurityContextHolder.getContext().getAuthentication());
 
 
         // 5. OAuth2User 반환
@@ -106,9 +98,9 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             attributes,
             "id"
         );
-        System.out.println(String.format("OAuth2 요청: clientName={}", userRequest.getClientRegistration().getClientName()));
-        System.out.println(String.format("OAuth2 사용자 정보: {}", attributes));
-        System.out.println(String.format("OAuth2 사용자 정보2: {}", oAuth2User));
+        logger.info("OAuth2 요청: clientName={}", userRequest.getClientRegistration().getClientName());
+        logger.info("OAuth2 사용자 정보: {}", attributes);
+        logger.info("OAuth2 사용자 정보2: {}", oAuth2User);
 
         return oAuth2User;
     }
