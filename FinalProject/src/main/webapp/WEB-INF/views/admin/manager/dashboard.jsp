@@ -11,8 +11,9 @@
 
 
 main {
-  padding-top:100px;
-  margin-bottom:400px;
+  padding-top:93px;
+  margin-bottom:100px;
+  margin-top:0;
 }
 
  body {
@@ -23,16 +24,20 @@ main {
   margin:0 auto;
   max-width:1500px;
   display:flex;
-  justify-content:center;
+  paddig-top:600px;
+  height:100%;
+  justify-content:space-between;
 }
 
 .container {
   background-color:#E8EEE7;
   width:1100px;
+  height:100%;
   display:flex;
   flex-direction:column;
   justify-content:center;
   gap:100px;
+  margin-top:0;
 }
 
 .chart-wrapper {
@@ -47,7 +52,7 @@ main {
 <main>
  	<div class="inner">
  	 <aside>
- 	 <%@include file="/WEB-INF/include/admin-slidebar.jsp" %>
+ 	 <%@include file="/WEB-INF/include/admin-slidebartest.jsp" %>
  	 </aside>
  	 <div class="container">
       <div class="chart-wrapper">
@@ -101,7 +106,8 @@ main {
                 },
                 title: {
                     display: true,
-                    text: '지역별 스토어 수 분포'
+                    text: '지역별 스토어 수 분포',
+                    font: {size:25}
                 }
             }
         };
@@ -124,7 +130,8 @@ main {
         const visitors = [120, 150, 180, 200, 160, 190, 210];
 
         // 차트 생성
-        const ctx = document.getElementById('visitorChart').getContext('2d');
+       // 차트 생성
+const ctx = document.getElementById('visitorChart').getContext('2d');
 new Chart(ctx, {
     type: 'line',
     data: {
@@ -146,13 +153,36 @@ new Chart(ctx, {
                 beginAtZero: true,
                 title: {
                     display: true,
-                    text: '방문자 수'
+                    text: '방문자 수',
+                    font: {
+                        size: 16 // Y축 제목 폰트 크기 조정
+                    }
                 }
             },
             x: {
                 title: {
                     display: true,
-                    text: '날짜'
+                    text: '날짜',
+                    font: {
+                        size: 16 // X축 제목 폰트 크기 조정
+                    }
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                display: true, // 범례 표시 여부
+                labels: {
+                    font: {
+                        size: 14 // 범례 폰트 크기 조정
+                    }
+                }
+            },
+            title: {
+                display: true,
+                text: '일일 방문자 수',
+                font:{
+                    size : 25 // 제목 폰트 크기 조정
                 }
             }
         }
@@ -213,7 +243,8 @@ new Chart(ctxbar, {
             },
             title: {
                 display: true,
-                text: '페이지별 트래픽 현황'
+                text: '페이지별 트래픽 현황',
+                font: {size:25}
             }
         }
     }
