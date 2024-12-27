@@ -19,6 +19,7 @@ public class HomeController {
 	public  String   home() {
 		
 		return "home";
+
 		//return "/WEB-INF/views/home.jsp";
 	}
 	

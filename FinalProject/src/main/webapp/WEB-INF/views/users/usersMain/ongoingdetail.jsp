@@ -8,7 +8,6 @@
 <link rel="icon" type="image/png" href="/img/favicon.png" />
 <link rel="stylesheet"  href="/css/common.css" />
 
-
 <style>
    body{
    background-color: #121212 !important;
@@ -23,6 +22,7 @@
     justify-content: center; /* 컨테이너 내에서 카드들을 가운데 정렬 */
 }
 
+
   .card {
     background-color: #121212; /* 카드 배경색 */
     border-radius: 10px; /* 모서리 둥글게 */
@@ -30,7 +30,7 @@
     text-align: center; /* 텍스트 중앙 정렬 */
     color: white;
     width: 100%; /* 카드 폭을 컨테이너에 맞춤 */
-    max-width: 400px; /* 최대 너비 설정 */
+    max-width: 535px; /* 최대 너비 설정 */
   }
 
   .card img {
@@ -80,7 +80,7 @@
     display: inline-block;
     padding : 13px;
     }
-   .agefilter{
+    .agefilter{
     cursor: pointer;
     padding: 10px;
     background: #121212;
@@ -92,6 +92,7 @@
     border: 2px solid #00ff84;
     display: inline-block;
     padding : 13px;
+    position: relative;
     }
     
     #calendarInput{
@@ -107,7 +108,6 @@
     padding-top : 11px;
     padding-bottom : 11px;
     }
-    
     .h2text{
     max-width: 300px;
     position: relative;
@@ -117,7 +117,6 @@
     font-size:40px;
     
     }
-    
     .ongoingfilter {
     position: relative; /* 요소를 고정 */
     top: 70px; /* 원하는 위치에 맞게 조정 */
@@ -146,8 +145,8 @@
 <%@include file="/WEB-INF/include/header.jsp" %>
 <body>
 <div>
-<h2 class="h2text">랭킹</h2>
-  <div class="ongoingfilter">
+<h2 class="h2text">진행중</h2>
+   <div class="ongoingfilter">
 	    <input type="date"class="mainfilter" id="datepickerButton" >
 	    <select class="regionfilter">
 	      <option value="">지역</option>
@@ -173,16 +172,13 @@
 </div>
 
 <div class="container">
-    <c:forEach var="rank" items="${ranklist}">
+    <c:forEach var="popup" items="${popuplist}">
 	    <div class="card">
 	      <img src="/images/main/popup1.png" alt="/images/main/popup1.png">
-	      <div class="title">${rank.title}</div>
-	      <div class="info">주소:${rank.address}<br>기간: ${rank.start_date} ~ ${rank.end_date}</div>
+	      <div class="title">${popup.title}</div>
+	      <div class="info">주소:${popup.address}<br>기간: ${popup.start_date} ~ ${popup.end_date}</div>
 	    </div>
-	 </c:forEach>
-    
-    
-    
+	    </c:forEach>
   </div>
 </body>
 <%@include file="/WEB-INF/include/footer.jsp" %>

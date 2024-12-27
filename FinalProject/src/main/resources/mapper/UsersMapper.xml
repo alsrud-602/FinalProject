@@ -160,31 +160,4 @@
 	ORDER BY
 	    st.store_idx ASC
   </select>
-  
-  
-  <select id="getUser">
-	SELECT
-	    USER_IDX,
-	    NIKNAME,
-	    ID,
-	    PASSWORD,
-	    EMAIL,
-	    BIRTHDATE,
-	    PHONE,
-	    COMPULSORY_AGREEMENT,
-	    INFO_AGREEMENT,
-	    MESSAGE_AGREEMENT,
-	    MARKETING_AGREEMENT,
-	    ALERT_AGREEMENT,
-	    CDATE,
-	    STATUS,
-	    ENABLED,
-	    ROLE,
-	    SOCIAL_ID,
-	    SOCIAL_TYPE,
-	    NAME
-	FROM
-    	USERS
-    WHERE USER_IDX = #{user_idx}  
-  </select>
 </mapper>

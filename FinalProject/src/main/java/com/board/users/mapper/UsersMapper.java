@@ -36,12 +36,6 @@ public interface UsersMapper {
 
 	List<UsersDto> getClosesearchlist(@Param("search") String search);
 
-	UsersDto getUser();
-
-	UsersDto getUserById(Integer userIdx);
-
-
-
 	
 
 
