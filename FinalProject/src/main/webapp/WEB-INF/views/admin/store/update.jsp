@@ -25,40 +25,20 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/browser-scss@1.0.3/dist/browser-scss.min.js"></script>
 <style>
-#view_header  {
-p:first-child {
-font-size: 26px;
-font-weight: 700;
-}
-}
-.sub_short{
-width: 250px;        
-height: 43px;         
-border: 1px solid #9A9A9A;
-box-sizing: border-box; 
-font-size: 16px; 
-padding-left: 10px;
-margin: 0 10px;
-}
-.sub_input_date{
-width: 150px;        
-height: 43px;         
-border: 1px solid #9A9A9A;
-box-sizing: border-box; 
-font-size: 16px; 
-padding-left: 10px;
-margin: 0 10px;
-}
+
+
 </style>
 </head>
 <body>
+  <%@include file="/WEB-INF/include/admin-header.jsp" %>
 <div class="container">
+  <%@include file="/WEB-INF/include/admin-slidebar2.jsp" %>
+<form action="">
   <main>
 
 
      <div id="view_header">
      <p>키스톤 마케팅</p>
-     <p>부산광역시 부산진구</p>
      </div>
      <div id="line_white"></div>
      
@@ -89,7 +69,7 @@ margin: 0 10px;
         <tr>
            <td>브랜드</td>
            <td>
-           메인<input class="sub_short"type="text" placeholder="브랜드명을 입력하시오"> 
+           메인<span class="star_red">*</span><input class="sub_short"type="text" placeholder="브랜드명을 입력하시오"> 
            콜라보브랜드<input class="sub_short"type="text" placeholder="콜라보  브랜드명을 입력하시오">
            </td>
         </tr>        
@@ -123,8 +103,8 @@ margin: 0 10px;
         <tr>
            <td>운영기간</td>
            <td>
-           <input class="sub_input_date"type="date" placeholder="시작날짜"> ~
-           <input class="sub_input_date"type="date" placeholder="마감날짜">
+           <input onchange="vailddateOperation(this,document.getElementById('pop_end'))"  id="pop_start"class="sub_input_date"type="date" placeholder="시작날짜"> ~
+           <input  onchange="vailddateOperation(document.getElementById('pop_start'),this)"  id="pop_end"class="sub_input_date"type="date" placeholder="마감날짜">
            
            </td>
         </tr>        
@@ -237,22 +217,38 @@ margin: 0 10px;
     </div>
  </div> 
  
- <div class="cover_layout">
- <input class="btn2" type="submit" value="수정완료">
+ <div class="btn_layout">
+ <input class="btnful" type="submit" value="수정완료">
   </div>
 
  
-  </main>	
+  </main>
+  </form>	
 </div>
+<%@include file="/WEB-INF/include/admin-footer.jsp" %>
 <script>
+function vailddateOperation(startDate, endDate){
+
+	const start = startDate.value;
+	const end = endDate.value;
+	
+	if(start && end && start >= end){
+		alert("시작 날짜는 종료 날짜보다 나중이어야 합니다");	
+		startDate.value ="";
+		endDate.value ="";	
+	}
+	
+	
+}
+
 function validateTimes(startInput, endInput) {
     const startTime = startInput.value;
     const endTime = endInput.value;
 
     if (startTime && endTime && startTime >= endTime) {
         alert("종료 시간은 시작 시간보다 나중이어야 합니다.");
-        endInput.value = ""; // 종료 시간 초기화
-        //startInput.value="";
+        endInput.value = "";   
+        startInput.value="";
     }
 }
 

@@ -22,10 +22,10 @@
 </head>
 <body>
 <%@include file="/WEB-INF/include/header.jsp" %>
+
 <div class="container">
   <img id="icon_back" src="/images/icon/back.png" alt="뒤로가기">
   <main>
-  
     <div class="swiper-container">
   <div class="swiper-wrapper">
     <div class="swiper-slide"><img src="/images/example/exampleimg1.png" alt="1"></div>
@@ -118,8 +118,7 @@
   <div class="link">
   <a class="btn1" href="#">홈페이지 바로가기</a><a class="btn1" href="#">SNS 바로가기</a>
   </div>
-  
-
+ 
 
 
 
@@ -127,6 +126,21 @@
 
     
   </div> <!-- contents -->
+	
+	  <div id="map_show">
+    <div class="review_header" >
+    <div class="review_title">
+      <p>팝업스토어 위치</p>
+    </div>
+  </div>
+  <div id="map"></div>
+  <div class="content">
+  <div class="content_title"><img  src="/images/icon/location.png"><p>주소</p></div>
+  <p class="content_detail">서울 성북구 성수이로 231-2 </p>
+</div>
+<br><br><br><br>
+</div>
+	
 	
   </main>
   
@@ -273,7 +287,7 @@ const infoPage = `<div class="content">
 	  `;
   
 const mapPage = `
-    <div class="review_header">
+    <div class="review_header map_show">
     <div class="review_title">
       <p>팝업스토어 위치</p>
     </div>
@@ -352,12 +366,13 @@ var swiper2 = new Swiper('.swiper-container2', {
   function moveInfo() {
 	$('#contents').html('');
   $('#contents').html(infoPage);
-	
+  $('#map_show').hide();
 }
   
 function moveReiview() {
 	$('#contents').html('');
 	  $('#contents').html(reviewPage);
+	  $('#map_show').hide();
 }
 
 function moveReviewBack(e) {
@@ -367,42 +382,54 @@ function moveReviewBack(e) {
 	  $('#contents').html(reviewPage);
 }
 
-function initMap() {
+document.addEventListener("DOMContentLoaded", function() {
+	
+	 var map;  
     // 지도 객체 생성
     map = new naver.maps.Map('map', {
         center: new naver.maps.LatLng(37.5665, 126.9780), // 기본 서울 위치
-        zoom: 10
+        zoom: 15
     });
-    console.log("지도 객체 생성 완료!");
-    // 위도, 경도를 직접 설정하여 지도 변경
-    var coordinates = { latitude: 35.1796, longitude: 129.0756 }; // 부산광역시 연제구 중앙대로 1001의 위도, 경도
+    var adddd ='서울특별시 성동구 아차산로 3';
+    var add = encodeURIComponent(adddd);
+    console.log(add);
 
-    var position = new naver.maps.LatLng(coordinates.latitude, coordinates.longitude);
+    var url = 'https://nominatim.openstreetmap.org/search?format=json&q='+add;
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.length > 0) {
+                var lat = data[0].lat;
+                var lon = data[0].lon;
+                
+                var coords = new naver.maps.LatLng(lat, lon);
 
-    // 지도에 마커 추가
-    new naver.maps.Marker({
-        position: position,
-        map: map
-    });
+                // 마커 표시
+                var marker = new naver.maps.Marker({
+                    position: coords,
+                    map: map
+                });
 
-    // 지도 중심을 해당 좌표로 이동
-    map.setCenter(position);
-    map.setZoom(14);    
+                // 지도 중심을 마커 위치로 이동
+                map.setCenter(coords);
+                map.setZoom(15);
+                
+                setTimeout(function () {
+                    map.refresh();
+                }, 500); // 초기 로딩 시 500ms 지연 후 refresh
+                
+            } else {
+                alert('주소를 찾을 수 없습니다.');
+            }
+        })
+        .catch(error => console.error('Error:', error));   
 
-}
-
+})
+$('#map_show').hide();
 function moveMap() {
 	$('#contents').html('');
-	 $('#contents').html(mapPage);
-	  var map;         
-      
-
-
-      // 페이지 로드 후 지도 초기화
-      // maps.js가 로드된 후 initMap을 호출
-      //window.onload =  
-    	  initMap();
-          	 	 
+	$('#map_show').show();
+	map.refresh();               	 	 
 }
 
 //예약하기 버튼 클릭 시 모달 열기
@@ -490,7 +517,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 
     <script>
-      
+
     </script>
 </body>
 

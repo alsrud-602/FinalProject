@@ -8,11 +8,11 @@
 
 .footer {
   background: #F3F9F3; /* 배경 색상 */
-  height: 94px; /* 높이 */
+  height: 90px; /* 높이 */
   left: 0;
   width: 100%; /* 너비 */
-  position: fixed; /* 고정 위치로 변경 */
-  bottom: 0; /* 화면 하단에 고정 */
+  position: relative; /* 상대 위치로 변경 */
+  margin-top: auto; /* 자동 여백으로 아래로 밀리도록 설정 */
   padding: 10px 34px; /* 패딩 추가 */
   z-index: 1000; /* 다른 요소 위에 표시되도록 z-index 추가 */
 }
@@ -25,7 +25,7 @@
   color: black; /* 글자 색상 */
   text-align: left; /* 텍스트 정렬 */
   font-family: "ABeeZee-Regular", sans-serif; /* 폰트 설정 */
-  font-size: 12px; /* 폰트 크기 */
+  font-size: 10px; /* 폰트 크기 */
   line-height: 140%; /* 줄 높이 */
   letter-spacing: -0.025em; /* 글자 간격 */
   font-weight: 400; /* 글자 두께 */

@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <title>POP CORN - 로그인</title>
-    <link rel="stylesheet" href="/css/common.css" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="/css/common.css" />
     <style type="text/css">
         main {
             background-color: #121212;
@@ -74,7 +74,12 @@
             text-decoration: underline;
         }
         .sub-login{
-        	
+        	margin-top: 10px;
+        }
+        .kakaoLogin{
+        width:220px;
+        height: 55px;;
+        
         }
     </style>
 </head>
@@ -91,7 +96,13 @@
     <c:if test="${param.error != null}">
         <p style="color: red;">아이디 또는 비밀번호가 잘못되었습니다.</p>
     </c:if>
+    <div id="errorMessages" style="color: red;"></div>
+    <c:if test="${not empty message}">
+    <div class="alert alert-warning" style="color: aqua;">${message}</div>
+	</c:if>
 </form>
+<a href="/oauth2/authorization/kakao" id="kakaoLogin"><img src="/images/header/kakao_login_large_narrow.png" class="kakaoLogin"></a>
+
             <div class="sub-login">
             <a href="#" class="link">아이디 찾기</a> |
             <a href="#" class="link">비밀번호 찾기</a> |
@@ -102,34 +113,119 @@
 document.getElementById('loginForm').addEventListener('submit', function(event) {
     event.preventDefault();
 
-    var id = document.getElementById('id').value;
-    var password = document.getElementById('password').value;
-    var userData = { id: id, password: password };
+    const id = document.getElementById('id').value.trim();
+    const password = document.getElementById('password').value.trim();
+
+    if (!id || !password) {
+        alert('아이디와 비밀번호를 입력해주세요.');
+        return;
+    }
 
     fetch('/Users/Login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userData),
+        body: JSON.stringify({ id: id, password: password })
     })
-        .then(response => {
-            if (!response.headers.get('Content-Type').includes('application/json')) {
-                throw new Error('Invalid response format');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.token) {
-                localStorage.setItem('token', data.token);
-                window.location.href = '/';
-            } else {
-                console.error('Authentication failed');
-            }
-        })
-        .catch(error => console.error('Error:', error));
+    .then(function(response) {
+        if (response.status === 401) {
+            const errorMessages = [];
+            errorMessages.push("아이디 또는 비밀번호가 잘못되었습니다.");
 
+            const errorMessagesDiv = document.getElementById('errorMessages');
+            errorMessagesDiv.innerHTML = ''; // 이전 메시지 제거
+            if (errorMessages.length > 0) {
+                errorMessages.forEach(function(message) {
+                    const p = document.createElement('p');
+                    p.textContent = message;
+                    errorMessagesDiv.appendChild(p);
+                });
+            }
+            return;
+        }
 
+        if (!response.ok) {
+            console.error('오류 상태 코드:', response.status);
+            alert('로그인 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.');
+            return;
+        }
+
+        return response.json(); // JSON 응답 파싱
+    })
+    .then(function(data) {
+        if (data && data.token) {
+            // JWT 토큰 저장
+            // 로그인 성공 후, JWT를 Authorization 헤더에 추가
+			localStorage.setItem('token', data.token);
+            console.log('JWT 토큰 저장 완료:', data.token);
+
+            // 홈 화면으로 리다이렉션
+            window.location.href = '/';
+        } else {
+            if (data === undefined) {
+                const errorMessages = [];
+                errorMessages.push("아이디 또는 비밀번호가 잘못되었습니다.");
+
+                const errorMessagesDiv = document.getElementById('errorMessages');
+                errorMessagesDiv.innerHTML = ''; // 이전 메시지 제거
+                if (errorMessages.length > 0) {
+                    errorMessages.forEach(function(message) {
+                        const p = document.createElement('p');
+                        p.textContent = message;
+                        errorMessagesDiv.appendChild(p);
+                    });
+                }
+                return;
+            }else {
+            alert('로그인에 실패했습니다. 서버 응답을 확인하세요.');
+            console.error('서버 응답 데이터:', data);
+            }
+        }
+    })
+    .catch(function(error) {
+        console.error('로그인 요청 중 오류:', error);
+        alert('로그인 중 문제가 발생했습니다.');
+    });
 });
+
+window.onload = function() {
+    console.log('window.onload 실행됨'); // 디버깅 로그 추가
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code'); // 인가 코드 가져오기
+
+    console.log('인가 코드:', code); // 인가 코드 로그 추가
+
+    if (code) {
+        // 액세스 토큰 요청
+        fetch('http://localhost:9090/oauth2/callback/kakao?code=' + code)
+            .then(response => {
+                console.log('응답:', response); // 응답 로그 추가
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Failed to fetch access token');
+                }
+            })
+            .then(data => {
+                const accessToken = data.access_token; // 백엔드에서 반환한 토큰
+                localStorage.setItem('kakaoAccessToken', accessToken); // localStorage에 저장
+                console.log('토큰이 localStorage에 저장되었습니다:', accessToken);
+                // 홈 화면으로 리다이렉트 (필요 시)
+                window.location.href = "/";
+            })
+            .catch(error => {
+                console.error('토큰 요청 실패:', error);
+            });
+    } else {
+        console.log('인가 코드가 없습니다.');
+    }
+};
+
 </script>
+
+
+
+
+
     </main>
     <%@include file="/WEB-INF/include/footer.jsp" %>
 </body>

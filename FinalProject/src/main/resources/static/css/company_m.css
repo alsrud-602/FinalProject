@@ -1,24 +1,22 @@
 @charset "UTF-8";
 body{
 	padding-top : 94px;
-	background: white;
-	
+	background: white;	
 }
-
 .container {
-
 display:flex;
 justify-content: center;
 position: relative;
 
 }
-main {
 
+main {
 width: 1200px;
 position: absolute;
-left: 50%; 
+left: 50%;
 margin-bottom: 80px;
-transform: translateX(-50%); 
+transform: translateX(-50%);
+padding-bottom: 40px;
 
 }   
 
@@ -141,7 +139,19 @@ background-color: #DFDFDF;
 border: none;
 height: 2px;
 }
+.sub_brand{
+width: 250px;        
+height: 43px;         
+border: 1px solid #9A9A9A;
+box-sizing: border-box; 
+font-size: 16px; 
+padding-left: 10px;
+margin: 0 10px;
+}     
+#sub_adress{
+display:flex;
 
+}
 
   /*request  추가사항 */
  .content_field{
@@ -382,7 +392,7 @@ font-size: 18px;
 font-weight: 400;
 border: 1px solid #9A9A9A;
 color: #121212;
-
+margin-right: 10px;
 
 }
 .btn4{
@@ -420,6 +430,7 @@ border-radius: 5px;
 font-size: 16px;
 text-align: right;
 color: #767676;
+margin-bottom: 6px;
 }  
 
 /*사이드 바 */

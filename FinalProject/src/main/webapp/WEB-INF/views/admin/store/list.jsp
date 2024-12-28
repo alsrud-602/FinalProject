@@ -11,12 +11,15 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/browser-scss@1.0.3/dist/browser-scss.min.js"></script>
 <style>
+.slidebar{
 
+}
 </style>
 </head>
 <body>
-  
-  <div class="container">
+  <%@include file="/WEB-INF/include/admin-header.jsp" %>
+  <div class="container">  
+  <%@include file="/WEB-INF/include/admin-slidebar2.jsp" %>
   <main>
   <div class="content_box">
      <table id ="box_table">
@@ -96,13 +99,14 @@
        <td>서울</td>
        <td>
          <div class="status_green">승인완료</div>
+         <div class="status_purple">담당자요청</div>
        </td>
      </tr>
      <tr>
        <td>스텐리</td>
-       <td>스텐리X메시 콜라보 1943 팝업스토어 특집 한정판도 공개예정</td>
+       <td><a href="/Review/Storeview">스텐리X메시 콜라보 1943 팝업스토어 특집 한정판도 공개예정</a></td>
        <td>2024.12.12</td>
-       <td>4dddddefdsggggg42@email.com</td>
+       <td>4ddddd42@email.com</td>
        <td>서울</td>
        <td>
          <div class="status_red">미승인</div>
@@ -110,12 +114,12 @@
      </tr>
      <tr>
        <td>스텐리</td>
-       <td>침착맨 팝업스토어</td>
+       <td><a href="/Review/Storeview">침착맨 팝업스토어</a></td>
        <td>2024.12.12</td>
        <td>4342@email.come</td>
        <td>서울</td>
        <td>
-         <div class="status_purple">담당자요청</div>
+         <div class="status_green">승인완료</div>
        </td>
      </tr>
    
@@ -126,6 +130,7 @@
 
   </main>	
   </div>
+<%@include file="/WEB-INF/include/admin-footer.jsp" %>
 </body>
 </html>
   

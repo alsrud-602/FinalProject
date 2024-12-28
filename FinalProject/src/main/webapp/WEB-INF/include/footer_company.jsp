@@ -6,11 +6,9 @@
 }
 .footer {
   background: #949494;
-  height: 93px;
-  left: 0;
+  height: 90px;
   width: 100%;
-  position: relative; /* 고정 위치로 변경 */
-  bottom: 0; /* 화면 하단에 고정 */
+  position: relative; 
   margin-top: 20px;
   z-index: 1000;
 }
@@ -18,7 +16,7 @@
 .zetciti-zetciti-com-894-88-02003-2024-0235 {
   color: #ffffff;
   text-align: left;
-  font-size: 12px;
+  font-size: 10px;
   line-height: 140%;
   letter-spacing: -0.025em;
   font-weight: 400;
@@ -33,7 +31,7 @@
 .popcorn-corp-all-rights-reserved {
   color: #000000;
   text-align: left;
-  font-size: 12px;
+  font-size: 10px;
   line-height: 140%;
   letter-spacing: -0.025em;
   font-weight: 400;
@@ -61,7 +59,7 @@
   color: #000000;
   text-align: left;
   font-family: "ABeeZee-Regular", sans-serif;
-  font-size: 12px;
+  font-size: 10px;
   line-height: 140%;
   letter-spacing: -0.025em;
   font-weight: 400;
@@ -74,7 +72,7 @@
   color: #000000;
   text-align: left;
   font-family: "ABeeZee-Regular", sans-serif;
-  font-size: 12px;
+  font-size: 10px;
   line-height: 140%;
   letter-spacing: -0.025em;
   font-weight: 400;
