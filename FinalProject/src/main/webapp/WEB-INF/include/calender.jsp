@@ -72,9 +72,9 @@
             <table id="calendar">
                 <thead>
                     <tr height="70px">
-                        <td><label onclick="prev()" style="color: #ccc;"><</label></td>
+                        <td><label onclick="prev()" style="color: #ccc;">이전</label></td>
                         <td colspan="5" id="monthTable"></td>
-                        <td><label onclick="next()" style="color: #ccc;">></label></td>
+                        <td><label onclick="next()" style="color: #ccc;">다음</label></td>
                     </tr>
                     <tr id="dateHead">
                         <td>일</td>
@@ -323,30 +323,45 @@ function addNewPeriodForm() {
     colorCircle.style.borderRadius = '50%';
     colorCircle.style.backgroundColor = color;
     colorCircle.style.marginRight = '10px';
+    
 
     // 시작 날짜 입력
     const startDateInput = document.createElement('input');
     startDateInput.type = 'date';
-    startDateInput.classList.add('time_start');
+    startDateInput.classList.add('time_start'); 
+    startDateInput.name = 'reservation_start_date' 
+    
     startDateInput.value = startDateStr;
     startDateInput.style.marginRight = '10px';
     startDateInput.style.pointerEvents = 'none'; // 클릭 불가
+   
+    
     
     // 종료 날짜 입력
     const endDateInput = document.createElement('input');
     endDateInput.type = 'date';
     endDateInput.classList.add('time_end');
+    endDateInput.name = 'reservation_end_date' 
     endDateInput.value = endDateStr;
     endDateInput.style.marginRight = '10px';
     endDateInput.style.pointerEvents = 'none'; // 클릭 불가
+   
+    
+    
     
     // 플랜 선택
     const planSelect = document.createElement('select');
     planSelect.classList.add('sub_select');
     planSelect.style.marginRight = '10px';
+    planSelect.className = 'sub_plan_select'
+    planSelect.name = 'rd_plan'
     const option = document.createElement('option');
-    option.textContent = '플랜';
-    planSelect.appendChild(option);
+    option.textContent = '플랜선택';
+    planSelect.appendChild(option);   
+    
+   
+
+
 
     // 삭제 버튼
     const deleteButton = document.createElement('button');
@@ -375,9 +390,12 @@ function addNewPeriodForm() {
     subDayContainer.appendChild(endDateInput);
     subDayContainer.appendChild(planSelect);
     subDayContainer.appendChild(deleteButton);
-
+    
     newPeriod.appendChild(subDayContainer);
     periodContainer.appendChild(newPeriod);
+    
+    //셀렉트 업데이트
+    updatePlanSelectOptions();
 }
 
 
@@ -404,6 +422,42 @@ function removePeriod(button) {
 }
 
 makeArray();
+
+function updatePlanSelectOptions() {
+    const subPlanSelects = document.querySelectorAll('.sub_plan_select'); // 모든 요소 선택
+    
+    if (subPlanSelects.length > 0) {
+        subPlanSelects.forEach(subPlanSelect => { // 각 요소에 대해 반복
+            // 기존 옵션을 모두 제거
+            let presnetValue = subPlanSelect.value;
+            subPlanSelect.innerHTML = '';
+  
+            const option1 = document.createElement('option');
+            option1.textContent = '플랜선택';
+            subPlanSelect.appendChild(option1);
+            console.log(plans);
+            
+            // plans 배열의 각 플랜에 대해 옵션 생성
+            plans.forEach(plan => {
+                const option2 = document.createElement('option');
+                let planValue = 'P' + plan;
+                let planName = '플랜' + plan;
+                option2.value = planValue; 
+                option2.textContent = planName; 
+                
+                if(presnetValue == planValue){
+                 option2.selected = true;
+                }
+                
+                subPlanSelect.appendChild(option2); 
+            });
+            console.log(subPlanSelect);
+        });
+    } else {
+        console.log("sub_plan_select 클래스가 존재하지 않습니다.");
+    }
+}
+
 
 
 

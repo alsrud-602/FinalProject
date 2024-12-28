@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>     
 <!DOCTYPE html>
 <html>
 <head>
@@ -26,35 +28,32 @@
    <h2 class="content_title">관리자 요청 내역</h2>
    <div class="content_body">
    
+   <c:forEach var="r" items="${rList}" varStatus="status">
   <div class="content_header">
-  <p>2024.12.14 ~ 2014.12.30</p><div>진행중</div>
+  <p>${r.start_date} ~ ${r.end_date}</p>
+  <div>
+  <c:choose>
+  <c:when test="${not empty r.response}">
+    처리완료
+  </c:when>
+  <c:otherwise>
+   진행중
+  </c:otherwise>
+  </c:choose>
+ 
   </div>
-  <p class="content_store"><a href="/Review/Rview">메시X스텐리 1942 콜라보 팝업스토어</a></p>
+  </div>
+  <p class="content_store"><a href="/Business/Management/Request/View?request_idx=${r.request_idx}">${r.title}</a></p>
   <div class ="content_bottom">
-  <p>요청분야&nbsp;&nbsp;|&nbsp;&nbsp;기타</p>
+  <p>요청분야&nbsp;&nbsp;|&nbsp;&nbsp;${r.field}</p>
   </div>
 
 
   
-  <hr>
-     <div class="content_header">
-  <p>2024.12.14 ~ 2014.12.30</p><div>처리완료</div>
-  </div>
-  <p class="content_store"><a href="/Review/Rview">메시X스텐리 1942 콜라보 팝업스토어</a></p>
-  <div class ="content_bottom">
-  <p>요청분야&nbsp;&nbsp;|&nbsp;&nbsp;입점거부</p>
-  </div>
-
-  <hr>
-     <div class="content_header">
-  <p>2024.12.14 ~ 2014.12.30</p><div>진행중</div>
-  </div>
-  <p class="content_store"><a href="/Review/Rview">메시X스텐리 1942 콜라보 팝업스토어</a></p>
-  <div class ="content_bottom">
-  <p>요청분야&nbsp;&nbsp;|&nbsp;&nbsp;팝업정보수정</p>
-  </div>
-  
-   
+ <c:if test="${!status.last}">
+   <hr>
+   </c:if>
+  </c:forEach>
    </div>
    </div>
  
@@ -64,9 +63,9 @@
     <aside>
     <div id="side_title"><p>관리메뉴</p></div>
     <div id="side_layout">
-    <a href="/Review/Rview"><div class="side_menu">스토어 관리</div></a>
-    <a href="/Review/Rview"><div class="side_menu">요청 관리</div></a>
-    <a href=""><div class="side_menu">회원정보 관리</div></a>
+    <a href="/Business/Management/Main/List?company_idx=${company_idx}"><div class="side_menu">스토어 관리</div></a>
+    <a href="/Business/Management/Request/List?company_idx=${company_idx}"><div class="side_menu">요청 관리</div></a>
+    <a href="/Business/Management/Info?company_idx=${company_idx}"><div class="side_menu">회원정보 관리</div></a>
     </div>
   </aside>
   
