@@ -410,7 +410,7 @@
             </div>
             <img class="arrow0" src="/images/header/arrow0.png" />
         </div>
-        <a href="#">
+        <a href="/Users/Profile">
         <div class="menu-2066">
             <img class="personal-collection0" src="/images/header/personal-collection0.svg" />
             <div class="menu-list">프로필</div>

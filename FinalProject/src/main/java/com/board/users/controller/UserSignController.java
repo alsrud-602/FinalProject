@@ -89,7 +89,6 @@ public class UserSignController {
 	    String jwt = (String) session.getAttribute("jwt");
 	    String accessToken = (String) session.getAttribute("accessToken");
 
-	    // 세션에서 제거 (선택 사항)
 	    session.removeAttribute("jwt");
 	    session.removeAttribute("accessToken");
 
