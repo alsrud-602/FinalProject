@@ -28,7 +28,7 @@ public class HomeController {
 	
 	@RequestMapping("/Ho2")
 	public  String   test2() {
-		return "business/management/update";
+		return "users/usersWallet/wallet";
 
 		//return "/WEB-INF/views/home.jsp";
 	}
