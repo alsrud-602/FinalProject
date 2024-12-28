@@ -257,8 +257,10 @@
   
 </style>
 </head>
-<%@include file="/WEB-INF/include/header.jsp" %>
 <body>
+<%@include file="/WEB-INF/include/header.jsp" %>
+<main>
+
 <div>
    <div class="search-container">
         <input type="text" class="search-input">
@@ -266,6 +268,7 @@
             <img class="imgsearch" src="/images/main/search.png" alt="검색">
         </button>
     </div>
+
 	<div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
 	  <div class="carousel-indicators">
 	    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
@@ -379,6 +382,7 @@
 	  </div>
 	</div>
 </div>
+</main>
 	  <%@include file="/WEB-INF/include/footer.jsp" %>
 </body>
 <script>
@@ -427,5 +431,6 @@ $(function (){
 	})
 })
 </script>
+
 
 </html>

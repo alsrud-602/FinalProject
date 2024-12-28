@@ -89,7 +89,6 @@ public class UserSignController {
 	    String jwt = (String) session.getAttribute("jwt");
 	    String accessToken = (String) session.getAttribute("accessToken");
 
-	    // 세션에서 제거 (선택 사항)
 	    session.removeAttribute("jwt");
 	    session.removeAttribute("accessToken");
 
@@ -167,11 +166,8 @@ public class UserSignController {
 
 	    // 사용자 정보를 모델에 추가
 	    model.addAttribute("user", userOptional.get()); //user테이블 전체 가져오는 거
-	    
-	    model.addAttribute("name", userOptional.get().getName()); //이부분은 가져오실 값에따라 바뀌는 부분입니다. userOptional.get()까지는 동일하고 그 뒤에 수정하셔서 원하시는거 넣으시면 됩니다.
-	    model.addAttribute("email", userOptional.get().getEmail());
 
-	    return "users/popup/info";
+	    return "users/usersMain/main"; //정보를 보여줄 페이지
 	}
 
 	private String processKakaoToken(String jwt, Model model) {
@@ -191,10 +187,9 @@ public class UserSignController {
 	        }
 
 	        // 사용자 정보를 모델에 추가
-	        model.addAttribute("name", userOptional.get().getName());//그냥 로그인했을때랑 동일하게 수정하시면 됩니다.
-	        model.addAttribute("email", userOptional.get().getEmail());
+		    model.addAttribute("user", userOptional.get()); //user테이블 전체 가져오는 거
 
-	        return "users/popup/info";
+	        return "users/usersMain/main";//정보를 보여줄 페이지
 
 	    } catch (ExpiredJwtException e) {
 	        System.err.println("토큰 만료: " + e.getMessage());

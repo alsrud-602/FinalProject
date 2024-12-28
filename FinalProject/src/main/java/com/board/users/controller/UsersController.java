@@ -1,15 +1,21 @@
 package com.board.users.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.board.jwt.JwtUtil;
+import com.board.users.dto.User;
 import com.board.users.dto.UsersDto;
 import com.board.users.mapper.UsersMapper;
+import com.board.users.service.UserService;
 
 @Controller
 @RequestMapping("/Users")
@@ -17,6 +23,17 @@ public class UsersController {
 	
 	@Autowired
 	private UsersMapper usersMapper;
+	
+    @Autowired
+    private UserService userService;
+    
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
+
+    public UsersController(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
+        this.authenticationManager = authenticationManager;
+        this.jwtUtil = jwtUtil;
+    }
 	
 	// http://localhost:9090
 	@RequestMapping("/Wallet")
@@ -70,5 +87,6 @@ public class UsersController {
 		mv.setViewName("users/usersMain/mainsearch");
 		return mv;
 	}
+	
 	
 }
