@@ -62,7 +62,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
-                        .loginPage("/Users/LoginForm")
+                       .loginPage("/Users/LoginForm")
                         .failureUrl("/Users/LoginForm?error=true")
                         .successHandler((request, response, authentication) -> {
                             // SecurityContext 설정

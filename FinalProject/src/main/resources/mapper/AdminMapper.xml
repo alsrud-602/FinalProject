@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.board.admin.mapper.AdminMapper">  
+
+
+<select id="getalluserinfo">
+    SELECT
+    USER_IDX,
+    NIKNAME,
+    ID,
+    PASSWORD,
+    EMAIL,
+    BIRTHDATE,
+    PHONE,
+    COMPULSORY_AGREEMENT,
+    INFO_AGREEMENT,
+    MESSAGE_AGREEMENT,
+    MARKETING_AGREEMENT,
+    ALERT_AGREEMENT,
+    TO_CHAR(CDATE,'YYYY-MM-DD') AS CDATE,
+    STATUS,
+    ENABLED,
+    NAME,
+    ROLE,
+    SOCIAL_ID,
+    SOCIAL_TYPE
+FROM
+    USERS
+</select>
+
+
+<select id="getTotalPopcorn">
+SELECT TOTAL_POINTS
+ FROM POPCORN_WALLET
+ WHERE USER_ID = #{userId}
+  
+</select>
+
+<select id="getPopcornLogByUserId" resultType="com.board.users.vo.PopcornVo">
+SELECT 
+    LOG_ID, 
+    USER_ID, 
+    CONTENT, 
+    CONTENT_INFO, 
+    EARNED_POINTS, 
+    SPENT_POINTS,
+    TOTAL_POINTS, 
+    ADD_DATE
+  FROM FINAL.POPCORN_LOG
+  WHERE USER_ID = #{userId}
+  ORDER BY ADD_DATE DESC
+</select>
+
+
+<select id="getPopcornEarnLogByUserId" >
+SELECT 
+   NVL(SUM(EARNED_POINTS), 0) AS TOTAL_SPENT_POINTS
+  FROM FINAL.POPCORN_LOG
+  WHERE USER_ID = #{userId}
+</select>
+
+<select id="getPopcornSpentedLogByUserId" >
+SELECT 
+  NVL(SUM(SPENT_POINTS), 0) AS TOTAL_SPENT_POINTS
+  FROM FINAL.POPCORN_LOG
+  WHERE USER_ID = #{userId}
+</select>
+
+
+<insert id="PopcornPlusLogByUserId" >
+INSERT INTO POPCORN_LOG (
+    LOG_ID,
+    USER_ID,
+    CONTENT,
+    CONTENT_INFO,
+    EARNED_POINTS,
+    TOTAL_POINTS,
+    ADD_DATE
+) VALUES (
+ (SELECT NVL(MAX(LOG_ID),0)+1 FROM POPCORN_LOG),
+ #{arg0},
+ #{arg1},
+ '지급',
+ #{arg2},
+ (SELECT TOTAL_POINTS + #{arg2} FROM POPCORN_WALLET WHERE USER_ID = #{arg0}), 
+ SYSDATE
+)
+</insert>
+
+<insert id="PopcornMinusLogByUserId" >
+INSERT INTO POPCORN_LOG (
+    LOG_ID,
+    USER_ID,
+    CONTENT,
+    CONTENT_INFO,
+    SPENT_POINTS,
+    TOTAL_POINTS,
+    ADD_DATE
+) VALUES (
+ (SELECT NVL(MAX(LOG_ID),0)+1 FROM POPCORN_LOG),
+ #{arg0},
+ #{arg1},
+ '사용',
+ #{arg2},
+ (SELECT TOTAL_POINTS - #{arg2} FROM POPCORN_WALLET WHERE USER_ID = #{arg0}), 
+ SYSDATE
+)
+</insert>
+
+<update id="PopcornPlusWalletByUserId">
+	UPDATE POPCORN_WALLET
+SET
+        TOTAL_POINTS = TOTAL_POINTS + #{arg1}
+WHERE
+        USER_ID = #{arg0}
+</update>
+
+<update id="PopcornMinusWalletByUserId">
+	UPDATE POPCORN_WALLET
+SET
+        TOTAL_POINTS = TOTAL_POINTS - #{arg1}
+WHERE
+        USER_ID = #{arg0}
+</update>
+
+
+
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

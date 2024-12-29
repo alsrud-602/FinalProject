@@ -87,6 +87,94 @@ h3{
     border-radius: 10px;
 }
 /*---------------------------------------------------*/
+/*모달 버튼*/
+.modalbutton1{
+    white:50px;
+    width:100px;
+    height: 50px;
+    font-size: 14px;
+    font-family: 'Pretendard';
+    margin-bottom: 10px;
+    background: #00FF80;
+    border: none;
+    border-radius: 15px;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-weight: bold;
+    margin-left: 1300px;
+}
+.modalbutton2{
+    white:50px;
+    width:100px;
+    height: 50px;
+    font-size: 14px;
+    font-family: 'Pretendard';
+    margin-bottom: 10px;
+    background: #FFAE62;
+    border: none;
+    border-radius: 15px;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-weight: bold;
+}
+span{
+ color:red;
+}
+/*-----------------------------------------*/
+/*모달 내부*/
+.modal-content{
+top: 500px; /* 모달의 상단 위치 */
+}
+#exampleModalLabel1{
+    font-family: 'Roboto';
+    font-size: 24px;
+    font-weight: bold;
+    
+}
+#exampleModalLabel1 span{
+    color: #20573D;
+}
+
+#exampleModalLabel2{
+    font-family: 'Roboto';
+    font-size: 24px;
+    font-weight: bold;
+    
+}
+#exampleModalLabel2 span{
+    color: #731912;
+}
+
+.modal-body input[type="text"]{
+    background: #29292E;
+    color:white;
+    width:250px;
+    height: 50px;
+    margin-right: 5px;
+    text-align: center;
+}
+input[type="number"]{
+    background: #29292E;
+    color:white;
+    width:100px;
+    height: 50px;
+    text-align: center;
+}
+.insertbutton1{
+    background: #00875F;
+    color: white;
+    border: none;
+    width : 80px;
+    height: 50px;
+}
+.insertbutton2{
+    background: #F75A68;
+    color: white;
+    border: none;
+    width : 80px;
+    height: 50px;
+}
+/*---------------------------------------------------*/
 /*팝콘*/
 .popcorn{
     margin-top: 120px;  
@@ -171,6 +259,11 @@ h3{
     font-size: 20px;
     font-weight: 550;
 }
+
+.popcorndetail table th{
+text-align: center;
+
+}
 .popcorndetail table td:hover{
      background: #F5F5FF;
 }
@@ -193,21 +286,21 @@ h3{
     background:#F1FFF8;
     border: 1px solid #B8DBCA;
     border-radius: 15px;
-    width : 200px;
+    width : 100px;
     height: 45px;
 }
 .popcorning{
     background: #FFF9F2;
     border: 1px solid #EECEB0;
     border-radius: 15px;
-    width : 200px;
+    width : 100px;
     height: 45px;
 }
 .popcornminus{
     background: #FFF4F2;
     border: 1px solid #EECEB0;
     border-radius: 15px;
-    width : 200px;
+    width : 100px;
     height: 45px;
 }
 .popcornplus p{
@@ -337,7 +430,7 @@ span.center {
 	               <div><img src="/images/admin/user/popcorncharater.png"></div>
 	               <div>
 	                 <p style="color: #26A3DD; font-family: 'Poppins';">얻은 팝콘</p>
-	                 <p style="color: #0C5070; font-family: 'Poppins'; font-size:40px; font-weight: 700;">1000</p>
+	                 <p style="color: #0C5070; font-family: 'Poppins'; font-size:40px; font-weight: 700;">${earn}</p>
 	               </div>
 	             </div>
 	           </td>
@@ -346,7 +439,7 @@ span.center {
 	              <div><img src="/images/admin/user/popcornimg1.png"></div>
 	              <div>
 	                <p style="color: #CB3A31; font-family: 'Poppins';">사용된 팝콘</p>
-	                <p style="color: #F29321; font-family: 'Poppins'; font-size:40px; font-weight: 700;">1000</p>
+	                <p style="color: #F29321; font-family: 'Poppins'; font-size:40px; font-weight: 700;">${spented}</p>
 	              </div>
 	            </div>
 	           </td>
@@ -369,7 +462,7 @@ span.center {
 	              <div><img src="/images/admin/user/popcornimg2.png"></div>
 	              <div>
 	              <p style="font-family: 'Poppins';">잔여 팝콘</p>
-	              <p style="font-family: 'Poppins'; 'Poppins'; font-size:40px; font-weight: 700;">10000</p></div>
+	              <p style="font-family: 'Poppins'; 'Poppins'; font-size:40px; font-weight: 700;">${totPopCorn}</p></div>
 	            </div>
 	           </td>
 	         </tr>
@@ -378,22 +471,130 @@ span.center {
 	     
      </div>
      
-	       <p class="headerp">팝콘 내역</p>
-	     <div class="popcorndetail">
-	       <table>
-	         <tr>
-	           <td>거래명</td>
-	           <td>팝콘량</td>
-	           <td>일자</td>
-	           <td>상태</td>
+	 <p class="headerp">팝콘 내역</p>
+	    <!-- 모달을 실행할 버튼 --> 
+	  <button type="button" class="modalbutton1" data-bs-toggle="modal" data-bs-target="#exampleModal1">
+	    현재 회원 <br> 팝콘 지급하기
+	  </button>
+	  <button type="button" class="modalbutton2" data-bs-toggle="modal" data-bs-target="#exampleModal2">
+	    현재 회원 <br> 팝콘 <span>차감하기</span>
+	  </button>
+	  
+	  	<!-- 모달 -->
+		<!-- 지급하기 -->
+		<div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h1 class="modal-title fs-5" id="exampleModalLabel1">팝콘 <span>지급하기</span></h1>
+		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		      </div>
+		      <div class="modal-body">
+		        <form action="/Admin/PlusPopcorn" method="POST">
+		        <input id="popcornContentPlus" type="text"   name="content"      placeholder="지급내용(필수기입)">
+		        <input id="popcornAmountPlus"  type="number" name="plusPopcorn"  placeholder="ex)100">
+		        <input type="hidden" name="userId" value="TEST">
+		        <button type="submit" id="plusPopcornBtn"  class="insertbutton1" data-bs-dismiss="modal" >등록</button>
+		        </form>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		
+		<!-- 차감하기 -->
+		<div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h1 class="modal-title fs-5" id="exampleModalLabel2">팝콘 <span>차감하기</span></h1>
+		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		      </div>
+		      <div class="modal-body">
+		       <form action="/Admin/MinusPopcorn" method="POST">
+		        <input id="popcornContentMinus" type="text"   name="content"       placeholder="차감내용(필수기입)">
+		        <input id="popcornAmountMinus" type="number"  name="minusPopcorn"  placeholder="ex)100">
+		        <input type="hidden" name="userId" value="TEST">
+		        <button type="submit" id="minusPopcornBtn"  class="insertbutton2" data-bs-dismiss="modal">차감</button>
+		        </form>
+		    </div>
+		  </div>
+		</div>
+		
+		</div>
+	  
+<div class="popcorndetail">
+
+    <table>
+        <tr>
+            <th>거래명</th>
+            <th>팝콘량</th>
+            <th>일자</th>
+            <th>상태</th>
+        </tr>
+        
+        <c:forEach var="log" items="${wallet}">
+            <tr>
+                <td>${log.content}</td> <!-- 거래명 -->
+                <td>
+                    <c:choose>
+                        <c:when test="${log.earned_points > 0}">
+                            <span style="color: green;">+${log.earned_points}</span>
+                        </c:when>
+                        <c:otherwise>
+                            <span style="color: red;">-${log.spent_points}</span>
+                        </c:otherwise>
+                    </c:choose>
+                </td>
+                
+                <td>${log.add_date}</td> <!-- 일자 -->
+                
+                <td>
+                    <div class="popcorncenter">
+                        <c:choose>
+                            <c:when test="${log.earned_points > 0}">
+                                <div class="popcornplus"><p>지급</p></div>
+                            </c:when>
+                            <c:when test="${log.spent_points > 0}">
+                                <div class="popcornminus"><p>차감</p></div>
+                            </c:when>
+                            <c:otherwise>
+                                <div class="popcorning"><p>대기중</p></div>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+                </td>
+                
+            </tr>
+        </c:forEach>
+        
+          <tr>
+	           <td>리뷰 작성</td>
+	           <td>+200</td>
+	           <td>2024-12-16</td>
+	           <td>
+	             <div class="popcorncenter">
+	               <div class="popcorning"><p>지급대기</p></div>
+	             </div>
+	           </td>
 	         </tr>
-	         <tr>
+         <tr>
+          <tr>
+	           <td>리뷰 top3</td>
+	           <td>+2000</td>
+	           <td>2024-12-16</td>
+	           <td>
+	             <div class="popcorncenter">
+	               <div class="popcorning"><p>지급대기</p></div>
+	             </div>
+	           </td>
+	         </tr>
+         <tr>
 	           <td>팝콘 팩토리</td>
 	           <td>-50</td>
 	           <td>2024-12-20</td>
 	           <td>
 	             <div class="popcorncenter">
-	               <div class="popcornminus"><p>차감</p></div>
+	               <div class="popcorning"><p>차감대기</p></div>
 	             </div>
 	           </td>
 	         </tr>
@@ -403,52 +604,13 @@ span.center {
 	           <td>2024-12-18</td>
 	           <td>
 	             <div class="popcorncenter">
-	               <div class="popcornminus"><p>차감</p></div>
+	               <div class="popcorning"><p>차감대기</p></div>
 	             </div>
 	           </td>
 	         </tr>
-	         <tr>
-	           <td>리뷰 top3</td>
-	           <td>+2000</td>
-	           <td>2024-12-16</td>
-	           <td>
-	             <div class="popcorncenter">
-	               <div class="popcorning"><p>지급중</p></div>
-	             </div>
-	           </td>
-	         </tr>
-	         <tr>
-	           <td>리뷰작성</td>
-	           <td>+200</td>
-	           <td>2024-12-14</td>
-	           <td>
-	             <div class="popcorncenter">
-	               <div class="popcornplus"><p>지급완료</p></div>
-	             </div>
-	           </td>
-	         </tr>
-	         <tr>
-	           <td>팝콘 팩토리</td>
-	           <td>-500</td>
-	           <td>2024-12-13</td>
-	           <td>
-	             <div class="popcorncenter">
-	               <div class="popcornminus"><p>차감</p></div>
-	             </div>
-	           </td>
-	         </tr>
-	         <tr>
-	           <td>가입 보상</td>
-	           <td>+1000</td>
-	           <td>2024-12-12</td>
-	           <td>
-	             <div class="popcorncenter">
-	               <div class="popcornplus"><p>지급완료</p></div>
-	             </div>
-	           </td>
-	         </tr>
-	       </table>
-	     </div>
+        
+    </table>
+</div>
      
    </div>
  </div>
@@ -479,6 +641,8 @@ const colorFn = (i, classname, color) => {
 
 
 makeChart(45, chart1, '#45AD5D');
+
+
 
 </script>
 </html>

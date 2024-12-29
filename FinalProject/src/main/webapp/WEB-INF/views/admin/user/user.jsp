@@ -161,12 +161,20 @@ top: 500px; /* 모달의 상단 위치 */
 #exampleModalLabel2 span{
     color: #731912;
 }
-
+.modal-body input[type="text"]{
+    background: #29292E;
+    color:white;
+    width:250px;
+    height: 50px;
+    margin-right: 5px;
+    text-align: center;
+}
 input[type="number"]{
     background: #29292E;
     color:white;
-    width:300px;
+    width:100px;
     height: 50px;
+    text-align: center;
 }
 .insertbutton1{
     background: #00875F;
@@ -210,7 +218,7 @@ input[type="number"]{
           <td><input type="checkbox" id="usertable" name="usertable" class="headercheckbox" onclick='selectAll(this)'/></td>
           <td>
 	          닉네임
-	          <select id="sortSelect">
+	          <select id="sortSelect" onchange="sortTable('nikname')">
 	          <option value=""></option>
 	          <option value="asc">asc</option>
 	          <option value="desc">desc</option>
@@ -218,7 +226,7 @@ input[type="number"]{
           </td>
           <td>
           아이디
-          <select id="sortSelect">
+          <select id="sortSelect" onchange="sortTable('id')">
             <option value=""></option>
             <option value="asc">asc</option>
             <option value="desc">desc</option>
@@ -228,249 +236,29 @@ input[type="number"]{
           <td>상태</td>
           <td>상세보기</td>
         </tr>
-        <tr>
-          <td><input type="checkbox" id="usertable" name="usertable" class="checkbox"></td>
-          <td>대원스토어</td>
-          <td>DaeWon Store</td>
-          <td>2024.12.13</td>
-          <td>
-	          <div>
-		          <select class="userSelect">
-		            <option class="good">우수회원</option>
-		            <option class="nomal">nomal</option>
-		            <option class="bad">blocked</option>
-		          </select>
-		      </div>
-          </td>
-          <td><a href="/Admin/Userdetail">상세보기</a></td>
-        </tr>
-        <tr>
-          <td><input type="checkbox" id="usertable" name="usertable" class="checkbox"></td>
-          <td>대원스토어</td>
-          <td>DaeWon Store</td>
-          <td>2024.12.13</td>
-          <td>
-	          <div>
-		          <select class="userSelect">
-		            <option class="nomal">nomal</option>
-		            <option class="good">우수회원</option>
-		            <option class="bad">blocked</option>
-		          </select>
-		      </div>
-          </td>
-          <td><a href="/Admin/Userdetail">상세보기</a></td>
-        </tr>
-        <tr>
-          <td><input type="checkbox" id="usertable" name="usertable" class="checkbox"></td>
-          <td>대원스토어</td>
-          <td>DaeWon Store</td>
-          <td>2024.12.13</td>
-          <td>
-	          <div>
-		          <select class="userSelect">
-		            <option class="bad">blocked</option>
-		            <option class="good">우수회원</option>
-		            <option class="nomal">nomal</option>
-		          </select>
-		      </div>
-          </td>
-          <td><a href="/Admin/Userdetail">상세보기</a></td>
-        </tr>
-        <tr>
-          <td><input type="checkbox" id="usertable" name="usertable" class="checkbox"></td>
-          <td>대원스토어</td>
-          <td>DaeWon Store</td>
-          <td>2024.12.13</td>
-          <td>
-	          <div>
-		          <select class="userSelect">
-		            <option class="nomal">nomal</option>
-		            <option class="bad">blocked</option>
-		            <option class="good">우수회원</option>
-		          </select>
-		      </div>
-          </td>
-          <td><a href="/Admin/Userdetail">상세보기</a></td>
-        </tr>
-        <tr>
-          <td><input type="checkbox" id="usertable" name="usertable" class="checkbox"></td>
-          <td>대원스토어</td>
-          <td>DaeWon Store</td>
-          <td>2024.12.13</td>
-          <td>
-	          <div>
-		          <select class="userSelect">
-		            <option class="good">우수회원</option>
-		            <option class="bad">blocked</option>
-		            <option class="nomal">nomal</option>
-		          </select>
-		      </div>
-          </td>
-          <td><a href="/Admin/Userdetail">상세보기</a></td>
-        </tr>
-        <tr>
-          <td><input type="checkbox" id="usertable" name="usertable" class="checkbox"></td>
-          <td>대원스토어</td>
-          <td>DaeWon Store</td>
-          <td>2024.12.13</td>
-          <td>
-	          <div>
-		          <select class="userSelect">
-		            <option class="bad">blocked</option>
-		            <option class="good">우수회원</option>
-		            <option class="nomal">nomal</option>
-		          </select>
-		      </div>
-          </td>
-          <td><a href="/Admin/Userdetail">상세보기</a></td>
-        </tr>
-        <tr>
-          <td><input type="checkbox" id="usertable" name="usertable" class="checkbox"></td>
-          <td>대원스토어</td>
-          <td>DaeWon Store</td>
-          <td>2024.12.13</td>
-          <td>
-	          <div>
-		          <select class="userSelect">
-		            <option class="bad">blocked</option>
-		            <option class="good">우수회원</option>
-		            <option class="nomal">nomal</option>
-		          </select>
-		      </div>
-          </td>
-          <td><a href="/Admin/Userdetail">상세보기</a></td>
-        </tr>
-        <tr>
-          <td><input type="checkbox" id="usertable" name="usertable" class="checkbox"></td>
-          <td>대원스토어</td>
-          <td>DaeWon Store</td>
-          <td>2024.12.13</td>
-          <td>
-	          <div>
-		          <select class="userSelect">
-		            <option class="bad">blocked</option>
-		            <option class="good">우수회원</option>
-		            <option class="nomal">nomal</option>
-		          </select>
-		      </div>
-          </td>
-          <td><a href="/Admin/Userdetail">상세보기</a></td>
-        </tr>
-        <tr>
-          <td><input type="checkbox" id="usertable" name="usertable" class="checkbox"></td>
-          <td>대원스토어</td>
-          <td>DaeWon Store</td>
-          <td>2024.12.13</td>
-          <td>
-	          <div>
-		          <select class="userSelect">
-		            <option>우수회원</option>
-		            <option>nomal</option>
-		            <option>blocked</option>
-		          </select>
-		      </div>
-          </td>
-          <td><a href="/Admin/Userdetail">상세보기</a></td>
-        </tr>
-        <tr>
-          <td><input type="checkbox" id="usertable" name="usertable" class="checkbox"></td>
-          <td>대원스토어</td>
-          <td>DaeWon Store</td>
-          <td>2024.12.13</td>
-          <td>
-	          <div>
-		          <select class="userSelect">
-		            <option>우수회원</option>
-		            <option>blocked</option>
-		            <option>nomal</option>
-		          </select>
-		      </div>
-          </td>
-          <td><a href="/Admin/Userdetail">상세보기</a></td>
-        </tr>
-        <tr>
-          <td><input type="checkbox" id="usertable" name="usertable" class="checkbox"></td>
-          <td>대원스토어</td>
-          <td>DaeWon Store</td>
-          <td>2024.12.13</td>
-          <td>
-	          <div>
-		          <select class="userSelect">
-		            <option>blocked</option>
-		            <option>우수회원</option>
-		            <option>nomal</option>
-		          </select>
-		      </div>
-          </td>
-          <td><a href="/Admin/Userdetail">상세보기</a></td>
-        </tr>
-        <tr>
-          <td><input type="checkbox" id="usertable" name="usertable" class="checkbox"></td>
-          <td>대원스토어</td>
-          <td>DaeWon Store</td>
-          <td>2024.12.13</td>
-          <td>
-	          <div>
-		          <select class="userSelect">
-		            <option>우수회원</option>
-		            <option>nomal</option>
-		            <option>blocked</option>
-		          </select>
-		      </div>
-          </td>
-          <td><a href="/Admin/Userdetail">상세보기</a></td>
-        </tr>
-        <tr>
-          <td><input type="checkbox" id="usertable" name="usertable" class="checkbox"></td>
-          <td>대원스토어</td>
-          <td>DaeWon Store</td>
-          <td>2024.12.13</td>
-          <td>
-	          <div>
-		          <select class="userSelect">
-		            <option>우수회원</option>
-		            <option>nomal</option>
-		            <option>blocked</option>
-		          </select>
-		      </div>
-          </td>
-          <td><a href="/Admin/Userdetail">상세보기</a></td>
-        </tr>
-        <tr>
-          <td><input type="checkbox" id="usertable" name="usertable" class="checkbox"></td>
-          <td>대원스토어</td>
-          <td>DaeWon Store</td>
-          <td>2024.12.13</td>
-          <td>
-	          <div>
-		          <select class="userSelect">
-		            <option class="bad">blocked</option>
-		            <option class="good">우수회원</option>
-		            <option class="nomal">nomal</option>
-		          </select>
-		      </div>
-          </td>
-          <td><a href="/Admin/Userdetail">상세보기</a></td>
-        </tr>
-        <tr>
-          <td><input type="checkbox" id="usertable" name="usertable" class="checkbox"></td>
-          <td>대원스토어</td>
-          <td>DaeWon Store</td>
-          <td>2024.12.13</td>
-          <td>
-	          <div>
-		          <select class="userSelect">
-		            <option class="bad">blocked</option>
-		            <option class="good">우수회원</option>
-		            <option class="nomal">nomal</option>
-		          </select>
-		      </div>
-          </td>
-          <td><a href="/Admin/Userdetail">상세보기</a></td>
-        </tr>
-        
-        
-      </table>
+          
+    <tbody>
+        <!-- 사용자 목록을 출력 -->
+        <c:forEach var="user" items="${allusers}">
+            <tr>
+             <td><input type="checkbox" id="usertable" name="usertable" class="headercheckbox" onclick='select(this)'/></td>
+                <td>${user.nikname}</td>
+                <td>${user.id}</td>
+                <td>${user.cdate}</td>
+                <td>
+                    <div>
+                        <select class="userSelect">
+                            <option value="good" ${user.status == '우수회원' ? 'selected' : ''}>우수회원</option>
+                            <option value="nomal" ${user.status == '일반회원' ? 'selected' : ''}>일반회원</option>
+                            <option value="bad" ${user.status == 'blocked' ? 'selected' : ''}>차단됨</option>
+                        </select>
+                    </div>
+                </td>
+                <td><a href="/Admin/Userdetail">상세보기</a></td>
+            </tr>
+        </c:forEach>
+    </tbody>
+    </table>
       
 
 		<!-- 모달 -->
@@ -483,7 +271,8 @@ input[type="number"]{
 		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		      </div>
 		      <div class="modal-body">
-		        <input type="number">
+		        <input type="text" placeholder="지급내용(필수기입)">
+		        <input type="number" placeholder="ex)100">
 		        <button type="button" class="insertbutton1" data-bs-dismiss="modal">등록</button>
 		      </div>
 		    </div>
@@ -499,7 +288,8 @@ input[type="number"]{
 		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		      </div>
 		      <div class="modal-body">
-		        <input type="number">
+		        <input type="text" placeholder="차감내용(필수기입)">
+		        <input type="number" placeholder="ex)100">
 		        <button type="button" class="insertbutton2" data-bs-dismiss="modal">차감</button>
 		    </div>
 		  </div>
@@ -523,32 +313,51 @@ function selectAll(selectAll)  {
     checkbox.checked = selectAll.checked;
   })
 }
+
 </script>
 <script>
 $(function() {
-    // 페이지 로드 시 각 .userSelect 요소의 첫 번째 옵션의 값을 확인
+    // 회원별 색깔
     $('.userSelect').each(function() {
-        var insert = $(this).find('option:first').text(); 
-        if (insert == '우수회원') {
-            $(this).css('background-color', '#F7FF00'); // '우수회원'일 경우 배경색을 노란색으로
-        } else if (insert == 'nomal') {
-            $(this).css('background-color', '#00522B'); // 'nomal'일 경우 배경색을 어두운 녹색으로
-        } else if (insert == 'blocked') {
-            $(this).css('background-color', '#DC3545'); // 'blocked'일 경우 배경색을 빨간색으로
-        } 
+        var value = $(this).val(); 
+        updateBackgroundColor($(this), value); 
     });
 
-    // 선택된 옵션에 따라 색상 변경
     $('.userSelect').on('change', function() {
-        var value = $(this).val();
-        if (value == '우수회원') {
-            $(this).css('background-color', '#F7FF00'); // 현재 선택된 요소의 배경색 변경
-        } else if (value == 'nomal') {
-            $(this).css('background-color', '#00522B'); // 현재 선택된 요소의 배경색 변경
-        } else if (value == 'blocked') {
-            $(this).css('background-color', '#DC3545'); // 현재 선택된 요소의 배경색 변경
-        }
+        var value = $(this).val(); 
+        updateBackgroundColor($(this), value); 
+        updateFontColor($(this), value); 
     });
+    
+    function updateBackgroundColor(selectElement, value) {
+        if (value == 'good') {
+            selectElement.css('background-color', '#F7FF00'); // 우수회원: 노란색
+            selectElement.css('color', 'black');
+        } else if (value == 'nomal') {
+            selectElement.css('background-color', '#00522B'); // 일반회원: 녹색
+            selectElement.css('color', 'white');
+        } else if (value == 'bad') {
+            selectElement.css('background-color', '#DC3545'); // 차단됨: 빨간색
+            selectElement.css('color', 'white'); // 차단됨: 빨간색
+        } else {
+            selectElement.css('background-color', ''); // 기본: 하양 
+        }
+    }
+    
+    function updateFontColor(selectElement, value) {
+        if (value == 'good') {
+            selectElement.css('color', 'black');
+        } else if (value == 'nomal') {
+            selectElement.css('color', 'white');
+        } else if (value == 'bad') {
+            selectElement.css('color', 'white'); // 차단됨: 빨간색
+        } else {
+        }
+    }
 });
+
+
+
+
 </script>
 </html>
