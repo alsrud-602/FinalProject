@@ -209,6 +209,8 @@ function handleDateClick(day, isCurrentMonth, cell) {
         selectedStartDate = clickedDate;
         selectedEndDate = null; // 종료일 초기화
     }
+    //console.log('가나다' + selectedStartDate);
+    //console.log('가나다' + selectedEndDate);
 
     // 선택하려는 범위의 셀을 조회
     const cells = document.querySelectorAll("#calendar tbody td");
@@ -296,10 +298,15 @@ function getColorForPeriod(periodCount) {
     return colors[periodCount % colors.length];
 }
 
-function addNewPeriodForm() {
+function addNewPeriodForm(sd,ed,planCount) {
     const periodContainer = document.getElementById('periods');
     const newPeriod = document.createElement('div');
     newPeriod.classList.add('period');
+    
+    if (sd !== undefined && ed !== undefined) {
+        selectedStartDate = sd;
+        selectedEndDate = ed;
+    }
     
     // 현재 기간의 시작일과 종료일에 1일 추가 이유 : 지금 현재 선택한 날짜가 UTC 형식이라 값이  하루씩 적어진다고 함 
     const adjustedStartDate = new Date(selectedStartDate);
@@ -308,11 +315,17 @@ function addNewPeriodForm() {
     const adjustedEndDate = new Date(selectedEndDate);
     adjustedEndDate.setDate(adjustedEndDate.getDate() + 1);
     
+    console.log('확인중');
+    console.log(adjustedStartDate);
+    console.log(adjustedEndDate);
     
     // 현재 기간의 시작일과 종료일
     const startDateStr = adjustedStartDate.toISOString().split('T')[0];
     const endDateStr = adjustedEndDate.toISOString().split('T')[0];
-
+    console.log(startDateStr);
+    console.log(endDateStr);
+        
+    
     // 현재 기간에 대응하는 색상
     const color = getColorForPeriod(periodCount - 1);
 
@@ -395,7 +408,7 @@ function addNewPeriodForm() {
     periodContainer.appendChild(newPeriod);
     
     //셀렉트 업데이트
-    updatePlanSelectOptions();
+    updatePlanSelectOptions(planCount);
 }
 
 
@@ -423,30 +436,49 @@ function removePeriod(button) {
 
 makeArray();
 
-function updatePlanSelectOptions() {
+function updatePlanSelectOptions(planCount) {
+                console.log('planCount Value:', planCount);
+	
     const subPlanSelects = document.querySelectorAll('.sub_plan_select'); // 모든 요소 선택
     
     if (subPlanSelects.length > 0) {
         subPlanSelects.forEach(subPlanSelect => { // 각 요소에 대해 반복
             // 기존 옵션을 모두 제거
             let presnetValue = subPlanSelect.value;
+            let createValue = null; 
+            if (planCount) {
+                createValue = 'P' + planCount; // 새로운 값 생성
+                console.log('Created Value:', createValue);
+            }
+        
+           
             subPlanSelect.innerHTML = '';
-  
+       
             const option1 = document.createElement('option');
             option1.textContent = '플랜선택';
             subPlanSelect.appendChild(option1);
             console.log(plans);
-            
+            console.log('Created Value 포문전 확인:', createValue);
             // plans 배열의 각 플랜에 대해 옵션 생성
             plans.forEach(plan => {
                 const option2 = document.createElement('option');
                 let planValue = 'P' + plan;
                 let planName = '플랜' + plan;
                 option2.value = planValue; 
-                option2.textContent = planName; 
-                
-                if(presnetValue == planValue){
-                 option2.selected = true;
+                option2.textContent = planName;  
+            	
+                	  console.log('Created Value 접근 가능:', createValue);
+                if(createValue !== null && createValue !== undefined) {
+                	  console.log('Created Value 접근 가능완료:', createValue);
+                	
+                    if (createValue == planValue) {
+                        option2.selected = true; // 새로 생성된 값 선택
+                        console.log('Created Value치최최:', createValue);
+                    }
+                } else {
+                    if (presnetValue == planValue) {
+                        option2.selected = true; // 기존 값 선택
+                    }
                 }
                 
                 subPlanSelect.appendChild(option2); 

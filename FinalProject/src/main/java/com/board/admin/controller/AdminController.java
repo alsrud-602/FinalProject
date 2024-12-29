@@ -43,4 +43,11 @@ public class AdminController {
 		return mv;
 	}
 	
+	@RequestMapping("/Advertise")
+	public ModelAndView advertise() {
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("/admin/manager/advertise");
+		return mv;
+	}
+	
 }

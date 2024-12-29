@@ -15,6 +15,7 @@ public class ReservationDateDto {
 	
 	private int rd_idx;
 	private int rs_idx;
+	private int store_idx;
 	private String plan;
 	private Date reservation_start_date;
 	private Date reservation_end_date;

@@ -11,7 +11,7 @@ public class HomeController {
 	@RequestMapping("/")
 	public  String   home() {
 		
-
+		
 		return "business/management/main/updatebasic";
 		//return "/WEB-INF/views/home.jsp";
 	}
