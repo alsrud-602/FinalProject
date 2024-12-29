@@ -111,11 +111,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
 		String path = request.getServletPath();
-		boolean shouldExclude = path.equals("/error") || path.startsWith("/css/") || path.startsWith("/images/")
-				|| path.startsWith("/img/") || path.startsWith("/static/") || path.endsWith(".js")
+		boolean shouldExclude = path.equals("/error") || path.startsWith("/static/")
 				|| path.startsWith("/Users/LoginForm") || path.startsWith("/Users/SignupForm")
 				|| path.startsWith("/Users/Signup") || path.startsWith("/Users/CheckDuplication")
-				//|| path.startsWith("/oauth2/") || path.startsWith("/oauth2/callback")
 				|| path.startsWith("/CompanyAuth/Signup") || path.startsWith("/CompanyAuth/SignupForm")
 				|| path.startsWith("/CompanyAuth/LoginForm") || path.startsWith("/CompanyAuth/CheckDuplication");
 		// System.out.println("필터 제외 여부: " + shouldExclude + ", 경로: " + path);
