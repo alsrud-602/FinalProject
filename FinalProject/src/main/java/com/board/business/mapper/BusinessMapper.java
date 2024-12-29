@@ -11,9 +11,11 @@ import com.board.business.dto.CompanyDto;
 import com.board.business.dto.RequestDto;
 import com.board.business.dto.ReservationDateDto;
 import com.board.business.dto.ReservationPlanDto;
+import com.board.business.dto.ReservationStoreDto;
 import com.board.business.dto.StoreCategoryDto;
 import com.board.business.dto.StoreListDto;
 import com.board.business.dto.StoreTagDto;
+import com.board.business.dto.StoreUpdateDto;
 
 @Mapper
 public interface BusinessMapper {
@@ -57,6 +59,45 @@ public interface BusinessMapper {
 	int getCompanyIdxByStoreIdx(int store_idx);
 
 	void updateCompany(CompanyDto companydto);
+
+	StoreUpdateDto getStoreUpdateinfo(int store_idx);
+
+	List<StoreTagDto> getStoreTag(int store_idx);
+
+	List<CategoryDto> getStoreCategory(int store_idx);
+
+	ReservationStoreDto getReservationStore(int store_idx);
+
+	List<ReservationDateDto> getReservationDate(int rs_idx);
+
+	List<ReservationPlanDto> getReservationPlan(String plan);
+
+	void updateStore(HashMap<String, Object> map);
+
+	void updateStoreDetail(HashMap<String, Object> map);
+
+	void deleteStoreCategory(int store_idx);
+
+	void deleteStoreTage(int store_idx);
+
+	void updateStoreOperation(HashMap<String, Object> map);
+
+	void insertStoreCategoryListUpdate(@Param("scList")List<StoreCategoryDto> scList);
+
+	void insertStoreTageUpdate(@Param("tagList")List<StoreTagDto> tagList);
+
+	void insertReservationDateUpdate(@Param("rdList")List<ReservationDateDto> rdList);
+
+	int getReservationRs_idx(int store_idx);
+
+	void updateReservationStore(HashMap<String, Object> map);
+
+	void deleteReservationPlan(String plan);
+
+	void deleteReservationDate(int rs_idx);
+
+	void insertReservationPlanUpdate(@Param("rpList")List<ReservationPlanDto> rpList);
+
 
 
 	
