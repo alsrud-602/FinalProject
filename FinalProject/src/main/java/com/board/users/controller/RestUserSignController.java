@@ -169,8 +169,10 @@ public class RestUserSignController {
                     .headers(headers)
                     .build();
         }
-        catch (UserNotFoundOAuth2Exception | UserAlreadyLinkedToSocialException e) {
-            // 예외를 그대로 던져 GlobalExceptionHandler에서 처리하도록 위임
+        catch (UserNotFoundOAuth2Exception e){
+        	throw e;
+        }
+        catch (UserAlreadyLinkedToSocialException e) {
             throw e;
         }
         catch (Exception e) {
