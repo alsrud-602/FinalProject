@@ -101,7 +101,7 @@ public interface BusinessMapper {
 
 	void insertReservationPlanUpdate(@Param("rpList")List<ReservationPlanDto> rpList);
 
->>>>>>> refs/heads/develop
+
 
 
 	

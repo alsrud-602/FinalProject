@@ -176,7 +176,6 @@ public class BusinessController {
     mv.addObject("planList", jsonPlanList);		
     
     System.out.println("!!!!!!!!리스트 리스트 넣기"+ allRPList);
->>>>>>> refs/heads/develop
 	mv.setViewName("business/management/main/update");
 	return mv;
 				
