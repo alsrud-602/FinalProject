@@ -92,8 +92,14 @@ public class User {
     public boolean isValidAgreement(String agreement) {
         return "N".equals(agreement) || "Y".equals(agreement);
     }
+    
+    // 사용자 유형 결정 메소드
+    public String determineUserType() {
+        return "user"; // 기본 사용자 유형
+    }
 
 
 
 
 }
+

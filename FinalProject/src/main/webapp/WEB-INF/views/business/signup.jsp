@@ -133,11 +133,11 @@
 <body>
     <main>
         <div class="container">
-            <form method="POST" action="/Users/Signup" id="signupForm">
+            <form method="POST" action="/CompanyAuth/Signup" id="signupForm">
                 <a href="/Business"><h2>POPCORN.Biz</h2></a>
                 <div class="input-group">
                     <label for="nickname">기업명</label>
-                    <input type="text" id="nickname" name="nickname" placeholder="*2자 이상 입력해 주세요" required>
+                    <input type="text" id="name" name="name" placeholder="*2자 이상 입력해 주세요" required>
                     <div class="note">*2자 이상 입력해 주세요</div>
                 </div>
                 <div class="input-group">
@@ -183,28 +183,28 @@
 	             </div>
                 <div class="input-group">
                     <label for="phone">전화번호</label>
-                    <input type="text" id="phone" name="phone" placeholder="01011111111" required>
+                    <input type="text" id="phone" name="phone" maxlength="11" pattern="[0-9]{2,3}[0-9]{3,4}[0-9]{4}" placeholder="01011111111" required>
                     <div class="note">*숫자만 입력해주세요</div>
                 </div>
 				<div class="checkbox-group">
 				    <label for="compulsoryAgreement">
-				        <input type="checkbox" id="compulsoryAgreement" name="compulsoryAgreement" required>
+				        <input type="checkbox" id="compulsoryAgreement" name="compulsoryAgreement" value="Y"  required>
 				        <span style="color: #00FF84;">(필수)</span>&nbsp;POPCORN 이용약관 동의&nbsp;&nbsp; <span style="color: #767676; border-bottom: 1px solid #767676">자세히</span>
 				    </label>
 				    <label for="infoAgreement">
-				        <input type="checkbox" id="infoAgreement" name="infoAgreement" required>
+				        <input type="checkbox" id="infoAgreement" name="infoAgreement" value="Y" required>
 				        <span style="color: #00FF84;">(필수)</span>&nbsp;개인정보 수집 및 이용 동의&nbsp;&nbsp;<span style="color: #767676; border-bottom: 1px solid #767676">자세히</span>
 				    </label>
 				    <label for="messageAgreement">
-				        <input type="checkbox" id="messageAgreement" name="messageAgreement" required>
+				        <input type="checkbox" id="messageAgreement" name="messageAgreement" value="Y" required>
 				        <span style="color: #00FF84;">(필수)</span>&nbsp;SMS/E-MAIL 수신 동의&nbsp;&nbsp;<span style="color: #767676; border-bottom: 1px solid #767676">자세히</span>
 				    </label>
 				    <label for="marketingAgreement">
-				        <input type="checkbox" id="marketingAgreement" name="marketingAgreement">
+				        <input type="checkbox" id="marketingAgreement" name="marketingAgreement" value="Y" >
 				        <span style="color: #767676;">(선택)</span>&nbsp;마케팅 목적의 개인정보 수집 및 이용 동의&nbsp;&nbsp;<span style="color: #767676; border-bottom: 1px solid #767676">자세히</span>
 				    </label>
 				    <label for="alertAgreement">
-				        <input type="checkbox" id="alertAgreement" name="alertAgreement">
+				        <input type="checkbox" id="alertAgreement" name="alertAgreement" value="Y" >
 				        <span style="color: #767676;">(선택)</span>&nbsp;광고성 정보 수신 동의&nbsp;&nbsp;<span style="color: #767676; border-bottom: 1px solid #767676">자세히</span>
 				    </label>
 				</div>
@@ -213,20 +213,21 @@
             </form>
         </div>
         
-<script>
+<script>/*
 document.getElementById('signupForm').addEventListener('submit', function(event) {
     event.preventDefault(); // 기본 제출 동작 방지
     const confirmPassword = document.querySelector('#confirm-password');
     const password = document.getElementById('password').value;
+    const passwordInput = document.getElementById('password');
     const errorMessages = [];
 
     // 비밀번호 유효성 검사
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{};:,<.>])[A-Za-z\d!@#$%^&*()\-_=+{};:,<.>]{8,16}$/;
-    if (!passwordRegex.test(password)) {
+    if (!passwordRegex.test(passwordInput)) {
         errorMessages.push("비밀번호는 8~16자의 영문 대/소문자, 숫자, 특수문자를 사용해야 합니다.");
-        password.focus();
+        passwordInput.focus();
     }
- 	if( password.value.trim() != confirmPassword.value.trim() ) {
+ 	if( password.trim() != confirmPassword.value.trim() ) {
  		errorMessages.push("비밀번호와 비밀번호확인이 일치하지 않습니다");
  		confirmPassword.focus();
   	   return false;
@@ -251,7 +252,7 @@ document.getElementById('signupForm').addEventListener('submit', function(event)
             psErrorMessagesDiv2.appendChild(p);
         });
     }
-});
+});*/
 //이메일 유효성 처리
 function updateEmail() {
     var emailInput = document.getElementById('email');
@@ -265,15 +266,7 @@ function updateEmail() {
         emailInput.value = emailInput.value.split('@')[0]; // 도메인 제거
     }
 }
-//생일 formatter
-const birthdate = document.getElementById('birthdate');
 
-birthdate.addEventListener('change', function() {
-    const selectedDate = new Date(birthdate.value);
-    
-
-    console.log(typeof(selectedDate.value), selectedDate.value)
-});
 //사업자 번호 유효성 검사
 function updateBcode(input) {
 	// 숫자만 허용
@@ -288,7 +281,7 @@ function updateBcode(input) {
     } else {
         input.value = cleanedInput; // 11자리가 아닐 경우 하이픈 추가하지 않음
     }
-} 
+}
 </script>
 <script>
 //아이디 중복검사
@@ -303,7 +296,7 @@ function updateBcode(input) {
          }
 
          $.ajax({
-             url: '/CompanySign/CheckDuplication',
+             url: '/CompanyAuth/CheckDuplication',
              method: 'GET',
              data: { id: inputId }
          })

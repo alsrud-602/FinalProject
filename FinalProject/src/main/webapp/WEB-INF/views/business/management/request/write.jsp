@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+   
 <!DOCTYPE html>
 <html>
 <head>
@@ -29,15 +30,15 @@
 </p>
    </div>
    
-    <form action=""> 
+    <form action="/Business/Management/Request/Write" method="POST"> 
    <h2 class="content_title">요청 팝업스토어</h2>
   <div class="content_body">
   <div class="content_header">
-  <p>2024.12.14 ~ 2014.12.30</p>
+  <p>${store.start_date} ~ ${store.end_date}</p>
   </div>
-  <p class="content_store">메시X스텐리 1942 콜라보 팝업스토어</p>
+  <p class="content_store">${store.title}</p>
   <div class ="content_bottom">
-  <p>사전예약&nbsp;&nbsp;|&nbsp;&nbsp;잡화&nbsp;&nbsp;|&nbsp;&nbsp;스포츠</p>
+  <p>${store.rstatus}&nbsp;|&nbsp;${store.category_name}</p>
   </div>
    </div>
 
@@ -45,10 +46,11 @@
   <div class="content_body">
  <div class="content_field">
  <p>요청분야</p>
- <select>
+ <select name ="field">
  <option>요청분야</option>
  <option>팝업삭제</option>
  <option>팝업명 변경</option>
+ <option>팝업정보 수정</option>
  <option>승인결과 변경</option>
  <option>기타 </option>
  </select>
@@ -57,17 +59,27 @@
  <div class="content_cover">
  <p>요청 상세내용</p>
  <div class="cover_layout">
- <textarea rows="" cols="">상세 내용을 입력하시오</textarea>
+ <textarea name ="content" rows="" cols="" placeholder="상세내용을 입력하세요"></textarea>
  </div>
  </div>
 
    </div>
  <div class="cover_layout">
+ <input type="hidden" name="store_idx" value="${store.store_idx}">
  <input class="btn2" type="submit" value="등록">
   </div>
   
   </form>
   </main>
+  
+   <aside>
+    <div id="side_title"><p>관리메뉴</p></div>
+    <div id="side_layout">
+    <a href="/Business/Management/Main/List?company_idx=${company_idx}"><div class="side_menu">스토어 관리</div></a>
+    <a href="/Business/Management/Request/List?company_idx=${company_idx}"><div class="side_menu">요청 관리</div></a>
+    <a href="/Business/Management/Info?company_idx=${company_idx}"><div class="side_menu">회원정보 관리</div></a>
+    </div>
+  </aside>
  </div>
  <%@include file="/WEB-INF/include/footer_company.jsp" %>		
  <script>

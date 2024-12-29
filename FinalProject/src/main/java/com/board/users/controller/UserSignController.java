@@ -2,17 +2,12 @@ package com.board.users.controller;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,18 +15,20 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.board.jwt.JwtUtil;
 import com.board.users.dto.User;
-import com.board.users.jwt.JwtUtil;
 import com.board.users.service.UserService;
 
-import jakarta.servlet.http.HttpServletRequest;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
@@ -87,13 +84,38 @@ public class UserSignController {
 	public  String   loginform() {
 		return "login";
 	}
+	@GetMapping("/KakaoCallBack")
+	public String kakaoCallBack(HttpSession session, HttpServletResponse response, Model model) {
+	    String jwt = (String) session.getAttribute("jwt");
+	    String accessToken = (String) session.getAttribute("accessToken");
 
-	@PostMapping("/Logout")
-	public ResponseEntity<String> logout() {
-	    SecurityContextHolder.clearContext();
-	    return ResponseEntity.ok("Logout successful");
+	    session.removeAttribute("jwt");
+	    session.removeAttribute("accessToken");
+
+	    // JWT를 응답 헤더에 추가
+	    response.setHeader("Authorization", "Bearer " + jwt);
+
+	    // 필요한 작업 수행
+	    model.addAttribute("jwt", jwt);
+	    model.addAttribute("accessToken", accessToken);
+
+	    return "callback"; // 반환할 뷰 이름
 	}
 
-    
+
+	
+
+	@PostMapping("/Logout")
+	public ResponseEntity<String> logout(HttpServletResponse response) {
+	    Cookie jwtCookie = new Cookie("token", null);
+	    jwtCookie.setHttpOnly(true);
+	    jwtCookie.setSecure(true);
+	    jwtCookie.setPath("/");
+	    jwtCookie.setMaxAge(0); // 쿠키 만료
+	    response.addCookie(jwtCookie);
+	    SecurityContextHolder.clearContext();
+	    return ResponseEntity.ok().build();
+	}
+
 
 }

@@ -16,9 +16,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.board.business.dto.CategoryDto;
+import com.board.business.dto.CompanyDto;
+import com.board.business.dto.RequestDto;
 import com.board.business.dto.ReservationDateDto;
 import com.board.business.dto.ReservationPlanDto;
 import com.board.business.dto.StoreCategoryDto;
+import com.board.business.dto.StoreListDto;
 import com.board.business.dto.StoreTagDto;
 import com.board.business.mapper.BusinessMapper;
 
@@ -151,6 +154,73 @@ public class BusinessServiceimpl  implements BusinessService{
 	public List<CategoryDto> getCategoryList() {
 		List<CategoryDto> cList = businessMapper.getCategoryList();
 		return cList;
+	}
+
+	@Override
+	public List<StoreListDto> getStoreHistoryList(int company_idx) {
+		List <StoreListDto>	shList = businessMapper. getStoreHistoryList(company_idx);
+		
+		return shList;
+	}
+
+	@Override
+	public List<StoreListDto> getStoreOpertaionList(int company_idx) {
+		List <StoreListDto> soList = businessMapper.getStoreOpertaionList(company_idx);
+		return soList;
+	}
+
+	@Override
+	public StoreListDto getStoreRequest(int store_idx) {
+		StoreListDto slDto = businessMapper.getStoreRequest(store_idx);
+		return slDto;
+	}
+
+	@Override
+	public void insertRequest(RequestDto requstDto) {
+		businessMapper.insertRequest(requstDto);
+		
+	}
+
+	@Override
+	public List<StoreListDto> getStoreRequestList(int company_idx) {
+		 List<StoreListDto> rList = businessMapper.getStoreRequestList(company_idx);
+		return rList;
+	}
+
+	@Override
+	public RequestDto getRequest(int request_idx) {
+		RequestDto rDto = businessMapper.getRequest(request_idx);
+		return rDto;
+	}
+
+	@Override
+	public CompanyDto getCompany(int company_idx) {
+		CompanyDto cDto = businessMapper.getCompany(company_idx);
+		return cDto;
+	}
+
+	@Override
+	public int getCompanyIdxByStoreIdx(int store_idx) {
+		int company_idx = businessMapper.getCompanyIdxByStoreIdx(store_idx);
+		return company_idx;
+	}
+
+	@Override
+	public void updateCompany(CompanyDto companydto) {
+		businessMapper.updateCompany(companydto);
+		
+	}
+
+	@Override
+	public void getStoreUpdateinfo(HashMap<String, Object> map) {
+		// updateinfo
+		//List<STORES_TAG>
+		//List<STORES_CATEGORY>
+		//RESERVATION_STORES
+		//RESERVATION_PLANS
+		//RESERVATION_DATES
+		//IMAGE_STORE
+		
 	}
 	
 	

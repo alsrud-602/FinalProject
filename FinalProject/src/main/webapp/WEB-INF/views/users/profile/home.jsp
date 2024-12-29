@@ -173,22 +173,22 @@ main {
 	<h2 class="pagetitle">내 정보</h2>
 	<div class="myinfo">
 	 <h3 class="infotitle">이름</h3>
-	 <p class="infocontent">${name}</p>
+	 <p class="infocontent">${user.name}</p>
 	 <div class="liner"></div>
 	</div>
 	<div class="myinfo">
 	 <h3 class="infotitle">닉네임</h3>
-	 <p class="infocontent">${nickname}</p>
+	 <p class="infocontent">${user.nikname}</p>
 	 <div class="liner"></div>
 	</div>
 	<div class="myinfo">
 	 <h3 class="infotitle">계정정보</h3>
-	 <p class="infocontent">${email}</p>
+	 <p class="infocontent">${user.email}</p>
 	 <div class="liner"></div>
 	</div>
 	<div class="myinfo">
 	 <h3 class="infotitle">연락처</h3>
-	 <p class="infocontent">${phone}</p>
+	 <p class="infocontent">${user.phone}</p>
 	 <div class="liner"></div>
 	</div>
 	<h2 class="pagetitle"># 관심 카테고리</h2>
@@ -221,5 +221,6 @@ main {
   </div>
   </main>	
  <%@include file="/WEB-INF/include/footer.jsp" %>
+ <script src="/js/auth.js" defer></script>
 </body>
 </html>

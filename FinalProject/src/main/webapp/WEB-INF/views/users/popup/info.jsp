@@ -22,10 +22,10 @@
 </head>
 <body>
 <%@include file="/WEB-INF/include/header.jsp" %>
+
 <div class="container">
   <img id="icon_back" src="/images/icon/back.png" alt="뒤로가기">
   <main>
-  
     <div class="swiper-container">
   <div class="swiper-wrapper">
     <div class="swiper-slide"><img src="/images/example/exampleimg1.png" alt="1"></div>
@@ -517,7 +517,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 
     <script>
-      
+
     </script>
 </body>
 

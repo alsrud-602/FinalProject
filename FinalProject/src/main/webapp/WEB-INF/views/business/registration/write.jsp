@@ -169,7 +169,7 @@ color:red;
 
 
  <div class="title_write">
-   <p>입점 전 필요한 팝업정보를 수정하세요</p>
+   <p>홍보 및 예약서비스를 이용할 팝업스토어를 등록하세요</p>
    <p>팝업스토어 등록</p>
  </div>  
    <p id="title_guide">*수정 불가 항목은 관리자요청 부탁드립니다.</p>
@@ -237,10 +237,10 @@ color:red;
            <td>
            
            <div id="sub_adress">
-             <input value="서울 성수동"name="address"  required type="text"  class="sub_link" placeholder="주소검색 버튼을 눌러주세요" style="width:620px; margin: 0 10px 0 0;">
-             <div class="btn3">주소검색</div>
+             <input value="서울 성수동"   name="address"  required type="text"  id="roadFullAddr" class="sub_link" placeholder="주소검색 버튼을 눌러주세요" style="width:620px; margin: 0 10px 0 0;">
+             <div class="btn3" onclick="searchAddress()" >주소검색</div>
            </div>
-           <input type="text"  id="address_detail" required class="sub_link" placeholder="상세주소를 입력하세요" style="margin: 10px 0;" >
+          
            </td>
         </tr>
         <tr>
@@ -297,10 +297,7 @@ color:red;
            <td>
            <input type="text" id="inputHash" onkeydown="checkEnter(event)" placeholder="#없이 입력 후 ENTER로 해쉬태그를 입력하세요">
            <div class="sub_flex">
-             <div class="sub_hash">굿즈판매<span onclick="deleteHash(this)"><img src="/images/icon/delete2.png"></span></div>
-             <input type="hidden" name="tag_name"value="굿즈판매"/>
-             <div class="sub_hash">포토부스<span onclick="deleteHash(this)"><img src="/images/icon/delete2.png"></span></div>
-             <input type="hidden" name="tag_name"value="포토부스"/>
+
            </div>
            </td>
         </tr>        
@@ -507,6 +504,13 @@ color:red;
     
    </form> 
 <script>
+
+function searchAddress() {
+    window.open("/Business/SearchAddress","pop","width=570,height=430, scrollbars=yes, resizable=yes");
+}
+function jusoCallBack(roadFullAddr){
+    document.getElementById('roadFullAddr').value = roadFullAddr;
+}
 const linkElement = document.querySelector('input[name="link"]');
 
 
@@ -665,7 +669,7 @@ function vaildOpendate(date){
 	 
 	if(open<today){
 		date.value = "";
-		alert('현재날짜보다 이전에 예약을 오픈할 수 없습니다');		
+		alert('예약은 현재날짜보다 이후에 오픈 할 수 있습니다');		
 	}
 }
 //null 값 유효성 검사
@@ -686,7 +690,8 @@ function validateForm() {
     const reservationEndDates = document.getElementsByName('reservation_end_date');
     const planSelects = document.querySelectorAll('.sub_plan_select'); 
     const openDateElement = document.querySelector('input[name="open_date"]');
-    
+    const TagElement = document.querySelectorAll('input[name="tag_name"]');
+
     const inputsToValidate = [
         { element: ageElement, defaultValue: '연령대', message: '연령대를 선택하세요' },
         { element: cg1Element, defaultValue: '카테고리1', message: '카테고리를 선택하세요' },
@@ -701,6 +706,12 @@ function validateForm() {
     console.log(reservationEndDates.length);
     console.log(planSelects.length);
     console.log(planSelects);
+    
+    if (TagElement.length === 0) {
+        alert('해시태그를 만들어주세요.');
+        return false;
+    }
+    
     
     if(statusElement.value == '') {
         alert('예약기능을 선택하세요');
@@ -730,11 +741,7 @@ function validateForm() {
           }     	
       }
     }
-    
-    	
-    
 
-    
     if (!validateInputs(inputsToValidate)) {
         return false; // 폼 제출을 방지
     }
