@@ -60,9 +60,6 @@ public interface BusinessMapper {
 
 	void updateCompany(CompanyDto companydto);
 
-<<<<<<< HEAD
-	StoreUpdateDto getStoreUpdateInfo(int store_idx);
-=======
 	StoreUpdateDto getStoreUpdateinfo(int store_idx);
 
 	List<StoreTagDto> getStoreTag(int store_idx);

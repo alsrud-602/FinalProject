@@ -1,10 +1,10 @@
 package com.board.business.controller;
 
-<<<<<<< HEAD
+
 import java.io.Console;
-=======
+
 import java.util.ArrayList;
->>>>>>> refs/heads/develop
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -24,10 +24,10 @@ import com.board.business.dto.ReservationDateDto;
 import com.board.business.dto.ReservationPlanDto;
 import com.board.business.dto.ReservationStoreDto;
 import com.board.business.dto.StoreListDto;
-<<<<<<< HEAD
-=======
+
+
 import com.board.business.dto.StoreTagDto;
->>>>>>> refs/heads/develop
+
 import com.board.business.dto.StoreUpdateDto;
 import com.board.business.service.BusinessService;
 import com.board.business.service.PdsService;
@@ -115,18 +115,11 @@ public class BusinessController {
 	@RequestMapping("/Management/Main/UpdateForm")
 	public ModelAndView managementMupdateFrom( int store_idx) {
 	
-<<<<<<< HEAD
-	HashMap<String, Object> map	 = new HashMap<>();
-	businessService.getStoreUpdateinfo(map,store_idx);
-	StoreUpdateDto suDto =(StoreUpdateDto) map.get("suDto");
-	System.out.println(suDto);	
-=======
-		
->>>>>>> refs/heads/develop
+
 	ModelAndView mv = new ModelAndView();
-<<<<<<< HEAD
-	mv.addObject("suDto", suDto);	
-=======
+
+		
+
     StoreUpdateDto suDto = businessService.getStoreUpdateinfo(store_idx);
     List<StoreTagDto> stList = businessService.getStoreTag(store_idx);
     List <CategoryDto> scList = businessService.getStoreCategory(store_idx);
@@ -176,6 +169,7 @@ public class BusinessController {
     mv.addObject("planList", jsonPlanList);		
     
     System.out.println("!!!!!!!!리스트 리스트 넣기"+ allRPList);
+
 	mv.setViewName("business/management/main/update");
 	return mv;
 				

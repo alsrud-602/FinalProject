@@ -213,21 +213,7 @@ public class BusinessServiceimpl  implements BusinessService{
 	}
 
 	@Override
-<<<<<<< HEAD
-	public void getStoreUpdateinfo(HashMap<String, Object> map, int store_idx) {
-		
-		StoreUpdateDto suDto = businessMapper.getStoreUpdateInfo(store_idx);
-		map.put("suDto", suDto);
-		System.out.println(suDto);
-		// updateinfo
-		//List<STORES_TAG>
-		//List<STORES_CATEGORY>
-		//RESERVATION_STORES
-		//RESERVATION_PLANS
-		//RESERVATION_DATES
-		//IMAGE_STORE
-=======
-	public StoreUpdateDto getStoreUpdateinfo(int store_idx) {
+	public  StoreUpdateDto getStoreUpdateinfo( int store_idx) {					
 		StoreUpdateDto suDto =businessMapper.getStoreUpdateinfo(store_idx);
 		return suDto;
 	}
@@ -427,9 +413,11 @@ public class BusinessServiceimpl  implements BusinessService{
 		    businessMapper.insertReservationDateUpdate(rdList);
 		   }	   
 		   
->>>>>>> refs/heads/develop
+
 		
 	}
+
+
 		   
 		
 		  
