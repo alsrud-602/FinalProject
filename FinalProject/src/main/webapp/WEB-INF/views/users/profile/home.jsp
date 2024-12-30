@@ -9,7 +9,6 @@
 <link rel="icon" type="image/png" href="/img/favicon.png" />
 <link rel="stylesheet" href="/css/common.css" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 <style>
 
 main {
@@ -173,12 +172,12 @@ main {
 	<h2 class="pagetitle">내 정보</h2>
 	<div class="myinfo">
 	 <h3 class="infotitle">이름</h3>
-	 <p class="infocontent">${user.name}</p>
+	 <p class="infocontent">${name}</p>
 	 <div class="liner"></div>
 	</div>
 	<div class="myinfo">
 	 <h3 class="infotitle">닉네임</h3>
-	 <p class="infocontent">${user.nikname}</p>
+	 <p class="infocontent">${user.nickname}</p>
 	 <div class="liner"></div>
 	</div>
 	<div class="myinfo">
@@ -208,12 +207,12 @@ main {
 	 <div class="sidebar">
 	  <table>
 	   <tbody>
-	    <tr><td><a href="">내 정보</a></td></tr>
-	    <tr><td><a href="">예약내역</a></td></tr>
-	    <tr><td><a href="">관심팝업</a></td></tr>
+	    <tr><td><a href="/Users/Profile/Home">내 정보</a></td></tr>
+	    <tr><td><a href="/Users/Profile/Reservation">예약내역</a></td></tr>
+	    <tr><td><a href="/Users/Profile/Bookmark">관심팝업</a></td></tr>
 	    <tr><td><a href="">지갑</a></td></tr>
-	    <tr><td><a href="">추천스토어</a></td></tr>
-	    <tr><td><a href="">내가 쓴 리뷰</a></td></tr>
+	    <tr><td><a href="/Users/Profile/Suggestion">추천스토어</a></td></tr>
+	    <tr><td><a href="/Users/Profile/Myreview">내가 쓴 리뷰</a></td></tr>
 	   </tbody>
 	  </table>
 	 </div>
@@ -221,6 +220,5 @@ main {
   </div>
   </main>	
  <%@include file="/WEB-INF/include/footer.jsp" %>
- <script src="/js/auth.js" defer></script>
 </body>
 </html>

@@ -8,6 +8,7 @@
 <link rel="icon" type="image/png" href="/img/favicon.png" />
 <link rel="stylesheet" href="/css/common.css" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/js/auth.js" defer></script>
 <style>
 
 main {
@@ -146,12 +147,12 @@ main {
 	 <div class="sidebar">
 	  <table>
 	   <tbody>
-	    <tr><td><a href="">내 정보</a></td></tr>
-	    <tr><td><a href="">예약내역</a></td></tr>
-	    <tr><td><a href="">관심팝업</a></td></tr>
+	    <tr><td><a href="/Users/Profile/Home">내 정보</a></td></tr>
+	    <tr><td><a href="/Users/Profile/Reservation">예약내역</a></td></tr>
+	    <tr><td><a href="/Users/Profile/Bookmark">관심팝업</a></td></tr>
 	    <tr><td><a href="">지갑</a></td></tr>
-	    <tr><td><a href="">추천스토어</a></td></tr>
-	    <tr><td><a href="">내가 쓴 리뷰</a></td></tr>
+	    <tr><td><a href="/Users/Profile/Suggestion">추천스토어</a></td></tr>
+	    <tr><td><a href="/Users/Profile/Myreview">내가 쓴 리뷰</a></td></tr>
 	   </tbody>
 	  </table>
 	 </div>
@@ -159,5 +160,57 @@ main {
   </div>
   </main>	
  <%@include file="/WEB-INF/include/footer.jsp" %>
+ <script>
+ document.addEventListener("DOMContentLoaded", () => {
+	    const token = localStorage.getItem("token");
+	    const kakaoAccessToken = localStorage.getItem("kakaoAccessToken");
+
+	    if (!token && !kakaoAccessToken) {
+	        alert("로그인이 필요합니다.");
+	        window.location.href = "/Users/LoginForm"; // 로그인 페이지로 이동
+	        return;
+	    }
+
+	    // 중복 요청 방지: token과 kakaoAccessToken 중 하나만 처리
+	    const isUserToken = !!token;
+	    const authToken = isUserToken ? token : kakaoAccessToken;
+	    const tokenType = isUserToken ? "UserToken" : "KakaoToken";
+
+	    // 사용자 정보 요청
+	    fetch("/Users/user-info", {
+	        method: "GET",
+	        headers: {
+	            "Authorization": "Bearer " + authToken,
+	            "Token-Type": tokenType
+	        }
+	    })
+	        .then(response => {
+	            if (!response.ok) {
+	                throw new Error("사용자 정보를 가져오지 못했습니다.");
+	            }
+	            return response.text();
+	        })
+	      .then(html => {
+	          const bodyElement = document.querySelector("body");
+	          const header = document.querySelector("header");
+	          const footer = document.querySelector("footer");
+	          
+	          // 기존 내용을 삭제하지 않고 main만 업데이트
+	          const mainElement = document.querySelector("main");
+	          mainElement.innerHTML = html; // main 부분만 갱신
+	          
+	          bodyElement.appendChild(header); 
+	         // body에서 기존 footer 제거
+	         if (bodyElement.contains(footer)) { 
+	             bodyElement.removeChild(footer);  
+	         }
+	      })
+	        .catch(error => {
+	            console.error("Error:", error);
+	            alert("사용자 정보를 불러오지 못했습니다.");
+	        });
+	});
+
+</script>
 </body>
 </html>

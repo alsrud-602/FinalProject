@@ -51,4 +51,9 @@ public class UserService {
 	public Optional<User> findBySocialId(String id) {
         return userRepository.findBySocialId(id);
 	}
+
+	public Optional<User> getUserByUsername(String username) {
+        return userRepository.findById(username);
+	}
+
 }

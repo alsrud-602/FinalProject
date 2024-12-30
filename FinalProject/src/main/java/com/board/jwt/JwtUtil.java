@@ -1,5 +1,6 @@
 package com.board.jwt;
 
+import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,13 +9,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 
 @Component
 public class JwtUtil {
-    private final String SECRET_KEY = "46930csaefnioweanelbe589eea5b0f43819599a3749d88e26fff284659a26f4baecffc1e7ba574d24d4da5164bf2cf21670ce983d58eb91c";
+    private final static String SECRET_KEY = "46930csaefnioweanelbe589eea5b0f43819599a3749d88e26fff284659a26f4baecffc1e7ba574d24d4da5164bf2cf21670ce983d58eb91c";
 
     public String generateToken(String username, String userType) {
         Map<String, Object> claims = new HashMap<>();
@@ -66,5 +70,18 @@ public class JwtUtil {
         final String username = extractUsername(jwt);
         return username.equals(oauth2User.getName()) && !isTokenExpired(jwt);
 	}
+
+    public static Claims extractClaims(String token) {
+        try {
+            Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+            return Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (SignatureException e) {
+            throw new RuntimeException("Invalid JWT signature");
+        }
+    }
 
 }
