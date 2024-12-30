@@ -104,7 +104,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			System.out.println("요청 헤더: " + Collections.list(request.getHeaderNames()));
 			System.out.println("요청 파라미터: " + request.getParameterMap());
 		} else {
-			System.out.println("SecurityContext 인증 정보 없음 (익명 사용자)");
 		}
 
 		filterChain.doFilter(request, response);

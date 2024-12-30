@@ -152,11 +152,11 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         return response.json(); // JSON 응답 파싱
     })
     .then(function(data) {
-        if (data && data.token) {
+        if (data && data.userJwt) {
             // JWT 토큰 저장
             // 로그인 성공 후, JWT를 Authorization 헤더에 추가
-			localStorage.setItem('token', data.token);
-            console.log('JWT 토큰 저장 완료:', data.token);
+			localStorage.setItem('userJwt', data.userJwt);
+            console.log('JWT 토큰 저장 완료:', data.userJwt);
 
             if (data.redirect) {
                 // ADMIN user, redirect to 2FA page

@@ -123,4 +123,9 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         return formattedNumber.toString();
     }
+
+	public OAuth2User getUser(String username) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
