@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.board.business.dto.CategoryDto;
 import com.board.business.dto.CompanyDto;
+import com.board.business.dto.ImageStoreDTO;
 import com.board.business.dto.RequestDto;
 import com.board.business.dto.ReservationDateDto;
 import com.board.business.dto.ReservationPlanDto;
@@ -97,6 +98,14 @@ public interface BusinessMapper {
 	void deleteReservationDate(int rs_idx);
 
 	void insertReservationPlanUpdate(@Param("rpList")List<ReservationPlanDto> rpList);
+
+	List<ImageStoreDTO> getImageStorList(int store_idx);
+
+	ImageStoreDTO getImageStore(int is_idx);
+
+	void deleteImageStore(int is_idx);
+
+	List<StoreListDto> getStoreOperationView(int company_idx);
 
 
 

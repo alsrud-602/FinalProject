@@ -417,6 +417,12 @@ public class BusinessServiceimpl  implements BusinessService{
 		
 	}
 
+	@Override
+	public List<StoreListDto> getStoreOperationView(int company_idx) {
+		List<StoreListDto> sovList = businessMapper.getStoreOperationView(company_idx);
+		return sovList;
+	}
+
 
 		   
 		

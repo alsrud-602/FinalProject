@@ -19,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.board.business.dto.CategoryDto;
 import com.board.business.dto.CompanyDto;
+import com.board.business.dto.ImageStoreDTO;
 import com.board.business.dto.RequestDto;
 import com.board.business.dto.ReservationDateDto;
 import com.board.business.dto.ReservationPlanDto;
@@ -127,7 +128,8 @@ public class BusinessController {
     List <ReservationDateDto> rdList = businessService.getReservationDate(rsDto.getRs_idx());
     List<List<ReservationPlanDto>> allRPList = new ArrayList<>();
     Set<String> uniquePlans = new HashSet<>(); // 중복을 체크할 Set
-
+    List<ImageStoreDTO> isList= pdsService.getImageStorList(store_idx);
+    
     System.out.println("!!!!!!!!rsDto.getRs_idx()"+ rsDto.getRs_idx());	
     for (ReservationDateDto rDto : rdList) {
         String plan = rDto.getPlan();
@@ -166,7 +168,8 @@ public class BusinessController {
     mv.addObject("categoryList", scList);	
     mv.addObject("reservation", rsDto);	
     mv.addObject("dateList", jsonDateList);	
-    mv.addObject("planList", jsonPlanList);		
+    mv.addObject("planList", jsonPlanList);
+    mv.addObject("imageList", isList);	
     
     System.out.println("!!!!!!!!리스트 리스트 넣기"+ allRPList);
 
@@ -199,9 +202,9 @@ public class BusinessController {
 								            @RequestParam(value="upfile",required = false) MultipartFile[] uploadfiles) {
 	
 		
-	System.out.println("!!!!!!!!리스트 리스트 넣기"+ map.get("onotes"));	
+
 	businessService.updateStore(map,tag_name,category_id);
-	
+	pdsService.setUpdate(map, uploadfiles);
 	businessService.updateReservation(map,start_time,end_time,max_number,rp_plan,rd_plan,reservation_end_date,reservation_start_date);
 	ModelAndView mv = new ModelAndView();
 	int company_idx = Integer.valueOf(map.get("company_idx").toString());
@@ -280,6 +283,53 @@ public class BusinessController {
 	return mv;	
 		
 	}
+	@RequestMapping("/Operation/UpdateFormStore")
+	public ModelAndView operationUpdateFormStore(int store_idx) {	
+	StoreUpdateDto suDto = businessService.getStoreUpdateinfo(store_idx);	
+    List<StoreTagDto> stList = businessService.getStoreTag(store_idx);
+    List <CategoryDto> scList = businessService.getStoreCategory(store_idx);
+    List<ImageStoreDTO> isList= pdsService.getImageStorList(store_idx);
+    
+	ModelAndView mv = new ModelAndView();
+	mv.addObject("store",suDto);
+    mv.addObject("tagList", stList);	
+    mv.addObject("categoryList", scList);	
+    mv.addObject("imageList", isList);	
+	mv.setViewName("business/operation/updatestore");
+	return mv;	
+		
+	}
+	
+	@RequestMapping("/Operation/UpdateStore")
+	public ModelAndView operationUpdateStore(@RequestParam HashMap<String, Object> map,
+									            @RequestParam (value="tag_name", 
+									            required = false) String[] tag_name,
+		                                        @RequestParam (value="category_id", 
+				                                required = false) String[] category_id,
+									            @RequestParam(value="upfile",required = false) MultipartFile[] uploadfiles) {	
+	
+	ModelAndView mv = new ModelAndView();
+	businessService.updateStore(map,tag_name,category_id);
+	pdsService.setUpdate(map, uploadfiles);
+	
+	System.out.println("!!!!map 확인중 "+map);
+	int company_idx = Integer.valueOf(map.get("company_idx").toString());
+	mv.setViewName("redirect:/Business/Operation/View");
+	return mv;	
+		
+	}	
+	
+	@RequestMapping("/Operation/View")
+	public ModelAndView operationView() {		
+		
+	int company_idx =1;			
+	List<StoreListDto> sovList = businessService.getStoreOperationView(company_idx);
+	ModelAndView mv = new ModelAndView();
+	mv.addObject("storeList",sovList);
+	mv.setViewName("business/operation/view");
+	return mv;	
+		
+	}	
 	
 	
 }

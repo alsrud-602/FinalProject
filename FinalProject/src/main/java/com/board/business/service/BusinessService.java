@@ -41,8 +41,6 @@ public interface BusinessService {
 
 	void updateCompany(CompanyDto companydto);
 
-	
-
 	StoreUpdateDto getStoreUpdateinfo(int store_idx);
 
 	List<StoreTagDto> getStoreTag(int store_idx);
@@ -59,6 +57,8 @@ public interface BusinessService {
 
 	void updateReservation(HashMap<String, Object> map, String[] start_time, String[] end_time, String[] max_number,
 			String[] rp_plan, String[] rd_plan, String[] reservation_end_date, String[] reservation_start_date);
+
+	List<StoreListDto> getStoreOperationView(int company_idx);
 
 	
 

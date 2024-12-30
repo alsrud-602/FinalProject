@@ -19,12 +19,7 @@
 
 	}
 
-	/* 제목 */
-	.title {
-		border: 2px solid #9A9A9A;
-		margin-top: 30px;
-		padding: 40px 50px 30px 50px;
-	}
+
 	
 	p {
 		color: #757575;
@@ -507,7 +502,7 @@ button:hover{
     margin-top: 20px;
 }
 
-.buttons-footer button {
+.buttons-footer a {
     flex: 1;
     margin: 0 10px; /* 버튼 간의 간격 */
     color: black;
@@ -516,6 +511,9 @@ button:hover{
     font-size: 22px;
     background-color: #fff; /* 버튼 배경색 */
     border: 1px solid black;
+    display:flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .notify-all-btn {
@@ -636,6 +634,46 @@ button:hover{
 .complete-delete-btn{
 background-color: #FFC9C9;
 }
+
+#icon_prev {
+width: 43px;
+height: 43px;
+position: absolute;
+ top: 180px; 
+left: calc(50% - 600px - 75px);
+cursor: pointer;
+}
+#icon_next {
+width: 43px;
+height: 43px;
+position: absolute;
+ top: 180px; 
+right: calc(50% - 600px - 50px);
+cursor: pointer;
+}
+
+	
+.carousel-container{
+    
+   overflow: hidden; 
+   width:1200px;
+   position: relative;
+}	
+.carousel{
+	display: flex;
+    position: relative;
+	transition: transform 0.5s ease-in-out; 
+	will-change: transform; 
+}	
+	
+.title {
+	border: 2px solid #9A9A9A;
+	margin-top: 30px;
+	padding: 40px 50px 30px 50px;
+	flex: 0 0 1200px; 
+}
+
+
 	</style>
 </head>
 
@@ -643,33 +681,54 @@ background-color: #FFC9C9;
     <%@include file="/WEB-INF/include/header_company.jsp" %>
     <main>
        	<h1>운영 팝업스토어</h1>
-	    <div class='title'>
-	   
+       	
+
+        <img id ="icon_prev" src="/images/icon/prev.png">
+
+         <div class="carousel-container">
+         
+	      <div class="carousel">
+	      
+	      <c:forEach var="store" items="${storeList}" >
+	       <div  class="title carousel_store" >
 	      <div class="title_header"> 
-	        <div class="title_category">잡화 > 스포츠 > 2030대</div> 
+	        <div class="title_category">${store.category_name}&nbsp;|&nbsp;${store.age}</div> 
 	        <div class="title_icon">
 	          <p></p>&nbsp;
 	          <p></p>&nbsp;
 	          <img src="/images/icon/degree_b.png"><p>90%</p>
 	        </div>
 	      </div>
-	      <p class="title_name">스텐리 1943 기념 팝업스토어</p>
-	      <p class="title_subname"> 드디어 상륙! 스탠리와 메시의 콜라보 팝업스토어가 떴다!</p>
+	      <p class="title_name">${store.title}</p>
+	      <p class="title_subname"> ${store.introduction}</p>
 	      <div class="title_adress">
-	        <img src="/images/icon/map1.png">&nbsp;<p>서울 성동구 성수이로 134-2</p>&nbsp;&nbsp;<p>|</p>&nbsp;&nbsp;
-	        <img src="/images/icon/store.png">&nbsp;<p>스텐리</p>
+	        <img src="/images/icon/map1.png">&nbsp;<p>${store.address}</p>&nbsp;&nbsp;<p>|</p>&nbsp;&nbsp;
+	        <img src="/images/icon/store.png">&nbsp;<p>${store.brand1}</p>
+	        <c:if test="${not empty store.brand2}">
+	        <p>${store.brand2}</p>
+	        </c:if>
 	      </div>
 	      <div class="title_footer">
 	      <div class="tags">
-	      <div class="tag_option">스텐리</div> 
+	      <div class="tag_option">${store.tag_name}</div> 
 	      <div class="tag_option">포토부스</div>
 	      </div>
 	      <div class="title_click" >
 	      </div>
+	      </div>         
 	      </div>
-	    
+	      </c:forEach>
+
+	      
+	
+	      
+	      
+	      
 	    </div>
-    
+	    </div>
+       <img id ="icon_next" src="/images/icon/next.png" onclick="updateCarousel(this)">
+     
+	         
 		<div class="info">    
 		    <div class="frame-496">
 		        <div class="frame-490">
@@ -887,9 +946,9 @@ background-color: #FFC9C9;
 </section>
 
         <div class="buttons-footer">
-		    <button>예약 일정 수정하기</button>
-		    <button>기본정보 수정하기</button>
-		    <button>팝업 페이지 이동하기</button>
+		    <a href="">예약 일정 수정하기</a>
+		    <a href="/Business/Operation/UpdateFormStore?store_idx=91">기본정보 수정하기</a>
+		    <a href="">팝업 페이지 이동하기</a>
 		    <c:if test="">
 		   	<button>예약 기능 사용하기</button>
 		    <button>기본정보 수정하기</button>
@@ -901,8 +960,47 @@ background-color: #FFC9C9;
 
     
     <script>
-	    /* 혼잡도 그래프 */
-	    const ctx = document.getElementById('trafficChart').getContext('2d');
+    let currentIndex = 0; // 현재 슬라이드의 인덱스
+    const carousel = document.querySelector('.carousel');
+    const slides = Array.from(document.querySelectorAll('.carousel_store'));
+    const totalSlides = slides.length;
+
+    // 슬라이드 초기화 (초기 위치 설정)
+    function initializeCarousel() {
+      const offset = -currentIndex * 100; // 현재 슬라이드 기준으로 이동
+      carousel.style.transform = `translateX(\${offset}%)`;
+    }
+
+    // 캐러셀 업데이트 함수
+    function updateCarousel(direction) {
+      if (direction === 'next') {
+        currentIndex = (currentIndex + 1) % totalSlides; // 인덱스를 순환
+      } else if (direction === 'prev') {
+        currentIndex = (currentIndex - 1 + totalSlides) % totalSlides; // 인덱스를 순환
+      }
+
+      // 슬라이드 이동
+      const offset = -currentIndex * 100; // 슬라이드의 % 단위 이동
+      carousel.style.transform = `translateX(\${offset}%)`;
+    }
+
+    // 버튼 이벤트
+    document.querySelector('#icon_next').addEventListener('click', () => {
+      updateCarousel('next');
+    });
+
+    document.querySelector('#icon_prev').addEventListener('click', () => {
+      updateCarousel('prev');
+    });
+
+    // 초기화
+    initializeCarousel();    
+    
+    
+    
+    
+/* 혼잡도 그래프 */
+const ctx = document.getElementById('trafficChart').getContext('2d');
 const dailyCtx = document.getElementById('dailyTrafficChart').getContext('2d');
 
 const trafficChart = new Chart(ctx, {

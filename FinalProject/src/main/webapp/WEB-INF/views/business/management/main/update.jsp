@@ -356,9 +356,13 @@ color:red;
 		    </label>
            <input id="file-input" name="upfile" type="file" accept=".jpg, .jpeg, .png" style="display: none;" multiple  />
          </div>
-    <div id="file-name-container">
-    </div>
-         
+      <div>
+     <c:forEach var="img" items="${imageList}">
+      <div class="file-item"><span>${img.imagename}</span>&nbsp;<a class="deleteImage" href="/DeleteImage?is_idx=${img.is_idx}">x</a></div>   
+      </c:forEach>     
+     <div id="file-name-container">
+      </div>
+     </div>       
          </td>
        </tr>
       
@@ -502,7 +506,24 @@ color:red;
     
    </form> 
 <script>
-
+  $('.deleteImage').on('click',function(event){
+	
+	event.preventDefault();   
+	event.stopPropagation();  
+	let aDelete = this; 
+	
+	//서버에서 파일과 Files table의 정보를 삭제하고 돌아온다
+	$.ajax({
+		url : this.href,
+		method:'GET'
+	}).done(function(result){
+		$(aDelete).parent().remove();
+	}).fail(function(error){
+		console.log(error);
+		alert('서버오류발생:' + error + '관리자에게문의하세요')
+	})
+	
+  })
 const linkElement = document.querySelector('input[name="link"]');
 const btnNEl = document.querySelector('#btn_n');
 const btnAEl = document.querySelector('#btn_a');
@@ -1246,13 +1267,7 @@ function resetSubButtons() {
         }
 
       //////////////////////////////////////////////////////////////////  
-        
 
-   
-     
-     
-     
-     // 운영시간 - 예약시간 - 예약 오픈 시간 유효성 검사
     </script>
     
 </body>

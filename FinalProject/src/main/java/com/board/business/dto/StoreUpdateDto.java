@@ -46,6 +46,7 @@ public class StoreUpdateDto {
 	    private String esat;           
 	    private String esun;            
 	    private String onotes;         
+       
 	
 	
 	    

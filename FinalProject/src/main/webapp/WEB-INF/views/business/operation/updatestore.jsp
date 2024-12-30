@@ -155,14 +155,14 @@ color:red;
        }
 .button_reservation.active {
            background-color: #BDFF91; /* 클릭했을 때 배경색 */
-       }
+       }      
         
     </style>
 </head>
 <body>
 <%@include file="/WEB-INF/include/header_company.jsp" %> 
  <img id="icon_back" src="/images/icon/back2.png" alt="뒤로가기" onclick="goBack()">
- <form action="/Business/Management/Main/update" method="POST" enctype="multipart/form-data" 
+ <form action="/Business/Operation/UpdateStore" method="POST" enctype="multipart/form-data" 
        onsubmit="return validateForm()">
  <input type="hidden" name="detail_idx" value="${store.detail_idx}">      
  <input type="hidden" name="store_idx" value="${store.store_idx}">      
@@ -186,11 +186,7 @@ color:red;
       <table class="sub_table">
         <tr>
            <td>팝업스토어명칭</td>
-<<<<<<< HEAD
-           <td>${suDto.title}</td>
-=======
-           <td>${store.title}</td>
->>>>>>> refs/heads/develop
+            <td>${store.title}</td>
         </tr>
         <tr>
            <td>카테고리</td>
@@ -360,8 +356,14 @@ color:red;
 		    </label>
            <input id="file-input" name="upfile" type="file" accept=".jpg, .jpeg, .png" style="display: none;" multiple  />
          </div>
-    <div id="file-name-container">
-    </div>
+
+        <div >
+         <c:forEach var="img" items="${imageList}">
+        <div class="file-item"><span>${img.imagename}</span>&nbsp;<a class="deleteImage" href="/DeleteImage?is_idx=${img.is_idx}">x</a></div>   
+        </c:forEach>
+       </div>
+       <div id="file-name-container">
+       </div>
          
          </td>
        </tr>
@@ -385,6 +387,24 @@ color:red;
     
    </form> 
 <script>
+  $('.deleteImage').on('click',function(event){
+	
+	event.preventDefault();   
+	event.stopPropagation();  
+	let aDelete = this; 
+	
+	//서버에서 파일과 Files table의 정보를 삭제하고 돌아온다
+	$.ajax({
+		url : this.href,
+		method:'GET'
+	}).done(function(result){
+		$(aDelete).parent().remove();
+	}).fail(function(error){
+		console.log(error);
+		alert('서버오류발생:' + error + '관리자에게문의하세요')
+	})
+	
+  })
 
 // 운영시간 값 넣기
     document.querySelector('input[name="SMON"]').value = '${store.smon}';

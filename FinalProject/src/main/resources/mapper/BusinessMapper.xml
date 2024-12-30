@@ -201,7 +201,7 @@ LEFT JOIN CATEGORY C ON C.CATEGORY_ID = SC.CATEGORY_ID
 WHERE S.COMPANY_IDX = #{company_idx}
  <if test="company_idx != null">
   AND (SD.START_DATE &gt; SYSDATE OR
-   SD.END_DATE &lt; SYSDATE )
+   SD.END_DATE &lt; SYSDATE OR  S.STATUS ='불가')
 </if>
 GROUP BY S.STORE_IDX, 
          S.TITLE, 
@@ -442,6 +442,79 @@ DELETE FROM RESERVATION_DATES
 WHERE RS_IDX = #{rs_idx}   
 </delete>
 
+<select id="getImageStorList">
+SELECT *
+FROM IMAGE_STORE
+WHERE STORE_IDX= #{store_idx}
+
+</select>
+
+<select id="getImageStore">
+SELECT *
+FROM IMAGE_STORE
+WHERE IS_IDX= #{is_idx}
+</select>
+
+<delete id="deleteImageStore">
+DELETE FROM IMAGE_STORE
+WHERE IS_IDX = #{is_idx}  
+</delete>
+
+
+<select id="getStoreOperationView">
+SELECT S.STORE_IDX,
+       S.TITLE, 
+       S.AGE,
+       S.BRAND1,
+       S.BRAND2,
+       SD.ADDRESS,
+       SD.INTRODUCTION,
+       SD.HIT,
+       SD."LIKE",
+       TO_CHAR(SD.START_DATE, '""YYYY"."MM"."DD""') AS START_DATE,  
+       TO_CHAR(SD.END_DATE, '""YYYY"."MM"."DD""') AS END_DATE, 
+       CASE 
+           WHEN SD.START_DATE &gt; SYSDATE THEN '예정' 
+           WHEN SD.END_DATE &lt; SYSDATE THEN '마감'   
+           ELSE '진행중'       
+       END AS LABEL  ,
+       S.STATUS, 
+       S.BAN, 
+       RS.STATUS AS RSTATUS,
+       LISTAGG(DISTINCT C.CATEGORY_NAME, '  |  ') WITHIN GROUP (ORDER BY C.CATEGORY_NAME) AS CATEGORY_NAME,
+       LISTAGG(DISTINCT ST.TAG_NAME, '|') WITHIN GROUP (ORDER BY ST.TAG_NAME) AS TAG_NAME,
+       COUNT(RE.REVIEW_IDX) AS REVIEW_COUNT,  
+       ROUND(AVG(RE.SCORE), 2) AS AVERAGE_SCORE 
+FROM STORES S 
+JOIN STORES_DETAIL SD ON S.STORE_IDX = SD.STORE_IDX
+JOIN RESERVATION_STORES RS ON S.STORE_IDX = RS.STORE_IDX
+LEFT JOIN STORES_CATEGORY SC ON S.STORE_IDX = SC.STORE_IDX
+LEFT JOIN CATEGORY C ON C.CATEGORY_ID = SC.CATEGORY_ID
+LEFT JOIN REVIEWS RE ON RE.STORE_IDX = S.STORE_IDX
+LEFT JOIN STORES_TAG ST ON ST.STORE_IDX = S.STORE_IDX
+
+WHERE S.COMPANY_IDX = #{company_idx}
+AND  S.STATUS ='승인' AND S.BAN ='N'
+ <if test="company_idx != null">
+  AND SD.START_DATE &lt;= SYSDATE
+  AND SD.END_DATE &gt;= SYSDATE
+  </if>
+GROUP BY S.STORE_IDX, 
+         S.TITLE, 
+         SD.START_DATE, 
+         SD.END_DATE, 
+         S.STATUS, 
+         S.BAN, 
+         RS.STATUS,
+         S.AGE,
+         S.BRAND1,
+         S.BRAND2,
+         SD.ADDRESS,
+         SD.INTRODUCTION,
+         SD.HIT,
+         SD."LIKE"
+
+</select>
 
 </mapper>
 
