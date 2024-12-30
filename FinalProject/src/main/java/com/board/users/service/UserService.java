@@ -44,6 +44,7 @@ public class UserService {
 
         // 가입일 기본값
         user.setCdate(new java.util.Date());
+        user.setRole("USER");
 
         userRepository.save(user);
     }
@@ -51,4 +52,12 @@ public class UserService {
 	public Optional<User> findBySocialId(String id) {
         return userRepository.findBySocialId(id);
 	}
+
+    public String getEmailById(String id) {
+        // ID로 사용자 정보 조회
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다.")); // 사용자 없으면 예외 처리
+        String email = user.getEmail();
+        return email; // 사용자 이메일 반환
+    }
 }

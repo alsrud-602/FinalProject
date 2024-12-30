@@ -158,8 +158,13 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
 			localStorage.setItem('token', data.token);
             console.log('JWT 토큰 저장 완료:', data.token);
 
-            // 홈 화면으로 리다이렉션
-            window.location.href = '/';
+            if (data.redirect) {
+                // ADMIN user, redirect to 2FA page
+                window.location.href = data.redirect;
+            } else {
+                // Regular user, redirect to home
+                window.location.href = '/';
+            }
         } else {
             if (data === undefined) {
                 const errorMessages = [];

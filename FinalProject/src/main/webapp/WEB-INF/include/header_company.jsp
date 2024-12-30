@@ -482,8 +482,8 @@
 
  document.addEventListener('DOMContentLoaded', function() {
     const authContent = document.querySelector('.header-util');
-    const token = localStorage.getItem('token');
-    if (token) {
+    const companytoken = localStorage.getItem('companytoken');
+    if (companytoken) {
         // 토큰이 있는 경우 (인증된 사용자)
         authContent.innerHTML = `
             <form id="logoutForm">
@@ -493,7 +493,7 @@
         
         // 로그아웃 버튼 이벤트 리스너
         document.getElementById('logout-button').addEventListener('click', function() {
-        	sessionStorage.removeItem('token');
+        	localStorage.removeItem('companytoken');
             window.location.href = '/CompanyAuth/Logout';
         });
     } else {
@@ -515,19 +515,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (logoutButton) {
         logoutButton.addEventListener('click', function(event) {
             event.preventDefault(); // 기본 폼 서브미션 방지
-
-            /*
-            fetch('/Users/Logout', { method: 'POST' })
-                .then(response => {
-                    if (response.ok) {
-                    	sessionStorage.removeItem('token'); // 토큰 삭제
-                        window.location.href = '/'; // 리다이렉션
-                    } else {
-                        console.error('Failed to log out');
-                        alert('로그아웃에 실패했습니다. 다시 시도해주세요.');
-                    }
-                })
-                .catch(error => console.error('Error during logout:', error));*/
             fetch('/CompanyAuth/Logout', { method: 'POST', credentials: 'include' })
             .then(() => {
                 window.location.reload(); // 페이지 새로고침
