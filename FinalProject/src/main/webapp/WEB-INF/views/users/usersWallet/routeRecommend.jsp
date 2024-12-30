@@ -164,86 +164,99 @@
 <%-- <%@include file="/WEB-INF/include/footer.jsp" %> --%>
 
 <script>
-    let selectedAddresses = []; // 선택된 주소 목록
+let selectedAddresses = []; // 선택된 주소 목록
+let selectedNames = []; // 선택된 이름 목록
 
-    document.getElementById("popup-select").addEventListener("change", function () {
-    	const selectedOption = this.options[this.selectedIndex]; // 선택된 option 요소
-    	const selectedName = selectedOption.getAttribute('name'); // 'name' 속성 값 가져오기
-        const selectedValue = this.value;
-        const storeList = document.getElementById("store-list");
+document.getElementById("popup-select").addEventListener("change", function () {
+    const selectedOption = this.options[this.selectedIndex]; // 선택된 option 요소
+    const selectedName = selectedOption.getAttribute('name'); // 'name' 속성 값 가져오기
+    const selectedValue = this.value;
+    const storeList = document.getElementById("store-list");
 
-        // 선택된 값이 있고, 네모칸이 7개 미만인 경우만 실행
-        if (selectedValue && storeList.children.length < 7 && !selectedAddresses.includes(selectedValue)) {
-            selectedAddresses.push(selectedValue);
+    // 선택된 값이 있고, 네모칸이 7개 미만인 경우만 실행
+    if (selectedValue && storeList.children.length < 7 && !selectedAddresses.includes(selectedValue)) {
+        selectedAddresses.push(selectedValue);
+        selectedNames.push(selectedName); // 이름을 배열에 추가
 
-            // 네모칸 생성
-            const storeNameBox = document.createElement("div");
-            storeNameBox.classList.add("store-name");
-            storeNameBox.textContent = selectedName; // 선택한 팝업 이름 표시
+        // 네모칸 생성
+        const storeNameBox = document.createElement("div");
+        storeNameBox.classList.add("store-name");
+        storeNameBox.textContent = selectedName; // 선택한 팝업 이름 표시
 
-            // X 버튼 생성 및 삭제 기능
-            const removeBtn = document.createElement("span");
-            removeBtn.textContent = "x";
-            removeBtn.classList.add("remove-btn");
+        // X 버튼 생성 및 삭제 기능
+        const removeBtn = document.createElement("span");
+        removeBtn.textContent = "x";
+        removeBtn.classList.add("remove-btn");
 
-            removeBtn.onclick = function () {
-                // 네모칸 삭제
-                storeList.removeChild(storeNameBox);
+        removeBtn.onclick = function () {
+            // 네모칸 삭제
+            storeList.removeChild(storeNameBox);
 
-                // 배열에서 선택된 주소 삭제
-                selectedAddresses = selectedAddresses.filter(address => address !== selectedValue);
+            // 배열에서 선택된 주소 및 이름 삭제
+            selectedAddresses = selectedAddresses.filter(address => address !== selectedValue);
+            selectedNames = selectedNames.filter(name => name !== selectedName); // 이름도 삭제
 
-                // 선택된 팝업을 다시 활성화
-                const optionToEnable = Array.from(document.getElementById("popup-select").options)
-                    .find(option => option.value === selectedValue);
-                if (optionToEnable) {
-                    optionToEnable.disabled = false;
-                }
-            };
+            // 선택된 팝업을 다시 활성화
+            const optionToEnable = Array.from(document.getElementById("popup-select").options)
+                .find(option => option.value === selectedValue);
+            if (optionToEnable) {
+                optionToEnable.disabled = false;
+            }
+        };
 
-            // X 버튼 추가
-            storeNameBox.appendChild(removeBtn);
-            storeList.appendChild(storeNameBox);
+        // X 버튼 추가
+        storeNameBox.appendChild(removeBtn);
+        storeList.appendChild(storeNameBox);
 
-            // 숨겨진 필드 추가
-            const hiddenFields = document.getElementById("hidden-fields");
+        // 숨겨진 필드 추가
+        const hiddenFields = document.getElementById("hidden-fields");
+        const hiddenInput = document.createElement("input");
+        hiddenInput.type = "hidden";
+        hiddenInput.name = "address"; // 서버에서 List<String>으로 받을 수 있도록
+        hiddenInput.value = selectedValue;
+        hiddenFields.appendChild(hiddenInput);
+
+        // 선택된 팝업 비활성화
+        const optionToDisable = Array.from(this.options).find(option => option.value === selectedValue);
+        if (optionToDisable) {
+            optionToDisable.disabled = true;
+        }
+    } else if (storeList.children.length >= 7) {
+        alert("최대 7개까지 선택할 수 있습니다.");
+    }
+});
+
+
+// 검색 버튼 클릭 시, 선택된 주소들과 이름들을 숨겨진 필드에 추가 후 폼 제출
+document.getElementById('search-btn').addEventListener('click', function () {
+    if (selectedAddresses.length > 0) {
+        const hiddenFields = document.getElementById('hidden-fields');
+        hiddenFields.innerHTML = ""; // 이전 값을 초기화
+
+        // 선택된 주소를 숨겨진 필드로 다시 추가
+        selectedAddresses.forEach(address => {
             const hiddenInput = document.createElement("input");
             hiddenInput.type = "hidden";
             hiddenInput.name = "address"; // 서버에서 List<String>으로 받을 수 있도록
-            hiddenInput.value = selectedValue;
+            hiddenInput.value = address;
             hiddenFields.appendChild(hiddenInput);
+        });
 
-            // 선택된 팝업 비활성화
-            const optionToDisable = Array.from(this.options).find(option => option.value === selectedValue);
-            if (optionToDisable) {
-                optionToDisable.disabled = true;
-            }
-        } else if (storeList.children.length >= 7) {
-            alert("최대 7개까지 선택할 수 있습니다.");
-        }
-    });
+        // 선택된 이름들을 숨겨진 필드로 다시 추가
+        selectedNames.forEach(name => {
+            const hiddenInput = document.createElement("input");
+            hiddenInput.type = "hidden";
+            hiddenInput.name = "name"; // 서버에서 List<String>으로 받을 수 있도록
+            hiddenInput.value = name;
+            hiddenFields.appendChild(hiddenInput);
+        });
 
-    // 검색 버튼 클릭 시, 선택된 주소들을 숨겨진 필드에 추가 후 폼 제출
-    document.getElementById('search-btn').addEventListener('click', function () {
-        if (selectedAddresses.length > 0) {
-            const hiddenFields = document.getElementById('hidden-fields');
-            hiddenFields.innerHTML = ""; // 이전 값을 초기화
-
-            // 선택된 주소를 숨겨진 필드로 다시 추가
-            selectedAddresses.forEach(address => {
-                const hiddenInput = document.createElement("input");
-                hiddenInput.type = "hidden";
-                hiddenInput.name = "address"; // 서버에서 List<String>으로 받을 수 있도록
-                hiddenInput.value = address;
-                hiddenFields.appendChild(hiddenInput);
-            });
-
-            // 폼 제출
-            document.getElementById('address-form').submit();
-        } else {
-            alert('주소를 선택해주세요.');
-        }
-    });
+        // 폼 제출
+        document.getElementById('address-form').submit();
+    } else {
+        alert('주소를 선택해주세요.');
+    }
+});
 
     
 	</script>

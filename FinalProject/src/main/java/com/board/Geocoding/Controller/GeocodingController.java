@@ -26,14 +26,20 @@ public class GeocodingController {
 
     
     @RequestMapping("/GetCoordinates")
-    public String getCoordinates(@RequestParam("address") List<String> addresses, Model model) {
-     
-    	System.out.println("받아온 주소 리스트:"); // 선택한 주소 목록 출력 주석처리
-        addresses.forEach(System.out::println);    // 선택한 주소 목록 출력 주석처리
-
+    public String getCoordinates(@RequestParam("address") List<String> addresses, 
+                                  @RequestParam("name") List<String> names, Model model) {
+        
+        // 받은 주소와 이름을 로그로 출력
+        System.out.println("받아온 주소 리스트:");
+        addresses.forEach(System.out::println); // 선택한 주소 출력
+        names.forEach(System.out::println); // 선택한 이름 출력
+        
         List<Map<String, String>> locations = new ArrayList<>();
 
-        for (String address : addresses) {
+        // 각 주소에 대해 위치 정보 조회
+        for (int i = 0; i < addresses.size(); i++) {
+            String address = addresses.get(i);
+            String name = names.get(i); // 대응되는 이름 가져오기
             String[] location = getLocation(address); // 각 주소에 대해 위치 정보 조회
 
             if (location != null) {
@@ -41,20 +47,22 @@ public class GeocodingController {
                 locationMap.put("address", address);
                 locationMap.put("lat", location[0]);
                 locationMap.put("lon", location[1]);
-                locations.add(locationMap); // 유효한 위치 정보 저장
+                locationMap.put("name", name); // 이름 추가
+                locations.add(locationMap); // 유효한 위치 정보와 이름 저장
             } else {
                 Map<String, String> errorMap = new HashMap<>();
                 errorMap.put("address", address);
                 errorMap.put("error", "위치 정보를 찾을 수 없습니다.");
-                locations.add(errorMap); // 오류 정보 저장
+                errorMap.put("name", name); // 이름 추가
+                locations.add(errorMap); // 오류 정보와 이름 저장
             }
         }
 
-        // JSP로 위치 정보 전달
+        // 모델에 위치 정보를 추가하여 JSP로 전달
         model.addAttribute("locations", locations);
-
-        return "users/usersWallet/getCoordinates"; // 결과를 JSP로 전달
+        return "users/usersWallet/getCoordinates"; // 위치 정보를 JSP로 전달
     }
+
 
     public String[] getLocation(String address) {
         String apiUrl = "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=" + address;
