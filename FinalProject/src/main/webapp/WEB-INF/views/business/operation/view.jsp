@@ -690,7 +690,9 @@ cursor: pointer;
 	      <div class="carousel">
 	      
 	      <c:forEach var="store" items="${storeList}" >
-	       <div  class="title carousel_store" >
+	       <div  class="title carousel_store" 
+	       data-review="${store.review_count}" data-avg="${store.average_score}" 
+	        data-hit="${store.hit}" data-like="${store.like}"data-storeIdx="${store.store_idx}">
 	      <div class="title_header"> 
 	        <div class="title_category">${store.category_name}&nbsp;|&nbsp;${store.age}</div> 
 	        <div class="title_icon">
@@ -947,7 +949,7 @@ cursor: pointer;
 
         <div class="buttons-footer">
 		    <a href="">예약 일정 수정하기</a>
-		    <a href="/Business/Operation/UpdateFormStore?store_idx=91">기본정보 수정하기</a>
+		    <a id="infoUpdate"href="/Business/Operation/UpdateFormStore?store_idx=91">기본정보 수정하기</a>
 		    <a href="">팝업 페이지 이동하기</a>
 		    <c:if test="">
 		   	<button>예약 기능 사용하기</button>
@@ -982,8 +984,34 @@ cursor: pointer;
       // 슬라이드 이동
       const offset = -currentIndex * 100; // 슬라이드의 % 단위 이동
       carousel.style.transform = `translateX(\${offset}%)`;
+      updateInfo();
+      updateButton();
     }
+    
+    
+    function updateInfo() {
+    	  const currentSlide = slides[currentIndex];
+    	  const reviewCount = currentSlide.getAttribute('data-review'); 
+    	  const scoreAvg = currentSlide.getAttribute('data-avg'); 
+    	  const viewCount = currentSlide.getAttribute('data-hit'); 
+    	  const viewLike = currentSlide.getAttribute('data-like');
 
+    	  document.querySelector('._4').textContent = reviewCount; 
+    	  document.querySelector('._30').textContent = viewCount; 
+    	  document.querySelector('._200').textContent = viewLike; 
+    	  document.querySelector('._4-5').textContent = scoreAvg; 
+    	}
+    
+    function updateButton(){
+    	const currentSlide = slides[currentIndex];
+    	  const store_idx = currentSlide.getAttribute('data-storeIdx'); 
+    	  document.querySelector('#infoUpdate')
+    	  //여기 href 를 변경
+    	
+
+    }
+    
+    
     // 버튼 이벤트
     document.querySelector('#icon_next').addEventListener('click', () => {
       updateCarousel('next');
@@ -995,7 +1023,7 @@ cursor: pointer;
 
     // 초기화
     initializeCarousel();    
-    
+    updateInfo();
     
     
     
