@@ -501,6 +501,7 @@
         document.getElementById('logout-button').addEventListener('click', function() {
             localStorage.removeItem('userJwt');
             localStorage.removeItem('kakaoAccessToken');
+            
             window.location.href = '/Users/Logout';
         });
     } else {

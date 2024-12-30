@@ -165,60 +165,60 @@ main {
 </style>
 </head>
 <body>
-	<%@include file="/WEB-INF/include/header.jsp" %>
+   <%@include file="/WEB-INF/include/header.jsp" %>
   <main>
   <div class="inner">
    <div class="container">
-	<h2 class="pagetitle">내 정보</h2>
-	<div class="myinfo">
-	 <h3 class="infotitle">이름</h3>
-	 <p class="infocontent">${name}</p>
-	 <div class="liner"></div>
-	</div>
-	<div class="myinfo">
-	 <h3 class="infotitle">닉네임</h3>
-	 <p class="infocontent">${user.nickname}</p>
-	 <div class="liner"></div>
-	</div>
-	<div class="myinfo">
-	 <h3 class="infotitle">계정정보</h3>
-	 <p class="infocontent">${user.email}</p>
-	 <div class="liner"></div>
-	</div>
-	<div class="myinfo">
-	 <h3 class="infotitle">연락처</h3>
-	 <p class="infocontent">${user.phone}</p>
-	 <div class="liner"></div>
-	</div>
-	<h2 class="pagetitle"># 관심 카테고리</h2>
-	<div class="category">
-	 <p class="categories"><a href="" class="block">브랜드</a></p><p class="categories">패션/뷰티</p><p class="categories">식품</p>
-	 <p class="categories">패션/뷰티</p><p class="categories">패션/뷰티</p><p class="categories">패션/뷰티</p>
-	 <p class="categories">패션/뷰티</p><p class="categories">패션/뷰티</p><p class="categories">패션/뷰티</p>
-	 <p class="categories">패션/뷰티</p><p class="categories">패션/뷰티</p><p class="categories">패션/뷰티</p>
-	 <p class="categories">패션/뷰티</p><p class="categories">패션/뷰티</p><p class="categories">패션/뷰티</p>
-	</div>
-	<div class="btn">
-	 <div class="btn-update"><a href="" class="btn-block">수정</a></div>
-	 <div class="btn-quit"><a href="" class="btn-block">회원탈퇴</a></div>
-	</div>
+   <h2 class="pagetitle">내 정보</h2>
+   <div class="myinfo">
+    <h3 class="infotitle">이름</h3>
+    <p class="infocontent">${user.name}</p>
+    <div class="liner"></div>
+   </div>
+   <div class="myinfo">
+    <h3 class="infotitle">닉네임</h3>
+    <p class="infocontent">${user.nickname}</p>
+    <div class="liner"></div>
+   </div>
+   <div class="myinfo">
+    <h3 class="infotitle">계정정보</h3>
+    <p class="infocontent">${user.email}</p>
+    <div class="liner"></div>
+   </div>
+   <div class="myinfo">
+    <h3 class="infotitle">연락처</h3>
+    <p class="infocontent">${user.phone}</p>
+    <div class="liner"></div>
+   </div>
+   <h2 class="pagetitle"># 관심 카테고리</h2>
+   <div class="category">
+    <p class="categories"><a href="" class="block">브랜드</a></p><p class="categories">패션/뷰티</p><p class="categories">식품</p>
+    <p class="categories">패션/뷰티</p><p class="categories">패션/뷰티</p><p class="categories">패션/뷰티</p>
+    <p class="categories">패션/뷰티</p><p class="categories">패션/뷰티</p><p class="categories">패션/뷰티</p>
+    <p class="categories">패션/뷰티</p><p class="categories">패션/뷰티</p><p class="categories">패션/뷰티</p>
+    <p class="categories">패션/뷰티</p><p class="categories">패션/뷰티</p><p class="categories">패션/뷰티</p>
+   </div>
+   <div class="btn">
+    <div class="btn-update"><a href="" class="btn-block">수정</a></div>
+    <div class="btn-quit"><a href="" class="btn-block">회원탈퇴</a></div>
+   </div>
    </div>
     <aside>
-	 <div class="sidebar">
-	  <table>
-	   <tbody>
-	    <tr><td><a href="/Users/Profile/Home">내 정보</a></td></tr>
-	    <tr><td><a href="/Users/Profile/Reservation">예약내역</a></td></tr>
-	    <tr><td><a href="/Users/Profile/Bookmark">관심팝업</a></td></tr>
-	    <tr><td><a href="">지갑</a></td></tr>
-	    <tr><td><a href="/Users/Profile/Suggestion">추천스토어</a></td></tr>
-	    <tr><td><a href="/Users/Profile/Myreview">내가 쓴 리뷰</a></td></tr>
-	   </tbody>
-	  </table>
-	 </div>
-	</aside>
+    <div class="sidebar">
+     <table>
+      <tbody>
+       <tr><td><a href="/Users/Profile/Home">내 정보</a></td></tr>
+       <tr><td><a href="/Users/Profile/Reservation">예약내역</a></td></tr>
+       <tr><td><a href="/Users/Profile/Bookmark">관심팝업</a></td></tr>
+       <tr><td><a href="">지갑</a></td></tr>
+       <tr><td><a href="/Users/Profile/Suggestion">추천스토어</a></td></tr>
+       <tr><td><a href="/Users/Profile/Myreview">내가 쓴 리뷰</a></td></tr>
+      </tbody>
+     </table>
+    </div>
+   </aside>
   </div>
-  </main>	
+  </main>   
  <%@include file="/WEB-INF/include/footer.jsp" %>
 </body>
 </html>

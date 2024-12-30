@@ -3,6 +3,8 @@ package com.board.users.controller;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,57 +13,31 @@ import org.springframework.web.servlet.ModelAndView;
 import com.board.jwt.JwtUtil;
 import com.board.users.dto.User;
 import com.board.users.mapper.UsersMapper;
+import com.board.users.service.CustomOAuth2UserService;
 import com.board.users.service.UserService;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
-@RequestMapping("/Users/Profile")
+@RequestMapping("/Users")
 public class ProfileController {
 	
 	@Autowired
 	private UsersMapper usersMapper;
 	
 	@Autowired
-	private UserService userService;
-	
-	@Autowired
 	private JwtUtil jwtUtil;
 	
+	@Autowired
+	private UserService userService;
 	
-	@RequestMapping("/Bookmark")
-	public ModelAndView bookmark() {
-		ModelAndView mv = new ModelAndView();
-		mv.setViewName("/users/profile/bookmark");
-		return mv;
-	}
+    @Autowired
+    private CustomOAuth2UserService customOAuth2UserService;
 	
-	@RequestMapping("/Myreview")
-	public ModelAndView myreview() {
-		ModelAndView mv = new ModelAndView();
-		mv.setViewName("/users/profile/myreview");
-		return mv;
-	}
-	
-	@RequestMapping("/Reservation")
-	public ModelAndView reservation() {
-		ModelAndView mv = new ModelAndView();
-		mv.setViewName("/users/profile/reservation");
-		return mv;
-	}
-	
-	@RequestMapping("/Suggestion")
-	public ModelAndView suggestion() {
-		ModelAndView mv = new ModelAndView();
-		mv.setViewName("/users/profile/suggestion");
-		return mv;
-	}
-	   
-	   
-	   	@RequestMapping("/Home")
-	public ModelAndView profile(HttpServletRequest request, Model model) {
-	    ModelAndView mv = new ModelAndView("/users/profile/home");
+	// http://localhost:9090
+    @RequestMapping("/Profile")
+    public ModelAndView profile(HttpServletRequest request, Model model) {
         Cookie[] cookies = request.getCookies();
         String jwtToken = null;
         boolean isKakaoUser = false;  // 카카오 사용자 여부를 판단하는 변수
@@ -99,7 +75,10 @@ public class ProfileController {
             model.addAttribute("error", "JWT 토큰이 없습니다.");
         }
 
-	    return mv;
-	}
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("users/profile/home");
+        return mv;
+    }
 
+	
 }

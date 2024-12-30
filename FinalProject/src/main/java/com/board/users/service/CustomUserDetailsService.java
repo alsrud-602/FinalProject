@@ -63,8 +63,10 @@ public class CustomUserDetailsService implements UserDetailsService {
         throw new UsernameNotFoundException("User not found with ID: " + id);
     }
     
+    
     public UserDetails loadUserByKakaoUsername(String id) throws UsernameNotFoundException {
         return kakaoUserService.loadUserByKakaoUsername(id);  // KakaoUserService 호출
     }
+    
 
 }
