@@ -112,14 +112,14 @@ public class RestUserSignController {
             
             logger.info("JWT 생성 성공: {}", jwt);
             // JWT를 쿠키에 저장
-            Cookie jwtCookie = new Cookie("jwt", jwt);
+            Cookie jwtCookie = new Cookie("userJwt", jwt);
             jwtCookie.setHttpOnly(true);
             jwtCookie.setSecure(true); // HTTPS에서만 사용
-            jwtCookie.setMaxAge(60 * 120); // 2시간
+            jwtCookie.setMaxAge(60 * 60 * 11); // 2시간
             jwtCookie.setPath("/");
             response.addCookie(jwtCookie);
 
-            return ResponseEntity.ok(Map.of("token", jwt));
+            return ResponseEntity.ok(Map.of("userJwt", jwt));
         } catch (Exception e) {
             logger.error("인증 실패: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -178,7 +178,7 @@ public class RestUserSignController {
             // 6. JWT 토큰 생성
             String jwt = jwtUtil.generateToken(oAuth2User.getName(), "user", false);
             // JWT를 쿠키에 저장
-            Cookie jwtCookie = new Cookie("jwt", jwt);
+            Cookie jwtCookie = new Cookie("kakaoAccessToken", jwt);
             jwtCookie.setHttpOnly(true);
             jwtCookie.setSecure(true); // HTTPS에서만 사용
             jwtCookie.setMaxAge(60 * 120); // 2시간

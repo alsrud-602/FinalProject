@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
@@ -15,6 +17,9 @@ import io.jsonwebtoken.SignatureAlgorithm;
 
 @Component
 public class JwtUtil {
+	
+	private final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
+	
     private final String SECRET_KEY = "46930csaefnioweanelbe589eea5b0f43819599a3749d88e26fff284659a26f4baecffc1e7ba574d24d4da5164bf2cf21670ce983d58eb91c";
 
     public String generateToken(String username, String userType, boolean is2faAuthenticated) {

@@ -60,4 +60,8 @@ public class UserService {
         String email = user.getEmail();
         return email; // 사용자 이메일 반환
     }
+
+	public Optional<User> getUserByUsername(String username) {
+        return userRepository.findById(username);
+	}
 }
