@@ -45,7 +45,7 @@ public class RestCompanySignController {
 
             // 역할(Role) 확인
             boolean isCompanyRole = userDetails.getAuthorities().stream()
-                .anyMatch(authority -> "ROLE_company".equals(authority.getAuthority()));
+                .anyMatch(authority -> "ROLE_COMPANY".equals(authority.getAuthority()));
             
             if (!isCompanyRole) {
                 logger.info("로그인 실패: company 역할이 아님");
@@ -56,7 +56,7 @@ public class RestCompanySignController {
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            String jwt = jwtUtil.generateToken(authentication.getName(),"company");
+            String jwt = jwtUtil.generateToken(authentication.getName(),"company", false);
             logger.info("JWT 생성 성공: {}", jwt);
             // JWT를 쿠키에 저장
             Cookie jwtCookie = new Cookie("jwt", jwt);

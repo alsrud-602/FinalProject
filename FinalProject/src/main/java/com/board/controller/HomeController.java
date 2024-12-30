@@ -59,19 +59,6 @@ public class HomeController {
 	}
 	
 
-	
-	@RequestMapping("/Business")
-	public String businesshome() {
-		return "business/operation/operation";
-
-	}
-
-	@RequestMapping("/Operation")
-	public String operationform() {
-		return "business/operation/operation";
-
-	}
-
 
 	
 }

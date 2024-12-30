@@ -82,13 +82,11 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         }
 
         // 4. 프로필에서 카카오 로그인 연동
-        //"카카오로그인과 연동하려면 기존계정으로 로그인해주세요~ 로그인화면으로 보내는데 카카오이메일,소셜아이디,타입 전달"
+        //"카카오이메일,소셜아이디,타입 전달"
         //카카오 아이디와 연동하기
         //if (kakaouser.getSocialType() == null || kakaouser.getSocialId() == null) {
-        //if (!kakaouser.getEmail().equals(email)) {}}
+        //    if (!kakaouser.getEmail().equals(email) && 기존 아이디가 있을때) {
 
-
-        System.out.println("카카오 유저 아이디 기반 아이디"+kakaouser.getId());
         logger.info("SecurityContext 인증 정보: {}", SecurityContextHolder.getContext().getAuthentication());
 
 
