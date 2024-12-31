@@ -18,8 +18,10 @@ import com.board.business.dto.CategoryDto;
 import com.board.business.dto.CompanyDto;
 import com.board.business.dto.RequestDto;
 import com.board.business.dto.ReservationDateDto;
+import com.board.business.dto.ReservationDateListDto;
 import com.board.business.dto.ReservationPlanDto;
 import com.board.business.dto.ReservationStoreDto;
+import com.board.business.dto.ReservationUserListDto;
 import com.board.business.dto.StoreCategoryDto;
 import com.board.business.dto.StoreListDto;
 import com.board.business.dto.StoreTagDto;
@@ -421,6 +423,19 @@ public class BusinessServiceimpl  implements BusinessService{
 	public List<StoreListDto> getStoreOperationView(int company_idx) {
 		List<StoreListDto> sovList = businessMapper.getStoreOperationView(company_idx);
 		return sovList;
+	}
+
+	@Override
+	public List<ReservationDateListDto> getReservationDateList(HashMap<String, Object> map) {
+		 List<ReservationDateListDto> rdList = businessMapper.getReservationDateList(map);
+		return rdList;
+	}
+
+	@Override
+	public List<ReservationUserListDto> getReservationUserList(HashMap<String, Object> map) {
+		
+		 List<ReservationUserListDto> ruList = businessMapper.getReservationUserList(map);
+		return ruList;
 	}
 
 

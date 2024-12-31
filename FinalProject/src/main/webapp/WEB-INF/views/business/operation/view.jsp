@@ -673,7 +673,10 @@ cursor: pointer;
 	flex: 0 0 1200px; 
 }
 
+#advanceReservation{
 
+display:none;
+}
 	</style>
 </head>
 
@@ -687,12 +690,12 @@ cursor: pointer;
 
          <div class="carousel-container">
          
-	      <div class="carousel">
-	      
+	      <div class="carousel">	      
 	      <c:forEach var="store" items="${storeList}" >
 	       <div  class="title carousel_store" 
-	       data-review="${store.review_count}" data-avg="${store.average_score}" 
-	        data-hit="${store.hit}" data-like="${store.like}"data-storeIdx="${store.store_idx}">
+	       data-review="${store.review_count}" data-avg="${store.average_score}"  data-rsIdx="${store.rs_idx}"
+	        data-hit="${store.hit}" data-like="${store.like}" data-storeIdx="${store.store_idx}" 
+	        data-rstaus="${store.rstatus}"  data-link="${store.link}">
 	      <div class="title_header"> 
 	        <div class="title_category">${store.category_name}&nbsp;|&nbsp;${store.age}</div> 
 	        <div class="title_icon">
@@ -772,9 +775,16 @@ cursor: pointer;
 		        <p>일주일 평균</p>
 		    </div>
 		</section>
-<%-- <c:if test=""> choose쓰면 될듯--%>
+    <input type="hidden" id="reservation_rsIdx" value=""/>
+    <input type="hidden" id="reservation_rstatus" value=""/>		
+    <input type="hidden" id="reservation_link" value=""/>		
+ 
+<div id="advanceReservation">
+
+
 <section class="pre-reservation">
     <h3>사전예약명단</h3>
+
     <div class="pre-reservation-container">
         <div class="calendar">
             <div class="sec_cal">
@@ -816,13 +826,15 @@ cursor: pointer;
 
             </div>
         </div>
+        
+        
         <div class="pre-reservations">
             <h4>[예약 현황]</h4>
             <table id="pre-reservation-table">
                 <tr>
                     <th>순번</th>
                     <th>시간</th>
-                    <th>예약 현황</th>
+                    <th>인원수</th>
                     <th>상세보기</th>
                 </tr>
                 <!-- 동적으로 업데이트 될 부분 -->
@@ -831,7 +843,7 @@ cursor: pointer;
     </div>
 <section class="pre-reservation-list">
     <div class="pre-reservation-header">
-        <h4>2차 명단</h4>
+        <h4>1차 명단</h4>
         <button class="notify-all-btn">전체알림보내기</button>
     </div>
     <table>
@@ -847,7 +859,10 @@ cursor: pointer;
 </section>
 
 </section>
-<%-- </c:if> --%>
+</div> 
+
+ 
+ 
 <%-- <c:if test=""> --%>
 <section class="reservation-status">
     <div class="reservation-header">
@@ -986,6 +1001,8 @@ cursor: pointer;
       carousel.style.transform = `translateX(\${offset}%)`;
       updateInfo();
       updateButton();
+      displayCurrentReservations(); 
+      displayUserList();
     }
     
     
@@ -995,20 +1012,28 @@ cursor: pointer;
     	  const scoreAvg = currentSlide.getAttribute('data-avg'); 
     	  const viewCount = currentSlide.getAttribute('data-hit'); 
     	  const viewLike = currentSlide.getAttribute('data-like');
+    	  const rsIdx = currentSlide.getAttribute('data-rsIdx');
+    	  const rstaus = currentSlide.getAttribute('data-rstaus');
+    	  const link = currentSlide.getAttribute('data-link');
 
     	  document.querySelector('._4').textContent = reviewCount; 
     	  document.querySelector('._30').textContent = viewCount; 
     	  document.querySelector('._200').textContent = viewLike; 
     	  document.querySelector('._4-5').textContent = scoreAvg; 
+    	  document.querySelector('#reservation_rsIdx').value = rsIdx; 
+    	  document.querySelector('#reservation_rstatus').value = rstaus; 
+    	  document.querySelector('#reservation_link').value = link; 
+    	  
+    	  reservationDisplay(link,rstaus);
     	}
     
     function updateButton(){
     	const currentSlide = slides[currentIndex];
-    	  const store_idx = currentSlide.getAttribute('data-storeIdx'); 
-    	  document.querySelector('#infoUpdate')
-    	  //여기 href 를 변경
-    	
+    	let store_idx = currentSlide.getAttribute('data-storeIdx'); 
+    	let infoUpdateLink = document.querySelector('#infoUpdate');
 
+    	// href 속성 변경
+    	infoUpdateLink.href = `/Business/Operation/UpdateFormStore?store_idx=\${store_idx}`;    	
     }
     
     
@@ -1024,8 +1049,16 @@ cursor: pointer;
     // 초기화
     initializeCarousel();    
     updateInfo();
+    updateButton();
     
-    
+    function reservationDisplay(link, rstaus) {
+        console.log(rstaus);
+        console.log(link);
+    	if (link === null || link === undefined || link === "") { // null과 비교할 때는 === 사용
+            document.querySelector('#advanceReservation').style.display = "block";
+        
+        }
+    } 
     
 /* 혼잡도 그래프 */
 const ctx = document.getElementById('trafficChart').getContext('2d');
@@ -1187,10 +1220,10 @@ function calendarInit() {
         let month = parseInt(selectMonth.value);
 
         if (month === 0) {
-            month = 11; // 12월
-            year--; // 연도 감소
+            month = 11;   // 12월
+            year--;  // 연도 감소
         } else {
-            month--; // 이전 월
+            month--;   // 이전 월
         }
 
         selectYear.value = year;
@@ -1285,6 +1318,8 @@ function addDateSelection(currentYear, currentMonth) {
             
          // 예약 목록 업데이트
             updateReservationList(currentYear, currentMonth, dayNumber);
+            displayUserList();
+            
         });
     });
 }
@@ -1341,13 +1376,34 @@ function renderCalender(thisMonth) {
 // 예약 현황 목록 업데이트 함수
 function updateReservationList(year, month, day) {
     // 예시 데이터
-    const data = [
-        { id: 2, time: "11:30 - 12:00", status: "27명 예약", shift: "2차" },
-        { id: 3, time: "11:30 - 12:00", status: "24명 예약", shift: "3차" },
-        { id: 4, time: "11:30 - 12:00", status: "10명 예약", shift: "4차" },
-        { id: 5, time: "11:30 - 12:00", status: "6명 예약", shift: "5차" }
-    ];
+  
+    let rs_idx = document.querySelector('#reservation_rsIdx').value;
+    
+    $.ajax({
+        url: '/Reservation/Date',
+        method: 'GET', // HTTP 메서드
+        data: {
+        	rs_idx:rs_idx,
+            year: year, 
+            month: month + 1, 
+            day: day 
+        },
+        
+        success: function(data) {
+            displayReservations(data);
+        },
+        error: function(error) {
+            // 요청이 실패했을 때 실행되는 콜백 함수
+            console.error("예약 데이터를 가져오는 중 오류 발생:",error)
+            alert('예약 데이터를 가져오는 데 실패했습니다. 다시 시도해 주세요.');
+        }
+    });
+        
+    
 
+}
+function displayReservations(data) {
+    
     const tableBody = document.querySelector("#pre-reservation-table");
 
     // 기본 테이블 헤더 설정
@@ -1355,7 +1411,7 @@ function updateReservationList(year, month, day) {
         <tr>
             <th>순번</th>
             <th>시간</th>
-            <th>예약 현황</th>
+            <th>인원수</th>
             <th>상세보기</th>
         </tr>
     `;
@@ -1374,10 +1430,12 @@ function updateReservationList(year, month, day) {
     data.forEach((item, index) => {
         tableBody.innerHTML += `
             <tr>
-                <td>\${index + 1}차</td>
-                <td>\${item.time}</td>
-                <td>\${item.status}</td>
-                <td><button class="view-reservation-btn" data-id="${index + 1}">명단보기</button></td>
+                <td>\${item.time_slot}</td>
+                <td>\${item.time_range}</td>
+                <td>\${item.max_number}</td>
+                <td><button class="view-reservation-btn" data-rdate="\${item.reservation_date}"  data-id="\${item.rp_idx}"
+                >
+                명단보기</button></td>
             </tr>
         `;
     });
@@ -1385,30 +1443,50 @@ function updateReservationList(year, month, day) {
     // 명단보기 버튼 클릭 이벤트
     document.querySelectorAll('.view-reservation-btn').forEach(button => {
         button.addEventListener('click', function() {
-            const reservationId = this.getAttribute('data-id');
-            showReservationList(reservationId); // 예약 명단 보기
+            let userrdate = this.getAttribute('data-rdate');
+            let userrpIdx= this.getAttribute('data-id');
+            console.log(userrdate);
+            console.log(userrpIdx);
+            showReservationList(userrdate,userrpIdx); // 예약 명단 보기
         });
-    });
+    });	
+	
+	
+	
+	
+}
+function showReservationList(date,rp_idx) {
+	let rsIdxUser = document.querySelector('#reservation_rsIdx').value;
+    
+    $.ajax({
+        url: '/Reservation/UserView',
+        method: 'GET', // HTTP 메서드
+        data: {
+        	rp_idx:rp_idx,
+        	date: date, 
+        	rs_idx:rsIdxUser
+        },
+        
+        success: function(data) {
+        	displayUserList(data);
+        },
+        error: function(error) {
+            // 요청이 실패했을 때 실행되는 콜백 함수
+            console.error("예약 데이터를 가져오는 중 오류 발생:",error)
+            alert('예약 데이터를 가져오는 데 실패했습니다. 다시 시도해 주세요.');
+        }
+    });    
+    
+
 }
 
-function showReservationList(reservationId) {
-    const reservationListData = {
-        1: [
-            { id: 1, name: "김진환", userId: "bange", person: "3" },
-            { id: 2, name: "이하늘", userId: "sunny", person: "5" }
-        ],
-        2: [
-            { id: 1, name: "박지민", userId: "jimin", person: "6" },
-            { id: 2, name: "김수연", userId: "sooyeon", person: "2" }
-        ],
-        // 다른 예약 ID에 대한 데이터 추가
-    };
+function displayUserList(data){
 
     const reservationSection = document.querySelector('.pre-reservation-list');
     const reservationTableBody = reservationSection.querySelector('table');
-
+    console.log(data);
     // 예약 리스트 데이터 확인
-    const reservationData = reservationListData[reservationId] || [];
+    const reservationData = Array.isArray(data) ? data : [];
 
     // 예약 명단을 테이블에 업데이트
     reservationTableBody.innerHTML = `
@@ -1429,14 +1507,14 @@ function showReservationList(reservationId) {
         `;
     } else {
     	const reservationlistHeader = document.querySelector('.pre-reservation-header h4');
-    	reservationlistHeader.textContent = `\${reservationListData.item + 1}차 명단`;
         reservationData.forEach((item, index) => {
+    	reservationlistHeader.textContent = `\${item.time_slot} 명단`;
             reservationTableBody.innerHTML += `
                 <tr>
                     <td>\${index + 1}</td>
                     <td>\${item.name}</td>
-                    <td>\${item.userId}</td>
-                    <td>\${item.person}명</td>
+                    <td>\${item.id}</td>
+                    <td>\${item.reservation_number}명</td>
                     <td><button class="notify-btn">알림보내기</button></td>
                 </tr>
             `;
@@ -1444,58 +1522,19 @@ function showReservationList(reservationId) {
     }
 
     // 명단 섹션 보이기
-    reservationSection.style.display = 'block';
+    reservationSection.style.display = 'block';	
+	
+	
 }
 
 
-/*      $.ajax({
-        url: `/getReservations`, // 예약 데이터 요청 API 엔드포인트
-        method: 'GET',
-        data: {
-            year: year,
-            month: month + 1, // 0부터 시작하므로 1을 더합니다.
-            day: day
-        },
-        success: function(data) {
-            const tableBody = document.querySelector("#pre-reservation-table");
-            tableBody.innerHTML = `
-                <tr>
-                    <th>순번</th>
-                    <th>시간</th>
-                    <th>예약 현황</th>
-                    <th>상세보기</th>
-                </tr>
-            `;
 
-            // 데이터가 비어있을 경우 처리
-            if (data.length === 0) {
-                tableBody.innerHTML += `
-                    <tr>
-                        <td colspan="4" style="text-align:center;">예약된 정보가 없습니다.</td>
-                    </tr>
-                `;
-                return;
-            }
 
-            // 데이터를 순회하며 테이블에 추가
-            data.forEach((item, index) => {
-                tableBody.innerHTML += `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${item.time}</td>
-                        <td>${item.status}</td>
-                        <td><a href="/reservationDetails?id=${item.id}">보기</a></td>
-                    </tr>
-                `;
-            });
-        },
-        error: function(error) {
-            console.error("예약 데이터를 가져오는 중 오류 발생:", error);
-        }
-    }); */
-    </script>
+
+
+</script>
     <!-- 현장예약 -->
-    <script type="text/javascript">
+<script type="text/javascript">
     function filterReservations() {
         const filterValue = document.getElementById("status-filter").value;
         const rows = document.querySelectorAll("#reservation-table tr[data-status]");

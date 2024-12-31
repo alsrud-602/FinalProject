@@ -7,8 +7,10 @@ import com.board.business.dto.CategoryDto;
 import com.board.business.dto.CompanyDto;
 import com.board.business.dto.RequestDto;
 import com.board.business.dto.ReservationDateDto;
+import com.board.business.dto.ReservationDateListDto;
 import com.board.business.dto.ReservationPlanDto;
 import com.board.business.dto.ReservationStoreDto;
+import com.board.business.dto.ReservationUserListDto;
 import com.board.business.dto.StoreCategoryDto;
 import com.board.business.dto.StoreListDto;
 import com.board.business.dto.StoreTagDto;
@@ -59,6 +61,10 @@ public interface BusinessService {
 			String[] rp_plan, String[] rd_plan, String[] reservation_end_date, String[] reservation_start_date);
 
 	List<StoreListDto> getStoreOperationView(int company_idx);
+
+	List<ReservationDateListDto> getReservationDateList(HashMap<String, Object> map);
+
+	List<ReservationUserListDto> getReservationUserList(HashMap<String, Object> map);
 
 	
 

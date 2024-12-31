@@ -37,10 +37,9 @@
   <!-- Navigation buttons -->
   <div class="swiper-button-next"></div>
   <div class="swiper-button-prev"></div>
-</div>
-    
-    <div class='title'>
-   
+</div>   
+
+    <div class='title'>   
       <div class="title_header"> 
         <div class="title_category">잡화 > 스포츠 > 2030대</div> 
         <div class="title_icon">

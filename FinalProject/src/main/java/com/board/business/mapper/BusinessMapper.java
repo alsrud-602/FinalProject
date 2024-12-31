@@ -11,8 +11,10 @@ import com.board.business.dto.CompanyDto;
 import com.board.business.dto.ImageStoreDTO;
 import com.board.business.dto.RequestDto;
 import com.board.business.dto.ReservationDateDto;
+import com.board.business.dto.ReservationDateListDto;
 import com.board.business.dto.ReservationPlanDto;
 import com.board.business.dto.ReservationStoreDto;
+import com.board.business.dto.ReservationUserListDto;
 import com.board.business.dto.StoreCategoryDto;
 import com.board.business.dto.StoreListDto;
 import com.board.business.dto.StoreTagDto;
@@ -106,6 +108,10 @@ public interface BusinessMapper {
 	void deleteImageStore(int is_idx);
 
 	List<StoreListDto> getStoreOperationView(int company_idx);
+
+	List<ReservationDateListDto> getReservationDateList(HashMap<String, Object> map);
+
+	List<ReservationUserListDto> getReservationUserList(HashMap<String, Object> map);
 
 
 

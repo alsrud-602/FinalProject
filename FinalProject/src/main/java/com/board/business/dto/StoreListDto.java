@@ -5,6 +5,8 @@ import lombok.Data;
 @Data
 public class StoreListDto {
 	private int store_idx;
+	private int rs_idx;
+	private String link;
 	private String title;
 	private String age;
 	private String label;
