@@ -1,5 +1,7 @@
 package com.board.admin.vo;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -42,11 +44,43 @@ public class AdminVo {
 	private String content_info; // SQL에서는 CONTENT_INFO
 	private String add_date; // SQL에서는 ADD_DATE
 	
-	
+	 // 출석 관련 필드
     private String attendance_status;  // 출석 상태 ('on', 'off')
     private String attendance_date;  // 출석 날짜
     private int consecutive_attendance_days;  // 연속 출석 일수
     private int total_attendance_days; 
 
+    // 선택인원 모두 팝콘 지급 관련 필드 추가
+    private List<String> userIds;  // 팝콘을 지급할 유저들의 ID 목록
+    private String contentInfo;    // 지급 또는 차감 내용
+    private int points;            // 지급 또는 차감할 포인트
+    
+    
+    // Getters and Setters
+    public List<String> getUserIds() {
+        return userIds;
+    }
+
+    public void setUserIds(List<String> userIds) {
+        this.userIds = userIds;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public int getPoints() {
+        return points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
+    }
+    
+    
 }
 

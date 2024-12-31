@@ -85,7 +85,13 @@ h3{
     width:300px;
     height: 40px;
     border-radius: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 20px;
+    font-family: 'Pretendard';
+     padding-left: 10px;  
 }
+
 /*---------------------------------------------------*/
 /*모달 버튼*/
 .modalbutton1{
@@ -390,35 +396,35 @@ span.center {
 	    <div class="user">
 	    <table>
 	         <tr>
-	          <td>
-	             <h3>닉네임</h3>
-	             <div class="tableborder"></div>
-	          </td>
-	         </tr>
-	         <tr>
-	          <td>
-	             <h3>아이디</h3>
-	             <div class="tableborder"></div>
-	          </td>
-	         </tr>
-	         <tr>
-	          <td>
-	             <h3>비밀번호</h3>
-	             <div class="tableborder"></div>
-	          </td>
-	         </tr>
-	         <tr>
-	          <td>
-	             <h3>이메일</h3>
-	             <div class="tableborder"></div>
-	          </td>
-	         </tr>
-	         <tr>
-	          <td>
-	            <h3>전화번호</h3>
-	            <div class="tableborder"></div>
-	          </td>
-	         </tr>
+        <td>
+            <h3>닉네임</h3>
+            <div class="tableborder">${userinfo[0].nikname}</div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <h3>아이디</h3>
+            <div class="tableborder">${userinfo[0].id}</div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <h3>비밀번호</h3>
+            <div class="tableborder"  title="${userinfo[0].password}">${userinfo[0].password}</div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <h3>이메일</h3>
+            <div class="tableborder">${userinfo[0].email}</div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <h3>전화번호</h3>
+            <div class="tableborder">${userinfo[0].phone}</div>
+        </td>
+    </tr>
 	       </table>
 	     </div>
 	     
@@ -493,7 +499,7 @@ span.center {
 		        <form action="/Admin/PlusPopcorn" method="POST">
 		        <input id="popcornContentPlus" type="text"   name="content"      placeholder="지급내용(필수기입)">
 		        <input id="popcornAmountPlus"  type="number" name="plusPopcorn"  placeholder="ex)100">
-		        <input type="hidden" name="userId" value="TEST">
+		        <input type="hidden" name="userId" value="${userinfo[0].id}">
 		        <button type="submit" id="plusPopcornBtn"  class="insertbutton1" data-bs-dismiss="modal" >등록</button>
 		        </form>
 		      </div>
@@ -513,7 +519,7 @@ span.center {
 		       <form action="/Admin/MinusPopcorn" method="POST">
 		        <input id="popcornContentMinus" type="text"   name="content"       placeholder="차감내용(필수기입)">
 		        <input id="popcornAmountMinus" type="number"  name="minusPopcorn"  placeholder="ex)100">
-		        <input type="hidden" name="userId" value="TEST">
+		        <input type="hidden" name="userId" value="${userinfo[0].id}">
 		        <button type="submit" id="minusPopcornBtn"  class="insertbutton2" data-bs-dismiss="modal">차감</button>
 		        </form>
 		    </div>

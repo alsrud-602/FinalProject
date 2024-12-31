@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.board.jwt.JwtUtil;
 import com.board.users.dto.User;
+import com.board.users.mapper.PopcornMapper;
 import com.board.users.service.UserService;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -36,6 +37,9 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/Users")
 public class UserSignController {
 
+	@Autowired
+	private PopcornMapper popcornMapper; //팝콘지갑,로그,출석 추가용 
+	
     @Autowired
     private UserService userService;
     
@@ -75,6 +79,11 @@ public class UserSignController {
     @PostMapping("/Signup")
     public String registerUser(@ModelAttribute User user) {
         userService.registerUser(user);
+        
+        popcornMapper.createPopcornWallet(user); //팝콘 지갑 생성
+        popcornMapper.createUserAttendance(user);//출석 테이블 생성
+        popcornMapper.createPopcornLog(user);//팝콘 내역 생성
+        
         return "redirect:/Users/LoginForm";
     }
     /*========================================================*/

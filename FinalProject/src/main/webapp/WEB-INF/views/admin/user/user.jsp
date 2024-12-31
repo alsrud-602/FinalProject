@@ -5,14 +5,14 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <link rel="icon" type="image/png" href="/img/favicon.png" />
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
 <style>
@@ -199,10 +199,12 @@ input[type="number"]{
   
 <%@include file="/WEB-INF/include/admin-slidebar.jsp" %>
   
+
  
     <div class="content">
       <h2>유저 관리</h2>
       <div class="hr"></div>
+      
       
       <!-- 모달을 실행할 버튼 --> 
 	  <button type="button" class="modalbutton1" data-bs-toggle="modal" data-bs-target="#exampleModal1">
@@ -241,7 +243,7 @@ input[type="number"]{
         <!-- 사용자 목록을 출력 -->
         <c:forEach var="user" items="${allusers}">
             <tr>
-             <td><input type="checkbox" id="usertable" name="usertable" class="headercheckbox" onclick='select(this)'/></td>
+             <td><input type="checkbox" id="usertable" name="usertable"  value="${user.id}" class="headercheckbox" onclick='select(this)'/></td>
                 <td>${user.nikname}</td>
                 <td>${user.id}</td>
                 <td>${user.cdate}</td>
@@ -249,17 +251,17 @@ input[type="number"]{
                     <div>
                         <select class="userSelect">
                             <option value="good" ${user.status == '우수회원' ? 'selected' : ''}>우수회원</option>
-                            <option value="nomal" ${user.status == '일반회원' ? 'selected' : ''}>일반회원</option>
+                            <option value="nomal" ${user.status == 'ACTIVE' ? 'selected' : ''}>일반회원</option>
                             <option value="bad" ${user.status == 'blocked' ? 'selected' : ''}>차단됨</option>
                         </select>
                     </div>
                 </td>
-                <td><a href="/Admin/Userdetail">상세보기</a></td>
+                <td><a href="/Admin/Userdetail?id=${user.id}">상세보기</a></td>
             </tr>
         </c:forEach>
     </tbody>
     </table>
-      
+    
 
 		<!-- 모달 -->
 		<!-- 지급하기 -->
@@ -271,32 +273,43 @@ input[type="number"]{
 		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		      </div>
 		      <div class="modal-body">
-		        <input type="text" placeholder="지급내용(필수기입)">
-		        <input type="number" placeholder="ex)100">
-		        <button type="button" class="insertbutton1" data-bs-dismiss="modal">등록</button>
+		      <form id="popcornForm" method="post" >
+		          <input type="text"   id="contentInfo"  placeholder="지급내용(필수기입)" />
+    			  <input type="number" id="pointsAmount" placeholder="ex)100" />
+    
+   				 <!-- content와 points를 hidden 필드로 설정 -->
+   			 	 <input type="hidden" id="content" name="content" />
+   				 <input type="hidden" id="points"  name="points" />
+   				 <input type="hidden" id="userIds" name="userIds" />    
+		        <button type="button" id="submitPlusPopcorn" class="insertbutton1" data-bs-dismiss="modal">등록</button>
+		        </form>
 		      </div>
 		    </div>
 		  </div>
 		</div>
 		
 		<!-- 차감하기 -->
-		<div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		  <div class="modal-dialog">
-		    <div class="modal-content">
-		      <div class="modal-header">
-		        <h1 class="modal-title fs-5" id="exampleModalLabel2">팝콘 <span>차감하기</span></h1>
-		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-		      </div>
-		      <div class="modal-body">
-		        <input type="text" placeholder="차감내용(필수기입)">
-		        <input type="number" placeholder="ex)100">
-		        <button type="button" class="insertbutton2" data-bs-dismiss="modal">차감</button>
-		    </div>
-		  </div>
-		</div>
-		
-		</div>
-      
+<div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel2">팝콘 <span>차감하기</span></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="popcornForm2" method="post">
+                    <input type="text" id="contentInfo2" placeholder="차감내용(필수기입)">
+                    <input type="number" id="pointsAmount2" placeholder="ex)100">
+                    
+                   <input type="hidden" id="content2" name="content2" />
+                   <input type="hidden" id="points2" name="points2" />
+                   <input type="hidden" id="userIds2" name="userIds2" />
+                    <button type="button" id="submitMinusPopcorn" class="insertbutton2" data-bs-dismiss="modal">차감</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
  
     </div>
   
@@ -313,6 +326,10 @@ function selectAll(selectAll)  {
     checkbox.checked = selectAll.checked;
   })
 }
+
+
+
+
 
 </script>
 <script>
@@ -360,4 +377,72 @@ $(function() {
 
 
 </script>
+<script>
+$(document).ready(function() {
+    // 팝콘 지급 버튼 클릭 시
+    $("#submitPlusPopcorn").click(function() {
+        var content = $("#contentInfo").val();  // 지급내용
+        var points = $("#pointsAmount").val();  // 지급 포인트
+
+        // 선택된 사용자 IDs 배열 만들기
+        var selectedUsers = [];
+        $("input[name='usertable']:checked").each(function() {
+            selectedUsers.push($(this).val());  // 체크된 사용자의 ID를 배열에 추가
+        });
+
+        // hidden 필드에 값 채우기
+        $("#content").val(content);   // content 필드에 값 설정
+        $("#points").val(points);     // points 필드에 값 설정
+        $("#userIds").val(selectedUsers.join(','));  // 선택된 사용자 IDs를 콤마로 구분하여 설정
+
+        // action을 "PlusPopcorns"로 설정
+        $("#popcornForm").attr('action', '/Admin/PlusPopcorns');  // action URL 설정
+
+        // 폼 제출
+        $("#popcornForm").submit();  // 폼 제출
+    });
+
+});
+</script>
+<script>
+$(document).ready(function() {
+    // 팝콘 차감 버튼 클릭 시
+    $("#submitMinusPopcorn").click(function() {
+        var content = $("#contentInfo2").val();  // 차감내용
+        var points = $("#pointsAmount2").val();  // 차감 포인트
+
+        // 선택된 사용자 IDs 배열 만들기
+        var selectedUsers = [];
+        $("input[name='usertable']:checked").each(function() {
+            selectedUsers.push($(this).val());  // 체크된 사용자의 ID를 배열에 추가
+        });
+
+        // hidden 필드에 값 채우기
+        $("#content2").val(content);   // content2 필드에 값 설정
+        $("#points2").val(points);     // points2 필드에 값 설정
+        $("#userIds2").val(selectedUsers.join(','));  // 선택된 사용자 IDs를 콤마로 구분하여 설정
+
+        // action을 "MinusPopcorns"로 설정
+        $("#popcornForm2").attr('action', '/Admin/MinusPopcorns');  // action URL 설정
+
+        // 폼 제출
+        $("#popcornForm2").submit();  // 폼 제출
+    });
+});
+
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        // 서버에서 전달된 메시지를 확인
+        var message = '${message}';  // ${message}는 모델에서 전달된 메시지
+
+        // 메시지가 있을 경우 alert을 띄움
+        if (message && message.trim() !== "") {
+            alert(message);  // 메시지를 alert로 표시
+        }
+    });
+</script>
+
+
 </html>

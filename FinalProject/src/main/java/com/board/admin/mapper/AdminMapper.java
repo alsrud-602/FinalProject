@@ -1,6 +1,7 @@
 package com.board.admin.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -27,6 +28,30 @@ public interface AdminMapper {
 	void PopcornMinusLogByUserId(String userId, String content, int minusPopcorn);
 
 	void PopcornMinusWalletByUserId(String userId, int minusPopcorn);
+
+	List<AdminVo> getUserinfo(String userId);
+
+
+
+
+	void PlusPopcorns(Map<String, Object> params);
+
+
+	void PopcornPlusLogs(String content1, int points1, String user);
+
+	void PopcornMinusLogs(String content1, int points1, String user);
+
+	void MinusPopcorns(Map<String, Object> params);
+
+
+
+
+
+
+
+
+
+
 
 
 
