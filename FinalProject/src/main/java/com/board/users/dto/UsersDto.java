@@ -80,4 +80,6 @@ public class UsersDto {
     private int category_id;
     private int sc_idx;
     
+
+    
 }

@@ -54,6 +54,11 @@ public interface UsersMapper {
 
 	List<UsersDto> getStoreCategory(UsersDto usersdto);
 
+	List<UsersDto> getSelectStoreHit(@Param("store_idx") int store_idx, @Param("username") String username);
+	
+	int insertStoreHit(@Param("store_idx") int store_idx, @Param("username") String username);
+
+
 
 
 	
