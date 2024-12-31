@@ -33,8 +33,8 @@ import jakarta.servlet.http.Cookie;
 @EnableWebSecurity
 public class SecurityConfig {
 
-	@Autowired
-	private UserDetailsService userDetailsService;
+   @Autowired
+   private UserDetailsService userDetailsService;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -87,11 +87,11 @@ public class SecurityConfig {
                 )
 
                 .logout(logout -> logout
-                	    .logoutUrl("/Users/Logout")
-                	    .logoutSuccessUrl("/")
-                	    .invalidateHttpSession(true)
-                	    .clearAuthentication(true)
-                	    .permitAll()
+                       .logoutUrl("/Users/Logout")
+                       .logoutSuccessUrl("/")
+                       .invalidateHttpSession(true)
+                       .clearAuthentication(true)
+                       .permitAll()
                 )
                 
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // 세션 필요 시 생성

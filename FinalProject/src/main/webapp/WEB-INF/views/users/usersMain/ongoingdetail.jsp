@@ -142,46 +142,48 @@
     }
 </style>
 </head>
-<%@include file="/WEB-INF/include/header.jsp" %>
 <body>
-<div>
-<h2 class="h2text">진행중</h2>
-   <div class="ongoingfilter">
-	    <input type="date"class="mainfilter" id="datepickerButton" >
-	    <select class="regionfilter">
-	      <option value="">지역</option>
-	      <option value="서울">서울</option>
-	      <option value="부산">부산</option>
-	      <option value="대구">대구</option>
-	      <option value="대전">대전</option>
-	      <option value="울산">울산</option>
-	      <option value="광주">광주</option>
-	      <option value="인천">인천</option>
-	      <option value="제주도">제주도</option>
-	    </select>
-	    <select class="agefilter">
-	      <option value="">연령대</option>
-	      <option value="10대">10대</option>
-	      <option value="20대">20대</option>
-	      <option value="30대">30대</option>
-	      <option value="40대">40대</option>
-	      <option value="50대">50대</option>
-	    </select>
-	    <button type="reset" onclick='window.location.reload()' class="resetbutton">※초기화</button>
+<%@include file="/WEB-INF/include/header.jsp" %>
+  <main>
+	<div>
+	<h2 class="h2text">진행중</h2>
+	   <div class="ongoingfilter">
+		    <input type="date"class="mainfilter" id="datepickerButton" >
+		    <select class="regionfilter">
+		      <option value="">지역</option>
+		      <option value="서울">서울</option>
+		      <option value="부산">부산</option>
+		      <option value="대구">대구</option>
+		      <option value="대전">대전</option>
+		      <option value="울산">울산</option>
+		      <option value="광주">광주</option>
+		      <option value="인천">인천</option>
+		      <option value="제주도">제주도</option>
+		    </select>
+		    <select class="agefilter">
+		      <option value="">연령대</option>
+		      <option value="10대">10대</option>
+		      <option value="20대">20대</option>
+		      <option value="30대">30대</option>
+		      <option value="40대">40대</option>
+		      <option value="50대">50대</option>
+		    </select>
+		    <button type="reset" onclick='window.location.reload()' class="resetbutton">※초기화</button>
+		  </div>
+	</div>
+	
+	<div class="container">
+	    <c:forEach var="popup" items="${popuplist}">
+		    <div class="card">
+		      <img src="/images/main/popup1.png" alt="/images/main/popup1.png">
+		      <div class="title">${popup.title}</div>
+		      <div class="info">주소:${popup.address}<br>기간: ${popup.start_date} ~ ${popup.end_date}</div>
+		    </div>
+		    </c:forEach>
 	  </div>
-</div>
-
-<div class="container">
-    <c:forEach var="popup" items="${popuplist}">
-	    <div class="card">
-	      <img src="/images/main/popup1.png" alt="/images/main/popup1.png">
-	      <div class="title">${popup.title}</div>
-	      <div class="info">주소:${popup.address}<br>기간: ${popup.start_date} ~ ${popup.end_date}</div>
-	    </div>
-	    </c:forEach>
-  </div>
-</body>
+ </main>
 <%@include file="/WEB-INF/include/footer.jsp" %>
+</body>
 <script>
 //지역,연령대,날짜 필터링
 $(function() {
