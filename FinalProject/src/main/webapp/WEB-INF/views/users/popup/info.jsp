@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,15 +18,18 @@
 <!-- Flatpickr JS -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <style>
-
+#remainingDays {
+    color: #00ff84; /* 텍스트 색상 */
+    font-weight: bold; /* 글씨 두껍게 */
+}
 </style>
 </head>
 <body>
 <%@include file="/WEB-INF/include/header.jsp" %>
-
 <div class="container">
   <img id="icon_back" src="/images/icon/back.png" alt="뒤로가기">
   <main>
+  
     <div class="swiper-container">
   <div class="swiper-wrapper">
     <div class="swiper-slide"><img src="/images/example/exampleimg1.png" alt="1"></div>
@@ -41,23 +45,38 @@
     
     <div class='title'>
    
-      <div class="title_header"> 
-        <div class="title_category">잡화 > 스포츠 > 2030대</div> 
+      <div class="title_header">
+      <div class="title_category">
+        <c:forEach var="sc" items="${StoreCategory}">
+        ${sc.category_name}>
+        </c:forEach>
+        ${storedetail.age} 
+       </div>
         <div class="title_icon">
           <img src="/images/icon/heart.png"><p>100</p>&nbsp;
           <img src="/images/icon/eye1.png"><p>100</p>&nbsp;
           <img src="/images/icon/degree.png"><p>90%</p>
         </div>
       </div>
-      <p class="title_name">스텐리 1943 기념 팝업스토어</p>
-      <p class="title_subname"> 드디어 상륙! 스탠리와 메시의 콜라보 팝업스토어가 떴다!</p>
+      <p class="title_name">${storedetail.title}</p>
+      <p class="title_subname">${storedetail.introduction}</p>
       <div class="title_adress">
-        <img src="/images/icon/map1.png">&nbsp;<p>서울 성동구 성수이로 134-2</p>&nbsp;&nbsp;<p>|</p>&nbsp;&nbsp;
-        <img src="/images/icon/store.png">&nbsp;<p>스텐리</p>
+        <img src="/images/icon/map1.png">&nbsp;<p>${storedetail.address}</p>&nbsp;&nbsp;<p>|</p>&nbsp;&nbsp;
+        <c:if test="${not empty storedetail.brand1}">
+          <img src="/images/icon/store.png">&nbsp;<p>${storedetail.brand1}&nbsp;&nbsp;&nbsp;</p>
+        </c:if>
+        <c:if test="${not empty storedetail.brand2}">
+          <img src="/images/icon/store.png">&nbsp;<p>${storedetail.brand2}</p>
+        </c:if>
+        
+
+
       </div>
       <div class="title_footer">
       <div class="tags">
-      <div class="tag_option">스텐리</div> <div class="tag_option">포토부스</div>
+        <c:forEach var = "tag" items="${storetag}" >
+          <div class="tag_option">${tag.tag_name}</div> 
+        </c:forEach>
       </div>
       <div class="title_click" >
        <div class="bookmark"><img src="/images/icon/star.png"><p>찜하기</p></div>&nbsp;
@@ -68,12 +87,28 @@
     </div>
     
     <div class="guide_line">
-      <p>사전예약제로 운영되는 팝업입니다. 일정을 예약후 방문해주세요.</p>
-    </div>
+    <c:choose>
+        <c:when test="${StoreReservation.status == '사전예약'}">
+            <p>사전예약제로 운영되는 팝업입니다. 일정을 예약후 방문해주세요.</p>
+        </c:when>
+        <c:when test="${StoreReservation.status == '현장문의'}">
+            <p>현장방문으로 운영되는 팝업입니다.</p>
+        </c:when>
+        <c:when test="${StoreReservation.status == '현장대기예약'}">
+            <p>현장방문과 대기예약이 가능한 팝업입니다.대기예약은 앱을 이용해주세요</p>
+        </c:when>
+        <c:otherwise>
+            <p>상태가 설정되지 않았습니다.</p>
+        </c:otherwise>
+    </c:choose>
+</div>
     
     <div class="date_line">
-    <div class="deadline"><p>종료까지</p><p>D-22</p></div>
-    <div class="dateo"><p>팝업기간</p><p>2024 .12 .20  ~ 2024.12.31</p></div>
+    <div class="deadline">
+      <p>종료까지</p>
+      <p id="remainingDays"></p>
+    </div>
+    <div class="dateo"><p>팝업기간</p><p>${storedetail.start_date}  ~ ${storedetail.end_date}</p></div>
     <button id="reserveBtn" class="btn_booking">예약하기</button>    
     </div>
     
@@ -86,39 +121,81 @@
     <div id="contents">  
     <div class="content">
     <div class="content_title"><img  src="/images/icon/speaker.png" ><p>팝업스토어 소개</p></div>
-    <p class="content_detail">메시 X  스탠리 1913 컬렉션 출시 기념 팝업 open!
-		합업에서 확인할 수 있는 메시X스탠리 1913 컬렉션을 직접 즐겨보세요
-		
-		다양한 프로그램과 함께 스토리로 공개되는 깜짝 게릴라 이벤트도 있으니 방문하셔서 스탠리와 메시의 
-		특별한 한정판을 직접 눈으로 확인해 보세요!!
-		 step1 각인 이벤트
-		팝업에서 구매하신 제품에 나만의 문구로 특별한 각인을 해드립니다
-		
-		step2 게릴라 이벤트
-		성수동 일대에서 staff를 만나 게임에 참여하시면 선물을 드립니다</p>
+    <p class="content_detail">${storedetail.content}</p>
   </div>
   <div class="content">
     <div class="content_title"><img  src="/images/icon/clock.png" ><p>운영시간</p></div>
-    <p class="content_detail">11:00 - 12:00 </p>
+    <c:choose>
+      <c:when test="${empty StoreOperation.igdate}">
+	    <p class="content_detail">
+	    월 : ${StoreOperation.smon} - ${StoreOperation.emon }<br>
+	    화 : ${StoreOperation.stue } - ${StoreOperation.etue }<br>
+	    수 : ${StoreOperation.swed } - ${StoreOperation.ewed }<br>
+	    목 : ${StoreOperation.sthu } - ${StoreOperation.ethu }<br>
+	    금 : ${StoreOperation.sfri } - ${StoreOperation.efri }<br>
+	    토 : ${StoreOperation.ssat } - ${StoreOperation.esat }<br>
+	    일 : ${StoreOperation.ssun } - ${StoreOperation.esun }<br>
+	    ※${StoreOperation.onotes }
+	    </p>
+     </c:when>
+       <c:otherwise>
+	       <p class="content_detail">
+	         상세페이지를 참고해주세요
+	       </p>
+       </c:otherwise>
+    </c:choose>
   </div>
   <div class="content">
     <div class="content_title"><img  src="/images/icon/check.png" ><p>팝업환경</p></div>
     <div class="content_sit">
-      <div><img src="/images/icon/driver.png"><p>주차금지</p></div>
-      <div><img src="/images/icon/fare.png"><p>임장료 무료</p></div>    
+      <c:choose>
+        <c:when test="${storedetail.parking == '주차불가'}">
+        <div><img src="/images/popup/driver.png"><p>${storedetail.parking}</p></div>
+        </c:when>
+        <c:when test="${storedetail.parking == '주차가능'}">
+        <div><img src="/images/popup/parking.png"><p>${storedetail.parking}</p></div>
+        </c:when>
+      </c:choose>
+      
+      <c:choose>
+        <c:when test="${storedetail.fare == '무료'}">
+        <div><img src="/images/popup/fare.png"><p>${storedetail.fare}</p></div>
+        </c:when>
+        <c:otherwise>
+        <div><img src="/images/popup/nofree.png"><p>${storedetail.fare}</p></div>
+        </c:otherwise>
+      </c:choose>
+      
+      <c:choose>
+        <c:when test="${storedetail.age_limit == '19세 이상'}">
+        <div><img src="/images/popup/driver.png"><p>${storedetail.age_limit}</p></div>
+        </c:when>
+        <c:when test="${storedetail.age_limit == '노키즈 존'}">
+        <div><img src="/images/popup/nokids.png"><p>${storedetail.age_limit}</p></div>
+        </c:when>
+      </c:choose>
+      
+      <c:choose>
+        <c:when test="${storedetail.shooting == '촬영 가능'}">
+        <div><img src="/images/popup/camera.png"><p>${storedetail.shooting}</p></div>
+        </c:when>
+        <c:when test="${storedetail.shooting == '촬영 불가'}">
+        <div><img src="/images/popup/nocamera.png"><p>${storedetail.shooting}</p></div>
+        </c:when>
+      </c:choose>
     </div>
   </div>
   <div class="content">
     <div class="content_title"><img  src="/images/icon/box.png" ><p>굿즈 특이사항</p></div>
     <p class="content_detail">
-    메시x스텐리 한정판 텀블러 :  200개
-    스탠리 1913 다이어리 :300개   </p>
+    ${storedetail.goods} </p>
   </div>        
   <p class="sub_detail">현장상황에 따라 재고가 변동 혹은  수량의 오차가 있을 수 있습니다</p>
   <div class="link">
-  <a class="btn1" href="#">홈페이지 바로가기</a><a class="btn1" href="#">SNS 바로가기</a>
+  <a class="btn1" href="${storedetail.homepage}">홈페이지 바로가기</a><a class="btn1" href="${storedetail.sns}">SNS 바로가기</a>
   </div>
- 
+  
+
 
 
 
@@ -126,21 +203,6 @@
 
     
   </div> <!-- contents -->
-	
-	  <div id="map_show">
-    <div class="review_header" >
-    <div class="review_title">
-      <p>팝업스토어 위치</p>
-    </div>
-  </div>
-  <div id="map"></div>
-  <div class="content">
-  <div class="content_title"><img  src="/images/icon/location.png"><p>주소</p></div>
-  <p class="content_detail">서울 성북구 성수이로 231-2 </p>
-</div>
-<br><br><br><br>
-</div>
-	
 	
   </main>
   
@@ -188,37 +250,69 @@
 
 const infoPage = `<div class="content">
     <div class="content_title"><img  src="/images/icon/speaker.png" ><p>팝업스토어 소개</p></div>
-    <p class="content_detail">메시 X  스탠리 1913 컬렉션 출시 기념 팝업 open!
-		합업에서 확인할 수 있는 메시X스탠리 1913 컬렉션을 직접 즐겨보세요
-		
-		다양한 프로그램과 함께 스토리로 공개되는 깜짝 게릴라 이벤트도 있으니 방문하셔서 스탠리와 메시의 
-		특별한 한정판을 직접 눈으로 확인해 보세요!!
-		 step1 각인 이벤트
-		팝업에서 구매하신 제품에 나만의 문구로 특별한 각인을 해드립니다
-		
-		step2 게릴라 이벤트
-		성수동 일대에서 staff를 만나 게임에 참여하시면 선물을 드립니다</p>
+    <p class="content_detail">${storedetail.content}</p>
   </div>
   <div class="content">
     <div class="content_title"><img  src="/images/icon/clock.png" ><p>운영시간</p></div>
-    <p class="content_detail">11:00 - 12:00 </p>
+    <p class="content_detail">
+    월 : ${StoreOperation.smon} - ${StoreOperation.emon }<br>
+    화 : ${StoreOperation.stue } - ${StoreOperation.etue }<br>
+    수 : ${StoreOperation.swed } - ${StoreOperation.ewed }<br>
+    목 : ${StoreOperation.sthu } - ${StoreOperation.ethu }<br>
+    금 : ${StoreOperation.sfri } - ${StoreOperation.efri }<br>
+    토 : ${StoreOperation.ssat } - ${StoreOperation.esat }<br>
+    일 : ${StoreOperation.ssun } - ${StoreOperation.esun }<br>
+    ※${StoreOperation.onotes }
+    </p>
   </div>
   <div class="content">
     <div class="content_title"><img  src="/images/icon/check.png" ><p>팝업환경</p></div>
     <div class="content_sit">
-      <div><img src="/images/icon/driver.png"><p>주차금지</p></div>
-      <div><img src="/images/icon/fare.png"><p>임장료 무료</p></div>    
+	    <c:choose>
+	    <c:when test="${storedetail.parking == '주차불가'}">
+	    <div><img src="/images/popup/driver.png"><p>${storedetail.parking}</p></div>
+	    </c:when>
+	    <c:when test="${storedetail.parking == '주차가능'}">
+	    <div><img src="/images/popup/parking.png"><p>${storedetail.parking}</p></div>
+	    </c:when>
+	  </c:choose>
+	  
+	  <c:choose>
+	    <c:when test="${storedetail.fare == '무료'}">
+	    <div><img src="/images/popup/fare.png"><p>${storedetail.fare}</p></div>
+	    </c:when>
+	    <c:otherwise>
+	    <div><img src="/images/popup/nofree.png"><p>${storedetail.fare}</p></div>
+	    </c:otherwise>
+	  </c:choose>
+	  
+	  <c:choose>
+	    <c:when test="${storedetail.age_limit == '19세 이상'}">
+	    <div><img src="/images/popup/driver.png"><p>${storedetail.age_limit}</p></div>
+	    </c:when>
+	    <c:when test="${storedetail.age_limit == '노키즈 존'}">
+	    <div><img src="/images/popup/nokids.png"><p>${storedetail.age_limit}</p></div>
+	    </c:when>
+	  </c:choose>
+	  
+	  <c:choose>
+	    <c:when test="${storedetail.shooting == '촬영 가능'}">
+	    <div><img src="/images/popup/camera.png"><p>${storedetail.shooting}</p></div>
+	    </c:when>
+	    <c:when test="${storedetail.shooting == '촬영 불가'}">
+	    <div><img src="/images/popup/nocamera.png"><p>${storedetail.shooting}</p></div>
+	    </c:when>
+	  </c:choose>
     </div>
   </div>
   <div class="content">
     <div class="content_title"><img  src="/images/icon/box.png" ><p>굿즈 특이사항</p></div>
     <p class="content_detail">
-    메시x스텐리 한정판 텀블러 :  200개
-    스탠리 1913 다이어리 :300개   </p>
+    ${storedetail.goods}</p>
   </div>        
   <p class="sub_detail">현장상황에 따라 재고가 변동 혹은  수량의 오차가 있을 수 있습니다</p>
   <div class="link">
-  <a class="btn1" href="#">홈페이지 바로가기</a><a class="btn1" href="#">SNS 바로가기</a>
+  <a class="btn1" href="${storedetail.homepage}">홈페이지 바로가기</a><a class="btn1" href="${storedetail.sns}">SNS 바로가기</a>
   </div>`
   
   const reviewPage = ` 
@@ -287,7 +381,7 @@ const infoPage = `<div class="content">
 	  `;
   
 const mapPage = `
-    <div class="review_header map_show">
+    <div class="review_header">
     <div class="review_title">
       <p>팝업스토어 위치</p>
     </div>
@@ -366,13 +460,12 @@ var swiper2 = new Swiper('.swiper-container2', {
   function moveInfo() {
 	$('#contents').html('');
   $('#contents').html(infoPage);
-  $('#map_show').hide();
+	
 }
   
 function moveReiview() {
 	$('#contents').html('');
 	  $('#contents').html(reviewPage);
-	  $('#map_show').hide();
 }
 
 function moveReviewBack(e) {
@@ -382,54 +475,42 @@ function moveReviewBack(e) {
 	  $('#contents').html(reviewPage);
 }
 
-document.addEventListener("DOMContentLoaded", function() {
-	
-	 var map;  
+function initMap() {
     // 지도 객체 생성
     map = new naver.maps.Map('map', {
         center: new naver.maps.LatLng(37.5665, 126.9780), // 기본 서울 위치
-        zoom: 15
+        zoom: 10
     });
-    var adddd ='서울특별시 성동구 아차산로 3';
-    var add = encodeURIComponent(adddd);
-    console.log(add);
+    console.log("지도 객체 생성 완료!");
+    // 위도, 경도를 직접 설정하여 지도 변경
+    var coordinates = { latitude: 35.1796, longitude: 129.0756 }; // 부산광역시 연제구 중앙대로 1001의 위도, 경도
 
-    var url = 'https://nominatim.openstreetmap.org/search?format=json&q='+add;
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            if (data && data.length > 0) {
-                var lat = data[0].lat;
-                var lon = data[0].lon;
-                
-                var coords = new naver.maps.LatLng(lat, lon);
+    var position = new naver.maps.LatLng(coordinates.latitude, coordinates.longitude);
 
-                // 마커 표시
-                var marker = new naver.maps.Marker({
-                    position: coords,
-                    map: map
-                });
+    // 지도에 마커 추가
+    new naver.maps.Marker({
+        position: position,
+        map: map
+    });
 
-                // 지도 중심을 마커 위치로 이동
-                map.setCenter(coords);
-                map.setZoom(15);
-                
-                setTimeout(function () {
-                    map.refresh();
-                }, 500); // 초기 로딩 시 500ms 지연 후 refresh
-                
-            } else {
-                alert('주소를 찾을 수 없습니다.');
-            }
-        })
-        .catch(error => console.error('Error:', error));   
+    // 지도 중심을 해당 좌표로 이동
+    map.setCenter(position);
+    map.setZoom(14);    
 
-})
-$('#map_show').hide();
+}
+
 function moveMap() {
 	$('#contents').html('');
-	$('#map_show').show();
-	map.refresh();               	 	 
+	 $('#contents').html(mapPage);
+	  var map;         
+      
+
+
+      // 페이지 로드 후 지도 초기화
+      // maps.js가 로드된 후 initMap을 호출
+      //window.onload =  
+    	  initMap();
+          	 	 
 }
 
 //예약하기 버튼 클릭 시 모달 열기
@@ -516,19 +597,32 @@ document.addEventListener("DOMContentLoaded", function() {
 
 </script>
 
-    <script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const endDateStr = "${storedetail.end_date}"; // JSP에서 end_date를 가져옴
+    console.log("End Date String:", endDateStr); // 디버깅 정보
 
-    </script>
+    const endDate = new Date(endDateStr.replace(/-/g, '/')).getTime(); // '-'를 '/'로 바꿔서 Date 객체 생성
+    const today = new Date().getTime(); // 현재 밀리초로 변환
+    console.log("Today Date:", today); // 디버깅 정보
+
+    const timeDiff = endDate - today; // 남은 시간 (밀리초 단위)
+    const daysRemaining = Math.ceil(timeDiff / (1000 * 3600 * 24)); // 남은 일 수 계산
+
+    // 남은 날짜를 HTML에 표시
+    const remainingDaysElement = document.getElementById("remainingDays");
+    if (daysRemaining > 0) {
+        remainingDaysElement.innerHTML = `D-\${daysRemaining}`;
+    } else if (daysRemaining === 0) {
+        remainingDaysElement.innerHTML = "오늘 종료됩니다";
+    } else {
+        remainingDaysElement.innerHTML = "종료되었습니다"; // 종료된 경우 메시지 표시
+    }
+    console.log("Days Remaining:", daysRemaining); // 디버깅 정보
+});
+</script>
 </body>
 
 
 </html>
-
-
-
-
-
-
-
-
 

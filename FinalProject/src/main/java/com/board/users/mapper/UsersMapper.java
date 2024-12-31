@@ -32,9 +32,29 @@ public interface UsersMapper {
     // 메인화면 검색창
 	List<UsersDto> getOngoingsearchlist(@Param("search") String search);
 
-	List<UsersDto> getOpendsearchlist(@Param("search") String search);
 
 	List<UsersDto> getClosesearchlist(@Param("search") String search);
+
+	UsersDto getStoredetail(UsersDto usersdto);
+
+	List<UsersDto> getStoretag(UsersDto usersdto);
+
+	//메인화면
+	int getOngoingcount();
+
+	List<UsersDto> getPopuppaginglist(@Param("start") int start,@Param("size") int size);
+	
+    //메인화면 검색
+	int getOngoingsearchcount(@Param("search") String search);
+	List<UsersDto> getOpendsearchlist(@Param("search") String search, @Param("start") int start, @Param("size") int size);
+
+	UsersDto getStoreReservation(UsersDto usersdto);
+
+	UsersDto getStoreOperation(UsersDto usersdto);
+
+	List<UsersDto> getStoreCategory(UsersDto usersdto);
+
+
 
 	
 

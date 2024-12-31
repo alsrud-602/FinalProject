@@ -64,7 +64,7 @@ dependencies {
     
     //OAuth2
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-    
+
     //opt
     implementation files('lib/googleauth-1.5.0.jar')
     implementation 'com.google.zxing:core:3.3.0'
@@ -73,6 +73,7 @@ dependencies {
 	    // Apache Commons Codec 추가
     implementation 'commons-codec:commons-codec:1.15' // 또는 최신 버전
 }
+
 
 tasks.named('bootBuildImage') {
     builder = 'paketobuildpacks/builder-jammy-base:latest'
