@@ -482,8 +482,8 @@
 
  document.addEventListener('DOMContentLoaded', function() {
     const authContent = document.querySelector('.header-util');
-    const companytoken = localStorage.getItem('companytoken');
-    if (companytoken) {
+    const companyJwt = localStorage.getItem('companyJwt');
+    if (companyJwt) {
         // 토큰이 있는 경우 (인증된 사용자)
         authContent.innerHTML = `
             <form id="logoutForm">
@@ -493,7 +493,7 @@
         
         // 로그아웃 버튼 이벤트 리스너
         document.getElementById('logout-button').addEventListener('click', function() {
-        	localStorage.removeItem('companytoken');
+        	localStorage.removeItem('companyJwt');
             window.location.href = '/CompanyAuth/Logout';
         });
     } else {

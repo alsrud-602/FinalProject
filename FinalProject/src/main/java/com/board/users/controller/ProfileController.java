@@ -3,8 +3,6 @@ package com.board.users.controller;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +11,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.board.jwt.JwtUtil;
 import com.board.users.dto.User;
 import com.board.users.mapper.UsersMapper;
-import com.board.users.service.CustomOAuth2UserService;
 import com.board.users.service.UserService;
 
 import jakarta.servlet.http.Cookie;
@@ -31,9 +28,7 @@ public class ProfileController {
 	
 	@Autowired
 	private UserService userService;
-	
-    @Autowired
-    private CustomOAuth2UserService customOAuth2UserService;
+
 	
 	// http://localhost:9090
     @RequestMapping("/Profile")
