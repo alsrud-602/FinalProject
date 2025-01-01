@@ -2,25 +2,18 @@ package com.board.users.controller;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.MvcNamespaceHandler;
 
-import com.board.jwt.JwtUtil;
-import com.board.users.dto.User;
 import com.board.users.dto.UsersDto;
 import com.board.users.mapper.UsersMapper;
-import com.board.users.service.UserService;
 
 @Controller
 @RequestMapping("/Users")
@@ -28,17 +21,6 @@ public class UsersController {
 	
 	@Autowired
 	private UsersMapper usersMapper;
-	
-    @Autowired
-    private UserService userService;
-    
-    private final AuthenticationManager authenticationManager;
-    private final JwtUtil jwtUtil;
-
-    public UsersController(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
-        this.authenticationManager = authenticationManager;
-        this.jwtUtil = jwtUtil;
-    }
 	
 	// http://localhost:9090
 	@RequestMapping("/Wallet")
@@ -57,7 +39,15 @@ public class UsersController {
 	// 메인 화면
 	// http://localhost:9090/Users/Main
 	@RequestMapping("/Main")
-	public ModelAndView main() {
+	public ModelAndView main(			
+			@RequestParam(defaultValue = "1") int page,
+			@RequestParam(defaultValue = "2") int size) {
+		
+		 int start = (page - 1) * size; 
+		 int totalPosts = usersMapper.getOngoingcount();
+		 int totalPages = (int) Math.ceil((double) totalPosts / size);
+		 System.out.println("totalPosts : " + totalPosts);
+		 System.out.println("totalPages : " + totalPages);
 
 		//랭킹 팝업
 		List<UsersDto> ranklist = usersMapper.getRanklist();
@@ -69,12 +59,14 @@ public class UsersController {
 		System.out.println("opendpopuplist : "+opendpopuplist);
 		
 		// 팝업 진행중
-		List<UsersDto> popuplist = usersMapper.getPopuplist();
+		List<UsersDto> popuplist = usersMapper.getPopuppaginglist(start,size);
 		System.out.println("popuplist"+popuplist);
 		
 		ModelAndView mv = new ModelAndView();
 		
 		mv.addObject("opendpopuplist",opendpopuplist);
+		mv.addObject("totalPages", totalPages);
+		mv.addObject("currentPage", page);
 		mv.addObject("ranklist",ranklist);
 		mv.addObject("popuplist",popuplist);
 		mv.setViewName("users/usersMain/main");
@@ -126,22 +118,30 @@ public class UsersController {
 	@RequestMapping("/Mainsearch")
 	@ResponseBody
 	public ModelAndView mainsearch(
-			@RequestParam(required = false, value="search") String search) {
-		System.out.println("search : " + search);
+			@RequestParam(required = false, value="search") String search,
+			@RequestParam(defaultValue = "1") int page,
+			@RequestParam(defaultValue = "2") int size) {
+		
+		 int start = (page - 1) * size; 
+		 int totalPosts = usersMapper.getOngoingsearchcount(search);
+		 int totalPages = (int) Math.ceil((double) totalPosts / size);
+		 System.out.println("totalPosts search : " + totalPosts);
+		 System.out.println("totalPages search : " + totalPages);
+		 
 		
 		// 진행중 팝업
 		List<UsersDto> ongoingsearchlist = usersMapper.getOngoingsearchlist(search);
-		System.out.println("ongoingsearchlist : " + ongoingsearchlist);
 		// 팝업 오픈예정
-		List<UsersDto> opendsearchlist = usersMapper.getOpendsearchlist(search);
-		System.out.println("opendsearchlist : " + opendsearchlist);
-		
+		List<UsersDto> opendsearchlist = usersMapper.getOpendsearchlist(search,start,size);	
+		System.out.println("paging opendsearchlist : " + opendsearchlist);
 		// 종료된 팝업
 		List<UsersDto> closesearchlist = usersMapper.getClosesearchlist(search);
-		System.out.println("closesearchlist : " + closesearchlist);
 		
 		ModelAndView mv = new ModelAndView();
+		
 		mv.addObject("ongoingsearchlist", ongoingsearchlist);
+		mv.addObject("totalPages", totalPages);
+		mv.addObject("currentPage", page);
 		mv.addObject("opendsearchlist", opendsearchlist);
 		mv.addObject("closesearchlist", closesearchlist);
 		mv.setViewName("users/usersMain/mainsearch");
@@ -171,12 +171,39 @@ public class UsersController {
 		return response;
 	}
 	
+	
 	// 상세정보 페이지 
 	@RequestMapping("Info")
 	public ModelAndView info(UsersDto usersdto){
+
+		 // 유저 아이디당 한개씩 조회수 증가
 		
-		System.out.println("usersdto : "+ usersdto);
+        // store_idx 데이터 불러오기
+		UsersDto storedetail = usersMapper.getStoredetail(usersdto);
+		System.out.println("storedetail : " + storedetail);
+		
+		// 스토어 태그
+		List<UsersDto> storetag = usersMapper.getStoretag(usersdto);
+		System.out.println("storetag : " + storetag);
+		
+		//스토어 예약 구분
+		UsersDto StoreReservation = usersMapper.getStoreReservation(usersdto);
+		System.out.println("StoreReservation : " + StoreReservation);
+		
+		//운영시간 
+		UsersDto StoreOperation = usersMapper.getStoreOperation(usersdto);
+		System.out.println("StoreOperation : " + StoreOperation);
+		
+		// 카데고리
+		List<UsersDto> StoreCategory = usersMapper.getStoreCategory(usersdto);
+		System.out.println("StoreCategory : " + StoreCategory);
+		
 		ModelAndView mv = new ModelAndView();
+		mv.addObject("storedetail", storedetail);
+		mv.addObject("storetag", storetag);
+		mv.addObject("StoreReservation", StoreReservation);
+		mv.addObject("StoreOperation", StoreOperation);
+		mv.addObject("StoreCategory", StoreCategory);
 		mv.setViewName("users/popup/info");
 		return mv;
 	}
