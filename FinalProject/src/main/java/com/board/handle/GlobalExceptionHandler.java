@@ -45,9 +45,4 @@ public class GlobalExceptionHandler {
     	return "signup"; // 회원가입 페이지로 이동
     }
     
-    
-    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-		// ROLE_COMPANY가 아닐 경우 /CompanyAuth/LoginForm으로 리다이렉트
-		response.sendRedirect("/CompanyAuth/LoginForm");
-	}
 }
