@@ -28,4 +28,5 @@ public class StoreListDto {
     private String tag_name;
     private int hit;
     private int like;
+    private int waiting_count; 
 }

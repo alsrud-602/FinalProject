@@ -324,9 +324,19 @@ public class BusinessController {
 		
 	int company_idx =1;			
 	List<StoreListDto> sovList = businessService.getStoreOperationView(company_idx);
+	
 	ModelAndView mv = new ModelAndView();
 	mv.addObject("storeList",sovList);
 	mv.setViewName("business/operation/view");
+	return mv;	
+		
+	}
+	
+	@RequestMapping("/moblie")
+	public ModelAndView mobile() {		
+		
+	ModelAndView mv = new ModelAndView();
+	mv.setViewName("mobile/info");
 	return mv;	
 		
 	}	
