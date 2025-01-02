@@ -33,8 +33,8 @@ import jakarta.servlet.http.Cookie;
 @EnableWebSecurity
 public class SecurityConfig {
 
-	@Autowired
-	private UserDetailsService userDetailsService;
+   @Autowired
+   private UserDetailsService userDetailsService;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -71,11 +71,11 @@ public class SecurityConfig {
                         })
                 )
                 .logout(logout -> logout
-                	    .logoutUrl("/Users/Logout")
-                	    .logoutSuccessUrl("/")
-                	    .invalidateHttpSession(true)
-                	    .clearAuthentication(true)
-                	    .permitAll()
+                       .logoutUrl("/Users/Logout")
+                       .logoutSuccessUrl("/")
+                       .invalidateHttpSession(true)
+                       .clearAuthentication(true)
+                       .permitAll()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // 세션 필요 시 생성
                         .sessionFixation().changeSessionId()) //새로운 세션을 생성하지 않는다. 대신에, Servelet Container에서 제공되는 세션 고정 보호를 사용

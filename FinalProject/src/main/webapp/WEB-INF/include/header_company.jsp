@@ -366,7 +366,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <header>
         <div class="header">
-            <a href="/Business"><img class="logo" src="/images/icon/logo_company.png" alt="로고" /></a>
+            <a href="/Business/Operation/View"><img class="logo" src="/images/icon/logo_company.png" alt="로고" /></a>
             <div class="header-nav">
                 <a href="/Operation">
                     <div class="frame-2066">
@@ -482,8 +482,8 @@
 
  document.addEventListener('DOMContentLoaded', function() {
     const authContent = document.querySelector('.header-util');
-    const companytoken = localStorage.getItem('companytoken');
-    if (companytoken) {
+    const companyJwt = localStorage.getItem('companyJwt');
+    if (companyJwt) {
         // 토큰이 있는 경우 (인증된 사용자)
         authContent.innerHTML = `
             <form id="logoutForm">
@@ -493,7 +493,7 @@
         
         // 로그아웃 버튼 이벤트 리스너
         document.getElementById('logout-button').addEventListener('click', function() {
-        	localStorage.removeItem('companytoken');
+        	localStorage.removeItem('companyJwt');
             window.location.href = '/CompanyAuth/Logout';
         });
     } else {

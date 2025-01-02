@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +20,6 @@ import com.board.users.dto.User;
 import com.board.users.dto.UserCategory;
 import com.board.users.mapper.UserCategoryMapper;
 import com.board.users.mapper.UsersMapper;
-import com.board.users.service.CustomOAuth2UserService;
 import com.board.users.service.UserService;
 
 import jakarta.servlet.http.Cookie;
@@ -40,9 +37,11 @@ public class ProfileController {
 	
 	@Autowired
 	private UserService userService;
+
 	
 	@Autowired
 	private UserCategoryMapper userCategoryMapper;
+
 	
 	// http://localhost:9090
     @RequestMapping("Home")

@@ -18,6 +18,11 @@ public class StoreTagDto {
 	this.tag_name =tag;	
 	}
 	
+	public StoreTagDto(String tag, int store_idx) {
+		this.tag_name =tag;		
+		this.store_idx =store_idx;		
+	}
+
 	private int tage_idx;
 	private int store_idx;
 	private String tag_name;
