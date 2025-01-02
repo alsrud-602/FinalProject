@@ -103,6 +103,7 @@ public class UserSignController {
 	public  String   loginform() {
 		return "login";
 	}
+	
 	@GetMapping("/KakaoCallBack")
 	public String kakaoCallBack(HttpSession session, HttpServletResponse response, Model model) {
 	    String jwt = (String) session.getAttribute("jwt");
@@ -128,12 +129,8 @@ public class UserSignController {
 
     @PostMapping("/Admin/otp")
     public String processAdminOtp(@RequestParam String code, Authentication authentication, HttpSession session) {
-		System.out.println("갱신정보"+ code+ "세션" + session);
-		System.out.println("왜안되냐구"+ isValidAdminOTP(code, session));
-		
 		
         if (isValidAdminOTP(code, session)) {
-        	
         	
             // 인증 성공 처리
             List<GrantedAuthority> updatedAuthorities = new ArrayList<>(authentication.getAuthorities());

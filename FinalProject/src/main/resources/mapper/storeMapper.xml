@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.board.store.service">  
+
+    <insert id="insertStore">
+        INSERT INTO STORES (TITLE, AGE, BRAND1, BRAND2, CDATE, STATUS)
+        VALUES (#{title}, #{age}, #{brand1}, #{brand2}, SYSDATE, #{status})
+    </insert>
+
+    <insert id="insertStoreDetail">
+        INSERT INTO STORE_DETAILS (ADDRESS, START_DATE, END_DATE, INTRODUCTION, CONTENT, TAG_NAME)
+        VALUES (#{address}, #{start_date}, #{end_date}, #{introduction}, #{content}, #{tagName})
+    </insert>
+
+    <insert id="insertStoreTag">
+        INSERT INTO STORE_TAGS (TAG_NAME)
+        VALUES (#{tagName})
+    </insert>
+
+    <insert id="insertImageStore">
+        INSERT INTO IMAGE_STORE (IMAGENAME, IMAGEEXT, IMAGE_PATH, STORE_IDX)
+        VALUES (#{imageName}, #{imageExt}, #{imagePath}, #{storeIdx})
+    </insert>
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

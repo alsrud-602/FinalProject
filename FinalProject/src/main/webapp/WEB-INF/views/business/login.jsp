@@ -141,14 +141,14 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         return response.json(); // JSON 응답 파싱
     })
     .then(function(data) {
-        if (data && data.token) {
+        if (data && data.companyJwt) {
             // JWT 토큰 저장
             // 로그인 성공 후, JWT를 Authorization 헤더에 추가
-			localStorage.setItem('companytoken', data.token);
-            console.log('JWT 토큰 저장 완료:', data.token);
+			localStorage.setItem('companyJwt', data.companyJwt);
+            console.log('JWT 토큰 저장 완료:', data.companyJwt);
 
             // 홈 화면으로 리다이렉션
-            window.location.href = '/Business';
+            window.location.href = '/Business/Operation';
         } else {
             if (data === undefined) {
                 const errorMessages = [];

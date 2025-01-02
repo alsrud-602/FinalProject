@@ -59,14 +59,14 @@ public class RestCompanySignController {
             String jwt = jwtUtil.generateToken(authentication.getName(),"company", false);
             logger.info("JWT 생성 성공: {}", jwt);
             // JWT를 쿠키에 저장
-            Cookie jwtCookie = new Cookie("jwt", jwt);
+            Cookie jwtCookie = new Cookie("companyJwt", jwt);
             jwtCookie.setHttpOnly(true);
             jwtCookie.setSecure(true); // HTTPS에서만 사용
             jwtCookie.setMaxAge(60 * 120); // 2시간
             jwtCookie.setPath("/Business");
             response.addCookie(jwtCookie);
 
-            return ResponseEntity.ok(Map.of("token", jwt));
+            return ResponseEntity.ok(Map.of("companyJwt", jwt));
         } catch (Exception e) {
             logger.error("인증 실패: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

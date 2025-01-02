@@ -128,7 +128,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				|| path.startsWith("/Users/Signup") || path.startsWith("/Users/CheckDuplication")
 				|| path.startsWith("/CompanyAuth/Signup") || path.startsWith("/CompanyAuth/SignupForm")
 				 || path.startsWith("/CompanyAuth/CheckDuplication") || path.startsWith("/Users/2fa") || path.startsWith("/WEB-INF/views/")
-				 || path.startsWith("/Users/Admin/otp");
+				 || path.startsWith("/Users/Admin/otp") || path.startsWith("/Users/Map");
 		// System.out.println("필터 제외 여부: " + shouldExclude + ", 경로: " + path);
 		logger.debug("필터 제외 여부: {}, 경로: {}", shouldExclude, path);
 		return shouldExclude;

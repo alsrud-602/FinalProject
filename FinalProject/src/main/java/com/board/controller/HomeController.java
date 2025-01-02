@@ -18,12 +18,12 @@ public class HomeController {
 	
 	// http://localhost:9090
 	@RequestMapping("/")
+
 	public  ModelAndView   home() {
 		//랭킹 팝업
 		List<UsersDto> ranklist = usersMapper.getRanklist();
-		System.out.println("ranklist : "+ranklist);
-		
-		
+		System.out.println("ranklist : "+ranklist);		
+	
 		// 팝업 오픈예정
 		List<UsersDto> opendpopuplist = usersMapper.getOpendpopuplist();
 		System.out.println("opendpopuplist : "+opendpopuplist);

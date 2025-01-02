@@ -41,6 +41,8 @@
   <!-- Navigation buttons -->
   <div class="swiper-button-next"></div>
   <div class="swiper-button-prev"></div>
+
+
 </div>
     
     <div class='title'>
@@ -52,6 +54,7 @@
         </c:forEach>
         ${storedetail.age} 
        </div>
+
         <div class="title_icon">
           <img src="/images/icon/heart.png"><p>${StoreLike.storelike}</p>&nbsp;
           <img src="/images/icon/eye1.png"><p>${StoreHit.hit}</p>&nbsp;
@@ -244,7 +247,7 @@
 
 
 
-<script src="/js/popup_info.js" defer></script>
+<script src="/js/authuser.js" defer></script>
 <script>
 
 

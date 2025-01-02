@@ -35,6 +35,8 @@ public interface UsersMapper {
 	// 메인화면 검색창
 	List<UsersDto> getClosesearchlist(@Param("search") String search);
 
+	List<UsersDto> getPopupAdresses();
+
 	UsersDto getStoredetail(UsersDto usersdto);
 
 	List<UsersDto> getStoretag(UsersDto usersdto);
@@ -95,6 +97,8 @@ public interface UsersMapper {
 
 
 
+
+	UsersDto getUserById(Integer userIdx);
 
 	
 
