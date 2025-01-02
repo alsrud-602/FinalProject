@@ -1,5 +1,6 @@
 package com.board.users.controller;
 
+import java.net.URI;	
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -16,7 +17,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -33,16 +34,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import com.board.handle.UserAlreadyLinkedToSocialException;
+import com.board.handle.UserNotFoundOAuth2Exception;
+import com.board.jwt.JwtUtil;
 import com.board.users.dto.LoginRequest;
-import com.board.users.dto.User;
-import com.board.users.handle.UserAlreadyLinkedToSocialException;
-import com.board.users.handle.UserNotFoundOAuth2Exception;
-import com.board.users.jwt.JwtUtil;
 import com.board.users.repo.UserRepository;
 import com.board.users.service.CustomOAuth2UserService;
+import com.warrenstrange.googleauth.GoogleAuthenticator;
+import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping
@@ -65,8 +69,12 @@ public class RestUserSignController {
     @Autowired
     private CustomOAuth2UserService customOAuth2UserService;
     
+    
+    @Autowired
+    private UserDetailsService userDetailsService; // UserDetailsService 주입
+    
     @PostMapping("/Users/Login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response, HttpSession session) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getId(), loginRequest.getPassword())
@@ -74,11 +82,44 @@ public class RestUserSignController {
             logger.info("인증 성공: {}", authentication);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            
+           // 관리자 여부 확인
+           boolean isAdmin = authentication.getAuthorities().stream()
+                   .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
 
-            String jwt = jwtUtil.generateToken(authentication.getName());
+           if (isAdmin) {
+               // 관리자용 OTP 비밀 키 생성
+               generateSecretKeyForAdmin(session);
+
+               // 2FA를 위해 JWT 생성 (is2faAuthenticated=false)
+               String jwt = jwtUtil.generateToken(authentication.getName(), "ADMIN", isAdmin);
+               logger.info("관리자용 JWT 생성 성공: {}", jwt);
+               session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+
+               // JWT를 쿠키에 저장
+               Cookie jwtCookie = new Cookie("adminjwt", jwt);
+               jwtCookie.setHttpOnly(true);
+               jwtCookie.setSecure(true); // HTTPS에서만 사용
+               jwtCookie.setMaxAge(60 * 120); // 2시간
+               jwtCookie.setPath("/");
+               response.addCookie(jwtCookie);
+
+               // 2FA 페이지로 리다이렉트
+               return ResponseEntity.ok(Map.of("adminjwt", jwt, "redirect", "/Users/2fa"));
+           }
+
+            String jwt = jwtUtil.generateToken(authentication.getName(), "user", false);
+            
             logger.info("JWT 생성 성공: {}", jwt);
+            // JWT를 쿠키에 저장
+            Cookie jwtCookie = new Cookie("userJwt", jwt);
+            jwtCookie.setHttpOnly(true);
+            jwtCookie.setSecure(true); // HTTPS에서만 사용
+            jwtCookie.setMaxAge(60 * 60 * 11); // 2시간
+            jwtCookie.setPath("/");
+            response.addCookie(jwtCookie);
 
-            return ResponseEntity.ok(Map.of("token", jwt));
+            return ResponseEntity.ok(Map.of("userJwt", jwt));
         } catch (Exception e) {
             logger.error("인증 실패: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -86,19 +127,33 @@ public class RestUserSignController {
         }
     }
 
-    @GetMapping("/oauth2/callback/kakao")
-    public ResponseEntity<Map<String, String>> kakaoCallback(@RequestParam String code, HttpServletResponse response) {
+    
+    public String generateSecretKeyForAdmin(HttpSession session) {
+        GoogleAuthenticator gAuth = new GoogleAuthenticator();
+        GoogleAuthenticatorKey key = gAuth.createCredentials();
+        System.out.println("Generated Admin OTP Secret Key: " + key);
+        session.setAttribute("adminOtpSecretKey", key.getKey());
+        String secretKey = key.getKey();
+        System.out.println("Generated Admin OTP Secret Key: " + secretKey);
+        return secretKey;
+    }
+    
+
+	@GetMapping("/oauth2/callback/kakao")
+    public ResponseEntity<Map<String, String>> kakaoCallback(@RequestParam String code, HttpServletResponse response, HttpServletRequest request) {
     	System.out.println("Kakao code received: " + code); // 요청 확인 로그
         try {
             // 1. 액세스 토큰 요청
+        	
+            
             String accessToken = getKakaoAccessToken(code);
            
-
             // 2. OAuth2UserRequest 객체 생성
             OAuth2UserRequest oAuth2UserRequest = createOAuth2UserRequest(accessToken);
 
             // 3. CustomOAuth2UserService를 사용하여 사용자 정보 가져오기
             OAuth2User oAuth2User = customOAuth2UserService.loadUser(oAuth2UserRequest);
+            
             
             // 4. OAuth2 인증 객체 생성
             OAuth2AuthenticationToken authenticationToken = new OAuth2AuthenticationToken(
@@ -106,10 +161,13 @@ public class RestUserSignController {
                 oAuth2User.getAuthorities(),
                 "kakao"
             );
+            HttpSession session = request.getSession();
+
+            // ClientRegistration과 OAuth2AccessToken 저장
+            session.setAttribute("clientRegistration", createOAuth2UserRequest(accessToken).getClientRegistration());
+            session.setAttribute("accessToken", accessToken);
             
             // 5. SecurityContext에 인증 설정
-            //SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-            
             // SecurityContext 명시적 설정
             logger.info("SecurityContext before setting: {}", SecurityContextHolder.getContext().getAuthentication());
             SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
@@ -118,32 +176,38 @@ public class RestUserSignController {
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             logger.info("SecurityContext after setting: {}", SecurityContextHolder.getContext().getAuthentication());
             // 6. JWT 토큰 생성
-            String jwt = jwtUtil.generateToken(oAuth2User.getName());
+            String jwt = jwtUtil.generateToken(oAuth2User.getName(), "user", false);
             // JWT를 쿠키에 저장
-            Cookie jwtCookie = new Cookie("jwt", jwt);
+            Cookie jwtCookie = new Cookie("kakaoAccessToken", jwt);
             jwtCookie.setHttpOnly(true);
+            jwtCookie.setSecure(true); // HTTPS에서만 사용
             jwtCookie.setMaxAge(60 * 120); // 2시간
             jwtCookie.setPath("/");
             response.addCookie(jwtCookie);
-            //response.sendRedirect("/"); // 홈 화면으로 리다이렉트
-            
             
             logger.info("JWT 생성 성공: {}", jwt);
+            logger.info("JWT 쿠키 생성 성공: {}", jwtCookie);
             logger.info("SecurityContext 설정 완료: {}", SecurityContextHolder.getContext().getAuthentication());
             
             logger.info("사용자 인증:{}",authenticationToken);
-
-            // 리다이렉트 URL 설정
-            //String redirectUrl = "/";
             
-            // JWT를 전달하고 리다이렉트 설정
+            // 7. JWT를 헤더에 저장
             HttpHeaders headers = new HttpHeaders();
-            headers.add("Location", "callback?token=" + jwt); // JSP로 이동하며 토큰 전달
-            return new ResponseEntity<>(headers, HttpStatus.FOUND); // HTTP 302 리다이렉트
-            
+            headers.set("Authorization", "Bearer " + jwt);
+
+            // 8. 세션에 값을 저장
+            session.setAttribute("token", jwt);
+
+            // 클라이언트 페이지로 리다이렉트
+            headers.setLocation(URI.create("/Users/KakaoCallBack"));
+            return ResponseEntity.status(HttpStatus.FOUND)
+                    .headers(headers)
+                    .build();
         }
-        catch (UserNotFoundOAuth2Exception | UserAlreadyLinkedToSocialException e) {
-            // 예외를 그대로 던져 GlobalExceptionHandler에서 처리하도록 위임
+        catch (UserNotFoundOAuth2Exception e){
+        	throw e;
+        }
+        catch (UserAlreadyLinkedToSocialException e) {
             throw e;
         }
         catch (Exception e) {
@@ -195,8 +259,7 @@ public class RestUserSignController {
             oAuth2AccessToken
         );
     }
-
-
+ 
 
 
 }

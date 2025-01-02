@@ -96,11 +96,11 @@
              
                  <c:if test="${status.index == 0}">
                      // 첫 번째 위치는 출발지로 설정
-                     url += "${location.lon},${location.lat}/";
+                     url += "${location.lon},${location.lat},${location.name}/";
                  </c:if>
                  <c:if test="${status.index > 0}">
                      // 두 번째 위치는 도착지로 설정
-                     url += "${location.lon},${location.lat}/";
+                     url += "${location.lon},${location.lat},${location.name}/";
                  </c:if>
              </c:if>
          </c:forEach>
@@ -115,7 +115,7 @@
                 url += "walk"; // 3개 이상의 위치일 경우
             }
              window.open(url, "_blank");  // 자동으로 창 열기
-             window.history.back(); //코스 추천화면으로 돌아가도록
+             window.location.href = "/Users/RouteRecommend";
          } else {
              console.log("출발지와 도착지가 제대로 설정되지 않았습니다.");
          }

@@ -87,6 +87,10 @@
     <c:if test="${param.error != null}">
         <p style="color: red;">아이디 또는 비밀번호가 잘못되었습니다.</p>
     </c:if>
+    <div id="errorMessages" style="color: red;"></div>
+    <c:if test="${not empty message}">
+    <div class="alert alert-warning" style="color: aqua;">${message}</div>
+	</c:if>
 </form>
             <div class="sub-login">
             <a href="#" class="link">아이디 찾기</a> |
@@ -95,7 +99,7 @@
             </div>
         </div>
 <script type="text/javascript">
-document.getElementById('loginForm').addEventListener('submit', async function(event) {
+document.getElementById('loginForm').addEventListener('submit', function(event) {
     event.preventDefault();
 
     const id = document.getElementById('id').value.trim();
@@ -106,31 +110,71 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         return;
     }
 
-    try {
-        const response = await fetch('/Companys/Login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id, password }),
-        });
+    fetch('/CompanyAuth/Login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: id, password: password })
+    })
+    .then(function(response) {
+        if (response.status === 401) {
+            const errorMessages = [];
+            errorMessages.push("아이디 또는 비밀번호가 잘못되었습니다.");
 
-        if (!response.ok) {
-            alert('아이디 또는 비밀번호가 잘못되었습니다.');
+            const errorMessagesDiv = document.getElementById('errorMessages');
+            errorMessagesDiv.innerHTML = ''; // 이전 메시지 제거
+            if (errorMessages.length > 0) {
+                errorMessages.forEach(function(message) {
+                    const p = document.createElement('p');
+                    p.textContent = message;
+                    errorMessagesDiv.appendChild(p);
+                });
+            }
             return;
         }
 
-        const data = await response.json();
-        if (data.token) {
-            localStorage.setItem('token', data.token);
-            window.location.href = '/';
-        } else {
-            alert('로그인에 실패했습니다.');
+        if (!response.ok) {
+            console.error('오류 상태 코드:', response.status);
+            alert('로그인 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.');
+            return;
         }
-    } catch (error) {
+
+        return response.json(); // JSON 응답 파싱
+    })
+    .then(function(data) {
+        if (data && data.companyJwt) {
+            // JWT 토큰 저장
+            // 로그인 성공 후, JWT를 Authorization 헤더에 추가
+			localStorage.setItem('companyJwt', data.companyJwt);
+            console.log('JWT 토큰 저장 완료:', data.companyJwt);
+
+            // 홈 화면으로 리다이렉션
+            window.location.href = '/Business/Operation/View';
+        } else {
+            if (data === undefined) {
+                const errorMessages = [];
+                errorMessages.push("아이디 또는 비밀번호가 잘못되었습니다.");
+
+                const errorMessagesDiv = document.getElementById('errorMessages');
+                errorMessagesDiv.innerHTML = ''; // 이전 메시지 제거
+                if (errorMessages.length > 0) {
+                    errorMessages.forEach(function(message) {
+                        const p = document.createElement('p');
+                        p.textContent = message;
+                        errorMessagesDiv.appendChild(p);
+                    });
+                }
+                return;
+            }else {
+            alert('로그인에 실패했습니다. 서버 응답을 확인하세요.');
+            console.error('서버 응답 데이터:', data);
+            }
+        }
+    })
+    .catch(function(error) {
         console.error('로그인 요청 중 오류:', error);
         alert('로그인 중 문제가 발생했습니다.');
-    }
+    });
 });
-
 </script>
     </main>
     <%@include file="/WEB-INF/include/footer_company.jsp" %>

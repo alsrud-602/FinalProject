@@ -410,7 +410,7 @@
             </div>
             <img class="arrow0" src="/images/header/arrow0.png" />
         </div>
-        <a href="#">
+        <a href="/Users/Profile">
         <div class="menu-2066">
             <img class="personal-collection0" src="/images/header/personal-collection0.svg" />
             <div class="menu-list">프로필</div>
@@ -484,11 +484,12 @@
 
 <script>
 
-document.addEventListener('DOMContentLoaded', function() {
-    const authContent = document.querySelector('.header-util');
-    const token = localStorage.getItem('token');
 
-    if (token) {
+ document.addEventListener('DOMContentLoaded', function() {
+    const authContent = document.querySelector('.header-util');
+    const userJwt = localStorage.getItem('userJwt');
+    const kakaoAccessToken = localStorage.getItem('kakaoAccessToken');
+    if (userJwt || kakaoAccessToken) {
         // 토큰이 있는 경우 (인증된 사용자)
         authContent.innerHTML = `
             <form id="logoutForm">
@@ -498,7 +499,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // 로그아웃 버튼 이벤트 리스너
         document.getElementById('logout-button').addEventListener('click', function() {
-            localStorage.removeItem('token');
+            localStorage.removeItem('userJwt');
+            localStorage.removeItem('kakaoAccessToken');
+            
             window.location.href = '/Users/Logout';
         });
     } else {
@@ -509,7 +512,9 @@ document.addEventListener('DOMContentLoaded', function() {
             <a href="/Users/SignupForm"><div class="div3">회원가입</div></a>
         `;
     }
-});
+}); 
+
+
 </script>
 <script>
     /* 로그아웃 */
@@ -519,6 +524,7 @@ document.addEventListener('DOMContentLoaded', function() {
         logoutButton.addEventListener('click', function(event) {
             event.preventDefault(); // 기본 폼 서브미션 방지
 
+            /*
             fetch('/Users/Logout', { method: 'POST' })
                 .then(response => {
                     if (response.ok) {
@@ -529,7 +535,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         alert('로그아웃에 실패했습니다. 다시 시도해주세요.');
                     }
                 })
-                .catch(error => console.error('Error during logout:', error));
+                .catch(error => console.error('Error during logout:', error));*/
+            fetch('/Users/Logout', { method: 'POST', credentials: 'include' })
+            .then(() => {
+                window.location.reload(); // 페이지 새로고침
+            })
+            .catch(error => console.error('로그아웃 중 오류:', error));
         });
     }
 });

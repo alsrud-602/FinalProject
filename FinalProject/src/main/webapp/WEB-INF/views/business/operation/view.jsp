@@ -982,7 +982,7 @@ margin: 30px 42px;
 	<%@include file="/WEB-INF/include/footer_company.jsp"%>
 
 	<script>
-
+ 
 
 	
    function onSiteList() {
@@ -1117,24 +1117,26 @@ margin: 30px 42px;
     
     
     
-    
-    
-    let stompClient = null;
+    //웹소켓 초기 설정
+      let currentCompanyIdx = null;
+      let stompClient = null;
 	  const socket = new SockJS('/ws');  // 웹소켓 연결
 	  stompClient = Stomp.over(socket);	 		
 	  stompClient.connect({}, function(frame) {
 	      console.log('Connected: ' + frame);
 
-	      // 대기 리스트 실시간 업데이트
-	 stompClient.subscribe("/topic/Waiting/90", function(message) {
-	          
-		   const waitingList = JSON.parse(message.body);
+	      if (currentCompanyIdx) {
+	          updateCompanySubscription(currentCompanyIdx);
+	      }  
+	      
+	      stompClient.subscribe(`/topic/Waiting/\${initIdx}`, function(message) {
+	          const waitingList = JSON.parse(message.body);
 	          updateWaitingList(waitingList);
 	      });
 
 	  });
 	  
-	  
+	  // 삭제 보내기 웹소켓
 	    function deleteSend(button,select,idx){
 	        const selectElement = $(button).prev('select')
 	        const hiddenInput = $(button).next('input[type="hidden"]');
@@ -1156,7 +1158,7 @@ margin: 30px 42px;
 	        $('.overlay').hide(); // overlay 숨기기	
 	    	
 	    }  
-	  
+	  //방문완료 알람보내기 웹소켓
 	    function updateSend(button){
 	        const hiddenInput = $(button).next('input[type="hidden"]');
 	        const selectedValue = '현재순번';
@@ -1179,6 +1181,7 @@ margin: 30px 42px;
 	    	
     }   
 
+	  //현장대기예약 시작 중단 웹소켓
    function onSiteUse(element){
 	let store_idx =  document.querySelector('#reservation_storeIdx').value
 	  let ableStatus = element.getAttribute('data-use'); 
@@ -1194,7 +1197,33 @@ margin: 30px 42px;
    	
    }
 	    	    
+	//가게별 웹소켓 경로 설정하기 웹소켓
+   function updateCompanySubscription(newCompanyIdx) {
+	   
+	   if (!stompClient || !stompClient.connected) {
+	        console.error('WebSocket이 연결되지 않았습니다.');
+	        return;
+	    }
+	  	   
+	    // 기존 구독 취소
+	    if (currentCompanyIdx) {
+	        stompClient.unsubscribe(`/topic/Waiting/\${currentCompanyIdx}`);
+	    }
+        console.log('오류시점newCompanyIdx '+newCompanyIdx)
+	    // 새로운 companyIdx에 대한 구독 설정
+	    stompClient.subscribe(`/topic/Waiting/\${newCompanyIdx}`, function(message) {
+	        const waitingList = JSON.parse(message.body);
+	        updateWaitingList(waitingList);
+	    });
+   
+	    // currentCompanyIdx 값 업데이트
+	    currentCompanyIdx = newCompanyIdx;   
 	    
+   }
+   
+   
+   
+   let initIdx = null;
 	    
 	////////////////////////////////////////////////////////
 	
@@ -1241,8 +1270,9 @@ margin: 30px 42px;
     	  const storeIdx = currentSlide.getAttribute('data-storeIdx'); 
     	  const wc = currentSlide.getAttribute('data-waitingCount'); 
     	  
-    	  
-    	  
+    	  console.log('storeIdx의값' + storeIdx)
+    	  initIdx = storeIdx;
+    	  updateCompanySubscription(storeIdx)
     	  document.querySelector('._4').textContent = reviewCount; 
     	  document.querySelector('._30').textContent = viewCount; 
     	  document.querySelector('._200').textContent = viewLike; 

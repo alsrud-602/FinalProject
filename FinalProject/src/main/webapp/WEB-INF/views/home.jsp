@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    <%@ page import="com.board.users.jwt.JwtUtil" %>
+    <%@ page import="com.board.jwt.JwtUtil" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -23,12 +23,9 @@ color: white;}
 	<a href="/Users/RouteRecommend">Route Recommend</a>
 
 
-        사용자 이름: ${username}
-        사용자 이름: ${user.id}
-
 
   </main>	
+
  <%@include file="/WEB-INF/include/footer.jsp" %>
-<!-- <script src="/js/auth.js" defer></script> -->
 </body>
 </html>

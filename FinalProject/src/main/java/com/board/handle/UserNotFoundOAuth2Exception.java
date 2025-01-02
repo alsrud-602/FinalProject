@@ -1,4 +1,4 @@
-package com.board.users.handle;
+package com.board.handle;
 
 import com.board.users.dto.User;
 

@@ -20,6 +20,10 @@ button{
   cursor: pointer;
 }
 
+form{
+ cursor: pointer;
+}
+
 body{
 background-color: #121212;
    padding-top : 150px;
