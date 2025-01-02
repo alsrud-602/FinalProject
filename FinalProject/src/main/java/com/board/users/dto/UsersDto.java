@@ -80,4 +80,12 @@ public class UsersDto {
     private int category_id;
     private int sc_idx;
     
+    private int user_count;
+    private int ls_idx;
+    private int storelike;
+    
+    private int review_idx;
+    private int score; 
+    private String review_date;
+    
 }

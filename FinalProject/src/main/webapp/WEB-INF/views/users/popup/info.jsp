@@ -12,7 +12,7 @@
 <link rel="stylesheet"  href="/css/popupdetail.css" />
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/browser-scss@1.0.3/dist/browser-scss.min.js"></script>
-<script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=a9gjf918ri"></script>
+<script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId="></script>
 <!-- Flatpickr CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <!-- Flatpickr JS -->
@@ -53,8 +53,8 @@
         ${storedetail.age} 
        </div>
         <div class="title_icon">
-          <img src="/images/icon/heart.png"><p>100</p>&nbsp;
-          <img src="/images/icon/eye1.png"><p>100</p>&nbsp;
+          <img src="/images/icon/heart.png"><p>${StoreLike.storelike}</p>&nbsp;
+          <img src="/images/icon/eye1.png"><p>${StoreHit.hit}</p>&nbsp;
           <img src="/images/icon/degree.png"><p>90%</p>
         </div>
       </div>
@@ -325,22 +325,26 @@ const infoPage = `<div class="content">
 	  
 	   <!-- review body-->
 	   <div class="review_body">
-	     <div class="review_box" onclick="moveReviewDetail()">
+	   <c:forEach  var = "HotReviews" items="${HotReviews}" >
+	   <div class="review_box" onclick="moveReviewDetail(this)" 
+		     data-idx="${HotReviews.store_idx}" 
+		     data-user-idx="${HotReviews.user_idx}">
 	     <div class ="review_preview">
 	     <img class= "review_img"src="/images/example/exampleimg6.png">     
 	     <div class="review_like">
 	     <img src="/images/icon/heart.png">
-	     <p>100</p>
+	     <p>${HotReviews.like}</p>
 	     </div>
 	     </div>
 	     <div class="review_info">
-	       <p>김방글 님</p>
-	       <div><img src="/images/icon/eye2.png">&nbsp;100&nbsp;</div>
+	       <p>${HotReviews.name} 님</p>
+	       <div><img src="/images/icon/eye2.png">&nbsp;${HotReviews.score}&nbsp;</div>
 	     </div>
-	     <div class="review_score">평점 3.5</div>
+	     <div class="review_score">평점 ${HotReviews.score}</div>
 	     <div class="review_time"><div>3시간 전</div></div>
-	     <div class="review_cdate">2024.12.12</div>
-	     </div>       
+	     <div class="review_cdate">${HotReviews.cdate}</div>
+	     </div>
+	     </c:forEach> 
 	   </div> 
 	  
 	  <!-- review header-->
@@ -350,7 +354,7 @@ const infoPage = `<div class="content">
 	    </div>
 	  </div>
 	  <div class="review_sub">
-	    <p>전체리뷰수&nbsp; | &nbsp;10 &nbsp;&nbsp; 평균&nbsp; |&nbsp; 4.5</p>
+	    <p>전체리뷰수&nbsp; | &nbsp;${totalcount.review_idx} &nbsp;&nbsp; 평균&nbsp; |&nbsp; ${totalcount.score}</p>
 	    <div class="review_filter">
 	    <div id="review_slike">좋아요순</div>
 	    <div id="review_sscore">평점순</div>
@@ -360,23 +364,24 @@ const infoPage = `<div class="content">
 	  
 	   <!-- review body-->
 	<div class="review_body">
+	  <c:forEach  var = "review" items="${totalreviews}" >
 	     <div class="review_box" onclick="moveReviewDetail()">
 	     <div class ="review_preview">
 	     <img class= "review_img"src="/images/example/exampleimg6.png">     
 	     <div class="review_like">
 	     <img src="/images/icon/heart.png">
-	     <p>100</p>
+	     <p>${review.like}</p>
 	     </div>
 	     </div>
 	     <div class="review_info">
-	       <p>김방글 님</p>
-	       <div><img src="/images/icon/eye2.png">&nbsp;100&nbsp;</div>
+	       <p>${review.name} 님</p>
+	       <div><img src="/images/icon/eye2.png">&nbsp;${review.hit}&nbsp;</div>
 	     </div>
-	     <div class="review_score">평점 3.5</div>
+	     <div class="review_score">평점 ${review.score}</div>
 	     <div class="review_time"><div>3시간 전</div></div>
-	     <div class="review_cdate">2024.12.12</div>
+	     <div class="review_cdate">${review.cdate}</div>
 	     </div>        
-	        
+	     </c:forEach>  
 	   </div> 
 	  `;
   
@@ -389,71 +394,82 @@ const mapPage = `
   <div id="map"></div>
   <div class="content">
   <div class="content_title"><img  src="/images/icon/location.png"><p>주소</p></div>
-  <p class="content_detail">서울 성북구 성수이로 231-2 </p>
+  <p class="content_detail">${storedetail.address}</p>
 </div>
 <br><br><br><br>
 
 `  
 
-const reDetailPage = `    
-<div class="review_header">
-    <div class="review_title">
-    <p>리뷰상세보기</p><p>유저들의 생생한 후기를 확인하세요</p>
-  </div>
-</div>
-
-<div class="swiper-container2">
-<div class="swiper-wrapper">
-  <div class="swiper-slide ss"><img src="/images/example/exampleimg1.png" alt="1"></div>
-  <div class="swiper-slide ss"><img src="/images/example/exampleimg2.png" alt="2"></div>
-  <div class="swiper-slide ss"><img src="/images/example/exampleimg3.png" alt="3"></div>
-  <div class="swiper-slide ss"><img src="/images/example/exampleimg4.png" alt="4"></div>
-  <div class="swiper-slide ss"><img src="/images/example/exampleimg5.png" alt="5"></div>
-</div>
-<!-- Navigation buttons -->
-<div class="swiper-button-next"></div>
-<div class="swiper-button-prev"></div>
-</div>
 
 
-<div class="review_line">
-  <div class="review_score2">
-  <p>평점</p>
-  <img src="/images/icon/star2.png">
-  </div>
-  <div class="review_nld">
-  <img src="/images/icon/calender.png">&nbsp;&nbsp;&nbsp; <p>2024.12.13</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="/images/icon/eye1.png"> &nbsp;&nbsp;&nbsp;<p>100</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="/images/icon/heart.png">&nbsp;&nbsp;&nbsp; <p>100</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  </div>
-</div>
+ function moveReviewDetail(element){
+	const storeIdx = element.getAttribute('data-idx');
+    const userIdx = element.getAttribute('data-user-idx');
+    
+    $.ajax({
+    	url : '/Users/ReviewDetail',
+    	type : 'GET',
+    	data : { storeidx:storeIdx, useridx:userIdx}
+    })
+    .done(function(response){
+    	const reviewData = response.ReviewDetail; // 서버에서 받아온 데이터
+    	console.log(reviewData.review_date);
+    	console.log(reviewData.score);
+    	console.log(reviewData.hit);
+    	console.log(reviewData.like);
+    	console.log(reviewData.content);
+    	console.log(reviewData);
+    	$('#contents').html('');
+        const reviewDetail = "<div class='review_header'>" +
+	        "<div class='review_title'>" +
+	        "<p>리뷰상세보기</p><p>유저들의 생생한 후기를 확인하세요</p>" +
+	    "</div>" +
+	"</div>" +
+	"<div class='swiper-container2'>" +
+	    "<div class='swiper-wrapper'>" +
+	        "<div class='swiper-slide ss'><img src='/images/example/exampleimg1.png' alt='1'></div>" +
+	        "<div class='swiper-slide ss'><img src='/images/example/exampleimg1.png' alt='2'></div>" +
+	        "<div class='swiper-slide ss'><img src='/images/example/exampleimg1.png' alt='3'></div>" +
+	        "<div class='swiper-slide ss'><img src='/images/example/exampleimg1.png' alt='4'></div>" +
+	        "<div class='swiper-slide ss'><img src='/images/example/exampleimg1.png' alt='5'></div>" +
+	    "</div>" +
+	    "<div class='swiper-button-next'></div>" +
+	    "<div class='swiper-button-prev'></div>" +
+	"</div>" +
+	"<div class='review_line'>" +
+	    "<div class='review_score2'>" +
+	        "<p>평점 " + reviewData.score + "</p>" +
+	        "<img src='/images/icon/star2.png'>" +
+	    "</div>" +
+	    "<div class='review_nld'>" +
+	        "<img src='/images/icon/calender.png'>&nbsp;&nbsp;&nbsp; <p>" + reviewData.review_date + "</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
+	        "<img src='/images/icon/eye1.png'> &nbsp;&nbsp;&nbsp;<p>" + reviewData.hit + "</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
+	        "<img src='/images/icon/heart.png'>&nbsp;&nbsp;&nbsp; <p>" + reviewData.like + "</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
+	    "</div>" +
+	"</div>" +
+	"<div class='content'>" +
+	    "<div class='content_title'><img src='/images/icon/msg.png'><p>코멘트</p></div>" +
+	    "<p class='content_detail'>" + reviewData.content + "</p>" +
+	"</div>" +
+	"<div class='sizebox'></div>" +
+	"<div class='btn_line'>" +
+	    "<a class='btn3' href='/Users/Writeform?store_idx=" + reviewData.like + "&user_idx=" +reviewData.user_idx +"'>수정</a>" +
+	    "<a class='btn3' href='#'>삭제</a>" +
+	    "<a class='btn3' href='#' onclick='moveReviewBack(event)'>돌아가기</a>" +
+	"</div>";
 
-<div class="content">
-  <div class="content_title"><img  src="/images/icon/msg.png" ><p>코멘트</p></div>
-  <p class="content_detail">
-평일 오후에는 웨이팅도 별로 없었고 굿즈 수량도 많이 남아있어서 좋았어요! 주말 보다 평일에 가세요  </p>
-</div>   
-<div class="sizebox"></div>
-<div class="btn_line">
-<a class="btn3" href="#">수정</a>
-<a class="btn3" href="#">삭제</a>
-<a class="btn3" href="#"  onclick="moveReviewBack(event)">돌아가기</a>
-</div>
-`
-
- function moveReviewDetail(){
-	$('#contents').html('');
-	$('#contents').html(reDetailPage);	
-	 
-var swiper2 = new Swiper('.swiper-container2', {
-	 slidesPerView: 1,
-	 slidesPerGroup: 1,
-   navigation: {
-       nextEl: '.swiper-button-next',
-       prevEl: '.swiper-button-prev',
-   },
-   loop: true, // 무한 반복
-});
+        $('#contents').append(reviewDetail); // 업데이트된 내용을 HTML에 삽입
+        var swiper2 = new Swiper('.swiper-container2', {
+            slidesPerView: 1,
+            slidesPerGroup: 1,
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            loop: true, // 무한 반복
+        })
+        
+    })
 	
 } 
   
