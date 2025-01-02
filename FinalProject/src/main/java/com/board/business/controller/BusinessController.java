@@ -11,7 +11,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,6 +38,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 
+//@PreAuthorize("hasRole('ROLE_ADMIN')")
 @Controller
 @RequestMapping("/Business")
 public class BusinessController {
@@ -45,6 +48,15 @@ public class BusinessController {
 	
 	@Autowired
 	private PdsService pdsService;
+	
+	@RequestMapping
+	public ModelAndView businesshome() {
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("/business/login");
+		return mv;
+	}
+	
+	
 	
 	@RequestMapping("/Registraion/Write")
 	public ModelAndView registrationWrite( @RequestParam HashMap<String, Object> map,

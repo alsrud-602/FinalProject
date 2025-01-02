@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -141,6 +143,7 @@ body {
     color: black;
     text-align: center;
   }
+  
 
 /* 초기화 버튼*/
 .refresh{                     
@@ -305,7 +308,8 @@ th {
     <div class="container">
         <!-- 팝콘 잔액 -->
   			<p class="content-text" style="color:gray; text-decoration:underline;"><a href="javascript:void(0);" id="popup-trigger" >팝콘이란?</a></p>
-            <h1 class="content-text">내팝콘 <span >1000</span><img src="/img/PopcornCharater 1.png" alt="icon" width="80" height="80" class="icon"></h1>
+            <h1 class="content-text">내팝콘 <span >${Popcorn.total_points}</span><img src="/img/PopcornCharater 1.png" alt="icon" width="80" height="80" class="icon"></h1>
+
 
 
 		<!-- 팝콘이란? 설명 -->
@@ -323,21 +327,85 @@ th {
             </div>
         </div>
         
+<%--  <div>
+<H2> 출석 상태 조회</H2>
+<c:if test="${not empty attendstat}">
+    <p>User ID: ${attendstat.user_Id}</p>
+    <p>출석상태: ${attendstat.attendance_Status}</p>
+    <p>출석 날짜: ${attendstat.attendance_Date}</p>
+    <p>연속 출석: ${attendstat.consecutive_attendance_days}</p>
+    <p>총 출석: ${attendstat.total_Attendance_Days}</p>
+</c:if>
+<c:if test="${empty attendstat}">
+    <p>사용자 로그가 없습니다.</p>
+</c:if>
+</div>  --%>
+
+<%--  <div>
+ <H2>팝콘 내역 조회</H2>
+<c:if test="${not empty Loglist}">
+    <c:forEach var="userLog" items="${Loglist}">
+        <p>${userLog}</p> <!-- userLog 객체의 내용을 출력 -->
+        <p>User ID: ${userLog.user_id}</p> <!-- 필드명 수정 -->
+        <p>내용: ${userLog.content}</p>
+        <p>지급출금: ${userLog.content_info}</p>
+        <p>지급 포인트: ${userLog.spent_points != null ? userLog.spent_points : '0'}</p>
+        <p>지출 포인트: ${userLog.spent_points != null ? userLog.spent_points : '0'}</p>
+        <p>총 포인트: ${userLog.total_points}</p>
+        <p>날짜: ${userLog.add_date}</p>
+        <hr />
+    </c:forEach>
+</c:if>
+</div>   --%>
+
+
+
 
         <!-- 일일 출석 체크 -->
         <div class="daily-check">
             <h3>일일 출석체크</h3>
             <div class="check-list">
-                <div class="check-item"><img src="/img/PopcornCharater 1.png" alt="icon" width="50" height="50"><br>+20</div>
-                <div class="check-item"><img src="/img/PopcornCharater 1.png" alt="icon" width="50" height="50"><br>+30</div>
-                <div class="check-item"><img src="/img/PopcornCharater 1.png" alt="icon" width="50" height="50"><br>+40</div>
-                <div class="check-item"><img src="/img/PopcornCharater 1.png" alt="icon" width="50" height="50"><br>+50</div>
-                <div class="check-item"><img src="/img/PopcornCharater 1.png" alt="icon" width="50" height="50"><br>+60</div>
-                <div class="check-item"><img src="/img/PopcornCharater 1.png" alt="icon" width="50" height="50"><br>+70</div>
-                <div class="check-item"><img src="/img/PopcornCharater 1.png" alt="icon" width="50" height="50"><br>+100</div>
+                 <c:forEach var="points" items="${points}">
+            <div class="check-item" data-points="${points}">
+                <c:choose>
+                    <c:when test="${attendstat.consecutive_attendance_days == 0}">
+                        <img src="/img/PopcornCharater 1.png" alt="icon" width="50" height="50">
+                    </c:when>
+                    <c:when test="${attendstat.consecutive_attendance_days == 1 && points == 20}">
+                        <img src="/images/icon/check.png" alt="icon" width="50" height="50">
+                    </c:when>
+                    <c:when test="${attendstat.consecutive_attendance_days == 2 && (points == 20 || points == 30)}">
+                        <img src="/images/icon/check.png" alt="icon" width="50" height="50">
+                    </c:when>
+                    <c:when test="${attendstat.consecutive_attendance_days == 3 && (points == 20 || points == 30 || points == 40)}">
+                        <img src="/images/icon/check.png" alt="icon" width="50" height="50">
+                    </c:when>
+                    <c:when test="${attendstat.consecutive_attendance_days == 4 && (points == 20 || points == 30 || points == 40 || points == 50)} ">
+                        <img src="/images/icon/check.png" alt="icon" width="50" height="50">
+                    </c:when>
+                    <c:when test="${attendstat.consecutive_attendance_days == 5 && (points == 20 || points == 30 || points == 40 || points == 50 || points == 60)}">
+                        <img src="/images/icon/check.png" alt="icon" width="50" height="50">
+                    </c:when>
+                    <c:when test="${attendstat.consecutive_attendance_days == 6 && (points == 20 || points == 30 || points == 40 || points == 50 || points == 60 || points == 70)}">
+                        <img src="/images/icon/check.png" alt="icon" width="50" height="50">
+                    </c:when>
+                    <c:when test="${attendstat.consecutive_attendance_days == 7 && (points == 20 || points == 30 || points == 40 || points == 50 || points == 60 || points == 70 || points == 100)}">
+                        <img src="/images/icon/check.png" alt="icon" width="50" height="50">
+                    </c:when>
+                    <c:otherwise>
+                        <img src="/img/PopcornCharater 1.png" alt="icon" width="50" height="50">
+                    </c:otherwise>
+                </c:choose>
+                <br>+${points}
             </div>
-            <a class="daily-checkbtn">팝콘 받기</a>
+        </c:forEach>
+        
+          </div>
+            <a class="daily-checkbtn"  href="javascript:void(0);" onclick="submitAttendance()">팝콘 받기</a>
         </div>
+        
+        
+
 
 
 
@@ -345,39 +413,53 @@ th {
         <h1 class="content-text">팝콘 내역</h1>
         <div class="popcorn-history">
             
-            <table>
-                 <p>
-                   <a class="history-btn">입금</a>
-                   <a class="history-btn">지출</a>
-                   <a class="refresh" href="javascript:void(0);" ><span style="font-size: 28px;">↻</span>초기화</a>
-                  </p>
-                   
-                    <tr>
-                        <td class="bodleft">2024-12-15</td>
-                        <td class="bodcenter">최초 가입</td>
-                        <td class="bodright">+1000</td>
-                    </tr>
-                    <tr>
-                        <td class="bodleft">2024-12-15</td>
-                        <td class="bodcenter">피드 쓰기</td>
-                        <td class="bodright">+200</td>
-                    </tr>
-                    <tr>
-                        <td class="bodleft">2024-12-15</td>
-                        <td class="bodcenter">코스 정하기</td>
-                        <td class="bodright">-300</td>
-                    </tr>
-                    <tr>
-                        <td class="bodleft">2024-12-15</td>
-                        <td class="bodcenter">코스 정하기</td>
-                        <td class="bodright">-300</td>
-                    </tr>
-                    <tr>
-                        <td class="bodleft">2024-12-15</td>
-                        <td class="bodcenter">코스 정하기</td>
-                        <td class="bodright">-300</td>
-                    </tr>
-                    
+            
+            
+                <p>
+                    <a class="history-btn"  id="allinfobtn" 
+                       href="javascript:void(0);" onclick="filterLogs('')">전체</a>
+                    <a class="history-btn"  id="Earninfobtn" 
+                       href="javascript:void(0);" onclick="filterLogs('지급')">입금</a>
+                    <a class="history-btn" id="Spendinfobtn"  
+                       href="javascript:void(0);" onclick="filterLogs('사용')">지출</a>
+                    <a class="refresh" href="/Wallet/Wallet" 
+                      ><span style="font-size: 18px;">↻</span></a>
+                </p>
+                
+            
+       
+   <c:set var="filterCondition" value="${param.filterCondition}" />
+   <table>
+<c:if test="${not empty Loglist}">
+    <c:forEach var="userLog" items="${Loglist}">
+      <c:if test="${empty param.filterCondition or userLog.content_info eq param.filterCondition}">
+         <tr>
+            <c:if test="${not empty userLog.add_date}">
+                <td class="bodleft">${userLog.add_date}</td>
+            </c:if>
+
+            <c:if test="${not empty userLog.content}">
+                <td class="bodcenter">${userLog.content}</td>
+                <input type="hidden" value="${userLog.content_info}">
+            </c:if>
+
+            <c:if test="${not empty userLog.earned_points && userLog.earned_points > 0}">
+                <td class="bodright">+${userLog.earned_points}</td>
+            </c:if>
+
+            <c:if test="${not empty userLog.spent_points && userLog.spent_points > 0}">
+                <td class="bodright">-${userLog.spent_points}</td>
+            </c:if>
+          </tr>
+        </c:if>
+    </c:forEach>
+</c:if>
+
+<c:if test="${empty Loglist}">
+    <tr>
+        <td colspan="4">사용자 로그가 없습니다.</td>
+    </tr>
+</c:if>
                 </tbody>
             </table>
         </div>
@@ -416,6 +498,83 @@ th {
             bodyContainer.classList.remove('blurred');
         }
     });
+    
+
+    // 팝콘(체크안된) 칸 안의 포인트 값 가져오기
+    function submitAttendance() {
+        // "PopcornCharacter" 모양의 아이콘을 찾기
+        const popcornItems = document.querySelectorAll('.check-item img[src*="PopcornCharater 1.png"]');
+        
+        if (popcornItems.length > 0) {
+            // 첫 번째 "PopcornCharacter" 아이콘의 부모 요소에서 포인트 값 가져오기
+            const points = popcornItems[0].parentElement.getAttribute('data-points');
+
+            fetch('/Wallet/Daily-check', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'earnedPoints=' + points
+            })
+            .then(response => {
+                return response.text(); 
+            })
+            .then(data => {
+                console.log(data); 
+                
+                alert(data); 
+                if (data === "출석 체크가 완료되었습니다!") {
+                    window.location.href = "/Wallet/Wallet"; 
+                }
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+        } else {
+            alert('팝콘 캐릭터 아이템이 없습니다.');
+        }
+    }
+
+    //내역필터링 
+    function filterLogs(condition) {
+    	
+        // 현재 스크롤 위치 저장
+        localStorage.setItem('scrollPosition', window.scrollY);
+
+        const url = new URL(window.location.href);
+        if (condition) {
+            url.searchParams.set('filterCondition', condition); 
+        } else {
+            url.searchParams.delete('filterCondition'); 
+        }
+        window.location.href = url.toString(); 
+    }
+    
+    // 리로드 후 스크롤 위치 복원
+    window.addEventListener('load', () => {
+        const scrollPosition = localStorage.getItem('scrollPosition');
+        if (scrollPosition) {
+            window.scrollTo(0, parseInt(scrollPosition, 10)); // 저장된 위치로 이동
+            localStorage.removeItem('scrollPosition'); // 사용 후 제거
+        }
+    });
+    
+    //새로고침 (새로운 주 갱신 후 새로고침 주기)
+window.onload = function() {
+    // 세션 스토리지에서 'refreshed' 값 확인
+    if (!sessionStorage.getItem('refreshed')) {
+        // 세션 스토리지에 'refreshed' 값 저장
+        sessionStorage.setItem('refreshed', 'true');
+
+        // 1초 후 페이지 새로고침
+        setTimeout(() => {
+            location.reload(); // 페이지 새로고침
+        }, 1000); // 1초 대기 후 새로고침
+    } else {
+        // 새로고침 후 'refreshed' 값이 저장된 상태에서는 값 삭제
+        sessionStorage.removeItem('refreshed');
+    }
+};
     </script>
 </body>
 </html>

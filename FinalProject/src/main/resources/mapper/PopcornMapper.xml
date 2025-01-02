@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.board.users.mapper.PopcornMapper">  
+  
+
+
+<select id="getLogByUserId" resultType="com.board.users.vo.PopcornVo">
+SELECT 
+    LOG_ID, 
+    USER_ID, 
+    CONTENT, 
+    CONTENT_INFO, 
+    EARNED_POINTS, 
+    SPENT_POINTS,
+    TOTAL_POINTS, 
+    TO_CHAR(ADD_DATE, 'YYYY-MM-DD') AS ADD_DATE
+  FROM FINAL.popcorn_log
+  WHERE USER_ID = #{userId}
+  ORDER BY ADD_DATE DESC
+</select>
+
+
+<select id="getCheckAttend" >
+    SELECT
+    USER_ID,
+    ATTENDANCE_STATUS,
+    TO_CHAR(ATTENDANCE_DATE,'YYYY-MM-DD') AS ATTENDANCE_DATE,
+    CONSECUTIVE_ATTENDANCE_DAYS,
+    TOTAL_ATTENDANCE_DAYS
+  FROM FINAL.ATTENDANCE
+  WHERE USER_ID = #{userId}
+</select>
+
+<select id="checkWallet">
+ SELECT*
+  FROM FINAL.POPCORN_WALLET
+  WHERE USER_ID = #{userId}
+</select>
+
+
+<update id="updateAttendanceStatus">
+    UPDATE ATTENDANCE
+    SET
+        ATTENDANCE_STATUS = 'OFF'
+    WHERE
+        USER_ID = #{userId}
+</update>
+
+<update id="updateNewWeekAttend">
+    UPDATE ATTENDANCE
+    SET
+        ATTENDANCE_STATUS = 'OFF',
+        CONSECUTIVE_ATTENDANCE_DAYS = 0
+    WHERE
+        USER_ID = #{userId}
+</update>
+
+
+
+<update id="AttendToUser">
+    UPDATE ATTENDANCE
+    SET
+        ATTENDANCE_STATUS = 'ON',
+        ATTENDANCE_DATE = SYSDATE,
+        CONSECUTIVE_ATTENDANCE_DAYS = CONSECUTIVE_ATTENDANCE_DAYS + 1,
+        TOTAL_ATTENDANCE_DAYS = TOTAL_ATTENDANCE_DAYS + 1
+    WHERE
+        USER_ID = #{userId}
+</update>
+
+
+<update id="addPointsToUser">
+	UPDATE POPCORN_WALLET
+SET
+        TOTAL_POINTS = TOTAL_POINTS + #{arg1}
+WHERE
+        USER_ID = #{arg0}
+</update>
+
+
+<insert id="addPopcornLog">
+INSERT INTO POPCORN_LOG (
+    LOG_ID,
+    USER_ID,
+    CONTENT,
+    CONTENT_INFO,
+    EARNED_POINTS,
+    TOTAL_POINTS,
+    ADD_DATE
+) VALUES (
+    (SELECT NVL(MAX(LOG_ID),0)+1 FROM POPCORN_LOG),  
+    #{arg0},
+    '출석체크',
+    '지급',
+    #{arg1},
+    (SELECT TOTAL_POINTS + #{arg1} FROM POPCORN_WALLET WHERE USER_ID = #{arg0}),  
+    SYSDATE
+)
+</insert>
+
+</mapper>
+
+
+
