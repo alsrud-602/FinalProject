@@ -16,9 +16,15 @@
 
 
 <style>
+*{
+font-family: "Pretendard";
+
+}
+
 body {
     height:100%;
     margin: 0; /* 기본 여백 제거 */
+    overflow-y:scroll;
 }
 
 .container {
@@ -190,6 +196,21 @@ input[type="number"]{
     width : 80px;
     height: 50px;
 }
+
+/*----------------------------------------------*/
+    .search-box {
+        margin-bottom: 20px;
+    }
+    .search-box input {
+        width: 250px;
+        display: inline-block;
+    }
+    .search-box button {
+        display: inline-block;
+        margin-left: 10px;
+    }
+    
+ /*----------------------------------------------*/   
 </style>
 </head>
 
@@ -205,41 +226,47 @@ input[type="number"]{
       <h2>유저 관리</h2>
       <div class="hr"></div>
       
-      
-      <!-- 모달을 실행할 버튼 --> 
-	  <button type="button" class="modalbutton1" data-bs-toggle="modal" data-bs-target="#exampleModal1">
-	    선택한 회원 <br> 팝콘 지급하기
-	  </button>
-	  <button type="button" class="modalbutton2" data-bs-toggle="modal" data-bs-target="#exampleModal2">
-	    선택한 회원 <br> 팝콘 <span>차감하기</span>
-	  </button>
 
-      
+    
+    <div class="button-search-container">
+    <!-- 모달 버튼 -->
+    <button type="button" class="modalbutton1" data-bs-toggle="modal" data-bs-target="#exampleModal1">
+        선택한 회원 <br> 팝콘 지급하기
+    </button>
+    <button type="button" class="modalbutton2" data-bs-toggle="modal" data-bs-target="#exampleModal2">
+        선택한 회원 <br> 팝콘 <span>차감하기</span>
+    </button>
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="검색어 입력">
+        <button id="searchBtn" class="btn btn-primary">검색</button>
+    </div>
+</div>
       <table>
+      <thead>
         <tr>
           <td><input type="checkbox" id="usertable" name="usertable" class="headercheckbox" onclick='selectAll(this)'/></td>
           <td>
 	          닉네임
-	          <select id="sortSelect" onchange="sortTable('nikname')">
-	          <option value=""></option>
-	          <option value="asc">asc</option>
-	          <option value="desc">desc</option>
+	          <select id="sortSelectNikname" onchange="sortTable('nikname')">
+	          <option value="return">정렬</option>
+	          <option value="asc">닉네임(↑)</option>
+	          <option value="desc">닉네임(↓)</option>
 	        </select>
           </td>
           <td>
           아이디
-          <select id="sortSelect" onchange="sortTable('id')">
-            <option value=""></option>
-            <option value="asc">asc</option>
-            <option value="desc">desc</option>
+          <select id="sortSelectId" onchange="sortTable('id')" >
+            <option value="return">정렬</option>
+            <option value="asc">아이디(↑)</option>
+            <option value="desc">아이디(↓)</option>
         </select>
           </td>
           <td>가입일</td>
           <td>상태</td>
           <td>상세보기</td>
         </tr>
-          
-    <tbody>
+      </thead>    
+    <tbody id="userTableBody">
         <!-- 사용자 목록을 출력 -->
         <c:forEach var="user" items="${allusers}">
             <tr>
@@ -250,16 +277,19 @@ input[type="number"]{
                 <td>
                     <div>
                         <select class="userSelect">
-                            <option value="good" ${user.status == '우수회원' ? 'selected' : ''}>우수회원</option>
+                            <option value="good" ${user.status == 'BEST' ? 'selected' : ''}>우수회원</option>
                             <option value="nomal" ${user.status == 'ACTIVE' ? 'selected' : ''}>일반회원</option>
-                            <option value="bad" ${user.status == 'blocked' ? 'selected' : ''}>차단됨</option>
+                            <option value="bad" ${user.status == 'BLOCKED' ? 'selected' : ''}>차단됨</option>
                         </select>
+                        <button style="background: transparent; border: none;">버튼이 필요할까</button>
                     </div>
                 </td>
                 <td><a href="/Admin/Userdetail?id=${user.id}">상세보기</a></td>
             </tr>
         </c:forEach>
     </tbody>
+    
+
     </table>
     
 
@@ -442,6 +472,96 @@ $(document).ready(function() {
             alert(message);  // 메시지를 alert로 표시
         }
     });
+</script>
+
+<script>
+var originalRows = [];
+
+function sortTable(column) {
+    var table = $("table");
+    var rows = table.find("tbody tr").get();
+
+    // 만약 'return'을 선택했다면, 정렬을 초기화하고 원래 상태로 되돌리기
+    var sortOrder = (column === "nikname") ? $("#sortSelectNikname").val() : $("#sortSelectId").val();
+
+    if (sortOrder === "return") {
+        // 테이블의 행을 원본 순서로 되돌리기
+        if (originalRows.length > 0) {
+            $.each(originalRows, function(index, row) {
+                table.children("tbody").append(row);
+            });
+        }
+        return; // 정렬을 변경하지 않고 함수를 종료
+    }
+
+    // 첫 번째로 호출할 때 행을 원본 순서로 저장
+    if (originalRows.length === 0) {
+        originalRows = rows.slice(); // 원본 행을 복사
+    }
+
+    // 선택된 컬럼에 따른 인덱스 값
+    var columnIndex = (column === "nikname") ? 1 : 2; // nikname 컬럼은 인덱스 1, id 컬럼은 인덱스 2
+
+    // 정렬
+    rows.sort(function(a, b) {
+        var cellA = $(a).children("td").eq(columnIndex).text().toLowerCase();
+        var cellB = $(b).children("td").eq(columnIndex).text().toLowerCase();
+
+        // 숫자 부분만 추출하여 비교
+        var numericA = parseInt(cellA.replace(/\D/g, ''), 10);
+        var numericB = parseInt(cellB.replace(/\D/g, ''), 10);
+
+        if (!isNaN(numericA) && !isNaN(numericB)) {
+            // 숫자 비교
+            if (sortOrder === "asc") {
+                return numericA - numericB;
+            } else if (sortOrder === "desc") {
+                return numericB - numericA;
+            }
+        } else {
+            // 문자열 비교 (숫자가 아닌 경우)
+            if (sortOrder === "asc") {
+                return cellA.localeCompare(cellB);
+            } else if (sortOrder === "desc") {
+                return cellB.localeCompare(cellA);
+            }
+        }
+        return 0;
+    });
+
+    // 정렬된 행을 다시 테이블에 추가
+    $.each(rows, function(index, row) {
+        table.children("tbody").append(row);
+    });
+}
+
+</script>
+
+<script>
+$(document).ready(function() {
+    $('#searchInput').on('input', function() {
+        var searchTerm = $(this).val().toLowerCase();  // 입력된 검색어 소문자로 변환
+        var rowCount = 0;  // 검색된 행 수를 카운트
+        
+        $('table tbody tr').each(function() {
+            var rowText = $(this).text().toLowerCase();  // 각 행의 텍스트를 소문자로 변환
+            if (rowText.indexOf(searchTerm) !== -1) {
+                $(this).show();  // 텍스트에 검색어가 포함되면 해당 행을 표시
+                rowCount++;  // 검색된 행 수 증가
+            } else {
+                $(this).hide();  // 포함되지 않으면 해당 행을 숨김
+            }
+        });
+
+        // 검색 결과가 없을 때 메시지 표시
+        if (rowCount === 0) {
+            $('table tbody').append('<tr><td colspan="6" style="text-align:center; font-weight:bold; ">검색 결과가 없습니다.</td></tr>');
+        } else {
+            // 검색 결과가 있으면 메시지를 제거
+            $('table tbody tr:contains("검색 결과가 없습니다.")').remove();
+        }
+    });
+});
 </script>
 
 

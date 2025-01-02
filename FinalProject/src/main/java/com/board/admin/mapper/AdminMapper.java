@@ -11,6 +11,8 @@ import com.board.admin.vo.AdminVo;
 @Mapper
 public interface AdminMapper {
 
+
+
 	List<AdminVo> getPopcornLogByUserId(String userId);
 
 	int getTotalPopcorn(String userId);
@@ -42,6 +44,16 @@ public interface AdminMapper {
 	void PopcornMinusLogs(String content1, int points1, String user);
 
 	void MinusPopcorns(Map<String, Object> params);
+
+	List<AdminVo> getallReview();
+
+
+
+	String getUserIdx(String userId);
+
+	List<AdminVo> getUserReview(String selUserId);
+
+	void updateUserStatus(String userId, String status);
 
 
 

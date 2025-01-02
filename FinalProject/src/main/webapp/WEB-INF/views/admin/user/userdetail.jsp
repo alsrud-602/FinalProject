@@ -16,6 +16,9 @@
 
 
 <style>
+*{
+font-family: "Pretendard";
+}
 body {
     margin: 0; /* 기본 여백 제거 */
 }
@@ -26,7 +29,7 @@ body {
    
 }
 .headerp{
-  font-family: 'ABeeZee';
+  font-family: 'Pretendard';
   font-size: 30px;
   margin-top: 20px;
   margin-left: 45px;
@@ -267,15 +270,12 @@ input[type="number"]{
 }
 
 .popcorndetail table th{
-text-align: center;
-
 }
 .popcorndetail table td:hover{
      background: #F5F5FF;
 }
 .popcorndetail table td{
    border-bottom: 1px solid #D8D8D8;
-   text-align: center;
    background: white;
 }
 .popcorndetail table tr:first-child td{
@@ -313,6 +313,7 @@ text-align: center;
    text-align:center;
    color: #20573D;
    font-family: 'Inter';
+   font-size:16px;
    margin-bottom: 0;
    height: 45px;
    margin-top: 7px;
@@ -321,20 +322,22 @@ text-align: center;
 .popcorning p{
    color: #CD7B2E;
    font-family: 'Inter';
+   font-size:16px;
    margin-bottom: 0;
    height: 45px;
    margin-top: 7px;
 }
 
 .popcornminus p{
+   text-align:center;
    color: #731912;
    font-family: 'Inter';
+   font-size:16px;
    margin-bottom: 0;
    height: 45px;
    margin-top: 7px;
 }
 .popcorncenter{
-   display: flex; 
    justify-content: center; 
    align-items: center; 
    height: 100%;
@@ -366,7 +369,6 @@ text-align: center;
 
 span.center {
   background: #fff;
-  
   position: absolute;
   top: 50%;
   left: 50%;
@@ -407,12 +409,12 @@ span.center {
             <div class="tableborder">${userinfo[0].id}</div>
         </td>
     </tr>
-    <tr>
+  <%--   <tr>
         <td>
             <h3>비밀번호</h3>
             <div class="tableborder"  title="${userinfo[0].password}">${userinfo[0].password}</div>
         </td>
-    </tr>
+    </tr> --%>
     <tr>
         <td>
             <h3>이메일</h3>
@@ -454,10 +456,13 @@ span.center {
 	              <div><p>리뷰 상위 순위</p></div>
 	              <div class='wrap'>
 					  <div class='container'>
-					    <div class="chart doughnut1"><span class="center">45%</span></div>
+					  <canvas id="doughnutChart" width="200" height="200"></canvas>
+					  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+					  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 					  </div>
 				 </div>
-	              <div class="popcornlayout3-text1">*100등</div>
+				 <hr>
+	              <div class="popcornlayout3-text1">${userRank}등</div>
 	              <div class="popcornlayout3-text2">*3등안에 들 시 팝톤 2000개 지급 <br>좋아요 개수 기준</div>
 	              </div>
 	           </td>
@@ -535,12 +540,11 @@ span.center {
             <th>거래명</th>
             <th>팝콘량</th>
             <th>일자</th>
-            <th>상태</th>
+            <th style="padding-left: 30px; ">상태</th>
         </tr>
-        
         <c:forEach var="log" items="${wallet}">
             <tr>
-                <td>${log.content}</td> <!-- 거래명 -->
+                <td >${log.content}</td> <!-- 거래명 -->
                 <td>
                     <c:choose>
                         <c:when test="${log.earned_points > 0}">
@@ -552,16 +556,16 @@ span.center {
                     </c:choose>
                 </td>
                 
-                <td>${log.add_date}</td> <!-- 일자 -->
+                <td >${log.add_date}</td> <!-- 일자 -->
                 
                 <td>
                     <div class="popcorncenter">
                         <c:choose>
                             <c:when test="${log.earned_points > 0}">
-                                <div class="popcornplus"><p>지급</p></div>
+                                <div class="popcornplus"><p>지급완료</p></div>
                             </c:when>
                             <c:when test="${log.spent_points > 0}">
-                                <div class="popcornminus"><p>차감</p></div>
+                                <div class="popcornminus"><p>차감완료</p></div>
                             </c:when>
                             <c:otherwise>
                                 <div class="popcorning"><p>대기중</p></div>
@@ -572,7 +576,7 @@ span.center {
                 
             </tr>
         </c:forEach>
-        
+
           <tr>
 	           <td>리뷰 작성</td>
 	           <td>+200</td>
@@ -614,7 +618,6 @@ span.center {
 	             </div>
 	           </td>
 	         </tr>
-        
     </table>
 </div>
      
@@ -624,31 +627,85 @@ span.center {
 </div>
 <%@include file="/WEB-INF/include/admin-footer.jsp" %>
 </body>
+
+<canvas id="doughnutChart" width="400" height="400"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
 <script>
-const chart1 = document.querySelector('.doughnut1');
 
+// 서버에서 전달된 데이터
+const percentuser = ${percentuser};  // 유저 좋아요 비율
+const targetLikes = ${targetLikes}; // 유저 좋아요 수
+const totalLikes = ${totalLikes};   // 전체 좋아요 수
 
-const makeChart = (percent, classname, color) => {
-  let i = 1;
-  let chartFn = setInterval(function() {
-    if (i < percent) {
-      colorFn(i, classname, color);
-      i++;
-    } else {
-      clearInterval(chartFn);
+// 도넛 차트를 그릴 Canvas 요소
+const ctx = document.getElementById('doughnutChart').getContext('2d');
+//Chart.js 3.x에서 datalabels 플러그인 등록
+Chart.register(ChartDataLabels);
+
+// 도넛 차트 생성
+const doughnutChart = new Chart(ctx, {
+  type: 'doughnut',
+  data: {
+    labels: [`유저: ${targetLikes}개`, `전체: ${totalLikes}개`],  // 레이블에 유저 좋아요 수와 전체 좋아요 수 표시
+    datasets: [{
+      label: '좋아요 퍼센트',
+      data: [percentuser, 100 - percentuser],  // 유저 좋아요 비율과 나머지 비율
+      backgroundColor: ['#45AD5D', '#dedede'],  // 색상 설정
+      borderWidth: 1
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',  // 레전드 위치
+        labels: {
+          font: {
+        	family: 'Pretendard',
+            weight: 'bold',  // 레전드 글자 굵기 설정
+            size: 14,         // 글자 크기 설정
+            lineHeight: 1.5   // 레전드 글자 줄 간격 설정
+          }
+        }
+      },
+      tooltip: {
+        callbacks: {
+          label: function(tooltipItem) {
+            // 툴팁에서 소수점 2자리까지 퍼센트 추가
+            return tooltipItem.label + ': ' + tooltipItem.raw.toFixed(2) + '%';  // 툴팁에서 소수점 2자리로 표시하고 % 추가
+          }
+        }
+      }
+    },
+    // 데이터 라벨을 추가하여 % 표시
+    elements: {
+      arc: {
+        borderWidth: 0  // 테두리 없애기
+      }
+    },
+    plugins: {
+      datalabels: {
+        formatter: function(value) {
+          return value.toFixed(2) + '%';  // 소수점 2자리 + % 기호
+        },
+        color: '#000',  // 텍스트 색상
+        font: {
+          family: 'Pretendard',
+          weight: 'bold',  // 글자 굵기 설정
+          size: 14         // 글자 크기 설정
+        },
+        anchor: 'center',
+        align: 'center'
+      }
     }
-  }, 10);
-}
-
-const colorFn = (i, classname, color) => {
-  classname.style.background = "conic-gradient(" + color + " 0% " + i + "%, #dedede " + i + "% 100%)";
-}
-
-
-
-makeChart(45, chart1, '#45AD5D');
-
-
+  }
+});
 
 </script>
+
+
+
 </html>

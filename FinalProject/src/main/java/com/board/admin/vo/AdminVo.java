@@ -54,6 +54,17 @@ public class AdminVo {
     private List<String> userIds;  // 팝콘을 지급할 유저들의 ID 목록
     private String contentInfo;    // 지급 또는 차감 내용
     private int points;            // 지급 또는 차감할 포인트
+
+    
+    // 리뷰 조회
+    private int review_idx;
+    private int store_idx;
+    private int SCORE;
+    private int LIKE;
+    private int HIT;
+    
+    
+    
     
     
     // Getters and Setters
