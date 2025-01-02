@@ -1041,7 +1041,7 @@ function resetSubButtons() {
      
      
      // 운영시간 - 예약시간 - 예약 오픈 시간 유효성 검사
-    </script>
-    
+</script>
+<script src="/js/authcompany.js" defer></script>  
 </body>
 </html>
