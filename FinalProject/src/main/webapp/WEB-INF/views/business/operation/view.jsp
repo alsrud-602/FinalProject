@@ -884,8 +884,10 @@ margin: 30px 42px;
 		<section class="reservation-status">
 			<div class="reservation-header">
 				<h3>현장예약대기</h3>
+				<div class="btn-flex">
 				<button class="use-btn" onclick="onSiteUse(this)" data-use="able">사용하기</button>
 				<button class="use-btn" onclick="onSiteUse(this)"  data-use="disable">사용중지</button>
+				</div>
 			</div>
          
 			<div class="warning-message">
