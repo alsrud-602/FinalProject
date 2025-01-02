@@ -35,6 +35,8 @@ public interface UsersMapper {
 
 	List<UsersDto> getClosesearchlist(@Param("search") String search);
 
+	List<UsersDto> getPopupAdresses();
+
 	UsersDto getStoredetail(UsersDto usersdto);
 
 	List<UsersDto> getStoretag(UsersDto usersdto);
@@ -55,6 +57,7 @@ public interface UsersMapper {
 	List<UsersDto> getStoreCategory(UsersDto usersdto);
 
 
+>>>>>>> 9bb1d08847493158a3f25020c50f40409ca49ce9
 
 	
 
