@@ -43,6 +43,19 @@
 	
 	</select>
 	
+	<update id="updateOnsiteUse">
+	UPDATE RESERVATION_STORES
+	SET ONSITE_USE = #{onsite_use}
+	WHERE  STORE_IDX = #{store_idx}		
+	</update>
+	
+	<select id="getStoreStauts">
+	SELECT ONSITE_USE
+	FROM RESERVATION_STORES
+	WHERE STORE_IDX = #{store_idx}	
+	
+	</select>
+	
 	
 </mapper>
 

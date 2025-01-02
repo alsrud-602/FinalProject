@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.board.business.dto.StoreStatusDto;
 import com.board.business.dto.WaitingDto;
 import com.board.business.mapper.WatingMapper;
 
@@ -57,6 +58,33 @@ public class WaitingServiceimpl  implements WaitingService {
 		
 		return updatedList;
 		
+	}
+
+	@Override
+	public List<WaitingDto> sendWatingList(WaitingDto waitingDto) {
+		
+		//해당건 현재순번으로 업데이트
+		watingMapper.updateWatingList(waitingDto);
+        System.out.println("확인요망합니다");
+        System.out.println(waitingDto);
+		//store 구하기
+		int store_idx =watingMapper.getStore_idxWaiting(waitingDto.getWaiting_idx());
+		List<WaitingDto> updatedList = watingMapper.getWatingList(store_idx);
+		
+		return updatedList;
+	}
+
+	@Override
+	public void updateOnsiteUse(StoreStatusDto storeStatusDTO) {
+		System.out.println("한번더 확인" + storeStatusDTO);
+		watingMapper.updateOnsiteUse(storeStatusDTO);
+		
+	}
+
+	@Override
+	public StoreStatusDto getStoreStauts(int store_idx) {
+		StoreStatusDto onsiteDto = watingMapper.getStoreStauts(store_idx);
+		return onsiteDto;
 	}
 
 
