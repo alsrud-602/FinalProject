@@ -210,13 +210,17 @@
     color: white;
     width: 100%; /* 카드 폭을 컨테이너에 맞춤 */
     max-width: 535px; /* 최대 너비 설정 */
-  }
+    display: flex; /* Flexbox 활성화 */
+    flex-direction: column; /* 세로 방향으로 정렬 */
+    align-items: center; /* 수평 중앙 정렬 */
+}
 
-  .card img {
+.card img {
     width: 100%; /* 카드 크기에 맞춤 */
-    max-width: 300px; /* 최대 너비를 400px로 설정 */
+    max-width: 300px; /* 최대 너비를 300px로 설정 */
     height: auto; /* 비율 유지 */
     border-radius: 10px; /* 이미지 모서리 둥글게 */
+    object-fit: contain; /* 비율 유지하며 크기 조정 */
 }
 
   .title {
@@ -399,6 +403,7 @@
 		   <div class ="maintext">
 		    <h2 class="maintitle">랭킹</h2>
 		    <a href="/Users/Rankdetail"class="view-all" >전체보기 ☞</a>
+		    <p>${user.id}</p>
 		    </div>
 		    <div class="slide-wrapper">
 		        <ul class="slides">
@@ -494,6 +499,7 @@
 	</div>
   </main>
  <%@include file="/WEB-INF/include/footer.jsp" %>
+
 </body>
 <script>
     const carousels = document.querySelectorAll('.carousel1');
