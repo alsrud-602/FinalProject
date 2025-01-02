@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.board.business.dto.StoreStatusDto;
 import com.board.business.dto.WaitingDto;
 import com.board.business.service.WaitingService;
 
@@ -24,5 +25,10 @@ public class WatingApiController {
         return waitingService.getWatingList(store_idx);
     }
 	
+    @GetMapping("/status")
+    public StoreStatusDto getStoreStatus(@RequestParam("store_idx") int store_idx) {
+        return waitingService.getStoreStauts(store_idx);
+    }
+    
 
 }
