@@ -1,9 +1,16 @@
 package com.board.handle;
 
-import org.springframework.ui.Model;	
+import java.io.IOException;
+
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -37,4 +44,5 @@ public class GlobalExceptionHandler {
     	model.addAttribute("company", ex.getCompany());
     	return "signup"; // 회원가입 페이지로 이동
     }
+    
 }

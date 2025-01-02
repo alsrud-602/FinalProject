@@ -371,7 +371,7 @@
         <div class="header">
             <a href="/Users/Main"><img class="logo" src="/images/header/logo.png" alt="로고" /></a>
             <div class="header-nav">
-                <a href="/Users/Profile">
+                <a href="/Users/Profile/Home">
                     <div class="frame-2066">
                         <div class="div1">프로필</div>
                         <img class="personal-collection" src="/images/header/personal-collection.svg" alt="프로필 아이콘" />
@@ -487,9 +487,9 @@
 
  document.addEventListener('DOMContentLoaded', function() {
     const authContent = document.querySelector('.header-util');
-    const token = localStorage.getItem('token');
+    const userJwt = localStorage.getItem('userJwt');
     const kakaoAccessToken = localStorage.getItem('kakaoAccessToken');
-    if (token || kakaoAccessToken) {
+    if (userJwt || kakaoAccessToken) {
         // 토큰이 있는 경우 (인증된 사용자)
         authContent.innerHTML = `
             <form id="logoutForm">
@@ -499,8 +499,9 @@
         
         // 로그아웃 버튼 이벤트 리스너
         document.getElementById('logout-button').addEventListener('click', function() {
-            localStorage.removeItem('token');
+            localStorage.removeItem('userJwt');
             localStorage.removeItem('kakaoAccessToken');
+            
             window.location.href = '/Users/Logout';
         });
     } else {

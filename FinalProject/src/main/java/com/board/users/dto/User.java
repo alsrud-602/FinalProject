@@ -1,4 +1,3 @@
-
 package com.board.users.dto;
 
 import java.util.Date;
@@ -99,7 +98,4 @@ public class User {
     }
 
 
-
-
 }
-

@@ -19,6 +19,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureException;
 import jakarta.servlet.FilterChain;
@@ -65,6 +66,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		} else if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
 
 			jwt = authorizationHeader.substring(7);
+
 			
 			String username = jwtUtil.extractUsername(jwt);
 			String userType = jwtUtil.extractUserType(jwt); // JWT에서 사용자 유형 추출
@@ -92,8 +94,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		/*
 		 * if (jwt == null || !jwtUtil.validatableToken(jwt)) {
 		 * response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // HTTP 401 상태 설정
-		 * response.getWriter().write("Invalid Token"); // 응답 메시지 작성 (선택 사항) return; //
-		 * 메서드 종료 }
+		 * response.getWriter().write("Invalid Token"); 
+		 * }
 		 */
 		if (SecurityContextHolder.getContext().getAuthentication() != null) {
 			System.out.println("현재 SecurityContext 인증 정보: " + SecurityContextHolder.getContext().getAuthentication());
@@ -102,22 +104,31 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			System.out.println("요청 헤더: " + Collections.list(request.getHeaderNames()));
 			System.out.println("요청 파라미터: " + request.getParameterMap());
 		} else {
-			System.out.println("SecurityContext 인증 정보 없음 (익명 사용자)");
 		}
 
 		filterChain.doFilter(request, response);
 	}
 
+	private boolean isMfaAuthenticated(HttpServletRequest request) {
+	    // 사용자가 MFA 인증을 완료했는지 확인하는 로직
+	    // 예를 들어, 세션이나 쿠키에서 MFA 완료 여부를 확인
+	    HttpSession session = request.getSession(false);
+	    if (session != null) {
+	        Boolean mfaAuthenticated = (Boolean) session.getAttribute("mfaAuthenticated");
+	        return mfaAuthenticated != null && mfaAuthenticated;
+	    }
+	    return false;
+	}
+
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
 		String path = request.getServletPath();
-		boolean shouldExclude = path.equals("/error") || path.startsWith("/css/") || path.startsWith("/images/")
-				|| path.startsWith("/img/") || path.startsWith("/static/") || path.endsWith(".js")
+		boolean shouldExclude = path.equals("/error") || path.startsWith("/static/")
 				|| path.startsWith("/Users/LoginForm") || path.startsWith("/Users/SignupForm")
 				|| path.startsWith("/Users/Signup") || path.startsWith("/Users/CheckDuplication")
-				//|| path.startsWith("/oauth2/") || path.startsWith("/oauth2/callback")
 				|| path.startsWith("/CompanyAuth/Signup") || path.startsWith("/CompanyAuth/SignupForm")
-				|| path.startsWith("/CompanyAuth/LoginForm") || path.startsWith("/CompanyAuth/CheckDuplication");
+				 || path.startsWith("/CompanyAuth/CheckDuplication") || path.startsWith("/Users/2fa") || path.startsWith("/WEB-INF/views/")
+				 || path.startsWith("/Users/Admin/otp") || path.startsWith("/Users/Map");
 		// System.out.println("필터 제외 여부: " + shouldExclude + ", 경로: " + path);
 		logger.debug("필터 제외 여부: {}, 경로: {}", shouldExclude, path);
 		return shouldExclude;
@@ -166,12 +177,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private void processJwtAuthentication(HttpServletRequest request, String jwt) {
 	    try {
 	        String username = jwtUtil.extractUsername(jwt);
+	        logger.debug("존맛탱: {}", username);
 	        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 	            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+	            logger.debug("연결된 사용자: {}", userDetails);
 	            if (jwtUtil.validateToken(jwt, userDetails)) {
 	                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
 	                        userDetails, null, userDetails.getAuthorities());
 	                SecurityContextHolder.getContext().setAuthentication(authToken);
+	                logger.info("인증된거니: {}", username);
 	                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 	            } else {
 	                throw new SignatureException("Invalid JWT");

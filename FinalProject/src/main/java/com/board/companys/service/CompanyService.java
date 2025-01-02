@@ -44,6 +44,7 @@ public class CompanyService {
 
         // 가입일 기본값
         company.setCdate(new java.util.Date());
+        company.setRole("COMPANY");
 
         companyRepository.save(company);
     }

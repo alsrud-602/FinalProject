@@ -1,9 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%
     // 요일을 키-값 쌍으로 설정
-    java.util.Map<String, String> daysOfWeek = new java.util.HashMap<>();
+    java.util.Map<String, String> daysOfWeek = new java.util.LinkedHashMap<>();
     daysOfWeek.put("MON", "월");
     daysOfWeek.put("TUE", "화");
     daysOfWeek.put("WED", "수");
@@ -161,8 +162,12 @@ color:red;
 <body>
 <%@include file="/WEB-INF/include/header_company.jsp" %> 
  <img id="icon_back" src="/images/icon/back2.png" alt="뒤로가기" onclick="goBack()">
- <form action="/Business/Registraion/Write" method="POST" enctype="multipart/form-data" 
+ <form action="/Business/Management/Main/update" method="POST" enctype="multipart/form-data" 
        onsubmit="return validateForm()">
+ <input type="hidden" name="detail_idx" value="${store.detail_idx}">      
+ <input type="hidden" name="store_idx" value="${store.store_idx}">      
+ <input type="hidden" name="company_idx" value="${store.company_idx}">      
+ <input type="hidden" name="operation_idx" value="${store.operation_idx}">      
     <main>
 
 
@@ -181,48 +186,32 @@ color:red;
       <table class="sub_table">
         <tr>
            <td>팝업스토어명칭</td>
-           <td></td>
+           <td>${store.title}</td>
         </tr>
         <tr>
            <td>카테고리</td>
-           <td>  
-           <select id ="popup_cg1" name="category_id" class="sub_select" required >
-             <option>카테고리1</option>
-           
-           <c:forEach var="c" items="${cList}">
-           <option value="${c.category_id}">${c.category_name}</option>
-           </c:forEach>
-           
-           </select>
-           <select id ="popup_cg2" name="category_id" class="sub_select">
-             <option>카테고리2</option>
-           <c:forEach var="c" items="${cList}">
-           <option value="${c.category_id}">${c.category_name}</option>
-           </c:forEach>
-           </select>
+           <td>
+           <c:forEach var="c" items="${categoryList}" varStatus="status">
+            ${c.category_name} 
+		    <c:if test="${!status.last}">
+		    &nbsp;&nbsp;|&nbsp;&nbsp;
+		    </c:if>
+                     
+           </c:forEach>      
            </td>
         </tr>        
         <tr>
            <td>브랜드</td>
            <td>
-             메인 
-             <span id="brand_red">*</span>
-             <input value="스텐리"name="brand1"  required type="text" class="sub_brand" placeholder="메인브랜드를 작성하세요" >
-             콜라보 브랜드
-             <input name="brand2" type="text"  class="sub_brand" placeholder="콜라보 브랜드를 작성하세요" ></td>
+               ${store.brand1} 
+              <c:if test="${not empty store.brand2}">
+               &nbsp;&nbsp;|&nbsp;&nbsp;${store.brand2} 
+              </c:if>           
+            </td>
         </tr>        
         <tr>
            <td>주 타겟 연령대</td>
-           <td><select name="age" class="sub_select" required>
-             <option>연령대</option>
-             <option>어린이</option>
-             <option selected="selected">10대</option>
-             <option>10~20대</option>
-             <option>20~30대</option>
-             <option>30대~40대</option>
-             <option>40대 ~</option>
-             <option>전연령층</option>
-           </select></td>
+           <td>${store.age}</td>
         </tr>        
       </table>
   </div>
@@ -237,7 +226,7 @@ color:red;
            <td>
            
            <div id="sub_adress">
-             <input value="서울 성수동"   name="address"  required type="text"  id="roadFullAddr" class="sub_link" placeholder="주소검색 버튼을 눌러주세요" style="width:620px; margin: 0 10px 0 0;">
+             <input value="${store.address}"  name="address"  required type="text"  id="roadFullAddr" class="sub_link" placeholder="주소검색 버튼을 눌러주세요" style="width:620px; margin: 0 10px 0 0;">
              <div class="btn3" onclick="searchAddress()" >주소검색</div>
            </div>
           
@@ -247,9 +236,9 @@ color:red;
         <td>운영기간</td>
          <td> 
          <div class="sub_day">
-          <input   value="2024-12-30" name="start_date" required onchange="vailddateOperation(this,document.getElementById('pop_end'))"  id="pop_start"class="sub_input_date"type="date" placeholder="시작날짜"> 
+          <input   value="${store.start_date}" name="start_date" required onchange="vailddateOperation(this,document.getElementById('pop_end'))"  id="pop_start"class="sub_input_date"type="date" placeholder="시작날짜"> 
           &nbsp;&nbsp;<p>-</p>&nbsp;&nbsp;
-           <input   value="2025-01-15" name="end_date" required onchange="vailddateOperation(document.getElementById('pop_start'),this)"  id="pop_end"class="sub_input_date"type="date" placeholder="마감날짜">
+           <input   value="${store.end_date}" name="end_date" required onchange="vailddateOperation(document.getElementById('pop_start'),this)"  id="pop_end"class="sub_input_date"type="date" placeholder="마감날짜">
                
              
                </div> 
@@ -262,10 +251,13 @@ color:red;
             <c:forEach var="entry" items="${daysOfWeek}">
             <div class="sub_day">
                <p>${entry.value}</p>
-               <input name="S${entry.key}" required type="time" id="${entry.key}_START" class="time_start" 
+
+               <input                  
+                name="S${entry.key}" required type="time" id="${entry.key}_START" class="time_start" 
                 onchange="validateTimes(this,document.getElementById('${entry.key}_END') )">
                <p>-</p>&nbsp;&nbsp;
-               <input  name="E${entry.key}" required type="time" id="${entry.key}_END" class="time_end" 
+               <input   
+               name="E${entry.key}" required type="time" id="${entry.key}_END" class="time_end" 
                  onchange="validateTimes(document.getElementById('${entry.key}_START'), this)">
              </div>
              </c:forEach>
@@ -280,24 +272,29 @@ color:red;
              <div class="btn3" onclick="applyAllTimes()">일괄적용</div>
              </div>
              <div class="sub_day_full">
-             <input name="onotes"  class="sub_note"type="text" placeholder="특이사항이 있으면 남겨주세요">
+             <input name="onotes" value="${store.onotes}"class="sub_note"type="text" placeholder="특이사항이 있으면 남겨주세요">
              </div>
            </td>
         </tr>        
         <tr>
            <td>홈페이지 링크</td>
-           <td><input value="https"name="homepage" class="sub_link"type="text" placeholder="홈페이지 링크를 복사해 주세요"></td>
+           <td><input value="${store.homepage}" name="homepage" class="sub_link"type="text" placeholder="홈페이지 링크를 복사해 주세요"></td>
         </tr>        
         <tr>
            <td>SNS 링크</td>
-           <td><input value="https"name="sns" class="sub_link"type="text" placeholder="SNS 링크를 복사해 주세요"></td>
+           <td><input value="${store.sns}" name="sns" class="sub_link"type="text" placeholder="SNS 링크를 복사해 주세요"></td>
         </tr>        
         <tr>
            <td>해시태그</td>
            <td>
            <input type="text" id="inputHash" onkeydown="checkEnter(event)" placeholder="#없이 입력 후 ENTER로 해쉬태그를 입력하세요">
            <div class="sub_flex">
-
+           <c:forEach var="tag" items="${tagList}" >
+            <div class="sub_hash">${tag.tag_name}<span onclick="deleteHash(this)">
+			<img src="/images/icon/delete2.png"></span><input type="hidden" name="tag_name"value="${tag.tag_name}"/></div>
+			
+		  </c:forEach>	
+			
            </div>
            </td>
         </tr>        
@@ -307,45 +304,46 @@ color:red;
  
    <div class="content_body">
     <div class="sub_title">팝업 상세 내용</div>
+    
     <div class="sub_content">
       <table class="sub_table">
        <tr>
          <td>소개 한 줄</td>      
-         <td><input value="하하" required name="introduction" class="sub_link"  type="text" placeholder="팝업을 소개할 문구를 완성해 보세요">
+         <td><input value="${store.introduction}" required name="introduction" class="sub_link"  type="text" placeholder="팝업을 소개할 문구를 완성해 보세요">
          <p class="sub_guide" >소개 한줄은 목록상단에 기재되어 고객들에게 안내될 예정입니다</p></td>      
        </tr>
        <tr >
          <td>상세내용</td>      
-         <td><textarea name="content" required id="sub_textarea" placeholder="팝업스토어에 구체적인 내용을 작성하세요" >상세내용 입력</textarea></td>      
+         <td><textarea name="content" required id="sub_textarea" placeholder="팝업스토어에 구체적인 내용을 작성하세요" >${store.content}</textarea></td>      
        </tr>
        <tr>
          <td>굿즈 특이사항</td>      
-         <td><input value="하하" name="goods" class="sub_link"  type="text" placeholder="강조하고 싶은 굿즈가 있다면 작성하세요"></td>      
+         <td><input value="${store.goods}" name="goods" class="sub_link"  type="text" placeholder="강조하고 싶은 굿즈가 있다면 작성하세요"></td>      
        </tr>
        <tr>
          <td>팝업환경</td>      
          <td>
            <select name="parking" class="sub_select">
-             <option>주차정보</option>
-             <option selected>주차불가</option>
-             <option>주차가능</option>
+             <option value="" >주차정보</option>
+             <option  value="주차불가" <c:if test="${store.parking == '주차불가'}"> selected</c:if>>주차불가</option>
+             <option  value="주차가능" <c:if test="${store.parking == '주차가능'}"> selected</c:if>>주차가능</option>
            </select>
            <select name="fare" class="sub_select">
-             <option>요금</option>
-             <option selected>무료</option>
-             <option>유료</option>
+             <option value="">요금</option>
+             <option value="무료"<c:if test="${store.fare == '무료'}"> selected</c:if>>무료</option>
+             <option value="유료"<c:if test="${store.fare == '유료'}"> selected</c:if>>유료</option>
            </select>
            <select name="age_limit"  class="sub_select">
-             <option>연령제한</option>
-             <option selected>19세 이상</option>
-             <option>15세 이상</option>
-             <option>전 연령 가능</option>
-             <option>노키즈 존</option>
+             <option value="">연령제한</option>
+             <option value="19세 이상"<c:if test="${store.age_limit == '19세 이상'}"> selected</c:if>>19세 이상</option>
+             <option value="15세 이상"<c:if test="${store.age_limit == '15세 이상'}"> selected</c:if>>15세 이상</option>
+             <option value="전 연령 가능"<c:if test="${store.age_limit == '전 연령 가능'}"> selected</c:if>>전 연령 가능</option>
+             <option value="노키즈 존"<c:if test="${store.age_limit == '노키즈 존'}"> selected</c:if>>노키즈 존</option>
            </select>
            <select name="shooting"  class="sub_select">
-             <option>사진촬영여부</option>
-             <option selected>촬영 가능</option>
-             <option>촬영 불가</option>
+             <option value="">사진촬영여부</option>
+             <option value="촬영 가능"<c:if test="${store.shooting == '촬영 가능'}"> selected</c:if>>촬영 가능</option>
+             <option value="촬영 불가"<c:if test="${store.shooting == '촬영 불가'}"> selected</c:if>>촬영 불가</option>
            </select>        
          </td>      
        </tr>
@@ -358,9 +356,13 @@ color:red;
 		    </label>
            <input id="file-input" name="upfile" type="file" accept=".jpg, .jpeg, .png" style="display: none;" multiple  />
          </div>
-    <div id="file-name-container">
-    </div>
-         
+      <div>
+     <c:forEach var="img" items="${imageList}">
+      <div class="file-item"><span>${img.imagename}</span>&nbsp;<a class="deleteImage" href="/DeleteImage?is_idx=${img.is_idx}">x</a></div>   
+      </c:forEach>     
+     <div id="file-name-container">
+      </div>
+     </div>       
          </td>
        </tr>
       
@@ -376,9 +378,9 @@ color:red;
 		<td>예약기능</td>
 		<td>    
            <div class="button-container" >
-          <a href="#" class="button" onclick="toggleContent('content1', ['content2', 'content3'], this)" data-status ="현장문의">현장문의</a>
-    	  <a href="#" class="button" onclick= "toggleContent('content2', ['content3', 'content1'], this)"data-status ="사전예약">사전예약</a>
-   		  <a href="#" class="button" onclick="toggleContent('content3', ['content1', 'content2'], this)"data-status ="현장대기예약">현장대기예약</a>
+          <a href="#" id="btn_n" class="button" onclick="toggleContent('content1', ['content2', 'content3'], this)" data-status ="현장문의">현장문의</a>
+    	  <a href="#" id="btn_a" class="button" onclick= "toggleContent('content2', ['content3', 'content1'], this)"data-status ="사전예약">사전예약</a>
+   		  <a href="#" id="btn_w" class="button" onclick="toggleContent('content3', ['content1', 'content2'], this)"data-status ="현장대기예약">현장대기예약</a>
    		  <input type="hidden" name="status" id="statusInput" value="">
            </div>
         </td> 
@@ -413,8 +415,8 @@ color:red;
 	   <table class="sub_table">
 	   	<tr>
  		<td>
- 		<a href="#" class="button" onclick="toggleSubContent('content4', 'content2', this)" data-rq ="사용가능" style="font-size: 16px; margin-left: 250px;">네! 플랫폼 기능을 사용할래요</a>
-        <a href="#" class="button" onclick="toggleSubContent('content5', 'content2', this)"  data-rq ="사용불가" style="font-size: 16px; margin-left: 30px;">아니요! 다른 자체적인 사전예약 시스템이 있습니다</a>
+ 		<a href="#" id="btn_ok" class="button" onclick="toggleSubContent('content4', 'content2', this)" data-rq ="사용가능" style="font-size: 16px; margin-left: 250px;">네! 플랫폼 기능을 사용할래요</a>
+        <a href="#" id="btn_no" class="button" onclick="toggleSubContent('content5', 'content2', this)"  data-rq ="사용불가" style="font-size: 16px; margin-left: 30px;">아니요! 다른 자체적인 사전예약 시스템이 있습니다</a>
          <input type="hidden" id="advanceInput" value="">
         </td>
         
@@ -456,7 +458,7 @@ color:red;
         <tr>
            <td>예약 오픈 일자</td>
            <td>
-           <input name="open_date" type="date" style="width: 600px;"onchange=vaildOpendate(this)>
+           <input  name="open_date" type="date" style="width: 600px;"onchange=vaildOpendate(this)>
            <p class="sub_guide" style="font-size: 16px; font-weight: 300 ;margin-bottom: -19px;">사전예약을 오픈할 날짜를 지정해주세요! 이미오픈된 예약은 변경 불가합니다.</p>
            </td>
           </tr>
@@ -468,7 +470,7 @@ color:red;
         <table class="sub_table">
         <tr>
            <td>예약시 주의 사항</td>
-           <td><input class="sub_link"  name="notes" type="text" placeholder="예약시 주의사항을 입력하세요"></td>
+           <td><input class="sub_link"  value="${reservation.notes}" name="notes" type="text" placeholder="예약시 주의사항을 입력하세요"></td>
           </tr>
           </table> 
         </div>
@@ -504,14 +506,206 @@ color:red;
     
    </form> 
 <script>
+  $('.deleteImage').on('click',function(event){
+	
+	event.preventDefault();   
+	event.stopPropagation();  
+	let aDelete = this; 
+	
+	//서버에서 파일과 Files table의 정보를 삭제하고 돌아온다
+	$.ajax({
+		url : this.href,
+		method:'GET'
+	}).done(function(result){
+		$(aDelete).parent().remove();
+	}).fail(function(error){
+		console.log(error);
+		alert('서버오류발생:' + error + '관리자에게문의하세요')
+	})
+	
+  })
+const linkElement = document.querySelector('input[name="link"]');
+const btnNEl = document.querySelector('#btn_n');
+const btnAEl = document.querySelector('#btn_a');
+const btnWEl = document.querySelector('#btn_w');
+const btnOkEl = document.querySelector('#btn_ok');
+const btnNoEl = document.querySelector('#btn_no');
+const openDateElement = document.querySelector('input[name="open_date"]');
 
+
+
+// 수정 폼에 예약 정보 받기
+const rStatus = '${reservation.status}';
+console.log(rStatus);
+if (rStatus) {
+    
+    switch (rStatus) {
+        case '현장문의':
+            toggleContent('content1', ['content2', 'content3'], btnNEl);
+            break;
+        case '사전예약':
+            toggleContent('content2', ['content3', 'content1'], btnAEl);
+            break;
+        case '현장대기예약':
+            toggleContent('content3', ['content1', 'content2'], btnWEl);
+            break;
+        default:
+            console.log('알 수 없는 상태입니다: ' + rStatus);
+    }
+}
+
+// 정규 표현식 패턴: "P" 다음의 숫자 만들기
+function getNumberAfterP(planName) {
+  
+    const regex = /P(\d+)/;
+    const match = planName.match(regex);
+
+    if (match) {
+        return match[1]; 
+    }
+    return null; 
+}
+const uniqueNumbers = new Set(); 
+
+//시간 변환 로직
+function jsonTime(dateArray){
+
+	
+	const year = dateArray[0];
+	const month = String(dateArray[1]).padStart(2, '0'); 
+	const day = String(dateArray[2]).padStart(2, '0'); 
+	const hour = String(dateArray[3]).padStart(2, '0'); 
+	const minute = String(dateArray[4]).padStart(2, '0'); 
+
+	// 최종 문자열 생성
+	const formattedDateTime = `\${hour}:\${minute}`;
+
+	return  formattedDateTime;
+	
+}
+
+let plans = []; // 생성된 플랜을 저장할 배열
+//사전예약 정보 받기
+const rlink = '${reservation.link}'? '${reservation.link}' : null;
+
+ // 사전예약 기능 이용 x 시
+if(rlink){
+	linkElement.value ='${reservation.link};'
+	toggleSubContent('content5', 'content2', btnNoEl)
+	
+	//사전예약 기능 이용 시
+}else {
+	const openDate = '${reservation.open_date}'; 
+	if(openDate) {
+	const utcDateStr = openDate.replace('KST', 'UTC+0900');
+	const date = new Date(utcDateStr);
+	console.log(date);
+	const yyyy = date.getFullYear();
+	const mm = String(date.getMonth() + 1).padStart(2, '0'); 
+	console.log(mm);
+	const dd = String(date.getDate()).padStart(2, '0');
+	const formattedDate = `\${yyyy}-\${mm}-\${dd}`;
+	document.querySelector('input[name="open_date"]').value = formattedDate;
+	toggleSubContent('content4', 'content2', btnOkEl)
+      }	
+
+// 플랜-날짜	
+const dateList = JSON.parse('${dateList}');
+console.log(dateList);
+for (let dates of dateList) {
+	let planName = dates.plan
+	let rsDate = dates.reservation_start_date
+	let reDate = dates.reservation_end_date
+	
+	let startDate = new Date(rsDate);
+	let endDate = new Date(reDate);
+   console.log('말해'+startDate);
+   console.log(endDate);
+
+    let planCount = getNumberAfterP(planName);
+    uniqueNumbers.add(planCount);          
+   periods.push({ start: startDate, end: endDate });
+   console.log(periods);
+   periodCount++;
+
+   addNewPeriodForm(startDate,endDate,planCount);
+   highlightDates();
+    
+}	
+}
+
+const planCountArray = Array.from(uniqueNumbers);
+console.log(planCountArray);
+
+for (let planCount of planCountArray) {
+	let updatePlan = createPlanElement(planCount);	
+	   plans.push(planCount);
+	console.log(updatePlan);
+	document.getElementById('plansContainer').appendChild(updatePlan);
+	updatePlanSelectOptions();
+	
+}
+
+	
+//플랜 넣는 중 	
+    const planList = JSON.parse('${planList}'); // JSON 문자열을 객체로 변환
+        console.log('배열확인');
+        console.log(planList);
+ 
+for (const plans of planList) { // for...of 사용
+	let subIndex = 1;
+    for (const plan of plans) { // 각 plans 배열을 반복
+        let planName = plan.plan;
+        let planStart = plan.start_time;
+        let planEnd = plan.end_time;
+        let planMax = plan.max_number;
+        
+        startInput = jsonTime(planStart);
+        endInput = jsonTime(planEnd);
+        let planCount = getNumberAfterP(planName);
+
+        let updateChild = createSubDayElement(planCount,subIndex,startInput,endInput,planMax);
+        let planClass = `.Plan\${planCount}`
+        const SubInputDiv = document.querySelector(planClass);
+        SubInputDiv.appendChild(updateChild);                    
+        subIndex++ ;            
+    }
+}
+
+
+
+
+
+
+
+
+// 운영시간 값 넣기
+    document.querySelector('input[name="SMON"]').value = '${store.smon}';
+    document.querySelector('input[name="EMON"]').value = '${store.emon}';   
+    document.querySelector('input[name="STUE"]').value = '${store.stue}';
+    document.querySelector('input[name="ETUE"]').value = '${store.etue}';   
+    document.querySelector('input[name="SWED"]').value = '${store.swed}';
+    document.querySelector('input[name="EWED"]').value = '${store.ewed}';
+    document.querySelector('input[name="SFRI"]').value = '${store.sfri}';
+    document.querySelector('input[name="EFRI"]').value = '${store.efri}';    
+    document.querySelector('input[name="SSAT"]').value = '${store.ssat}';
+    document.querySelector('input[name="ESAT"]').value = '${store.esat}';    
+    document.querySelector('input[name="SSUN"]').value = '${store.ssun}';
+    document.querySelector('input[name="ESUN"]').value = '${store.esun}';
+    
+    document.querySelector('input[name="STHU"]').value = '${store.sthu}';
+    document.querySelector('input[name="ETHU"]').value = '${store.ethu}';
+
+
+/* 여기서 부터 등록 코딩 */
+ 
 function searchAddress() {
     window.open("/Business/SearchAddress","pop","width=570,height=430, scrollbars=yes, resizable=yes");
 }
 function jusoCallBack(roadFullAddr){
     document.getElementById('roadFullAddr').value = roadFullAddr;
 }
-const linkElement = document.querySelector('input[name="link"]');
+
 
 
 function vailddateOperation(startDate, endDate){
@@ -540,7 +734,7 @@ function validateTimes(startInput, endInput) {
     const endTime = endInput.value;
 
     if (startTime && endTime && startTime >= endTime) {
-        alert("종료 시간은 시작 시간보다 나중이어야 합니다.");
+        alert("마감시간은 오픈시간보다 이전일 수 없습니다.");
         endInput.value = "";   
         startInput.value="";
     }
@@ -582,8 +776,8 @@ function checkEnter(event){
 			alert('태그명을 입력하세요')
 		}else{
 			const divHashInput = `<div class="sub_hash">\${hashValue}<span onclick="deleteHash(this)">
-			<img src="/images/icon/delete2.png"></span></div>
-			<input type="hidden" name="tag_name"value="\${hashValue}"/>
+			<img src="/images/icon/delete2.png"></span><input type="hidden" name="tag_name"value="\${hashValue}"/></div>
+			
 			`
 		    hashContainer.innerHTML += divHashInput;
 			hashInput.value="";
@@ -677,29 +871,23 @@ function vaildOpendate(date){
 
 function validateForm() {
     const statusElement = document.querySelector('input[name="status"]');
-    const ageElement = document.querySelector('select[name="age"]');
-    const brand1Element = document.querySelector('select[name="brand1"]');
-    const brand2Element = document.querySelector('select[name="brand2"]');
+    const TagElement = document.querySelectorAll('input[name="tag_name"]');
+
+
     const parkingElement = document.querySelector('select[name="parking"]');
     const fareElement = document.querySelector('select[name="fare"]');
     const ageLimitElement = document.querySelector('select[name="age_limit"]');
     const shootingElement = document.querySelector('select[name="shooting"]');
-    const cg1Element = document.querySelector('#popup_cg1');
-    const cg2Element = document.querySelector('#popup_cg2');
     const aiElement = document.querySelector('#advanceInput');
     const reservationEndDates = document.getElementsByName('reservation_end_date');
     const planSelects = document.querySelectorAll('.sub_plan_select'); 
-    const openDateElement = document.querySelector('input[name="open_date"]');
-    const TagElement = document.querySelectorAll('input[name="tag_name"]');
+
 
     const inputsToValidate = [
-        { element: ageElement, defaultValue: '연령대', message: '연령대를 선택하세요' },
-        { element: cg1Element, defaultValue: '카테고리1', message: '카테고리를 선택하세요' },
-        { element: cg2Element, defaultValue: '카테고리2', message: '카테고리를 선택하세요' },
-        { element: parkingElement, defaultValue: '주차정보', message: '주차정보를 선택하세요' },
-        { element: fareElement, defaultValue: '요금', message: '요금정보를 선택하세요' },
-        { element: ageLimitElement, defaultValue: '연령제한', message: '연령제한 정보를 선택하세요' },
-        { element: shootingElement, defaultValue: '사진촬영여부', message: '사진촬영여부를 선택하세요' }
+        { element: parkingElement, defaultValue: '', message: '주차정보를 선택하세요' },
+        { element: fareElement, defaultValue: '', message: '요금정보를 선택하세요' },
+        { element: ageLimitElement, defaultValue: '', message: '연령제한 정보를 선택하세요' },
+        { element: shootingElement, defaultValue: '', message: '사진촬영여부를 선택하세요' }
        
     ];       
     
@@ -767,7 +955,13 @@ function validateInputs(inputs) {
 
 
 function toggleContent(currentId, otherIds, button) {
-	 event.preventDefault();
+	
+	
+	 if (event && event.type === 'click' && button.tagName === 'A') {
+	        event.preventDefault(); // a 태그일 경우 기본 동작 방지
+	    }
+	
+	
     const currentDiv = document.getElementById(currentId);
     const isCurrentlyVisible = currentDiv.style.display === 'block';
 
@@ -777,41 +971,22 @@ function toggleContent(currentId, otherIds, button) {
         otherDiv.style.display = 'none';
     });
 
-   
+    const statusValue = button.getAttribute('data-status');
+    
     if (isCurrentlyVisible) {
         currentDiv.style.display = 'none'; // 현재 내용 숨기기
         button.classList.remove('active'); 
+        document.getElementById('statusInput').value = "";
+        let statusValue ="";
+        resetFrom(statusValue);
+        
     } else {
         currentDiv.style.display = 'block'; // 현재 내용 표시
         resetButtons(); 
-        button.classList.add('active'); 
+        button.classList.add('active');
+        document.getElementById('statusInput').value = statusValue;
+        resetFrom(statusValue);
     }
-
-    //status 값 넣기
-    const statusValue = button.getAttribute('data-status');
-    document.getElementById('statusInput').value = statusValue;
-    
-    if(statusValue === '현장문의' ||  statusValue === '현장대기예약'){
-    	
-    	console.log(document.getElementById('advanceInput').value);
-    	document.getElementById('advanceInput').value  ="";
-    	console.log(document.getElementById('advanceInput').value);
-    	
-    	
-	    if (linkElement.hasAttribute('required')) {
-            linkElement.removeAttribute('required'); 
-            
-            console.log('예약기능에 의해 required 속성이 제거되었습니다.');
-            console.log(linkElement);
-        } else {
-            console.log('처음부터 required 속성이 없습니다.');  
-            console.log('linkElement');
-        }
-    	
-    }
-  
-    
-    
 
     const subContents = ['content4', 'content5'];
     subContents.forEach(id => {
@@ -821,8 +996,43 @@ function toggleContent(currentId, otherIds, button) {
     resetSubButtons(); 
 }
 
+
+//staust삭제 
+function resetFrom(statusValue){
+    if(statusValue === '현장문의' ||  statusValue === '현장대기예약' || statusValue === ""){
+    	
+    	//사전예약기능사용여부
+    	document.getElementById('advanceInput').value  ="";
+    	//사전예약 내용 리셋
+    	document.getElementById('plansContainer').innerHTML = "";
+    	openDateElement.value="";
+    	document.querySelector('input[name="notes"]').value="";
+    	periods = []; 
+    	periodCount = 0; 
+    	document.getElementById('periods').innerHTML = "";
+    	highlightDates();
+    	
+    	
+    	//예약 링크 리셋
+	    if (linkElement.hasAttribute('required')) {
+            linkElement.removeAttribute('required'); 
+            linkElement.value="";
+        } else {
+            console.log('처음부터 required 속성이 없습니다.');  
+        }
+    	
+    }	
+	
+}
+
+
 function toggleSubContent(subContentId, parentContentId, button) {
-	 event.preventDefault();
+	
+	 if (event && event.type === 'click' && button.tagName === 'A') {
+	        event.preventDefault(); // a 태그일 경우 기본 동작 방지
+	    }
+	 
+	 
     const subContentDiv = document.getElementById(subContentId);
     const isCurrentlyVisible = subContentDiv.style.display === 'block';
     
@@ -835,11 +1045,23 @@ function toggleSubContent(subContentId, parentContentId, button) {
     console.log(rqValue);
     if(rqValue === '사용불가'){
     	linkElement.setAttribute('required', 'required');
-    console.log(linkElement);	
+        console.log(linkElement);
+        
+        
+    	document.getElementById('plansContainer').innerHTML = "";
+    	openDateElement.value="";
+    	document.querySelector('input[name="notes"]').value="";
+    	periods = []; 
+    	periodCount = 0; 
+    	document.getElementById('periods').innerHTML = "";
+    	highlightDates();
+    	
+        
     }else if (rqValue === '사용가능'){
     	
     	    if (linkElement.hasAttribute('required')) {
             linkElement.removeAttribute('required'); 
+            linkElement.value="";
             console.log('required 속성이 제거되었습니다.');
         } else {
             console.log('required 속성이 없습니다.'); 
@@ -891,8 +1113,8 @@ function resetSubButtons() {
 }
     
     //3.플랜설정하기 버튼--------------------------------------------------------------------------
-     let planCount = 1; 
-     let plans = []; // 생성된 플랜을 저장할 배열
+     let planCount = 1 + planCountArray.length;
+
      
      
         // 플랜 추가 버튼 클릭 이벤트
@@ -952,10 +1174,18 @@ function resetSubButtons() {
 
             const subContent = document.createElement('div');
             subContent.className = 'sub_content';
+            subContent.className = 'Plan'+ planCount;
+            
 
+            // click  생성시에만 추가
+       	 if (event && event.type === 'click') { 	        
+ 	   
             // 기본 서브 플랜 추가
             const initialSubDay = createSubDayElement(planCount, 1);
             subContent.appendChild(initialSubDay);
+       	 }
+            
+            
 
             newPlan.appendChild(subTitle);
             newPlan.appendChild(addButton);
@@ -967,7 +1197,7 @@ function resetSubButtons() {
         
         
         // 새로운 서브 플랜을 생성하는 함수
-        function createSubDayElement(planCount, subDayIndex) {
+        function createSubDayElement(planCount, subDayIndex,planStart,planEnd,planMax) {
             const subDay = document.createElement('div');
             subDay.className = 'sub_day';
 
@@ -989,13 +1219,15 @@ function resetSubButtons() {
             timeStart.type = 'time';
             timeStart.className = 'time_start2';
             timeStart.name = 'start_time';
+            timeStart.value = planStart;           
             timeStart.setAttribute('required', 'required');
             timeStart.onchange = function() { validateTimes(this, this.nextElementSibling); };
-
+          
             const timeEnd = document.createElement('input');
             timeEnd.type = 'time';
             timeEnd.className = 'time_end2';
             timeEnd.name ='end_time';
+            timeEnd.value = planEnd; 
             timeEnd.setAttribute('required', 'required');
             timeEnd.onchange = function() { validateTimes(this.previousElementSibling, this); };
 
@@ -1004,6 +1236,7 @@ function resetSubButtons() {
             numberMax.type = 'number';
             numberMax.className ='sub_brand';
             numberMax.name ='max_number';
+            numberMax.value = planMax; 
             numberMax.setAttribute('required', 'required');
             numberMax.placeholder = '인원수';
            
@@ -1034,13 +1267,7 @@ function resetSubButtons() {
         }
 
       //////////////////////////////////////////////////////////////////  
-        
 
-   
-     
-     
-     
-     // 운영시간 - 예약시간 - 예약 오픈 시간 유효성 검사
     </script>
     
 </body>
