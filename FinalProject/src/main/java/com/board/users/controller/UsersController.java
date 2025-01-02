@@ -367,5 +367,14 @@ public class UsersController {
 		return response;
 	}
 	
+	// 리뷰 수정 페이지
+	@RequestMapping("Writeform")
+	public ModelAndView writeform() {
+		
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("users/popup/writeform");
+		return mv;
+	}
+	
 	
 }
