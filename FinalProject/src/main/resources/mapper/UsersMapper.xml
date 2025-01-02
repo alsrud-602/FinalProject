@@ -9,7 +9,7 @@
 	    st.store_idx, st.company_idx,st.title,st.age,st.brand1,st.brand2,st.cdate,st.status,st.ban,
 	    std.detail_idx,std.address,TO_CHAR(std.start_date, 'YYYY-MM-DD') AS start_date,TO_CHAR(std.end_date, 'YYYY-MM-DD') AS end_date,
 	    std.homepage, std.sns, std.introduction,std.content,std.parking,std.fare,std.age_limit, std.shooting,
-	    std."LIKE", std.hit, std.goods
+	    std."LIKE", std.goods
 	FROM
 	    stores st JOIN stores_detail std ON st.store_idx = std.store_idx
 	WHERE st.ban='N' AND st.status='승인' 
@@ -24,7 +24,7 @@
    SELECT 
 	    s.store_idx, s.company_idx, s.title, s.age,s.brand1,s.brand2, s.cdate,s.status,s.ban,
 	    sd.detail_idx,sd.address, TO_CHAR(sd.start_date, 'YYYY-MM-DD') AS start_date,TO_CHAR(sd.end_date, 'YYYY-MM-DD') AS end_date,sd.homepage,sd.sns, sd.introduction,
-	    sd.content, sd.parking, sd.fare, sd.age_limit, sd.shooting, sd."LIKE", sd.hit, sd.goods,
+	    sd.content, sd.parking, sd.fare, sd.age_limit, sd.shooting, sd."LIKE", sd.goods,
 	    h.hit_count
 	FROM 
 	    stores s
@@ -48,7 +48,7 @@
 	    st.store_idx, st.company_idx,st.title,st.age,st.brand1,st.brand2,st.cdate,st.status,st.ban,
 	    std.detail_idx,std.address,TO_CHAR(std.start_date, 'YYYY-MM-DD') AS start_date,TO_CHAR(std.end_date, 'YYYY-MM-DD') AS end_date,
 	    std.homepage, std.sns, std.introduction,std.content,std.parking,std.fare,std.age_limit, std.shooting,
-	    std."LIKE", std.hit, std.goods
+	    std."LIKE",  std.goods
 	FROM
 	    stores st JOIN stores_detail std ON st.store_idx = std.store_idx
 	WHERE st.ban='N' AND st.status='승인' 
@@ -63,7 +63,7 @@
 	    st.store_idx, st.company_idx,st.title,st.age,st.brand1,st.brand2,st.cdate,st.status,st.ban,
 	    std.detail_idx,std.address,TO_CHAR(std.start_date, 'YYYY-MM-DD') AS start_date,TO_CHAR(std.end_date, 'YYYY-MM-DD') AS end_date,
 	    std.homepage, std.sns, std.introduction,std.content,std.parking,std.fare,std.age_limit, std.shooting,
-	    std."LIKE", std.hit, std.goods
+	    std."LIKE",  std.goods
 	FROM
 	    stores st JOIN stores_detail std ON st.store_idx = std.store_idx
 	WHERE st.ban='N' AND st.status='승인' 
@@ -79,7 +79,7 @@
 	    st.store_idx, st.company_idx,st.title,st.age,st.brand1,st.brand2,st.cdate,st.status,st.ban,
 	    std.detail_idx,std.address,TO_CHAR(std.start_date, 'YYYY-MM-DD') AS start_date,TO_CHAR(std.end_date, 'YYYY-MM-DD') AS end_date,
 	    std.homepage, std.sns, std.introduction,std.content,std.parking,std.fare,std.age_limit, std.shooting,
-	    std."LIKE", std.hit, std.goods
+	    std."LIKE", std.goods
 	FROM
 	    stores st JOIN stores_detail std ON st.store_idx = std.store_idx
 	WHERE
@@ -109,7 +109,7 @@
 	    st.store_idx, st.company_idx,st.title,st.age,st.brand1,st.brand2,st.cdate,st.status,st.ban,
 	    std.detail_idx,std.address,TO_CHAR(std.start_date, 'YYYY-MM-DD') AS start_date,TO_CHAR(std.end_date, 'YYYY-MM-DD') AS end_date,
 	    std.homepage, std.sns, std.introduction,std.content,std.parking,std.fare,std.age_limit, std.shooting,
-	    std."LIKE", std.hit, std.goods
+	    std."LIKE", std.goods
 	FROM
 	    stores st JOIN stores_detail std ON st.store_idx = std.store_idx
 	WHERE 1=1
@@ -129,7 +129,7 @@
 	    st.store_idx, st.company_idx,st.title,st.age,st.brand1,st.brand2,st.cdate,st.status,st.ban,
 	    std.detail_idx,std.address,TO_CHAR(std.start_date, 'YYYY-MM-DD') AS start_date,TO_CHAR(std.end_date, 'YYYY-MM-DD') AS end_date,
 	    std.homepage, std.sns, std.introduction,std.content,std.parking,std.fare,std.age_limit, std.shooting,
-	    std."LIKE", std.hit, std.goods
+	    std."LIKE", std.goods
 	FROM
 	    stores st JOIN stores_detail std ON st.store_idx = std.store_idx
 	WHERE 1=1 
@@ -148,7 +148,7 @@
 	    st.store_idx, st.company_idx,st.title,st.age,st.brand1,st.brand2,st.cdate,st.status,st.ban,
 	    std.detail_idx,std.address,TO_CHAR(std.start_date, 'YYYY-MM-DD') AS start_date,TO_CHAR(std.end_date, 'YYYY-MM-DD') AS end_date,
 	    std.homepage, std.sns, std.introduction,std.content,std.parking,std.fare,std.age_limit, std.shooting,
-	    std."LIKE", std.hit, std.goods
+	    std."LIKE", std.goods
 	FROM
 	    stores st JOIN stores_detail std ON st.store_idx = std.store_idx
 	WHERE 1=1 

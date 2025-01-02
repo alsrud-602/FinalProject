@@ -48,5 +48,6 @@ public class UsersDto {
     private String social_id;
     private String social_type;
     private String name;
+
     
 }
