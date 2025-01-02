@@ -34,7 +34,17 @@
   </div>
   <p class="content_store">${so.title}</p>
   <div class ="content_bottom">
-  <p>${so.rstatus}&nbsp;|&nbsp;${so.category_name}</p><a href="">운영페이지 > </a>
+  <p>${so.rstatus}
+    <c:choose>
+    <c:when test="${ not empty so.category_name}">
+|&nbsp;${so.category_name}
+    </c:when>
+    <c:otherwise>
+     &nbsp;|&nbsp;&nbsp;카테고리 미지정
+    </c:otherwise>
+    </c:choose>  
+  
+  </p><a href="">운영페이지 > </a>
   </div> 
   <br>
      <c:if test="${!status.last}">
@@ -62,7 +72,16 @@
   </div>
   <p class="content_store">${sh.title}</p>
   <div class ="content_bottom">
-    <p>${sh.rstatus}&nbsp;|&nbsp;${sh.category_name}</p>
+    <p>${sh.rstatus}
+    <c:choose>
+    <c:when test="${ not empty sh.category_name}">
+    |&nbsp;${sh.category_name}
+    </c:when>
+    <c:otherwise>
+    |&nbsp;&nbsp;카테고리 미지정
+    </c:otherwise>
+    </c:choose>  
+    </p>
   </div>
   <div class="content_detail">
     <div class="detail_ing">

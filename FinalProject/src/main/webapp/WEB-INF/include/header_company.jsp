@@ -366,7 +366,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <header>
         <div class="header">
-            <a href="/Business"><img class="logo" src="/images/icon/logo_company.png" alt="로고" /></a>
+            <a href="/Business/Operation/View"><img class="logo" src="/images/icon/logo_company.png" alt="로고" /></a>
             <div class="header-nav">
                 <a href="/Operation">
                     <div class="frame-2066">

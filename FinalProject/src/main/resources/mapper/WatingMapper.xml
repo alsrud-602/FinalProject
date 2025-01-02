@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.board.business.mapper.WatingMapper">  
+
+	<insert id="insertWatingList">
+    INSERT INTO WAITINGS (WAITING_IDX,STORE_IDX,WATING_ORDER,USER_IDX,RESERVATION_NUMBER
+    ) VALUES (
+    (SELECT NVL(MAX(waiting_idx),0) FROM WAITINGS) +1 ,
+     #{store_idx},
+     (SELECT NVL(MAX(wating_order),0) FROM WAITINGS) +1,
+     #{user_idx},
+     #{reservation_number}
+)
+	</insert>
+    
+    <select id="getWatingList">
+    SELECT U.USER_IDX, U.ID,U.SOCIAL_ID,U.NAME,W.WAITING_IDX, W.STORE_IDX, W.WATING_ORDER, W.STATUS, W.RESERVATION_NUMBER, W.EDATE
+    FROM WAITINGS W JOIN USERS U ON W.USER_IDX = U.USER_IDX
+    WHERE STORE_IDX = #{store_idx} AND( W.STATUS IN('대기','현재순번'))
+    ORDER BY  W.WATING_ORDER
+    </select>
+    
+    
+    <update id="updateWatingList">
+    UPDATE WAITINGS
+    SET  STATUS = #{status}, EDATE = SYSDATE
+    WHERE  WAITING_IDX =#{waiting_idx}    
+    </update>
+    
+    
+        <!-- 순번 업데이트 -->
+    <update id="updateWaitingOrder">
+    UPDATE WAITINGS
+    SET WATING_ORDER = #{arg2}
+    WHERE STORE_IDX = #{arg0}
+    AND WATING_ORDER = #{arg1}
+    </update>
+	
+	<select id="getStore_idxWaiting">
+	SELECT STORE_IDX
+	FROM WAITINGS
+	WHERE  WAITING_IDX = #{waiting_idx}  
+	
+	</select>
+	
+	<update id="updateOnsiteUse">
+	UPDATE RESERVATION_STORES
+	SET ONSITE_USE = #{onsite_use}
+	WHERE  STORE_IDX = #{store_idx}		
+	</update>
+	
+	<select id="getStoreStauts">
+	SELECT ONSITE_USE
+	FROM RESERVATION_STORES
+	WHERE STORE_IDX = #{store_idx}	
+	
+	</select>
+	
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

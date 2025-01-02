@@ -96,6 +96,8 @@ public interface UsersMapper {
 	List<UsersDto> getStoresHitAtMap();
 
 
+	UsersDto getUserById(Integer userIdx);
 
+	
 
 }

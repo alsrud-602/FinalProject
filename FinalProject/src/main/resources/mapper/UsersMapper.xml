@@ -467,4 +467,7 @@ JOIN (
 	    re.store_idx = #{storeidx}
 	AND us.user_idx = #{useridx}
   </select>
+  
+
+  
 </mapper>

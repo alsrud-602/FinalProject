@@ -11,20 +11,14 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class StoreTagDto {
+public class ReservationStoreDto {
 
-
-	public StoreTagDto(String tag) {
-	this.tag_name =tag;	
-	}
 	
-	public StoreTagDto(String tag, int store_idx) {
-		this.tag_name =tag;		
-		this.store_idx =store_idx;		
-	}
-
-	private int tage_idx;
+	private int rs_idx;
 	private int store_idx;
-	private String tag_name;
-	
+	private String notes;
+	private Date open_date;
+	private String status;
+	private String link;
+
 }

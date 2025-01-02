@@ -1,12 +1,14 @@
 package com.board.business.controller;
 
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,10 +16,19 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.board.business.dto.CategoryDto;
 import com.board.business.dto.CompanyDto;
+import com.board.business.dto.ImageStoreDTO;
 import com.board.business.dto.RequestDto;
+import com.board.business.dto.ReservationDateDto;
+import com.board.business.dto.ReservationPlanDto;
+import com.board.business.dto.ReservationStoreDto;
 import com.board.business.dto.StoreListDto;
+import com.board.business.dto.StoreTagDto;
+import com.board.business.dto.StoreUpdateDto;
 import com.board.business.service.BusinessService;
 import com.board.business.service.PdsService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 
 //@PreAuthorize("hasRole('ROLE_ADMIN')")
 @Controller
@@ -109,11 +120,63 @@ public class BusinessController {
 	@RequestMapping("/Management/Main/UpdateForm")
 	public ModelAndView managementMupdateFrom( int store_idx) {
 	
-	HashMap<String, Object> map	 = new HashMap<>();
-	businessService.getStoreUpdateinfo(map);
-	
-		
+
 	ModelAndView mv = new ModelAndView();
+
+		
+
+    StoreUpdateDto suDto = businessService.getStoreUpdateinfo(store_idx);
+    List<StoreTagDto> stList = businessService.getStoreTag(store_idx);
+    List <CategoryDto> scList = businessService.getStoreCategory(store_idx);
+    ReservationStoreDto rsDto =businessService.getReservationStore(store_idx);
+    List <ReservationDateDto> rdList = businessService.getReservationDate(rsDto.getRs_idx());
+    List<List<ReservationPlanDto>> allRPList = new ArrayList<>();
+    Set<String> uniquePlans = new HashSet<>(); // 중복을 체크할 Set
+    List<ImageStoreDTO> isList= pdsService.getImageStorList(store_idx);
+    
+    System.out.println("!!!!!!!!rsDto.getRs_idx()"+ rsDto.getRs_idx());	
+    for (ReservationDateDto rDto : rdList) {
+        String plan = rDto.getPlan();
+        System.out.println("!!!!!!!!plan"+ plan);	
+        
+        // 중복된 plan인지 확인
+        if (uniquePlans.add(plan)) { // Set에 추가하고, 이미 존재하면 false 반환
+            List<ReservationPlanDto> rpList = businessService.getReservationPlan(plan);
+            System.out.println("!!!!!!!!plan"+ plan);	
+            
+            allRPList.add(rpList);
+        }
+    }
+    
+    ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.registerModule(new JavaTimeModule());
+
+    String jsonPlanList = "";
+    try {
+        // allRPList를 JSON으로 변환
+        jsonPlanList = objectMapper.writeValueAsString(allRPList);
+    } catch (Exception e) {
+        e.printStackTrace(); // 예외 처리
+    }
+    
+    String jsonDateList = "";
+    try {
+        // allRPList를 JSON으로 변환
+    	jsonDateList = objectMapper.writeValueAsString(rdList);
+    } catch (Exception e) {
+        e.printStackTrace(); // 예외 처리
+    }
+    
+    mv.addObject("store", suDto);	
+    mv.addObject("tagList", stList);	
+    mv.addObject("categoryList", scList);	
+    mv.addObject("reservation", rsDto);	
+    mv.addObject("dateList", jsonDateList);	
+    mv.addObject("planList", jsonPlanList);
+    mv.addObject("imageList", isList);	
+    
+    System.out.println("!!!!!!!!리스트 리스트 넣기"+ allRPList);
+
 	mv.setViewName("business/management/main/update");
 	return mv;
 				
@@ -121,12 +184,35 @@ public class BusinessController {
 	
 	
 	@RequestMapping("/Management/Main/update")
-	public ModelAndView managementMupdate( int store_idx) {
+	public ModelAndView managementMupdate( @RequestParam HashMap<String, Object> map,
+								            @RequestParam (value="tag_name", 
+								            required = false) String[] tag_name,
+								            @RequestParam (value="start_time", 
+								            required = false) String[] start_time,
+								            @RequestParam (value="end_time", 
+								            required = false) String[] end_time,
+								            @RequestParam (value="max_number", 
+								            required = false) String[] max_number,
+								            @RequestParam (value="rp_plan", 
+								            required = false) String[] rp_plan,
+								            @RequestParam (value="rd_plan", 
+								            required = false) String[] rd_plan,
+								            @RequestParam (value="reservation_end_date", 
+								            required = false) String[] reservation_end_date,
+								            @RequestParam (value="reservation_start_date", 
+								            required = false) String[] reservation_start_date,
+								            @RequestParam (value="category_id", 
+								            required = false) String[] category_id,
+								            @RequestParam(value="upfile",required = false) MultipartFile[] uploadfiles) {
 	
 		
-		
+
+	businessService.updateStore(map,tag_name,category_id);
+	pdsService.setUpdate(map, uploadfiles);
+	businessService.updateReservation(map,start_time,end_time,max_number,rp_plan,rd_plan,reservation_end_date,reservation_start_date);
 	ModelAndView mv = new ModelAndView();
-	mv.setViewName("business/management/main/update");
+	int company_idx = Integer.valueOf(map.get("company_idx").toString());
+	mv.setViewName("redirect:/Business/Management/Main/List?company_idx="+company_idx);
 	return mv;
 			
 	}
@@ -201,6 +287,63 @@ public class BusinessController {
 	return mv;	
 		
 	}
+	@RequestMapping("/Operation/UpdateFormStore")
+	public ModelAndView operationUpdateFormStore(int store_idx) {	
+	StoreUpdateDto suDto = businessService.getStoreUpdateinfo(store_idx);	
+    List<StoreTagDto> stList = businessService.getStoreTag(store_idx);
+    List <CategoryDto> scList = businessService.getStoreCategory(store_idx);
+    List<ImageStoreDTO> isList= pdsService.getImageStorList(store_idx);
+    
+	ModelAndView mv = new ModelAndView();
+	mv.addObject("store",suDto);
+    mv.addObject("tagList", stList);	
+    mv.addObject("categoryList", scList);	
+    mv.addObject("imageList", isList);	
+	mv.setViewName("business/operation/updatestore");
+	return mv;	
+		
+	}
+	
+	@RequestMapping("/Operation/UpdateStore")
+	public ModelAndView operationUpdateStore(@RequestParam HashMap<String, Object> map,
+									            @RequestParam (value="tag_name", 
+									            required = false) String[] tag_name,
+		                                        @RequestParam (value="category_id", 
+				                                required = false) String[] category_id,
+									            @RequestParam(value="upfile",required = false) MultipartFile[] uploadfiles) {	
+	
+	ModelAndView mv = new ModelAndView();
+	businessService.updateStore(map,tag_name,category_id);
+	pdsService.setUpdate(map, uploadfiles);
+	
+	System.out.println("!!!!map 확인중 "+map);
+	int company_idx = Integer.valueOf(map.get("company_idx").toString());
+	mv.setViewName("redirect:/Business/Operation/View");
+	return mv;	
+		
+	}	
+	
+	@RequestMapping("/Operation/View")
+	public ModelAndView operationView() {		
+		
+	int company_idx =1;			
+	List<StoreListDto> sovList = businessService.getStoreOperationView(company_idx);
+	
+	ModelAndView mv = new ModelAndView();
+	mv.addObject("storeList",sovList);
+	mv.setViewName("business/operation/view");
+	return mv;	
+		
+	}
+	
+	@RequestMapping("/moblie")
+	public ModelAndView mobile() {		
+		
+	ModelAndView mv = new ModelAndView();
+	mv.setViewName("mobile/info");
+	return mv;	
+		
+	}	
 	
 	
 }
