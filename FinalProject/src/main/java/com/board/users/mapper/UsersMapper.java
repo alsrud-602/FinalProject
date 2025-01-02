@@ -35,7 +35,6 @@ public interface UsersMapper {
 	// 메인화면 검색창
 	List<UsersDto> getClosesearchlist(@Param("search") String search);
 
-	List<UsersDto> getPopupAdresses();
 
 	UsersDto getStoredetail(UsersDto usersdto);
 
@@ -96,11 +95,17 @@ public interface UsersMapper {
 	UsersDto getotalWriteCount(int storeidx);
 
 
+	//igdate처리
+	List<UsersDto> getPopupDate();
+
+	//Map에서 리뷰 제목이나 내용가져오기 
+	List<UsersDto> getPopupReview();
+
+	List<UsersDto> getStoresHitAtMap();
 
 
 	UsersDto getUserById(Integer userIdx);
 
 	
-
 
 }

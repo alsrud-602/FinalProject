@@ -247,7 +247,7 @@
 
 
 
-<script src="/js/authuser.js" defer></script>
+
 <script>
 
 

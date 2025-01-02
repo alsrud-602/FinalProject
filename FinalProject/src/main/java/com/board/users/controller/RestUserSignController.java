@@ -115,7 +115,7 @@ public class RestUserSignController {
             Cookie jwtCookie = new Cookie("userJwt", jwt);
             jwtCookie.setHttpOnly(true);
             jwtCookie.setSecure(true); // HTTPS에서만 사용
-            jwtCookie.setMaxAge(60 * 60 * 11); // 2시간
+            jwtCookie.setMaxAge(60 * 120); // 2시간
             jwtCookie.setPath("/");
             response.addCookie(jwtCookie);
 
