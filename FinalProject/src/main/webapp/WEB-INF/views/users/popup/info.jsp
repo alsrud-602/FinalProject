@@ -215,7 +215,7 @@
   <div class="side_box">200 팝콘</div>
   <div class="side_box">내가 쓴 리뷰수 3개</div>
   <hr>
-  <div class="atag_div"><a class="btn2" href="/Review/WriteForm">후기 작성하기</a></div>
+  <div class="atag_div"><a class="btn2" href="/Users/Writeform?store_idx=${storedetail.store_idx}">후기 작성하기</a></div>
   </div>
   </aside>
 
@@ -456,7 +456,7 @@ const mapPage = `
 	"</div>" +
 	"<div class='sizebox'></div>" +
 	"<div class='btn_line'>" +
-	    "<a class='btn3' href='/Users/Writeform?store_idx=" + reviewData.like + "&user_idx=" +reviewData.user_idx +"'>수정</a>" +
+	    "<a class='btn3' href='/Users/Updateform?store_idx=" + reviewData.store_idx + "&user_idx=" +reviewData.user_idx +"'>수정</a>" +
 	    "<a class='btn3' href='#'>삭제</a>" +
 	    "<a class='btn3' href='#' onclick='moveReviewBack(event)'>돌아가기</a>" +
 	"</div>";
@@ -640,7 +640,9 @@ document.addEventListener("DOMContentLoaded", function() {
     console.log("Days Remaining:", daysRemaining); // 디버깅 정보
 });
 </script>
+<script src="/js/authuser.js" defer></script>
 </body>
+
 
 
 </html>

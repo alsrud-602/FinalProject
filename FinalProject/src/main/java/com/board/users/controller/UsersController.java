@@ -291,7 +291,7 @@ public class UsersController {
 		//System.out.println("스토어 HIT : " + insertStoreHit);
 		System.out.println("usersdto  : " + usersdto);
 		
-        // store_idx 데이터 불러오기
+        // store_idx로 스토어 디테일 데이터 불러오기
 		UsersDto storedetail = usersMapper.getStoredetail(usersdto);
 		System.out.println("storedetail : " + storedetail);
 		
@@ -349,8 +349,8 @@ public class UsersController {
 		return mv;
 	}
 	
-	// 리뷰 상세 페이지 데이터
-	@RequestMapping("ReviewDetail")
+	// 리뷰 상세 페이지 데이터(AJAX)
+	@RequestMapping("/ReviewDetail")
 	@ResponseBody
 	public Map<String,Object> reviewdetail(
 			@RequestParam(required = false,value = "storeidx") int storeidx,
@@ -367,14 +367,65 @@ public class UsersController {
 		return response;
 	}
 	
-	// 리뷰 수정 페이지
-	@RequestMapping("Writeform")
-	public ModelAndView writeform() {
+	// 리뷰 작성 페이지
+	@RequestMapping("/Writeform")
+	public ModelAndView writeform(@RequestParam(required = false,value = "store_idx") int storeidx) {
+		System.out.println("작성 : storeidx : " + storeidx);
+		
+		
+		// store_idx로 스토어 디테일 데이터 불러오기
+		UsersDto storedetail = usersMapper.getStoredReviewtail(storeidx);
+		System.out.println("storedetail" + storedetail);
+
+		// 스토어 카테고리
+		List<UsersDto> storetag = usersMapper.getStoreReviewtag(storeidx);
+		System.out.println("storetag : " + storetag);
+		
+		// 전체 리뷰 & 조회수
+		UsersDto totalcount = usersMapper.getotalWriteCount(storeidx);
+		System.out.println("totalcount : " + totalcount);
 		
 		ModelAndView mv = new ModelAndView();
+		mv.addObject("storedetail", storedetail);
+		mv.addObject("storetag", storetag);
+		mv.addObject("totalcount", totalcount);
 		mv.setViewName("users/popup/writeform");
 		return mv;
 	}
+	// 리뷰 수정 페이지
+	@RequestMapping("Updateform")
+	public ModelAndView updateform(@RequestParam(required = false,value = "store_idx") int storeidx,
+			@RequestParam(required = false,value = "user_idx") int useridx) {
+		System.out.println("수정 : storeidx : " + storeidx);
+		System.out.println("수정 : useridx : " + useridx);
+		
+		
+		// store_idx로 스토어 디테일 데이터 불러오기
+		UsersDto storedetail = usersMapper.getStoredReviewtail(storeidx);
+		System.out.println("storedetail" + storedetail);
+		
+		// 스토어 카테고리
+		List<UsersDto> storetag = usersMapper.getStoreReviewtag(storeidx);
+		System.out.println("storetag : " + storetag);
+		
+		// 전체 리뷰 & 조회수
+		UsersDto totalcount = usersMapper.getotalWriteCount(storeidx);
+		System.out.println("totalcount : " + totalcount);
+		
+		// 리뷰 상세 페이지
+		UsersDto ReviewDetail = usersMapper.getReviewDetail(storeidx,useridx); 
+		System.out.println("ReviewDetail : " + ReviewDetail);
+		
+		ModelAndView mv = new ModelAndView();
+		mv.addObject("storedetail", storedetail);
+		mv.addObject("storetag", storetag);
+		mv.addObject("totalcount", totalcount);
+		mv.addObject("ReviewDetail", ReviewDetail);
+		mv.setViewName("users/popup/updateform");
+		return mv;
+	}
+	
+	
 	
 	
 }

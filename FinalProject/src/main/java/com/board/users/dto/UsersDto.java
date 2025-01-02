@@ -88,5 +88,6 @@ public class UsersDto {
     private int review_idx;
     private int score; 
     private String review_date;
+    private int storeidx;
     
 }
