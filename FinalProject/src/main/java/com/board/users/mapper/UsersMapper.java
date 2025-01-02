@@ -85,6 +85,14 @@ public interface UsersMapper {
 	// 리뷰 상세 페이지
 	UsersDto getReviewDetail(@Param("storeidx") int storeidx,@Param("useridx") int useridx);
 
+	// 리뷰 수정 - store_idx로 스토어 디테일 데이터 불러오기
+	UsersDto getStoredReviewtail(int storeidx);
+
+	// 리뷰 수정 - 스토어 태그
+	List<UsersDto> getStoreReviewtag(int storeidx);
+
+	UsersDto getotalWriteCount(int storeidx);
+
 
 
 
