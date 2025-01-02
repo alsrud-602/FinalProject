@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,8 +17,7 @@
 	src="https://cdn.jsdelivr.net/npm/browser-scss@1.0.3/dist/browser-scss.min.js"></script>
 <script type="text/javascript"
 	src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=a9gjf918ri"></script>
-<script
-	src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.6/lottie.min.js"></script>
+	<script type="text/javascript" src="/js/MarkerClustering.js"></script>
 <!-- Slick CSS -->
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css"/>
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css"/>
@@ -103,6 +103,7 @@ margin-bottom: 100px;
 		</div>
 		<div id="popup-container">
 			<img src="/images/map/Group 1000000859.svg" alt="팝업 배경">
+			 <c:forEach var="popup" items="${popupList}">
 			<div class="group-480">
 				<div class="popover-pad">
 					<div class="popupbackground">
@@ -114,21 +115,37 @@ margin-bottom: 100px;
 				<div class="group-486">
 					<div class="group-488">
 						<div class="_100">
-							<span> <span class="_100-span">100명</span> <span
-								class="_100-span2">이 봤어요</span>
+							<span> 
+								<span class="_100-span">${popup.hit}명</span> 
+								<span class="_100-span2">이 봤어요</span>
 							</span>
 						</div>
 						<img class="eye" src="/images/map/Eye.svg" />
 					</div>
-					<div class="popup-period">2024.12.12 - 2025.01.08</div>
-					<img class="calendar" src="/images/map/Calendar.svg" /> <img
-						class="image-9" src="" alt="상세정보사진" />
-					<div class="ootd-of">OOTD of 침착맨 카드 교환소</div>
+					<c:choose>
+						<c:when test="${popup.start_date} == null || ${popup.end_date} == null">
+							<div class="popup-period">${popup.igdate}</div>
+						</c:when>
+						<c:otherwise>
+							<div class="popup-period">${popup.start_date} - ${popup.end_date}</div>
+						</c:otherwise>
+					</c:choose>
+					<img class="calendar" src="/images/map/Calendar.svg" /> 
+					<%-- <img class="image-9" src="/image/read?path=${popup.image_path}" alt="상세정보사진" /> --%>
+					<div class="ootd-of">${popup.title}</div>
 				</div>
 				<div class="frame-490">
 					<div class="_22">
-						<span> <span class="_22-span">종료까지</span> <span
-							class="_22-span2">22일</span> <span class="_22-span3">남았어요!</span>
+						<span> <span class="_22-span">종료까지</span> 
+						<c:choose>
+						<c:when test="${popup.start_date} == null || ${popup.end_date} == null">
+							<span class="_22-span2">${popup.igdate} - SYSDATE일</span> 
+						</c:when>
+						<c:otherwise>
+							<span class="_22-span2">${popup.end_date} - SYSDATE일</span> 
+						</c:otherwise>
+					</c:choose>
+						<span class="_22-span3">남았어요!</span>
 						</span>
 					</div>
 					<div class="line-4"></div>
@@ -141,16 +158,19 @@ margin-bottom: 100px;
 					</a>
                     <div class="rectangle-331">
 						<div class="carousel2">
-						    <div class="carousel-item">재고 얼마나 남았나요?</div>
-						    <div class="carousel-item">사람 겁나 많네요 ;;</div>
-						    <div class="carousel-item">오늘은 날씨가 좋네요!</div>
-						    <div class="carousel-item">기분이 너무 좋습니다!</div>
+							<c:forEach items="${content}" var="reviewContent">
+							    <div class="carousel-item">${reviewContent}</div>
+							    <div class="carousel-item">${reviewContent}</div>
+							    <div class="carousel-item">${reviewContent}</div>
+							    <div class="carousel-item">${reviewContent}</div>
+							</c:forEach>
 						</div>
                         <div class="line-5"></div>
                     </div>
 				</div>
 				<img id="closePopup" src="/images/map/close.svg" />
 			</div>
+			</c:forEach>
 		</div>
 	</main>
 	<!-- jQuery -->
@@ -187,8 +207,40 @@ margin-bottom: 100px;
 	    var defaultCoords = new naver.maps.LatLng(37.5665, 126.9780); //기본위치: 서울
 	    var map = new naver.maps.Map('map', {
 	        center: defaultCoords,
-	        zoom: 13
+	        zoom: 13,
+	        zoomControl: true,
+	        zoomControlOptions: {
+	            position: naver.maps.Position.TOP_LEFT,
+	            style: naver.maps.ZoomControlStyle.SMALL
+	        }
 	    });
+	    var markers=[];
+	    
+	    var htmlMarker1 = {
+	            content: '<div style="cursor:pointer;width:50px;height:50px;line-height:52px;font-size:15px;color:white;text-align:center;font-weight:bold;background:url(\'https://raw.githubusercontent.com/navermaps/marker-tools.js/refs/heads/master/marker-clustering/images/cluster-marker-1.png\');background-size:contain;"></div>',
+	            size: N.Size(40, 40),
+	            anchor: N.Point(20, 20)
+	        },
+	        htmlMarker2 = {
+	            content: '<div style="cursor:pointer;width:50px;height:50px;line-height:52px;font-size:15px;color:white;text-align:center;font-weight:bold;background:url(\'https://raw.githubusercontent.com/navermaps/marker-tools.js/refs/heads/master/marker-clustering/images/cluster-marker-2.png\');background-size:contain;"></div>',
+	            size: N.Size(40, 40),
+	            anchor: N.Point(20, 20)
+	        },
+	        htmlMarker3 = {
+	            content: '<div style="cursor:pointer;width:50px;height:50px;line-height:52px;font-size:15px;color:white;text-align:center;font-weight:bold;background:url(\'https://raw.githubusercontent.com/navermaps/marker-tools.js/refs/heads/master/marker-clustering/images/cluster-marker-3.png\');background-size:contain;"></div>',
+	            size: N.Size(40, 40),
+	            anchor: N.Point(20, 20)
+	        },
+	        htmlMarker4 = {
+	            content: '<div style="cursor:pointer;width:50px;height:50px;line-height:52px;font-size:15px;color:white;text-align:center;font-weight:bold;background:url(\'https://raw.githubusercontent.com/navermaps/marker-tools.js/refs/heads/master/marker-clustering/images/cluster-marker-4.png\');background-size:contain;"></div>',
+	            size: N.Size(40, 40),
+	            anchor: N.Point(20, 20)
+	        },
+	        htmlMarker5 = {
+	            content: '<div style="cursor:pointer;width:50px;height:50px;line-height:52px;font-size:15px;color:white;text-align:center;font-weight:bold;background:url(\'https://raw.githubusercontent.com/navermaps/marker-tools.js/refs/heads/master/marker-clustering/images/cluster-marker-5.png\');background-size:contain;"></div>',
+	            size: N.Size(40, 40),
+	            anchor: N.Point(20, 20)
+	        };
 
 	    // 전역 변수로 userMarker 선언
 	    var userMarker = null;
@@ -214,37 +266,17 @@ margin-bottom: 100px;
 	                title: '내 위치'
 	            });
 
-	            // Lottie 애니메이션 로드
-	            lottie.loadAnimation({
-	                container: document.getElementById('lottie'),
-	                renderer: 'svg',
-	                loop: true,
-	                autoplay: true,
-	                path: '/json/Animation - 1735684255412.json'
-	            });
 
-	            // 서버에서 주변 위치 데이터 가져오기 (임시 데이터 사용)
-	            const data = [
-	                { address: '부산 서면역 1번출구', title: '서면역' },
-	                { address: '부산 사하구 하단동', title: '하단역' },
-	                { address: '부산 해운대역 1번출구', title: '해운대역' },
-	                { address: '부산 사상역 1번출구', title: '사상역' },
-	                { address: '부산 동래역 1번출구', title: '동래역' }
-	            ];
 
-	            data.forEach(function(item) {
-	                var address = item.address;
-	                var title = item.title;
-	                var encodedAddress = encodeURIComponent(address);
-	                var url = 'https://nominatim.openstreetmap.org/search?format=json&q=' + encodedAddress;
+	            // 팝업 리스트 데이터 가져오기
+	            fetch('/Users/Map/popuplist')
+	                .then(response => response.json())
+	                .then(data => {
+	                    data.forEach(location => {
+	                        const { title, latitude, longitude } = location;
+	                        console.log(`Title: \${title}, Lat: \${latitude}, Lng: \${longitude}`);
 
-	                fetch(url)
-	                    .then(response => response.json())
-	                    .then(locationData => {
-	                        if (locationData && locationData.length > 0) {
-	                            var lat = locationData[0].lat;
-	                            var lon = locationData[0].lon;
-	                            var coords = new naver.maps.LatLng(lat, lon);
+	                        var coords = new naver.maps.LatLng(latitude, longitude);
 
 	                            // 주변 위치 마커 표시
 	                            var marker = new naver.maps.Marker({
@@ -257,6 +289,8 @@ margin-bottom: 100px;
 	                                title: title
 	                            });
 
+	                            markers.push(marker);
+	                            
 	                            // 마커 클릭 이벤트 추가
 	                            naver.maps.Event.addListener(marker, 'click', function() {
 	                                document.getElementById('popup-container').style.display = 'block';
@@ -267,12 +301,9 @@ margin-bottom: 100px;
 	                                document.getElementById('popup-container').style.display = 'none';
 	                            };
 
-	                            // 라벨 위치 설정
-	                            var labelPosition = new naver.maps.LatLng(lat, lon);
-
 	                            // 제목을 항상 표시할 위치 설정
 	                            var titleMarker = new naver.maps.Marker({
-	                                position: labelPosition,
+	                                position: coords,
 	                                map: map,
 	                                icon: {
 	                                    content: [
@@ -282,6 +313,22 @@ margin-bottom: 100px;
 	                                    size: new naver.maps.Size(38, 58)
 	                                }
 	                            });
+	                            
+	                            markers.push(titleMarker);
+	                            
+	                    	    var markerClustering = new MarkerClustering({
+	                    	        minClusterSize: 2,
+	                    	        maxZoom: 13,
+	                    	        map: map,
+	                    	        markers: markers,
+	                    	        disableClickZoom: false,
+	                    	        gridSize: 120,
+	                    	        icons: [htmlMarker1, htmlMarker2, htmlMarker3, htmlMarker4, htmlMarker5],
+	                    	        indexGenerator: [10, 100, 200, 500, 1000],
+	                    	        stylingFunction: function(clusterMarker, count) {
+	                    	            $(clusterMarker.getElement()).find('div:first-child').text(count);
+	                    	        }
+	                    	    });
 
 	                            // 마커 클릭 이벤트 추가
 	                            naver.maps.Event.addListener(titleMarker, 'click', function() {
@@ -292,12 +339,9 @@ margin-bottom: 100px;
 	                            document.getElementById('closePopup').onclick = function() {
 	                                document.getElementById('popup-container').style.display = 'none';
 	                            };
-	                        } else {
-	                            console.error('주소를 찾을 수 없습니다:', address);
-	                        }
+	                        });
 	                    })
 	                    .catch(error => console.error('Error:', error));
-	            });
 	        }, function() {
 	            alert('위치 정보를 가져올 수 없습니다.');
 	            map.setCenter(defaultCoords);
@@ -337,26 +381,7 @@ margin-bottom: 100px;
 	                    animation: naver.maps.Animation.BOUNCE
 	                });
 
-	                // 두 번째 마커
-	                var lottieMarker = new naver.maps.Marker({
-	                    position: new naver.maps.LatLng(userLat + 1, userLon + 1),
-	                    map: map,
-	                    icon: {
-	                        content: [
-	                            '<div id="lottie" style="width: 100px; height: 100px;"></div>'
-	                        ].join(''),
-	                        size: new naver.maps.Size(38, 58)
-	                    }
-	                });
 
-	                // Lottie 애니메이션 로드
-	                lottie.loadAnimation({
-	                    container: document.getElementById('lottie'),
-	                    renderer: 'svg',
-	                    loop: true,
-	                    autoplay: true,
-	                    path: '/json/Animation - 1735684255412.json'
-	                });
 	            }, function() {
 	                alert('위치 정보를 가져올 수 없습니다.');
 	            }, {

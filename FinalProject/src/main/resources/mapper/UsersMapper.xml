@@ -9,15 +9,18 @@
 	    st.store_idx, st.company_idx,st.title,st.age,st.brand1,st.brand2,st.cdate,st.status,st.ban,
 	    std.detail_idx,std.address,TO_CHAR(std.start_date, 'YYYY-MM-DD') AS start_date,TO_CHAR(std.end_date, 'YYYY-MM-DD') AS end_date,
 	    std.homepage, std.sns, std.introduction,std.content,std.parking,std.fare,std.age_limit, std.shooting,std.igdate,
-	    std."LIKE", std.hit, std.goods
+	    std."LIKE", std.goods
 	FROM
 	    stores st JOIN stores_detail std ON st.store_idx = std.store_idx
+	    
 	WHERE st.ban='N' AND st.status='승인' 
 	      AND std.start_date &lt; SYSDATE 
 	      AND std.end_date &gt; SYSDATE
 	ORDER BY
 	    st.store_idx ASC
   </select>
+
+
    
    <!-- 랭킹 팝업 리스트 -->
    <select id="getRanklist">
@@ -281,6 +284,21 @@
 	      ORDER BY
 	          st.store_idx ASC
 	 OFFSET #{start} ROWS FETCH NEXT #{size} ROWS ONLY 
+  </select>
+  
+  <!-- Map에서 종료일 -->
+    <select id="getPopupDate">
+	SELECT
+	    st.store_idx, st.status,st.ban, TO_CHAR(std.start_date, 'YYYY-MM-DD') AS start_date,TO_CHAR(std.end_date, 'YYYY-MM-DD') AS end_date,
+	    std.igdate
+	FROM
+	    stores st JOIN stores_detail std ON st.store_idx = std.store_idx
+	    
+	WHERE st.ban='N' AND st.status='승인' 
+	      AND std.start_date &lt; SYSDATE 
+	      AND std.end_date &gt; SYSDATE
+	ORDER BY
+	    st.store_idx ASC
   </select>
 
   

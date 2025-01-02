@@ -29,9 +29,9 @@ public class MapController {
     @GetMapping("/Map")
     public ModelAndView showMap() {	
         List<UsersDto> popupList = usersMapper.getPopuplist(); // 진행중 팝업 리스트 가져오기
-        
         ModelAndView mv = new ModelAndView(); // map.html 파일을 반환
         mv.addObject("popupList", popupList); // 리스트를 모델에 추가
+        List<UsersDto> review = usersMapper.getPopupReview();
         mv.setViewName("users/popup/map");
 
         return mv; // ModelAndView 반환
@@ -43,9 +43,13 @@ public class MapController {
     @ResponseBody
     public List<Map<String, Object>> getPopupList() {
         List<UsersDto> popupList = usersMapper.getPopuplist();
+        
+        //List<UsersDto> storeDetail = usersMapper.getStoredetail(popupList.get(0));
         List<Map<String, Object>> coordinatesList = new ArrayList<>();
 
-        for (UsersDto popup : popupList) {
+        // 인덱스를 사용한 for 루프
+        for (int i = 0; i < popupList.size(); i++) {
+            UsersDto popup = popupList.get(i);
             try {
                 double[] coords = mapService.getCoordinates(popup.getAddress());
                 Map<String, Object> data = new HashMap<>();
