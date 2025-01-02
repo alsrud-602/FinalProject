@@ -133,7 +133,7 @@ public class UsersController {
 	public ModelAndView rankdetail() {
 	 
 		// 랭킹 팝업 리스트
-		List<UsersDto> ranklist = usersMapper.getRanklist();
+		List<UsersDto> ranklist = usersMapper.getRankdetaillist();
   
 		
 	  ModelAndView mv = new ModelAndView();
@@ -230,7 +230,8 @@ public class UsersController {
 	// 상세정보 페이지 
 	@RequestMapping("Info")
 	public ModelAndView info(UsersDto usersdto,
-			Model model,HttpServletRequest request){
+			Model model,HttpServletRequest request
+			){
 		
 		// 유저 번호 가지고 오기
 				 Cookie[] cookies = request.getCookies();
@@ -271,7 +272,6 @@ public class UsersController {
 			        } else {
 			            model.addAttribute("error", "JWT 토큰이 없습니다.");
 			        }
-			        
 
 			        
 		 // 유저 아이디당 한개씩 조회수 증가
@@ -287,6 +287,7 @@ public class UsersController {
 		}else {
 			
 		}
+		
 		//System.out.println("스토어 HIT : " + insertStoreHit);
 		System.out.println("usersdto  : " + usersdto);
 		
@@ -310,16 +311,61 @@ public class UsersController {
 		List<UsersDto> StoreCategory = usersMapper.getStoreCategory(usersdto);
 		System.out.println("StoreCategory : " + StoreCategory);
 		
+		// 조회수
+		UsersDto StoreHit = usersMapper.getStoreHit(usersdto);
+		System.out.println("StoreHit : " + StoreHit);
+		
+		//좋아요
+		UsersDto StoreLike = usersMapper.getStoreLike(usersdto);
+		System.out.println("StoreLike : " + StoreLike);
+		
+		//전체 리뷰
+		List<UsersDto> totalreviews = usersMapper.gettotalreviews(usersdto);
+		System.out.println("totalreviews : " + totalreviews);
+		
+		//핫 리뷰 (조회수 기반 3개)
+		List<UsersDto> HotReviews = usersMapper.getHotReviews(usersdto);
+		System.out.println("HotReviews : " + HotReviews);
+		
+		// 전체 리뷰 & 조회수
+		UsersDto totalcount = usersMapper.getotalcount(usersdto);
+		System.out.println("totalcount : " + totalcount);
+		
+		
+		
+		
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("storedetail", storedetail);
 		mv.addObject("storetag", storetag);
 		mv.addObject("StoreReservation", StoreReservation);
 		mv.addObject("StoreOperation", StoreOperation);
 		mv.addObject("StoreCategory", StoreCategory);
+		mv.addObject("StoreHit", StoreHit);
+		mv.addObject("StoreLike", StoreLike);
+		mv.addObject("totalreviews", totalreviews);
+		mv.addObject("HotReviews", HotReviews);
+		mv.addObject("totalcount", totalcount);
 		mv.setViewName("users/popup/info");
 		return mv;
 	}
 	
+	// 리뷰 상세 페이지 데이터
+	@RequestMapping("ReviewDetail")
+	@ResponseBody
+	public Map<String,Object> reviewdetail(
+			@RequestParam(required = false,value = "storeidx") int storeidx,
+			@RequestParam(required = false,value = "useridx") int useridx){
+		System.out.println("storeidx : " + storeidx);
+		System.out.println("useridx : " + useridx);
+		
+		// 리뷰 상세 페이지
+		UsersDto ReviewDetail = usersMapper.getReviewDetail(storeidx,useridx); 
+		System.out.println("ReviewDetail : " + ReviewDetail);
+		
+		HashMap<String, Object> response = new HashMap<>();
+		response.put("ReviewDetail", ReviewDetail);
+		return response;
+	}
 	
 	
 }
