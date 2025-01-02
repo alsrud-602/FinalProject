@@ -90,6 +90,8 @@ public interface UsersMapper {
 
 
 
+	UsersDto getUserById(Integer userIdx);
+
 	
 
 

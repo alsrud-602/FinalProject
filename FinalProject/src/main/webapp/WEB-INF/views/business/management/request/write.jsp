@@ -38,7 +38,17 @@
   </div>
   <p class="content_store">${store.title}</p>
   <div class ="content_bottom">
-  <p>${store.rstatus}&nbsp;|&nbsp;${store.category_name}</p>
+  <p>${store.rstatus}
+      <c:choose>
+    <c:when test="${ not empty store.category_name}">
+    |&nbsp;${store.category_name}
+    </c:when>
+    <c:otherwise>
+     &nbsp;|&nbsp;&nbsp;카테고리 미지정
+    </c:otherwise>
+    </c:choose>  
+  
+  </p>
   </div>
    </div>
 

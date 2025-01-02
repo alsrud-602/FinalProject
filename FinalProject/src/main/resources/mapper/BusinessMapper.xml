@@ -29,7 +29,18 @@
   </foreach>
   </insert>
 
-
+	<!-- tag 여러개 저장 -->
+  <insert id="insertStoreTageUpdate">
+  <foreach collection="tagList" item="tag" index="i" 
+         open="INSERT ALL" 
+         close="SELECT * FROM DUAL" 
+         separator="">
+    INTO STORES_TAG VALUES (
+       (SELECT NVL(MAX(TAGE_IDX), 0) FROM STORES_TAG) + #{i} + 1,
+        #{tag.store_idx},#{tag.tag_name} )
+  </foreach>
+  </insert>
+  
    <insert id="insertStoreOperation">
    INSERT INTO STORES_OPERATION (OPERATION_IDX,STORE_IDX,SMON,STUE,SWED,STHU,SFRI,SSAT,SSUN,EMON,ETUE,EWED,ETHU,EFRI,ESAT,ESUN,ONOTES
    ) VALUES (STORES_OPERATION_SEQ.NEXTVAL,(SELECT MAX(STORE_IDX) FROM STORES),
@@ -70,6 +81,21 @@
             #{rp.max_number})
   </foreach>
   </insert>
+ 
+   	<!-- plan 여러개 저장 -->
+    <insert id="insertReservationPlanUpdate">
+  <foreach collection="rpList" item="rp" index="i" 
+         open="INSERT ALL" 
+         close="SELECT * FROM DUAL" 
+         separator="">
+		    INTO RESERVATION_PLANS (RP_IDX, PLAN, START_TIME, END_TIME, MAX_NUMBER)
+    VALUES ((SELECT NVL(MAX(RP_IDX), 0) FROM RESERVATION_PLANS) + #{i} + 1,
+            'S' || #{rp.store_idx} || #{rp.plan},
+            #{rp.start_time},
+            #{rp.end_time},
+            #{rp.max_number})
+  </foreach>
+  </insert>
   
    	<!-- date 여러개 저장 -->
     <insert id="insertReservationDate">
@@ -86,6 +112,22 @@
   </foreach>
   </insert> 
  
+    	<!-- date 여러개 저장 -->
+  <insert id="insertReservationDateUpdate">
+  <foreach collection="rdList" item="rd" index="i" 
+         open="INSERT ALL" 
+         close="SELECT * FROM DUAL" 
+         separator="">
+		    INTO RESERVATION_DATES (RD_IDX, RS_IDX, PLAN, RESERVATION_START_DATE, RESERVATION_END_DATE)
+           VALUES ((SELECT NVL(MAX(RD_IDX), 0) FROM RESERVATION_DATES) + #{i} + 1,
+            #{rd.rs_idx},
+            'S' || #{rd.store_idx} || #{rd.plan},
+            #{rd.reservation_start_date},
+            #{rd.reservation_end_date})
+  </foreach>
+  </insert> 
+ 
+ 
  <select id="getCategoryList">
   SELECT * FROM CATEGORY
  </select>
@@ -101,7 +143,18 @@
    (SELECT MAX(STORE_IDX) FROM STORES),#{sc.category_id} )
   </foreach>
   </insert> 
- 
+  
+   <!-- 카테고리 여러개 저장 update-->
+   <insert id="insertStoreCategoryListUpdate">
+   <foreach collection="scList" item="sc" index="i" 
+         open="INSERT ALL" 
+         close="SELECT * FROM DUAL" 
+         separator="">
+   INTO STORES_CATEGORY ( SC_IDX,STORE_IDX,CATEGORY_ID
+   ) VALUES ((SELECT NVL(MAX(SC_IDX), 0) FROM STORES_CATEGORY) + #{i} + 1,
+   #{sc.store_idx},#{sc.category_id} )
+  </foreach>
+  </insert>  
  
  
  
@@ -143,9 +196,13 @@
 FROM STORES S 
 JOIN STORES_DETAIL SD ON S.STORE_IDX = SD.STORE_IDX
 JOIN RESERVATION_STORES RS ON S.STORE_IDX = RS.STORE_IDX
-JOIN STORES_CATEGORY SC ON S.STORE_IDX = SC.STORE_IDX
-JOIN CATEGORY C ON C.CATEGORY_ID = SC.CATEGORY_ID
+LEFT JOIN STORES_CATEGORY SC ON S.STORE_IDX = SC.STORE_IDX
+LEFT JOIN CATEGORY C ON C.CATEGORY_ID = SC.CATEGORY_ID
 WHERE S.COMPANY_IDX = #{company_idx}
+ <if test="company_idx != null">
+  AND (SD.START_DATE &gt; SYSDATE OR
+   SD.END_DATE &lt; SYSDATE OR  S.STATUS ='불가' OR S.STATUS ='서류완료'OR  S.STATUS ='심사중')
+</if>
 GROUP BY S.STORE_IDX, 
          S.TITLE, 
          SD.START_DATE, 
@@ -172,12 +229,13 @@ GROUP BY S.STORE_IDX,
 FROM STORES S 
 JOIN STORES_DETAIL SD ON S.STORE_IDX = SD.STORE_IDX
 JOIN RESERVATION_STORES RS ON S.STORE_IDX = RS.STORE_IDX
-JOIN STORES_CATEGORY SC ON S.STORE_IDX = SC.STORE_IDX
-JOIN CATEGORY C ON C.CATEGORY_ID = SC.CATEGORY_ID
+LEFT JOIN STORES_CATEGORY SC ON S.STORE_IDX = SC.STORE_IDX
+LEFT JOIN CATEGORY C ON C.CATEGORY_ID = SC.CATEGORY_ID
 WHERE S.COMPANY_IDX = #{company_idx} 
 AND  S.STATUS ='승인' AND S.BAN ='N'
  <if test="company_idx != null">
-  AND SD.START_DATE &lt; SYSDATE
+  AND SD.START_DATE &lt;= SYSDATE
+  AND SD.END_DATE &gt;= SYSDATE
 </if>
 GROUP BY S.STORE_IDX, 
          S.TITLE, 
@@ -200,8 +258,8 @@ SELECT S.STORE_IDX,
 FROM STORES S 
 JOIN STORES_DETAIL SD ON S.STORE_IDX = SD.STORE_IDX
 JOIN RESERVATION_STORES RS ON S.STORE_IDX = RS.STORE_IDX
-JOIN STORES_CATEGORY SC ON S.STORE_IDX = SC.STORE_IDX
-JOIN CATEGORY C ON C.CATEGORY_ID = SC.CATEGORY_ID
+LEFT JOIN STORES_CATEGORY SC ON S.STORE_IDX = SC.STORE_IDX
+LEFT JOIN CATEGORY C ON C.CATEGORY_ID = SC.CATEGORY_ID
 WHERE S.STORE_IDX = #{store_idx}
 GROUP BY S.STORE_IDX, 
          S.TITLE, 
@@ -254,6 +312,289 @@ SET EMAIL = #{email},PHONE = #{phone}
 WHERE  COMPANY_IDX = #{company_idx}
 </update>
 
+
+
+
+<select id="getStoreUpdateinfo">
+SELECT S.STORE_IDX ,S.COMPANY_IDX ,S.TITLE ,S.AGE ,S.BRAND1 ,S.BRAND2 , S.CDATE,S.STATUS ,S.BAN,           
+	  SD.DETAIL_IDX,SD.ADDRESS ,SD.START_DATE ,SD.END_DATE,SD.HOMEPAGE , SD.SNS,SD.INTRODUCTION,     
+      SD.CONTENT, SD.PARKING, SD.FARE, SD.AGE_LIMIT, SD.SHOOTING,SD."LIKE",  SD.HIT ,  SD.GOODS,          
+      SO.OPERATION_IDX ,     
+	  TO_CHAR(SMON, 'HH24:MI') AS SMON ,
+	  TO_CHAR(STUE, 'HH24:MI') AS STUE , 
+	  TO_CHAR(SWED, 'HH24:MI') AS SWED , 
+	  TO_CHAR(STHU, 'HH24:MI') AS STHU , 
+	  TO_CHAR(SFRI, 'HH24:MI') AS SFRI , 
+	  TO_CHAR(SSAT, 'HH24:MI') AS SSAT , 
+	  TO_CHAR(SSUN, 'HH24:MI') AS SSUN , 
+	  TO_CHAR(EMON, 'HH24:MI') AS EMON , 
+	  TO_CHAR(ETUE, 'HH24:MI') AS ETUE , 
+	  TO_CHAR(EWED, 'HH24:MI') AS EWED , 
+	  TO_CHAR(ETHU, 'HH24:MI') AS ETHU , 
+	  TO_CHAR(EFRI, 'HH24:MI') AS EFRI , 
+	  TO_CHAR(ESAT, 'HH24:MI') AS ESAT , 
+	  TO_CHAR(ESUN, 'HH24:MI') AS ESUN ,         
+     SO.ONOTES
+FROM STORES S JOIN STORES_DETAIL SD ON S.STORE_IDX =SD.STORE_IDX
+              JOIN STORES_OPERATION SO ON S.STORE_IDX = SO.STORE_IDX
+WHERE S.STORE_IDX = #{store_idx}
+</select>
+
+
+<select id="getStoreTag">
+SELECT *
+FROM STORES_TAG
+WHERE STORE_IDX = #{store_idx}
+
+</select>
+<select id="getStoreCategory">
+SELECT SC.CATEGORY_ID, C.CATEGORY_NAME 
+FROM STORES_CATEGORY SC JOIN CATEGORY C ON SC.CATEGORY_ID = C.CATEGORY_ID
+WHERE STORE_IDX = #{store_idx}
+</select>
+
+<select id="getReservationStore">
+SELECT RS_IDX,STORE_IDX,NOTES,STATUS,LINK,
+       TO_CHAR(OPEN_DATE, 'yyyy-mm-dd hh:mm:ss') AS OPEN_DATE  
+FROM RESERVATION_STORES
+WHERE STORE_IDX = #{store_idx}
+
+</select>
+
+<select id="getReservationPlan">
+SELECT
+START_TIME , 
+END_TIME , 
+RP_IDX, PLAN, MAX_NUMBER
+FROM RESERVATION_PLANS
+WHERE PLAN = #{plan}
+</select>
+
+<select id="getReservationDate">
+SELECT * 
+FROM RESERVATION_DATES
+WHERE RS_IDX = #{rs_idx}
+</select>
+
+<select id="getReservationRs_idx">
+SELECT RS_IDX 
+FROM RESERVATION_STORES
+WHERE STORE_IDX = #{store_idx}
+</select>
+
+<update id="updateReservationStore">
+UPDATE RESERVATION_STORES
+SET NOTES = #{notes}, OPEN_DATE = #{open_date}, STATUS = #{status}, LINK = #{link}
+WHERE STORE_IDX = #{store_idx}
+</update>
+
+<update id="updateStore">
+UPDATE STORES
+SET TITLE = #{title}, AGE = #{age}, BRAND1 = #{brand1}, BRAND2 = #{brand2}
+WHERE STORE_IDX = #{store_idx}  
+</update>
+
+
+<update id="updateStoreDetail">
+UPDATE STORES_DETAIL
+SET ADDRESS = #{address}, START_DATE = #{start_date}, END_DATE = #{end_date}, HOMEPAGE = #{homepage}, SNS = #{sns}, INTRODUCTION = #{introduction}, CONTENT = #{content}, 
+PARKING = #{parking}, FARE = #{fare}, AGE_LIMIT = #{age_limit}, SHOOTING = #{shooting},GOODS = #{goods}
+WHERE DETAIL_IDX = #{detail_idx}    
+</update>
+
+<update id="updateStoreOperation">
+UPDATE STORES_OPERATION
+SET SMON = TO_TIMESTAMP(TO_CHAR(SYSDATE, 'YYYY-MM-DD') || ' ' || #{SMON}, 'YYYY-MM-DD HH24:MI'),
+    STUE = TO_TIMESTAMP(TO_CHAR(SYSDATE, 'YYYY-MM-DD') || ' ' || #{STUE}, 'YYYY-MM-DD HH24:MI'), 
+    SWED = TO_TIMESTAMP(TO_CHAR(SYSDATE, 'YYYY-MM-DD') || ' ' || #{SWED}, 'YYYY-MM-DD HH24:MI'), 
+    STHU = TO_TIMESTAMP(TO_CHAR(SYSDATE, 'YYYY-MM-DD') || ' ' || #{STHU}, 'YYYY-MM-DD HH24:MI'),
+    SFRI = TO_TIMESTAMP(TO_CHAR(SYSDATE, 'YYYY-MM-DD') || ' ' || #{SFRI}, 'YYYY-MM-DD HH24:MI'), 
+    SSAT = TO_TIMESTAMP(TO_CHAR(SYSDATE, 'YYYY-MM-DD') || ' ' || #{SSAT}, 'YYYY-MM-DD HH24:MI'),
+    SSUN = TO_TIMESTAMP(TO_CHAR(SYSDATE, 'YYYY-MM-DD') || ' ' || #{SSUN}, 'YYYY-MM-DD HH24:MI'),
+    EMON = TO_TIMESTAMP(TO_CHAR(SYSDATE, 'YYYY-MM-DD') || ' ' || #{EMON}, 'YYYY-MM-DD HH24:MI'),
+    ETUE = TO_TIMESTAMP(TO_CHAR(SYSDATE, 'YYYY-MM-DD') || ' ' || #{ETUE}, 'YYYY-MM-DD HH24:MI'),
+    EWED = TO_TIMESTAMP(TO_CHAR(SYSDATE, 'YYYY-MM-DD') || ' ' || #{EWED}, 'YYYY-MM-DD HH24:MI'), 
+    ETHU = TO_TIMESTAMP(TO_CHAR(SYSDATE, 'YYYY-MM-DD') || ' ' || #{ETHU}, 'YYYY-MM-DD HH24:MI'), 
+    EFRI = TO_TIMESTAMP(TO_CHAR(SYSDATE, 'YYYY-MM-DD') || ' ' || #{EFRI}, 'YYYY-MM-DD HH24:MI'), 
+    ESAT = TO_TIMESTAMP(TO_CHAR(SYSDATE, 'YYYY-MM-DD') || ' ' || #{ESAT}, 'YYYY-MM-DD HH24:MI'),
+    ESUN = TO_TIMESTAMP(TO_CHAR(SYSDATE, 'YYYY-MM-DD') || ' ' || #{ESUN}, 'YYYY-MM-DD HH24:MI'), 
+    ONOTES = #{onotes}
+WHERE STORE_IDX = #{store_idx}   
+</update>
+
+<delete id="deleteStoreCategory">
+DELETE FROM STORES_CATEGORY
+WHERE STORE_IDX = #{store_idx}   
+</delete>
+
+<delete id="deleteStoreTage">
+DELETE FROM STORES_TAG
+WHERE STORE_IDX = #{store_idx}   
+</delete> 
+ 
+<delete id="deleteReservationPlan">
+DELETE FROM RESERVATION_PLANS
+WHERE PLAN = #{plan}   
+</delete>
+
+<delete id="deleteReservationDate">
+DELETE FROM RESERVATION_DATES
+WHERE RS_IDX = #{rs_idx}   
+</delete>
+
+<select id="getImageStorList">
+SELECT *
+FROM IMAGE_STORE
+WHERE STORE_IDX= #{store_idx}
+
+</select>
+
+<select id="getImageStore">
+SELECT *
+FROM IMAGE_STORE
+WHERE IS_IDX= #{is_idx}
+</select>
+
+<delete id="deleteImageStore">
+DELETE FROM IMAGE_STORE
+WHERE IS_IDX = #{is_idx}  
+</delete>
+
+
+<select id="getStoreOperationView">
+SELECT S.STORE_IDX,
+       S.TITLE, 
+       S.AGE,
+       S.BRAND1,
+       S.BRAND2,
+       SD.ADDRESS,
+       SD.INTRODUCTION,
+       SD.HIT,
+       SD."LIKE",
+       TO_CHAR(SD.START_DATE, '""YYYY"."MM"."DD""') AS START_DATE,  
+       TO_CHAR(SD.END_DATE, '""YYYY"."MM"."DD""') AS END_DATE, 
+       CASE 
+           WHEN SD.START_DATE &gt; SYSDATE THEN '예정' 
+           WHEN SD.END_DATE &lt; SYSDATE THEN '마감'   
+           ELSE '진행중'       
+       END AS LABEL,
+       S.STATUS, 
+       S.BAN, 
+       RS.STATUS AS RSTATUS,
+       RS.RS_IDX,
+       LISTAGG(DISTINCT C.CATEGORY_NAME, '  |  ') WITHIN GROUP (ORDER BY C.CATEGORY_NAME) AS CATEGORY_NAME,
+       LISTAGG(DISTINCT ST.TAG_NAME, '|') WITHIN GROUP (ORDER BY ST.TAG_NAME) AS TAG_NAME,
+       COUNT(RE.REVIEW_IDX) AS REVIEW_COUNT,  
+       ROUND(AVG(RE.SCORE), 2) AS AVERAGE_SCORE,
+       RS.LINK,
+       COUNT(DISTINCT W.WAITING_IDX) AS WAITING_COUNT 
+FROM STORES S 
+JOIN STORES_DETAIL SD ON S.STORE_IDX = SD.STORE_IDX
+JOIN RESERVATION_STORES RS ON S.STORE_IDX = RS.STORE_IDX
+LEFT JOIN STORES_CATEGORY SC ON S.STORE_IDX = SC.STORE_IDX
+LEFT JOIN CATEGORY C ON C.CATEGORY_ID = SC.CATEGORY_ID
+LEFT JOIN REVIEWS RE ON RE.STORE_IDX = S.STORE_IDX
+LEFT JOIN STORES_TAG ST ON ST.STORE_IDX = S.STORE_IDX
+LEFT JOIN WAITINGS W ON W.STORE_IDX = S.STORE_IDX
+WHERE S.COMPANY_IDX = #{company_idx}
+AND  S.STATUS ='승인' AND S.BAN ='N'
+ <if test="company_idx != null">
+  AND SD.START_DATE &lt;= SYSDATE
+  AND SD.END_DATE &gt;= SYSDATE
+ </if>
+GROUP BY S.STORE_IDX, 
+         S.TITLE, 
+         SD.START_DATE, 
+         SD.END_DATE, 
+         S.STATUS, 
+         S.BAN, 
+         RS.STATUS,
+         S.AGE,
+         S.BRAND1,
+         S.BRAND2,
+         SD.ADDRESS,
+         SD.INTRODUCTION,
+         SD.HIT,
+         SD."LIKE",
+         RS.RS_IDX,
+         RS.LINK 
+</select>
+
+
+<select id="getReservationDateList">
+SELECT *
+FROM (
+    SELECT DISTINCT
+        TO_CHAR(RESERVATION_START_DATE + n.n, 'YYYY-MM-DD') AS RESERVATION_DATE,  
+        RD.RD_IDX,
+        RD.PLAN,
+        RP.RP_IDX,
+        TO_CHAR(RP.START_TIME, 'HH24:MI') || ' - ' || TO_CHAR(RP.END_TIME, 'HH24:MI') AS TIME_RANGE,
+        RP.MAX_NUMBER,
+        ROW_NUMBER() OVER (PARTITION BY RESERVATION_START_DATE + n.n ORDER BY TO_CHAR(RP.START_TIME, 'HH24:MI')) || '차' AS TIME_SLOT
+    FROM
+        RESERVATION_DATES RD
+    JOIN (
+        SELECT LEVEL - 1 AS n
+        FROM DUAL
+        CONNECT BY LEVEL  &lt;= 32
+    ) n ON RD.RESERVATION_START_DATE + n.n  &lt;= RD.RESERVATION_END_DATE
+    JOIN RESERVATION_PLANS RP ON RD.PLAN = RP.PLAN
+    WHERE
+        RD.RS_IDX = #{rs_idx}
+) subquery
+WHERE
+    RESERVATION_DATE = TO_DATE(#{year} || '-' || #{month} || '-' || #{day}, 'YYYY-MM-DD')
+ORDER BY
+    RESERVATION_DATE 
+</select>
+
+<select id="getReservationUserList">
+SELECT 
+    subquery.RESERVATION_DATE,
+    subquery.RD_IDX,
+    subquery.PLAN,
+    subquery.RP_IDX,
+    subquery.TIME_RANGE,
+    subquery.MAX_NUMBER,
+    subquery.TIME_SLOT,
+    U.SOCIAL_ID,
+    U.ID,
+    U.NAME,
+    RU.STATUS,
+    RU.RESERVATION_NUMBER
+FROM (
+    SELECT DISTINCT
+        RD.RESERVATION_START_DATE + n.n AS RESERVATION_DATE,
+        RD.RD_IDX,
+        RD.PLAN,
+        RP.RP_IDX,
+        TO_CHAR(RP.START_TIME, 'HH24:MI') || ' - ' || TO_CHAR(RP.END_TIME, 'HH24:MI') AS TIME_RANGE,
+        RP.MAX_NUMBER,
+        ROW_NUMBER() OVER (PARTITION BY RD.RESERVATION_START_DATE + n.n ORDER BY TO_CHAR(RP.START_TIME, 'HH24:MI')) || '차' AS TIME_SLOT
+    FROM
+        RESERVATION_DATES RD
+    JOIN (
+        SELECT LEVEL - 1 AS n
+        FROM DUAL
+        CONNECT BY LEVEL &lt;= 32
+    ) n ON RD.RESERVATION_START_DATE + n.n &lt;= RD.RESERVATION_END_DATE
+    JOIN RESERVATION_PLANS RP ON RD.PLAN = RP.PLAN
+    WHERE
+        RD.RS_IDX = #{rs_idx}
+) subquery
+JOIN RESERVATION_USERS RU ON subquery.RESERVATION_DATE = RU.RESERVATION_DATE
+    AND subquery.RP_IDX = RU.RP_IDX
+JOIN USERS U ON RU.USER_IDX = U.USER_IDX
+WHERE
+    subquery.RESERVATION_DATE = TO_DATE(#{date}, 'YYYY-MM-DD') AND
+    subquery.RP_IDX = #{rp_idx}
+ORDER BY
+    subquery.RESERVATION_DATE
+
+
+
+</select>
 </mapper>
 
 

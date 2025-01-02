@@ -1,5 +1,7 @@
 package com.board.business.dto;
 
+import java.sql.Date;
+
 import lombok.Data;
 
 @Data
@@ -7,7 +9,7 @@ public class StoreUpdateDto {
 	   private int store_idx;         
 	    private int company_idx;       
 	    private String title;          
-	    private int age;                
+	    private String age;                
 	    private String brand1;          
 	    private String brand2;         
 	    private String cdate;          
@@ -15,8 +17,8 @@ public class StoreUpdateDto {
 	    private String ban;             
 	    private int detail_idx;         
 	    private String address;         
-	    private String start_date;      
-	    private String end_date;        
+	    private Date start_date;      
+	    private Date end_date;        
 	    private String homepage;       
 	    private String sns;             
 	    private String introduction;     
@@ -39,11 +41,15 @@ public class StoreUpdateDto {
 	    private String emon;           
 	    private String etue;            
 	    private String ewed;      
+	    private String ethu;      
 	    private String efri;        
 	    private String esat;           
 	    private String esun;            
 	    private String onotes;         
+       
 	
 	
+	    
+
 
 }
