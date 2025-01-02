@@ -289,10 +289,31 @@ margin-bottom: 100px;
 	                                title: title
 	                            });
 
+	                         // 마커 객체에 관련 데이터를 추가
+	                            marker.set("popupData", {
+	                                title: title,
+	                                content: "팝업 내용",
+	                                hit: 100,
+	                                start_date: "2025-01-01",
+	                                end_date: "2025-01-15"
+	                            });
+	                         
 	                            markers.push(marker);
 	                            
 	                            // 마커 클릭 이벤트 추가
 	                            naver.maps.Event.addListener(marker, 'click', function() {
+
+	                                // 클릭한 마커의 데이터 가져오기
+	                                var popupData = marker.get("popupData");
+	                                
+	                                // 팝업 컨테이너에 데이터 삽입
+	                                document.querySelector("#popup-container .ootd-of").innerText = popupData.title;
+	                                document.querySelector("#popup-container .popup-period").innerText = `${popupData.start_date} - ${popupData.end_date}`;
+	                                document.querySelector("#popup-container ._100-span").innerText = `${popupData.hit}명`;
+
+	                                // 팝업 표시
+	                                var popupContainer = document.getElementById("popup-container");
+	                                
 	                                document.getElementById('popup-container').style.display = 'block';
 	                            });
 

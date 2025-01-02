@@ -32,6 +32,7 @@ public class MapController {
         ModelAndView mv = new ModelAndView(); // map.html 파일을 반환
         mv.addObject("popupList", popupList); // 리스트를 모델에 추가
         List<UsersDto> review = usersMapper.getPopupReview();
+        List<UsersDto> StoreHit = usersMapper.getStoresHitAtMap();
         mv.setViewName("users/popup/map");
 
         return mv; // ModelAndView 반환

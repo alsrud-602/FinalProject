@@ -244,7 +244,7 @@
 
 
 
-<script src="/js/authuser.js" defer></script>
+
 <script>
 
 
@@ -637,6 +637,7 @@ document.addEventListener("DOMContentLoaded", function() {
     console.log("Days Remaining:", daysRemaining); // 디버깅 정보
 });
 </script>
+<script src="/js/authuser.js" defer></script>
 </body>
 
 

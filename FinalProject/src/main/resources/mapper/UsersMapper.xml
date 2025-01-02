@@ -371,6 +371,21 @@
 	ORDER BY
 	    st.store_idx ASC
   </select>
+  
+  <!-- MAP 리뷰 조회수 조회 -->
+    <select id="getStoresHitAtMap">
+    SELECT
+	    us.name,  us.user_idx,
+	    re.review_idx, re.user_idx, re.store_idx,re.score,
+	    re.content,re."LIKE",re.hit,
+	    TO_CHAR(re.cdate, 'YYYY-MM-DD') AS review_date  
+	FROM
+	    reviews re 
+	JOIN 
+	    users us ON re.user_idx = us.user_idx 
+	WHERE 
+	    re.store_idx = #{store_idx}
+	</select>
 
   <!-- 조회수 조회 -->
   <select id="getStoreHit">

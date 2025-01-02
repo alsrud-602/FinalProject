@@ -93,6 +93,8 @@ public interface UsersMapper {
 	//Map에서 리뷰 제목이나 내용가져오기 
 	List<UsersDto> getPopupReview();
 
+	List<UsersDto> getStoresHitAtMap();
+
 
 
 
