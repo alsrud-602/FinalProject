@@ -52,6 +52,9 @@ public interface UsersMapper {
 	// 상세 페이지 예약 구분
 	UsersDto getStoreReservation(UsersDto usersdto);
 
+
+	UsersDto getUserById(Integer userIdx);
+
 	// 상세페이지 운영시간 
 	UsersDto getStoreOperation(UsersDto usersdto);
     
@@ -60,6 +63,7 @@ public interface UsersMapper {
     
 	//전체 조회수 조회
 	List<UsersDto> getSelectStoreHit(@Param("store_idx") int store_idx, @Param("username") String username);
+
 	
 	//조회수 증가
 	int insertStoreHit(@Param("store_idx") int store_idx, @Param("username") String username);
