@@ -22,7 +22,7 @@
 <div class="container">
   <main>
   
-  <button id="reserveButton"> 대기없음 </button>
+  <button id="reserveButton"> 대기상황 </button>
   <div >대기인원</div>
   <div id ="waiting-count"></div>
   </main>
@@ -32,6 +32,7 @@
 
 </body>
   <script>
+  const store_idx = 90;
   
   const socket = new SockJS('/ws');  // 웹소켓 연결
   const stompClient = Stomp.over(socket);
@@ -57,17 +58,47 @@
       });
 
      
-      /*
+      
       // 가게 예약 대기 상태 실시간 업데이트
-      stompClient.subscribe("/topic/StoreStatus/1", function(message) {
-          const status = message.body;
-          if (status === "대기기능사용") {
-              document.getElementById("reserveButton").textContent = " 대기하기";
-              document.getElementById("reserveButton").disabled = false;
-          }
+      stompClient.subscribe(`/topic/StoreStatus/\${store_idx}`, function(message) {
+    	  const data = JSON.parse(message.body);
+    	    const onsite_use = data.onsite_use;
+    	    const reserveButton = document.getElementById("reserveButton");
+
+    	    console.log('onsite_use의 값' + onsite_use);
+    	    console.log('data의 값' + data);
+    	    if (onsite_use === "able") {
+    	      reserveButton.disabled = false;
+    	      reserveButton.textContent = "대기하기";
+    	    } else {
+    	      reserveButton.disabled = true;
+    	      reserveButton.textContent = "대기없음";
+    	    }
       });
-      */
+     
   });
+  
+  //처음 로딩시 
+  fetch(`/api/waiting/status?store_idx=\${encodeURIComponent(store_idx)}`)
+  .then(response => response.json())
+  .then(status => {
+	  console.log('처음로딩 버튼 상태');
+	  console.log(status);
+    const reserveButton = document.getElementById("reserveButton");
+    if (status.onsite_use === 'able') {
+      reserveButton.disabled = false;
+      reserveButton.textContent = '대기하기';
+    } else {
+      reserveButton.disabled = true;
+      reserveButton.textContent = '대기없음';
+    }
+  });
+  
+  
+  
+  
+  
+  
   
   function updateWaitingList(waitingList) {
 	    const waitingCountElement = document.getElementById("waiting-count");

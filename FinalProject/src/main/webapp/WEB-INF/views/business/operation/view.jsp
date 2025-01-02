@@ -679,6 +679,12 @@ button:hover {
 #advanceReservation {
 	display: none;
 }
+
+#alert-index{
+font-size: 25px;
+font-weight:600;
+margin: 30px 42px;
+}
 </style>
 </head>
 
@@ -740,8 +746,7 @@ button:hover {
 
 			</div>
 		</div>
-		<img id="icon_next" src="/images/icon/next.png"
-			onclick="updateCarousel(this)">
+		<img id="icon_next" src="/images/icon/next.png">
 
 
 		<div class="info">
@@ -879,7 +884,8 @@ button:hover {
 		<section class="reservation-status">
 			<div class="reservation-header">
 				<h3>현장예약대기</h3>
-				<button class="use-btn" onclick="onSiteList()">사용하기</button>
+				<button class="use-btn" onclick="onSiteUse(this)" data-use="able">사용하기</button>
+				<button class="use-btn" onclick="onSiteUse(this)"  data-use="disable">사용중지</button>
 			</div>
          
 			<div class="warning-message">
@@ -896,7 +902,7 @@ button:hover {
 					<option value="customer-request">고객 요청</option>
 					<option value="etc">기타</option>
 				</select>
-				<p>대기 2팀</p>
+				<p id="waiting-count">대기 2팀</p>
 			</div>
 			<table id="reservation-table">
 				<tr>
@@ -937,11 +943,10 @@ button:hover {
 						<h3>알림보내기</h3>
 						<span class="close-btn">x</span>
 					</div>
-					<select>
-						<option>현재순번</option>
-						<option>기타</option>
-					</select>
-					<button class="complete-btn">완료</button>
+                    <div id='alert-index'>현재순번 알림보내기</div>
+                     
+					<button class="complete-btn" onclick="updateSend(this)">완료</button>
+					<input type="hidden" id="alert-waiting-idx"/>
 				</div>
 
 				<div class="notification-delete">
@@ -955,6 +960,7 @@ button:hover {
 						<option value="예약취소">고객요청</option>
 					</select>
 					<button class="complete-delete-btn" onclick="deleteSend(this)">완료</button>
+					<input type="hidden" id="delete-waiting-idx"/>
 				</div>
 			</div>
 
@@ -975,10 +981,9 @@ button:hover {
 
 	<script>
 
-	
 
 	
-	function onSiteList() {
+   function onSiteList() {
 		let store_idx  = document.querySelector('#reservation_storeIdx').value	
 		console.log(store_idx);
 		loadUserWaitingList(store_idx)	
@@ -1028,62 +1033,85 @@ button:hover {
 					<td>\${item.name}</td>
 					<td>\${item.id}</td>
 					<td>\${item.reservation_number}</td>
-					<td><button class="notify-btn">알림보내기</button></td>
+					<td><button onclick="alertModal(this)"  data-idx="\${item.waiting_idx}" class="notify-btn">알림보내기</button></td>
 					<td>\${item.status}</td>
 					<td><button onclick="deleteModal(this)" data-idx="\${item.waiting_idx}">삭제하기</button></td>
                 </tr>
             `;
         });
+      
+        let watingCount = data.length;
+        console.log(watingCount);
+        $('#waiting-count').html('대기 ' + watingCount + '팀'); 
     	
 
     }
-	
+	     
+    let isWaitingConfigCalled = false;
+
     function waitingconfig(wc) {
-        
-        const conditionResult = wc.trim() !== '0';
-        
-        
+        if (isWaitingConfigCalled) return; // 중복 호출 방지
+        isWaitingConfigCalled = true;
+
+        console.log("wc 값 확인:", wc, "타입:", typeof wc);
+        const conditionResult = wc && String(wc).trim() !== '0';
+
+        console.log("조건 결과:", conditionResult);
+
         if (conditionResult) {
+            console.log('onSiteList() 호출');
             onSiteList();
-        }else{
-        	
-        const tableBody = document.querySelector('#reservation-table');	           
-        console.log(tableBody);
-        tableBody.innerHTML = `
+        } else {
+            const tableBody = document.querySelector('#reservation-table');	           
+            console.log(tableBody);
+            tableBody.innerHTML = `
+            <tbody>
+                    <tr>
+            			<th>순번</th>
+            			<th>이름</th>
+            			<th>ID</th>
+            			<th>인원수</th>
+            			<th>알림 보내기</th>
+            			<th>상태</th>
+            			<th>삭제하기</th>
+                    </tr>
+            </tbody>      
+                `;
+                
+            tableBody.innerHTML += `
                 <tr>
-        			<th>순번</th>
-        			<th>이름</th>
-        			<th>ID</th>
-        			<th>인원수</th>
-        			<th>알림 보내기</th>
-        			<th>상태</th>
-        			<th>삭제하기</th>
+                    <td colspan="7" style="text-align:center;"> 대기인원이 없습니다.</td>
                 </tr>
-            `;
+            `;   
         }
+
+        isWaitingConfigCalled = false;
     }
+    
+    
     
     
     function deleteModal(element) {
-        // 삭제 팝업 보여주기
-        $('.notification-delete').show(); 
-        // overlay 보여주기	
-        $('.overlay').show(); 
-
         // data-idx 값을 가져오기
         const dataIdx = $(element).data('idx');
 
-        // input hidden 요소 생성
-        const hiddenInput = $('<input>', {
-            type: 'hidden',
-            id: 'waiting-idx',
-            value: dataIdx
-        });
-        // .notification-delete에 hidden input 추가
-        $('.notification-delete').append(hiddenInput);
+        // input hidden 요소 값 추가
+        $('#delete-waiting-idx').val(dataIdx);
+        $('.notification-delete').show(); 
+        // overlay 보여주기	
+        $('.overlay').show(); 
     }
 
-    
+    function alertModal(element){
+        // data-idx 값을 가져오기
+        const dataIdx = $(element).data('idx');
+    	
+        // input hidden 요소 값 추가
+        $('#alert-waiting-idx').val(dataIdx); 	
+    	
+        $('.notification').show(); // 알림 보내기 팝업 보여주기
+        $('.overlay').show(); // overlay 보여주기	
+    }
     
     
     
@@ -1127,8 +1155,45 @@ button:hover {
 	    	
 	    }  
 	  
-    
-    
+	    function updateSend(button){
+	        const hiddenInput = $(button).next('input[type="hidden"]');
+	        const selectedValue = '현재순번';
+	        const hiddenValue = hiddenInput.val(); 
+	        console.log(selectedValue)
+	        const waitingSend = {
+	        		waiting_idx: hiddenValue, 
+	        		status: selectedValue
+	            };
+	        
+	        if (stompClient) {
+	            stompClient.send("/app/Waiting/Send", {}, JSON.stringify(waitingSend));
+	        } else {
+	            console.error("WebSocket is not connected.");
+	        }  
+	        
+	        
+	        $('.notification').hide(); // 알림 보내기 팝업 숨기기
+	        $('.overlay').hide(); // overlay 숨기기
+	    	
+    }   
+
+   function onSiteUse(element){
+	let store_idx =  document.querySelector('#reservation_storeIdx').value
+	  let ableStatus = element.getAttribute('data-use'); 
+   	     const storeStatus = {
+   	    		store_idx : store_idx,   
+   	    		onsite_use: ableStatus  };
+     if (stompClient) {
+        stompClient.send("/app/Waiting/StoreStatus", {}, JSON.stringify(storeStatus));
+     } else {
+        console.error("WebSocket is not connected.");
+     }  
+   	
+   	
+   }
+	    	    
+	    
+	    
 	////////////////////////////////////////////////////////
 	
 	
@@ -1157,11 +1222,12 @@ button:hover {
       updateInfo();
       updateButton();
       displayCurrentReservations(); 
-      displayUserList();
+
     }
     
     
     function updateInfo() {
+    	console.log('updateInfo() 발동')
     	  const currentSlide = slides[currentIndex];
     	  const reviewCount = currentSlide.getAttribute('data-review'); 
     	  const scoreAvg = currentSlide.getAttribute('data-avg'); 
@@ -1184,9 +1250,11 @@ button:hover {
     	  document.querySelector('#reservation_link').value = link; 
     	  document.querySelector('#reservation_storeIdx').value = storeIdx; 
     	  document.querySelector('#reservation_wc').value = wc; 
-    	  
+    	  console.log('확인 합니다 ');
+    	  console.log(wc);
     	  reservationDisplay(link,rstaus);
-    	 waitingconfig(wc)
+    	  waitingconfig(wc) 
+    	  
     	}
     
     function updateButton(){
@@ -1210,6 +1278,7 @@ button:hover {
 
     // 초기화
     initializeCarousel();    
+    console.log('초기화 루프');
     updateInfo();
     updateButton();
     
@@ -1716,10 +1785,6 @@ function displayUserList(data){
     /* 현장대기예약 상세 */
 $(function() {
     // 팝업 버튼 클릭 이벤트
-    $('.notify-btn').on('click', function() {
-        $('.notification').show(); // 알림 보내기 팝업 보여주기
-        $('.overlay').show(); // overlay 보여주기
-    });
 
     $('.delete-btn').on('click', function() {
         $('.notification-delete').show(); // 삭제 팝업 보여주기
@@ -1727,7 +1792,7 @@ $(function() {
     });
 
     // 팝업 닫기
-    $('.complete-btn, .close-btn').on('click', function() {
+    $('.close-btn').on('click', function() {
         $('.notification').hide(); // 알림 보내기 팝업 숨기기
         $('.overlay').hide(); // overlay 숨기기
     });

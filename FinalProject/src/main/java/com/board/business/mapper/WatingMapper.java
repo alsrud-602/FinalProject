@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.board.business.dto.StoreStatusDto;
 import com.board.business.dto.WaitingDto;
 
 @Mapper
@@ -18,6 +19,10 @@ public interface WatingMapper {
 	void updateWaitingOrder(int store_idx, String wating_order, int newOrder);
 
 	int getStore_idxWaiting(int waiting_idx);
+
+	void updateOnsiteUse(StoreStatusDto storeStatusDTO);
+
+	StoreStatusDto getStoreStauts(int store_idx);
 
 	
 
