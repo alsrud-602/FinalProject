@@ -57,7 +57,6 @@ public interface UsersMapper {
 	List<UsersDto> getStoreCategory(UsersDto usersdto);
 
 
->>>>>>> 9bb1d08847493158a3f25020c50f40409ca49ce9
 
 	
 
