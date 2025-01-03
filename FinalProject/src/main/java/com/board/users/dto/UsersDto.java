@@ -35,6 +35,7 @@ public class UsersDto {
 	private int like;
 	private int hit;
     private String goods;
+    private String igdate;
     
 
     private String user_id;
@@ -49,5 +50,44 @@ public class UsersDto {
     private String social_type;
     private String name;
 
+    
+    private int tage_idx;
+    private String tag_name;
+    
+    private int rs_idx; 
+    private String notes;
+    private String open_date;
+    private String link;
+    
+    private int operation_idx;
+    private String smon;
+    private String stue;
+    private String swed;
+    private String sthu;
+    private String sfri;
+    private String ssat;
+    private String ssun;
+    private String emon;
+    private String etue;
+    private String ewed;
+    private String ethu;
+    private String efri;
+    private String esat;
+    private String esun;
+    private String onotes;
+    
+    private int category_idx;
+    private String category_name;
+    private int category_id;
+    private int sc_idx;
+    
+    private int user_count;
+    private int ls_idx;
+    private int storelike;
+    
+    private int review_idx;
+    private int score; 
+    private String review_date;
+    private int storeidx;
     
 }

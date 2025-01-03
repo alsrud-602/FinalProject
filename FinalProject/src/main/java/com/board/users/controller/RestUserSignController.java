@@ -97,7 +97,7 @@ public class RestUserSignController {
                session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
 
                // JWT를 쿠키에 저장
-               Cookie jwtCookie = new Cookie("jwt", jwt);
+               Cookie jwtCookie = new Cookie("adminjwt", jwt);
                jwtCookie.setHttpOnly(true);
                jwtCookie.setSecure(true); // HTTPS에서만 사용
                jwtCookie.setMaxAge(60 * 120); // 2시간
@@ -105,7 +105,7 @@ public class RestUserSignController {
                response.addCookie(jwtCookie);
 
                // 2FA 페이지로 리다이렉트
-               return ResponseEntity.ok(Map.of("token", jwt, "redirect", "/Users/2fa"));
+               return ResponseEntity.ok(Map.of("adminjwt", jwt, "redirect", "/Users/2fa"));
            }
 
             String jwt = jwtUtil.generateToken(authentication.getName(), "user", false);
@@ -115,7 +115,7 @@ public class RestUserSignController {
             Cookie jwtCookie = new Cookie("userJwt", jwt);
             jwtCookie.setHttpOnly(true);
             jwtCookie.setSecure(true); // HTTPS에서만 사용
-            jwtCookie.setMaxAge(60 * 60 * 11); // 2시간
+            jwtCookie.setMaxAge(60 * 120); // 2시간
             jwtCookie.setPath("/");
             response.addCookie(jwtCookie);
 

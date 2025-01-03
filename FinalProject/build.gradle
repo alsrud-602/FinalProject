@@ -65,14 +65,31 @@ dependencies {
     //OAuth2
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     
-    //opt
+
+    //WebSocket
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.springframework.messaging:spring-messaging'
+
+
+    //topt
     implementation files('lib/googleauth-1.5.0.jar')
     implementation 'com.google.zxing:core:3.3.0'
 	implementation 'com.google.zxing:javase:3.3.0'
 	
 	    // Apache Commons Codec 추가
     implementation 'commons-codec:commons-codec:1.15' // 또는 최신 버전
+    
+    //Cluade API
+    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
+    
+    //WebClient
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+
 }
+
+
 
 tasks.named('bootBuildImage') {
     builder = 'paketobuildpacks/builder-jammy-base:latest'
@@ -81,3 +98,4 @@ tasks.named('bootBuildImage') {
 tasks.named('test') {
     useJUnitPlatform()
 }
+

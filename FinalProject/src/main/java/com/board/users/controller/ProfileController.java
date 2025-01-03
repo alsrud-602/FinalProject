@@ -43,9 +43,11 @@ public class ProfileController {
 	
 	@Autowired
 	private UserService userService;
+
 	
 	@Autowired
 	private UserCategoryMapper userCategoryMapper;
+
 	
 	// http://localhost:9090
     @RequestMapping("Home")
@@ -93,6 +95,7 @@ public class ProfileController {
         mv.setViewName("users/profile/home");
         return mv;
     }
+
     
     @RequestMapping("UpdateProfileForm")
     public ModelAndView updateprofileForm(HttpServletRequest request, Model model) {

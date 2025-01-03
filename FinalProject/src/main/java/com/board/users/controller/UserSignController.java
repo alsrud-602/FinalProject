@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.board.jwt.JwtUtil;
 import com.board.users.dto.User;
+import com.board.users.mapper.PopcornMapper;
 import com.board.users.service.UserService;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
@@ -54,6 +55,9 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/Users")
 public class UserSignController {
 
+	@Autowired
+	private PopcornMapper popcornMapper; //팝콘지갑,로그,출석 추가용 
+	
     @Autowired
     private UserService userService;
     
@@ -94,6 +98,11 @@ public class UserSignController {
     @PostMapping("/Signup")
     public String registerUser(@ModelAttribute User user) {
         userService.registerUser(user);
+        
+        popcornMapper.createPopcornWallet(user); //팝콘 지갑 생성
+        popcornMapper.createUserAttendance(user);//출석 테이블 생성
+        popcornMapper.createPopcornLog(user);//팝콘 내역 생성
+        
         return "redirect:/Users/LoginForm";
     }
     /*========================================================*/
@@ -103,6 +112,7 @@ public class UserSignController {
 	public  String   loginform() {
 		return "login";
 	}
+	
 	@GetMapping("/KakaoCallBack")
 	public String kakaoCallBack(HttpSession session, HttpServletResponse response, Model model) {
 	    String jwt = (String) session.getAttribute("jwt");
@@ -128,12 +138,8 @@ public class UserSignController {
 
     @PostMapping("/Admin/otp")
     public String processAdminOtp(@RequestParam String code, Authentication authentication, HttpSession session) {
-		System.out.println("갱신정보"+ code+ "세션" + session);
-		System.out.println("왜안되냐구"+ isValidAdminOTP(code, session));
-		
 		
         if (isValidAdminOTP(code, session)) {
-        	
         	
             // 인증 성공 처리
             List<GrantedAuthority> updatedAuthorities = new ArrayList<>(authentication.getAuthorities());

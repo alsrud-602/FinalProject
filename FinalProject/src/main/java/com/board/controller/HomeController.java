@@ -18,12 +18,16 @@ public class HomeController {
 	
 	// http://localhost:9090
 	@RequestMapping("/")
+
+	public  String   home() {
+		return "users/usersMain/main";
+
+
 	public  ModelAndView   home() {
 		//랭킹 팝업
 		List<UsersDto> ranklist = usersMapper.getRanklist();
-		System.out.println("ranklist : "+ranklist);
-		
-		
+		System.out.println("ranklist : "+ranklist);		
+	
 		// 팝업 오픈예정
 		List<UsersDto> opendpopuplist = usersMapper.getOpendpopuplist();
 		System.out.println("opendpopuplist : "+opendpopuplist);
@@ -44,19 +48,13 @@ public class HomeController {
 
 	@RequestMapping("/Ho")
 	public  String   test() {
-		return "business/registration/write";
+		return "admin/user/user";
 		
 
 		//return "/WEB-INF/views/home.jsp";
 	}
 
 	
-	@RequestMapping("/Ho2")
-	public  String   test2() {
-		return "users/usersWallet/wallet";
-
-		//return "/WEB-INF/views/home.jsp";
-	}
 	
 
 
