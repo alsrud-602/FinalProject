@@ -18,6 +18,7 @@ import com.board.jwt.JwtUtil;
 import com.board.users.dto.CategoryRequest;
 import com.board.users.dto.User;
 import com.board.users.dto.UserCategory;
+import com.board.users.dto.UsersDto;
 import com.board.users.mapper.UserCategoryMapper;
 import com.board.users.mapper.UsersMapper;
 import com.board.users.service.UserService;
@@ -175,6 +176,7 @@ public class ProfileController {
             model.addAttribute("error", "JWT 토큰이 없습니다.");
         }
 
+        
         ModelAndView mv = new ModelAndView();
         mv.setViewName("users/profile/myreview");
         return mv;

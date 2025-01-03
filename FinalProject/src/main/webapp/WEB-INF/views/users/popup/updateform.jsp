@@ -123,7 +123,10 @@ margin-bottom: 30px;
       </div>
       </div>
       
-      <form action="/Users/Popup/Myreview">
+      <form action="/Users/Update" method="POST">
+      <input type="hidden" name="user_idx" value="${useridx}">
+      <input type="hidden" name="review_idx" value="${review_idx}">
+      <input type="hidden" name="store_idx" value="${storedetail.store_idx}">
       <div class="date_line">
       <div class="sub_box"><p>현재리뷰수</p><p>${totalcount.review_idx}</p></div>
       <div class="sub_box"><p>평균 평점</p><p>${totalcount.score}</p></div>
@@ -139,7 +142,7 @@ margin-bottom: 30px;
 	  
    <div class="content">
   <div class="content_title_white"><p>평점</p>
-  <select>
+  <select name="score">
   <option value="${ReviewDetail.score}">${ReviewDetail.score}</option>
   <option value="1">1</option>
   <option value="2">2</option>
@@ -153,7 +156,7 @@ margin-bottom: 30px;
 	  
 	  <div class="content">
   <div class="content_title_white"><p>내용</p></div>
-  <textarea class="review_textarea">${ReviewDetail.content}</textarea>
+  <textarea class="review_textarea" name="content">${ReviewDetail.content}</textarea>
     </div>
     <div class="btn_layout">
   <button class="btn4">사진첨부</button>
