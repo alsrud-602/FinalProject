@@ -383,7 +383,7 @@
                         <img class="popcornfactory" src="/images/header/popcornfactory.png" alt="팝콘 팩토리 아이콘" />
                     </div>
                 </a>
-                <a href="#">
+                <a href="/Users/Map">
                     <div class="frame-2068">
                         <div class="div2">지도</div>
                         <img class="map-2" src="/images/header/map-2.svg" alt="지도 아이콘" />
@@ -422,7 +422,7 @@
             <div class="menu-list">팝콘 팩토리</div>
         </div>
         </a>
-        <a href="#">
+        <a href="/Users/Map">
         <div class="menu-2068">
             <img class="map-20" src="/images/header/map-2.svg" />
             <div class="menu-list">지도</div>
