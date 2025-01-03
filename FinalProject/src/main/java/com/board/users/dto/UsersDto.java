@@ -49,6 +49,7 @@ public class UsersDto {
     private String social_id;
     private String social_type;
     private String name;
+
     
     private int tage_idx;
     private String tag_name;
@@ -87,5 +88,6 @@ public class UsersDto {
     private int review_idx;
     private int score; 
     private String review_date;
+    private int storeidx;
     
 }

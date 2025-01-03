@@ -269,12 +269,12 @@ main {
 	 <div class="sidebar">
 	  <table>
 	   <tbody>
-	    <tr><td><a href="">내 정보</a></td></tr>
-	    <tr><td><a href="">예약내역</a></td></tr>
-	    <tr><td><a href="">관심팝업</a></td></tr>
+	    <tr><td><a href="/Users/Profile/Home">내 정보</a></td></tr>
+	    <tr><td><a href="/Users/Profile/Reservation">예약내역</a></td></tr>
+	    <tr><td><a href="/Users/Profile/Bookmark">관심팝업</a></td></tr>
 	    <tr><td><a href="">지갑</a></td></tr>
-	    <tr><td><a href="">추천스토어</a></td></tr>
-	    <tr><td><a href="">내가 쓴 리뷰</a></td></tr>
+	    <tr><td><a href="/Users/Profile/Suggestion">추천스토어</a></td></tr>
+	    <tr><td><a href="/Users/Profile/Myreview">내가 쓴 리뷰</a></td></tr>
 	   </tbody>
 	  </table>
 	 </div>
@@ -282,5 +282,6 @@ main {
   </div>
   </main>	
  <%@include file="/WEB-INF/include/footer.jsp" %>
+ <script src="/js/authuser.js" defer></script> 
 </body>
 </html>
