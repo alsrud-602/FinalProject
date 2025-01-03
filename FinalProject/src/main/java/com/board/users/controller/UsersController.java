@@ -331,8 +331,6 @@ public class UsersController {
 		System.out.println("totalcount : " + totalcount);
 		
 		
-		
-		
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("storedetail", storedetail);
 		mv.addObject("storetag", storetag);
