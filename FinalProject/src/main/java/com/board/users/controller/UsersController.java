@@ -362,6 +362,7 @@ public class UsersController {
 		UsersDto TotalPopcorn = usersMapper.getTotalPopcorn(username);
 		System.out.println("TotalPopcorn : " + TotalPopcorn);
 		
+
 		//이미지
 		List<UsersDto> PopupImgList = usersMapper.getPopupImgList(usersdto);
 		System.out.println("PopupImgList : " + PopupImgList);
