@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.board.users.dto.User;
 import com.board.users.vo.PopcornVo;
 
 @Mapper
@@ -29,6 +30,12 @@ public interface PopcornMapper {
 	void updateAttendanceStatus(String userId);
 
 	void updateNewWeekAttend(String userId);
+
+	void createPopcornWallet(User user);
+
+	void createUserAttendance(User user);
+
+	void createPopcornLog(User user);
 
 
 

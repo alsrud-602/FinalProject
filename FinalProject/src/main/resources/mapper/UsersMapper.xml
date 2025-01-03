@@ -14,12 +14,15 @@
 	    std."LIKE", std.goods
 	FROM
 	    stores st JOIN stores_detail std ON st.store_idx = std.store_idx
+	    
 	WHERE st.ban='N' AND st.status='승인' 
 	      AND TRUNC(std.start_date) &lt;= TRUNC(SYSDATE) 
 	      AND TRUNC(std.end_date) &gt;= TRUNC(SYSDATE)
 	ORDER BY
 	    st.store_idx ASC
   </select>
+
+
    
    <!-- 랭킹 팝업 리스트 -->
    <select id="getRanklist">
@@ -370,6 +373,54 @@
 	          st.store_idx ASC
 	 OFFSET #{start} ROWS FETCH NEXT #{size} ROWS ONLY 
   </select>
+  
+  <!-- Map에서 종료일 -->
+    <select id="getPopupDate">
+	SELECT
+	    st.store_idx, st.status,st.ban, TO_CHAR(std.start_date, 'YYYY-MM-DD') AS start_date,TO_CHAR(std.end_date, 'YYYY-MM-DD') AS end_date,
+	    std.igdate
+	FROM
+	    stores st JOIN stores_detail std ON st.store_idx = std.store_idx
+	    
+	WHERE st.ban='N' AND st.status='승인' 
+	      AND std.start_date &lt; SYSDATE 
+	      AND std.end_date &gt; SYSDATE
+	ORDER BY
+	    st.store_idx ASC
+  </select>
+  
+
+	<update id="updateUserProfile" parameterType="com.board.users.dto.UsersDto">
+    	UPDATE users
+    	SET NAME = #{name},
+        NIKNAME = #{nickname},
+        EMAIL = #{email},
+        PHONE = #{phone}
+  		WHERE user_idx = #{user_idx}
+	</update>
+
+	<delete id="deleteUser" parameterType="int">
+        DELETE FROM Users WHERE user_idx = #{user_idx}
+    </delete>
+    
+ 	<select id="getUserById" parameterType="string">
+        SELECT * FROM Users WHERE id = #{id}
+    </select>
+
+  <!-- MAP 리뷰 조회수 조회 -->
+    <select id="getStoresHitAtMap">
+    SELECT
+	    us.name,  us.user_idx,
+	    re.review_idx, re.user_idx, re.store_idx,re.score,
+	    re.content,re."LIKE",re.hit,
+	    TO_CHAR(re.cdate, 'YYYY-MM-DD') AS review_date  
+	FROM
+	    reviews re 
+	JOIN 
+	    users us ON re.user_idx = us.user_idx 
+	WHERE 
+	    re.store_idx = #{store_idx}
+	</select>
 
   <!-- 조회수 조회 -->
   <select id="getStoreHit">
@@ -495,6 +546,7 @@ JOIN (
 	    store_idx = #{storeidx}
   </select>
 
+
  <!-- 내가 쓴 리뷰 개수 -->
  <select id="getMyTotalReview">
 	 SELECT
@@ -548,4 +600,6 @@ JOIN (
 	    AND user_idx   = #{useridx}
 	    AND store_idx  = #{storeidx}
  </delete>
+
+
 </mapper>

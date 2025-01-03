@@ -35,7 +35,15 @@ public interface UsersMapper {
 	// 메인화면 검색창
 	List<UsersDto> getClosesearchlist(@Param("search") String search);
 
-	List<UsersDto> getPopupAdresses();
+
+
+	List<UsersDto> getClosesearchlist(@Param("search") String search);
+	
+	int updateUserProfile(UsersDto usersDto);
+	
+	void deleteUser(int userIdx);
+
+	UsersDto getUserById(String userId);
 
 	UsersDto getStoredetail(UsersDto usersdto);
 
@@ -53,6 +61,10 @@ public interface UsersMapper {
 	// 상세 페이지 예약 구분
 	UsersDto getStoreReservation(UsersDto usersdto);
 
+
+	UsersDto getUserById(Integer userIdx);
+
+
 	// 상세페이지 운영시간 
 	UsersDto getStoreOperation(UsersDto usersdto);
     
@@ -61,6 +73,7 @@ public interface UsersMapper {
     
 	//전체 조회수 조회
 	List<UsersDto> getSelectStoreHit(@Param("store_idx") int store_idx, @Param("username") String username);
+
 	
 	//조회수 증가
 	int insertStoreHit(@Param("store_idx") int store_idx, @Param("username") String username);
@@ -99,8 +112,18 @@ public interface UsersMapper {
 	//
 	UsersDto getUserById(Integer userIdx);
 
+
 	// 내가 쓴 리뷰 개수
 	UsersDto getMyTotalReview(UsersDto usersdto, @Param("useruseridx") Long useruseridx);
+
+	//igdate처리
+	List<UsersDto> getPopupDate();
+
+	//Map에서 리뷰 제목이나 내용가져오기 
+	List<UsersDto> getPopupReview();
+
+	List<UsersDto> getStoresHitAtMap();
+
 
 	// 이미지
 	List<UsersDto> getPopupImgList(UsersDto usersdto);
@@ -119,6 +142,5 @@ public interface UsersMapper {
 
 
 	
-
 
 }

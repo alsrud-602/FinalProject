@@ -1,39 +1,72 @@
 package com.board.users.service;
 
-
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 @Service
 public class MapService {
 
-    private static final String NOMINATIM_API_URL = "https://nominatim.openstreetmap.org/search?format=json&q=";
+    private static final String NAVER_GEOCODING_API_URL = "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=%s";
+    private static final String CLIENT_ID = "4dibtwhe4s"; // 발급받은 Client ID
+    private static final String CLIENT_SECRET = "8cUloMnBQNDDZjjg8N739B7V6noUq3RkctKpOFgm"; // 발급받은 Client Secret
 
     public double[] getCoordinates(String address) {
         RestTemplate restTemplate = new RestTemplate();
-        String requestUrl = NOMINATIM_API_URL + address.replace(" ", "+");
+        String requestUrl = String.format(NAVER_GEOCODING_API_URL, address);
 
-        // Nominatim API 응답 데이터
-        GeocodeResponse[] response = restTemplate.getForObject(requestUrl, GeocodeResponse[].class);
+        // 헤더 설정
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("X-NCP-APIGW-API-KEY-ID", CLIENT_ID);
+        headers.set("X-NCP-APIGW-API-KEY", CLIENT_SECRET);
 
-        if (response != null && response.length > 0) {
-            double lat = Double.parseDouble(response[0].getLat());
-            double lon = Double.parseDouble(response[0].getLon());
-            return new double[]{lat, lon};
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        // API 호출 및 응답 처리
+        ResponseEntity<NaverGeocodeResponse> response = restTemplate.exchange(requestUrl, HttpMethod.GET, entity, NaverGeocodeResponse.class);
+
+        if (response.getBody() != null && !response.getBody().getAddresses().isEmpty()) {
+            NaverGeocodeResponse.Address addressInfo = response.getBody().getAddresses().get(0);
+            return new double[]{Double.parseDouble(addressInfo.getY()), Double.parseDouble(addressInfo.getX())};
         }
 
         throw new IllegalArgumentException("Address not found: " + address);
     }
 
-    // 내부 클래스: API 응답 매핑
-    public static class GeocodeResponse {
-        private String lat;
-        private String lon;
+    // 내부 클래스: Naver API 응답 매핑
+    public static class NaverGeocodeResponse {
+        private java.util.List<Address> addresses;
 
-        public String getLat() { return lat; }
-        public void setLat(String lat) { this.lat = lat; }
+        public java.util.List<Address> getAddresses() {
+            return addresses;
+        }
 
-        public String getLon() { return lon; }
-        public void setLon(String lon) { this.lon = lon; }
+        public void setAddresses(java.util.List<Address> addresses) {
+            this.addresses = addresses;
+        }
+
+        public static class Address {
+            private String x; // 경도
+            private String y; // 위도
+
+            public String getX() {
+                return x;
+            }
+
+            public void setX(String x) {
+                this.x = x;
+            }
+
+            public String getY() {
+                return y;
+            }
+
+            public void setY(String y) {
+                this.y = y;
+            }
+        }
     }
 }

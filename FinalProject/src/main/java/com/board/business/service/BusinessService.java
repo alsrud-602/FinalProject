@@ -11,7 +11,6 @@ import com.board.business.dto.ReservationDateListDto;
 import com.board.business.dto.ReservationPlanDto;
 import com.board.business.dto.ReservationStoreDto;
 import com.board.business.dto.ReservationUserListDto;
-import com.board.business.dto.StoreCategoryDto;
 import com.board.business.dto.StoreListDto;
 import com.board.business.dto.StoreTagDto;
 import com.board.business.dto.StoreUpdateDto;
