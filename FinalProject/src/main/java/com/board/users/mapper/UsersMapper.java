@@ -36,6 +36,15 @@ public interface UsersMapper {
 	List<UsersDto> getClosesearchlist(@Param("search") String search);
 
 
+
+	List<UsersDto> getClosesearchlist(@Param("search") String search);
+	
+	int updateUserProfile(UsersDto usersDto);
+	
+	void deleteUser(int userIdx);
+
+	UsersDto getUserById(String userId);
+
 	UsersDto getStoredetail(UsersDto usersdto);
 
 	List<UsersDto> getStoretag(UsersDto usersdto);
@@ -54,6 +63,7 @@ public interface UsersMapper {
 
 
 	UsersDto getUserById(Integer userIdx);
+
 
 	// 상세페이지 운영시간 
 	UsersDto getStoreOperation(UsersDto usersdto);

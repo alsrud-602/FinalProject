@@ -389,6 +389,24 @@
 	    st.store_idx ASC
   </select>
   
+
+	<update id="updateUserProfile" parameterType="com.board.users.dto.UsersDto">
+    	UPDATE users
+    	SET NAME = #{name},
+        NIKNAME = #{nickname},
+        EMAIL = #{email},
+        PHONE = #{phone}
+  		WHERE user_idx = #{user_idx}
+	</update>
+
+	<delete id="deleteUser" parameterType="int">
+        DELETE FROM Users WHERE user_idx = #{user_idx}
+    </delete>
+    
+ 	<select id="getUserById" parameterType="string">
+        SELECT * FROM Users WHERE id = #{id}
+    </select>
+
   <!-- MAP 리뷰 조회수 조회 -->
     <select id="getStoresHitAtMap">
     SELECT
@@ -524,5 +542,6 @@ JOIN (
 	WHERE
 	    store_idx = #{storeidx}
   </select>
+
 
 </mapper>
