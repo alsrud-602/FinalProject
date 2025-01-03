@@ -8,14 +8,16 @@
 	SELECT
 	    st.store_idx, st.company_idx,st.title,st.age,st.brand1,st.brand2,st.cdate,st.status,st.ban,
 	    std.detail_idx,std.address,TO_CHAR(std.start_date, 'YYYY-MM-DD') AS start_date,TO_CHAR(std.end_date, 'YYYY-MM-DD') AS end_date,
+
 	    std.homepage, std.sns, std.introduction,std.content,std.parking,std.fare,std.age_limit, std.shooting,std.igdate,
+
 	    std."LIKE", std.goods
 	FROM
 	    stores st JOIN stores_detail std ON st.store_idx = std.store_idx
 	    
 	WHERE st.ban='N' AND st.status='승인' 
-	      AND std.start_date &lt; SYSDATE 
-	      AND std.end_date &gt; SYSDATE
+	      AND TRUNC(std.start_date) &lt;= TRUNC(SYSDATE) 
+	      AND TRUNC(std.end_date) &gt;= TRUNC(SYSDATE)
 	ORDER BY
 	    st.store_idx ASC
   </select>
@@ -24,6 +26,7 @@
    
    <!-- 랭킹 팝업 리스트 -->
    <select id="getRanklist">
+
    SELECT
 	    st.store_idx, st.company_idx, st.title, st.age, st.brand1, st.brand2,
 	    st.cdate, st.status, st.ban, std.detail_idx, std.address,
@@ -46,7 +49,7 @@
 	        FROM (
 	            SELECT STORE_IDX, COUNT(user_id) AS user_count
 	            FROM HIT
-	            WHERE cdate &gt;= TRUNC(SYSDATE) - 7 
+	            WHERE TRUNC(cdate) &gt;= TRUNC(SYSDATE) - 7 
 	            GROUP BY STORE_IDX
 	            ORDER BY user_count DESC
 	        )
@@ -97,6 +100,7 @@
 	    std.age_limit, std.shooting, std.igdate, std."LIKE", std.goods
 	ORDER BY
 	    COUNT(h.user_id) DESC
+
    </select>
    
    <!-- 조회수 전체 조회 -->
@@ -120,12 +124,14 @@
    SELECT
 	    st.store_idx, st.company_idx,st.title,st.age,st.brand1,st.brand2,st.cdate,st.status,st.ban,
 	    std.detail_idx,std.address,TO_CHAR(std.start_date, 'YYYY-MM-DD') AS start_date,TO_CHAR(std.end_date, 'YYYY-MM-DD') AS end_date,
+
 	    std.homepage, std.sns, std.introduction,std.content,std.parking,std.fare,std.age_limit, std.shooting,std.igdate,
 	    std."LIKE", std.goods
+
 	FROM
 	    stores st JOIN stores_detail std ON st.store_idx = std.store_idx
 	WHERE st.ban='N' AND st.status='승인' 
-	AND std.start_date > SYSDATE AND std.end_date > SYSDATE
+	AND TRUNC(std.start_date) >= TRUNC(SYSDATE) AND TRUNC(std.end_date) >= TRUNC(SYSDATE)
 	ORDER BY
 	    st.store_idx ASC
   </select>
@@ -135,8 +141,10 @@
   SELECT
 	    st.store_idx, st.company_idx,st.title,st.age,st.brand1,st.brand2,st.cdate,st.status,st.ban,
 	    std.detail_idx,std.address,TO_CHAR(std.start_date, 'YYYY-MM-DD') AS start_date,TO_CHAR(std.end_date, 'YYYY-MM-DD') AS end_date,
+
 	    std.homepage, std.sns, std.introduction,std.content,std.parking,std.fare,std.age_limit, std.shooting,std.igdate,
 	    std."LIKE", std.goods
+
 	FROM
 	    stores st JOIN stores_detail std ON st.store_idx = std.store_idx
 	WHERE st.ban='N' AND st.status='승인' 
@@ -151,7 +159,10 @@
   SELECT
 	    st.store_idx, st.company_idx,st.title,st.age,st.brand1,st.brand2,st.cdate,st.status,st.ban,
 	    std.detail_idx,std.address,TO_CHAR(std.start_date, 'YYYY-MM-DD') AS start_date,TO_CHAR(std.end_date, 'YYYY-MM-DD') AS end_date,
+
+
 	    std.homepage, std.sns, std.introduction,std.content,std.parking,std.fare,std.age_limit, std.shooting,std.igdate,
+
 	    std."LIKE", std.goods
 	FROM
 	    stores st JOIN stores_detail std ON st.store_idx = std.store_idx
@@ -159,8 +170,8 @@
     1=1
 	    AND st.ban = 'N'
 	    AND st.status = '승인'
-	    AND std.start_date &lt; SYSDATE
-	    AND std.end_date &gt; SYSDATE
+	    AND TRUNC(std.start_date) &lt;= TRUNC(SYSDATE)
+	    AND TRUNC(std.end_date) &gt;= TRUNC(SYSDATE)
 	    <if test="region != null and region != ''">
 	        AND std.address LIKE '%' || #{region} || '%'
 	    </if>
@@ -181,14 +192,16 @@
   SELECT
 	    st.store_idx, st.company_idx,st.title,st.age,st.brand1,st.brand2,st.cdate,st.status,st.ban,
 	    std.detail_idx,std.address,TO_CHAR(std.start_date, 'YYYY-MM-DD') AS start_date,TO_CHAR(std.end_date, 'YYYY-MM-DD') AS end_date,
+
 	    std.homepage, std.sns, std.introduction,std.content,std.parking,std.fare,std.age_limit, std.shooting,std.igdate,
+
 	    std."LIKE", std.goods
 	FROM
 	    stores st JOIN stores_detail std ON st.store_idx = std.store_idx
 	WHERE 1=1
 	      AND st.ban='N' AND st.status='승인' 
-	      AND std.start_date &lt; SYSDATE 
-	      AND std.end_date &gt; SYSDATE
+	      AND TRUNC(std.start_date) &lt;= TRUNC(SYSDATE) 
+	      AND TRUNC(std.end_date) &gt;= TRUNC(SYSDATE)
 	      <if test="search != null and search != ''">
 	        AND st.title LIKE '%' || #{search} || '%'
 	    </if>
@@ -208,7 +221,7 @@
 	    stores st JOIN stores_detail std ON st.store_idx = std.store_idx
 	WHERE 1=1 
 	     AND st.ban='N' AND st.status='승인' 
-	     AND std.start_date &lt; SYSDATE AND std.end_date &lt; SYSDATE
+	     AND TRUNC(std.start_date) &lt; TRUNC(SYSDATE) AND TRUNC(std.end_date) &lt; TRUNC(SYSDATE)
 	     <if test="search != null and search != ''">
 	        AND st.title LIKE '%' || #{search} || '%'
 	    </if>
@@ -299,8 +312,8 @@
 	    stores st JOIN stores_detail std ON st.store_idx = std.store_idx
 	WHERE 
 	      st.ban='N' AND st.status='승인' 
-	      AND std.start_date &lt; SYSDATE 
-	      AND std.end_date &gt; SYSDATE
+	      AND TRUNC(std.start_date) &lt;= TRUNC(SYSDATE) 
+	      AND TRUNC(std.end_date) &gt;= TRUNC(SYSDATE)
 	ORDER BY
 	    st.store_idx ASC
   </select>
@@ -309,13 +322,14 @@
   SELECT
 	    st.store_idx, st.company_idx,st.title,st.age,st.brand1,st.brand2,st.cdate,st.status,st.ban,
 	    std.detail_idx,std.address,TO_CHAR(std.start_date, 'YYYY-MM-DD') AS start_date,TO_CHAR(std.end_date, 'YYYY-MM-DD') AS end_date,
+
 	    std.homepage, std.sns, std.introduction,std.content,std.parking,std.fare,std.age_limit, std.shooting,std.igdate,
 	    std."LIKE", std.goods
 	FROM
 	    stores st JOIN stores_detail std ON st.store_idx = std.store_idx
 	WHERE st.ban='N' AND st.status='승인' 
-	      AND std.start_date &lt; SYSDATE 
-	      AND std.end_date &gt; SYSDATE
+	      AND TRUNC(std.start_date) &lt;= TRUNC(SYSDATE) 
+	      AND TRUNC(std.end_date) &gt;= TRUNC(SYSDATE)
 	ORDER BY
 	    st.store_idx ASC
 	OFFSET #{start} ROWS FETCH NEXT #{size} ROWS ONLY    
@@ -325,11 +339,12 @@
   <select id="getOngoingsearchcount">
   SELECT
 	    COUNT(*)  AS CNT
+
 	FROM
 	    stores st JOIN stores_detail std ON st.store_idx = std.store_idx
 	WHERE 1=1 
 	      AND st.ban='N' AND st.status='승인' 
-	      AND std.start_date > SYSDATE AND std.end_date > SYSDATE
+	      AND TRUNC(std.start_date) >= TRUNC(SYSDATE) AND TRUNC(std.end_date) >= TRUNC(SYSDATE)
 	      <if test="search != null and search != ''">
 	        AND st.title LIKE '%' || #{search} || '%'
 	    </if>
@@ -342,13 +357,15 @@
   SELECT
 	    st.store_idx, st.company_idx,st.title,st.age,st.brand1,st.brand2,st.cdate,st.status,st.ban,
 	    std.detail_idx,std.address,TO_CHAR(std.start_date, 'YYYY-MM-DD') AS start_date,TO_CHAR(std.end_date, 'YYYY-MM-DD') AS end_date,
+
 	    std.homepage, std.sns, std.introduction,std.content,std.parking,std.fare,std.age_limit, std.shooting,std.igdate,
+
 	    std."LIKE", std.goods
 	FROM
 	    stores st JOIN stores_detail std ON st.store_idx = std.store_idx
 	WHERE 1=1 
 	      AND st.ban='N' AND st.status='승인' 
-	      AND std.start_date > SYSDATE AND std.end_date > SYSDATE
+	      AND TRUNC(std.start_date) >= TRUNC(SYSDATE) AND TRUNC(std.end_date) >= TRUNC(SYSDATE)
 	      <if test="search != null and search != ''">
 	        AND st.title LIKE '%' || #{search} || '%'
 	    </if>
@@ -372,6 +389,24 @@
 	    st.store_idx ASC
   </select>
   
+
+	<update id="updateUserProfile" parameterType="com.board.users.dto.UsersDto">
+    	UPDATE users
+    	SET NAME = #{name},
+        NIKNAME = #{nickname},
+        EMAIL = #{email},
+        PHONE = #{phone}
+  		WHERE user_idx = #{user_idx}
+	</update>
+
+	<delete id="deleteUser" parameterType="int">
+        DELETE FROM Users WHERE user_idx = #{user_idx}
+    </delete>
+    
+ 	<select id="getUserById" parameterType="string">
+        SELECT * FROM Users WHERE id = #{id}
+    </select>
+
   <!-- MAP 리뷰 조회수 조회 -->
     <select id="getStoresHitAtMap">
     SELECT
@@ -421,10 +456,14 @@
   <!-- 전체 리뷰,평점 계산 -->
   <select id="getotalcount">
   SELECT
-	    count(review_idx) as review_idx ,avg(score) as score
+	    count(review_idx) as review_idx,
+	    avg(score) as score,
+	    sum("LIKE") as "LIKE",
+	    sum(HIT) as hit
 	FROM
 	    reviews
-	WHERE store_idx=#{store_idx}
+	WHERE
+	    store_idx = #{store_idx}
   </select>
   
   <!-- 핫리뷰 조회순(3개) -->
@@ -432,7 +471,7 @@
   SELECT
     us.name,us.user_idx,
     re.review_idx, re.store_idx, re.score, 
-    re.content, re."LIKE", re.hit, TO_CHAR(re.cdate, 'YYYY-MM-DD') AS review_cdate
+    re.content, re."LIKE", re.hit, TO_CHAR(re.cdate, 'YYYY-MM-DD') AS review_date
 FROM
     users us
 JOIN (
@@ -466,8 +505,101 @@ JOIN (
 	WHERE 
 	    re.store_idx = #{storeidx}
 	AND us.user_idx = #{useridx}
+	AND re.review_idx=#{review_idx} 
+	
+	
   </select>
   
 
+    <!-- 리뷰 작성 - store_idx로 스토어 디테일 데이터 불러오기 -->
+  <select id="getStoredReviewtail">
+  SELECT
+	    st.store_idx, st.company_idx, st.title, st.age, st.brand1, st.brand2,
+	    st.cdate, st.status, st.ban,
+	    std.detail_idx,std.store_idx, std.address, TO_CHAR(start_date,'YYYY-MM-DD') AS start_date, TO_CHAR(end_date,'YYYY-MM-DD') AS end_date, std.homepage, std.sns, std.introduction,
+	    std.content, std.parking, std.fare, std.age_limit, std.shooting, std."LIKE", std.goods, std.igdate
+	FROM
+	    stores st JOIN stores_detail std ON st.store_idx = std.store_idx
+	WHERE st.store_idx = #{storeidx}
+  </select>
   
+  <!-- 리뷰 작성 - 스토어 카데고리 -->
+  <select id="getStoreReviewtag">
+  SELECT 
+	    c.category_idx,c.category_name,c.category_id,
+	    sc.sc_idx,sc.store_idx,sc.category_id
+	FROM
+	    category c JOIN stores_category sc ON c.category_id = sc.category_id
+	WHERE sc.store_idx=#{storeidx}
+  </select>
+  
+  <!-- 리뷰 작성 - 특정 스토어 전체 리뷰 평점등  -->
+  <select id="getotalWriteCount">
+  SELECT
+	    count(review_idx) as review_idx,
+	    avg(score) as score,
+	    sum("LIKE") as "LIKE",
+	    sum(HIT) as hit
+	FROM
+	    reviews
+	WHERE
+	    store_idx = #{storeidx}
+  </select>
+
+
+ <!-- 내가 쓴 리뷰 개수 -->
+ <select id="getMyTotalReview">
+	 SELECT
+	    COUNT(review_idx) AS review_idx
+	FROM
+	    reviews
+	WHERE user_idx=#{useruseridx}
+ </select>
+ 
+ <!-- 상세 페이지 이미지 -->
+ <select id="getPopupImgList">
+ SELECT is_idx,imagename, imageext, image_path,  store_idx
+	FROM
+	    image_store
+	WHERE store_idx = #{store_idx}
+ </select>
+ 
+ <!-- 팝콘 보유 갯수 -->
+ <select id="getTotalPopcorn">
+ SELECT
+	    user_id,
+	    total_points
+	FROM
+	    popcorn_wallet
+	WHERE user_id = #{username}
+ </select>
+ 
+ <!-- 리뷰작성 -->
+ <insert id="insertReview">
+ INSERT INTO reviews (review_idx, user_idx,store_idx, score, content) 
+ VALUES (REVIEW_IDX_SEQ.NEXTVAL, #{user_idx}, #{store_idx}, #{score}, #{content})
+ </insert>
+ 
+ <!-- 리뷰 수정 -->
+ <update id="updateReview">
+ UPDATE reviews
+	SET
+	    content=#{content},
+	    score=#{score}
+	WHERE
+	        user_idx   = #{user_idx}
+	    AND store_idx  = #{store_idx}
+	    AND review_idx = #{review_idx} 
+ </update>
+ 
+ <!-- 리뷰 삭제 -->
+ <delete id="deleteReview">
+ DELETE FROM reviews
+	WHERE
+	        review_idx = #{review_idx}
+	    AND user_idx   = #{useridx}
+	    AND store_idx  = #{storeidx}
+ </delete>
+
+
 </mapper>

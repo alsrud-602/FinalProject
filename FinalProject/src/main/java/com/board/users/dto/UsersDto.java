@@ -39,7 +39,7 @@ public class UsersDto {
     
 
     private String user_id;
-    private int user_idx;
+    private Integer user_idx;
     private String nickname;
     private String id;
     private String password;
@@ -49,6 +49,7 @@ public class UsersDto {
     private String social_id;
     private String social_type;
     private String name;
+
     
     private int tage_idx;
     private String tag_name;
@@ -87,5 +88,14 @@ public class UsersDto {
     private int review_idx;
     private int score; 
     private String review_date;
+    private int storeidx;
+    
+    private int is_idx;
+    private String imagename;
+    private String imageext;
+    private String image_path;
+    
+    private int total_points;
+    
     
 }

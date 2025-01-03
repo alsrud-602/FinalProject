@@ -457,11 +457,13 @@ $(function() {
             if (data.filterlist && Array.isArray(data.filterlist)) {
             	if (data.filterlist.length > 0) {
 	                data.filterlist.forEach(function(a) {
-	                    html += "<div class='card'>" +
+	                    html += "<a href='/Users/Info?store_idx=" + a.store_idx + "'>" +
+	                    	    "<div class='card'>" +
 	                                "<img src='/images/main/popup1.png' alt='/images/main/popup1.png'>" +
 	                                "<div class='title'>" + a.title + "</div>" +
 	                                "<div class='info'>주소: " + a.address + "<br>기간: " + a.start_date + " ~ " + a.end_date + "</div>" +
-	                             "</div>";
+	                             "</div>"+
+	                             "</a>";
                 });
             } else {
                 html = "<div>데이터가 없습니다.</div>"; // 데이터가 없을 때 메시지
