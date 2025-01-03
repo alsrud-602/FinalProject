@@ -35,8 +35,12 @@ public interface UsersMapper {
 	List<UsersDto> getOpendsearchlist(@Param("search") String search);
 
 	List<UsersDto> getClosesearchlist(@Param("search") String search);
-
 	
+	int updateUserProfile(UsersDto usersDto);
+	
+	void deleteUser(int userIdx);
+
+	UsersDto getUserById(String userId);
 
 
 }

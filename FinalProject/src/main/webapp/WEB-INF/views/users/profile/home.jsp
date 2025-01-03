@@ -215,7 +215,7 @@ main {
     <p class="categories" data-category-id="180">브랜드</p>
    </div>
    <div class="btn">
-    <div class="btn-update"><a href="" class="btn-block">수정</a></div>
+    <div class="btn-update"><a href="/Users/Profile/UpdateProfileForm" class="btn-block">수정</a></div>
     <div class="btn-quit"><a href="" class="btn-block">회원탈퇴</a></div>
    </div>
    </div>
@@ -271,29 +271,7 @@ $(document).ready(function() {
             addCategory(userIdx, categoryId);
         }
     });
-/*
-    function addCategory(userIdx, categoryId) {
-        $.ajax({
-            url: "/Users/Profile/addCategory",
-            type: "POST",
-            contentType: "application/json",
-            data: JSON.stringify({
-                userIdx: userIdx,
-                categoryId: categoryId
-            }),
-            success: function(response) {
-                if (response === "success") {
-                    console.log("카테고리가 성공적으로 추가되었습니다.");
-                } else {
-                    console.error("카테고리 추가 실패");
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error("카테고리 추가 중 오류 발생:", error);
-            }
-        });
-    }
-*/
+
 function addCategory(userIdx, categoryId) {
     // userIdx와 categoryId가 null인지 확인
     if (userIdx == null || categoryId == null) {
@@ -349,6 +327,24 @@ function addCategory(userIdx, categoryId) {
             }
         });
     }
+    // 회원탈퇴 버튼 클릭 이벤트
+    $('.btn-quit').click(function(e) {
+        e.preventDefault();
+        if (confirm('레알?')) {
+            $.ajax({
+                url: "/Users/Profile/DeleteUser",
+                type: "POST",
+                success: function(response) {
+                    alert('회원탈퇴가 완료되었습니다.');
+                    window.location.href = '/'; // 홈페이지로 리다이렉트
+                },
+                error: function(xhr, status, error) {
+                    alert('회원탈퇴 중 오류가 발생했습니다.');
+                    console.error("Error:", error);
+                }
+            });
+        }
+    });
 });
 </script>
 </body>
