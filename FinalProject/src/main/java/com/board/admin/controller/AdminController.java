@@ -7,15 +7,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -33,10 +29,19 @@ public class AdminController {
 	@Autowired
 	private AdminMapper adminMapper;
 	
+    @Autowired
+    private HttpServletRequest request;
+	
 	// http://localhost:9090
 	// 유저관리
 	@RequestMapping("/User")
-	public  ModelAndView  user() {
+	public  ModelAndView  user(HttpServletResponse response) throws Exception {
+		
+        // MFA 인증 확인
+        if (!isMfaAuthenticated(request)) {
+            response.sendRedirect("/Users/2fa"); 
+            return null;
+        }
 		
 		List<AdminVo> allusers = adminMapper.getalluserinfo();
 		
@@ -49,9 +54,15 @@ public class AdminController {
 	}
 	
 	//유저관리 상세
-	@RequestMapping("/Userdetail")
-	public String userDetail(@RequestParam("id") String userId , Model model) {
-		
+    // 유저관리 상세
+    @RequestMapping("/Userdetail")
+    public String userdetail(HttpServletResponse response, @RequestParam("id") String userId , Model model) throws Exception {
+    	// 에러 떠서 일단 mav -> String 으로 바꿔놓은 상태.
+        // MFA 인증 확인
+        if (!isMfaAuthenticated(request)) {
+            response.sendRedirect("/Users/2fa"); 
+            return null; 
+        }
 		//전체 좋아요 정보(REVUEW 테이블)
 		List<AdminVo> allreview = adminMapper.getallReview();
 		System.out.println("모든 리뷰:"+allreview);
@@ -138,7 +149,7 @@ public class AdminController {
         model.addAttribute("userId", userId);
         model.addAttribute("wallet", wallet);
 
-        return "admin/user/userdetail"; // 수정 가능한 폼으로 연결
+        return "/admin/user/userdetail"; // 수정 가능한 폼으로 연결
     }
 	
 	  @PostMapping("/PlusPopcorn")
@@ -241,66 +252,10 @@ public class AdminController {
 	    }
 
 	    
-	    
+	  
 	
-	
-	// 스토어관리 - 담당자관리
-	@RequestMapping("/Managerlist")
-	public  ModelAndView  managerlist() {
-		ModelAndView mv = new ModelAndView();
-		mv.setViewName("/admin/manager/managerlist");
-		return mv;
-	}
-	
-	@RequestMapping("/Advertise")
-	public ModelAndView advertise() {
-		ModelAndView mv = new ModelAndView();
-		mv.setViewName("/admin/manager/advertise");
-		return mv;
-	}
-	
-}
 
-    @Autowired
-    private HttpServletRequest request;
 
-    // MFA 인증 확인
-    private boolean isMfaAuthenticated(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            Boolean mfaAuthenticated = (Boolean) session.getAttribute("mfaAuthenticated");
-            return mfaAuthenticated != null && mfaAuthenticated;
-        }
-        return false;
-    }
-
-    // 유저관리
-    @RequestMapping("/User")
-    public ModelAndView user(HttpServletResponse response) throws Exception {
-        // MFA 인증 확인
-        if (!isMfaAuthenticated(request)) {
-            response.sendRedirect("/Users/2fa"); 
-            return null;
-        }
-
-        ModelAndView mv = new ModelAndView();
-        mv.setViewName("/admin/user/user");
-        return mv;
-    }
-
-    // 유저관리 상세
-    @RequestMapping("/Userdetail")
-    public ModelAndView userdetail(HttpServletResponse response) throws Exception {
-        // MFA 인증 확인
-        if (!isMfaAuthenticated(request)) {
-            response.sendRedirect("/Users/2fa"); 
-            return null; 
-        }
-
-        ModelAndView mv = new ModelAndView();
-        mv.setViewName("/admin/user/userdetail");
-        return mv;
-    }
 
     @RequestMapping("/M1")
     public ModelAndView M1(HttpServletResponse response) throws Exception {
@@ -351,5 +306,18 @@ public class AdminController {
         }
 
         return "admin/dashboard/dashboard";
+    
+    }
+    
+    // MFA 인증 확인
+    private boolean isMfaAuthenticated(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            Boolean mfaAuthenticated = (Boolean) session.getAttribute("mfaAuthenticated");
+            return mfaAuthenticated != null && mfaAuthenticated;
+        }
+        return false;
     }
 }
+    
+

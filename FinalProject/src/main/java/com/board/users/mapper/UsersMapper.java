@@ -37,7 +37,6 @@ public interface UsersMapper {
 
 
 
-	List<UsersDto> getClosesearchlist(@Param("search") String search);
 	
 	int updateUserProfile(UsersDto usersDto);
 	
@@ -118,7 +117,6 @@ public interface UsersMapper {
 	List<UsersDto> getStoresHitAtMap();
 
 
-	UsersDto getUserById(Integer userIdx);
 
 	
 
