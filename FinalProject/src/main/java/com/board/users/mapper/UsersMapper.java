@@ -31,6 +31,8 @@ public interface UsersMapper {
 	
     // 메인화면 검색창
 	List<UsersDto> getOngoingsearchlist(@Param("search") String search);
+	
+	List<UsersDto> getClosesearchlist(@Param("search") String search);
     
 	
 	int updateUserProfile(UsersDto usersDto);
