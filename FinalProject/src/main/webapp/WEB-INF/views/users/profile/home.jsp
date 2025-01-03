@@ -234,8 +234,10 @@ main {
     </div>
    </aside>
   </div>
-  </main>   
+  </main>
  <%@include file="/WEB-INF/include/footer.jsp" %>
+ <script src="/js/authuser.js" defer></script>
+ 
  <!-- AJAX 스크립트 -->
 <script>
 $(document).ready(function() {
