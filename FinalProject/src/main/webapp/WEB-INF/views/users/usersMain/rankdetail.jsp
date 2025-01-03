@@ -35,9 +35,10 @@
 
   .card img {
     width: 100%; /* 카드 크기에 맞춤 */
-    max-width: 500px; /* 최대 너비를 400px로 설정 */
+    max-width: 300px; /* 최대 너비를 400px로 설정 */
     height: auto; /* 비율 유지 */
     border-radius: 10px; /* 이미지 모서리 둥글게 */
+    object-fit: contain; /* 비율 유지하며 크기 조정 */
 }
 
   .title {
@@ -175,11 +176,13 @@
 	
 	<div class="container">
 	    <c:forEach var="rank" items="${ranklist}">
+	      <a href="/Users/Info?store_idx=${rank.store_idx}">
 		    <div class="card">
 		      <img src="/images/main/popup1.png" alt="/images/main/popup1.png">
 		      <div class="title">${rank.title}</div>
 		      <div class="info">주소:${rank.address}<br>기간: ${rank.start_date} ~ ${rank.end_date}</div>
 		    </div>
+		   </a>
 		 </c:forEach>
 	  </div>
   </main>
@@ -207,11 +210,13 @@ $(function() {
             if (data.filterlist && Array.isArray(data.filterlist)) {
                 if (data.filterlist.length > 0) { // filterlist가 비어있지 않으면
                     data.filterlist.forEach(function(a) {
-                        html += "<div class='card'>" +
-                                    "<img src='/images/main/popup1.png' alt='/images/main/popup1.png'>" +
-                                    "<div class='title'>" + a.title + "</div>" +
-                                    "<div class='info'>주소: " + a.address + "<br>기간: " + a.start_date + " ~ " + a.end_date + "</div>" +
-                                 "</div>";
+                        html += "<a href='/Users/Info?store_idx=" + a.store_idx + "'>" +
+                        "<div class='card'>" +
+                        "<img src='/images/main/popup1.png' alt='/images/main/popup1.png'>" +
+                        "<div class='title'>" + a.title + "</div>" +
+                        "<div class='info'>주소: " + a.address + "<br>기간: " + a.start_date + " ~ " + popup.end_date + "</div>" +
+                    "</div>" +
+                "</a>";
                     });
                 } else {
                     html = "<div class='nodata'>데이터가 없습니다.</div>"; // filterlist가 비어있을 때 메시지

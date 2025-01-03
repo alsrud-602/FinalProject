@@ -308,6 +308,7 @@ public class ProfileController {
             model.addAttribute("error", "JWT 토큰이 없습니다.");
         }
 
+        
         ModelAndView mv = new ModelAndView();
         mv.setViewName("users/profile/myreview");
         return mv;

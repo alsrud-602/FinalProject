@@ -98,7 +98,7 @@ public interface UsersMapper {
 
 
 	// 리뷰 상세 페이지
-	UsersDto getReviewDetail(@Param("storeidx") int storeidx,@Param("useridx") int useridx);
+	UsersDto getReviewDetail(@Param("storeidx") int storeidx,@Param("useridx") int useridx,@Param("review_idx") int review_idx);
 
 	// 리뷰 수정 - store_idx로 스토어 디테일 데이터 불러오기
 	UsersDto getStoredReviewtail(int storeidx);
@@ -106,8 +106,15 @@ public interface UsersMapper {
 	// 리뷰 수정 - 스토어 태그
 	List<UsersDto> getStoreReviewtag(int storeidx);
 
+	//전체 리뷰&조회수
 	UsersDto getotalWriteCount(int storeidx);
 
+	//
+	UsersDto getUserById(Integer userIdx);
+
+
+	// 내가 쓴 리뷰 개수
+	UsersDto getMyTotalReview(UsersDto usersdto, @Param("useruseridx") Long useruseridx);
 
 	//igdate처리
 	List<UsersDto> getPopupDate();
@@ -118,7 +125,21 @@ public interface UsersMapper {
 	List<UsersDto> getStoresHitAtMap();
 
 
-	UsersDto getUserById(Integer userIdx);
+	// 이미지
+	List<UsersDto> getPopupImgList(UsersDto usersdto);
+
+	//특정 유저 팝콘 보유수
+	UsersDto getTotalPopcorn(String username);
+
+	// 리뷰 작성
+	int insertReview(UsersDto usersdto);
+	
+	// 리뷰 수정
+	int updateReview(UsersDto usersdto);
+
+	//리뷰 삭제
+	int deleteReview(@Param("storeidx") int storeidx,@Param("useridx") int useridx,@Param("review_idx") int review_idx);
+
 
 	
 
