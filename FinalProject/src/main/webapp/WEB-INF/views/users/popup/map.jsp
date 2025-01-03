@@ -1,6 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.util.Date" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,7 +24,7 @@
 <!-- Slick CSS -->
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css"/>
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css"/>
-
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=15f8eb7767b91a40fb405d5545b39a4d&libraries=services"></script>
 <style>
 main{
 margin-bottom: 100px;
@@ -44,6 +47,7 @@ margin-bottom: 100px;
 	width: 62px;
 }
 
+/* 팝업 기본 스타일 */
 #popup-container {
     display: none; /* 기본적으로 숨김 */
     top: 20%;
@@ -52,6 +56,24 @@ margin-bottom: 100px;
     z-index: 2000;
 
 }
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    #popup-container {
+        width: 80%; /* 모바일 화면에서 너비를 더 넓게 */
+        transform: translate(-50%, -110%); /* 마커 위 여백 추가 */
+    }
+}
+
+@media (max-width: 480px) {
+    #popup-container {
+        width: 90%; /* 작은 모바일 화면에서 너비 확장 */
+        font-size: 14px; /* 글자 크기 조정 */
+        transform: translate(-50%, -120%); /* 팝업 위치 조정 */
+    }
+}
+
+
     .rectangle-331 {
         position: relative;
         height: auto; /* 슬라이드 높이 */
@@ -103,7 +125,6 @@ margin-bottom: 100px;
 		</div>
 		<div id="popup-container">
 			<img src="/images/map/Group 1000000859.svg" alt="팝업 배경">
-			 <c:forEach var="popup" items="${popupList}">
 			<div class="group-480">
 				<div class="popover-pad">
 					<div class="popupbackground">
@@ -116,35 +137,21 @@ margin-bottom: 100px;
 					<div class="group-488">
 						<div class="_100">
 							<span> 
-								<span class="_100-span">${popup.hit}명</span> 
+								<span class="_100-span"></span> 
 								<span class="_100-span2">이 봤어요</span>
 							</span>
 						</div>
 						<img class="eye" src="/images/map/Eye.svg" />
 					</div>
-					<c:choose>
-						<c:when test="${popup.start_date} == null || ${popup.end_date} == null">
-							<div class="popup-period">${popup.igdate}</div>
-						</c:when>
-						<c:otherwise>
-							<div class="popup-period">${popup.start_date} - ${popup.end_date}</div>
-						</c:otherwise>
-					</c:choose>
+							<div class="popup-period"></div>
 					<img class="calendar" src="/images/map/Calendar.svg" /> 
 					<%-- <img class="image-9" src="/image/read?path=${popup.image_path}" alt="상세정보사진" /> --%>
-					<div class="ootd-of">${popup.title}</div>
+					<div class="ootd-of"></div>
 				</div>
 				<div class="frame-490">
 					<div class="_22">
 						<span> <span class="_22-span">종료까지</span> 
-						<c:choose>
-						<c:when test="${popup.start_date} == null || ${popup.end_date} == null">
-							<span class="_22-span2">${popup.igdate} - SYSDATE일</span> 
-						</c:when>
-						<c:otherwise>
-							<span class="_22-span2">${popup.end_date} - SYSDATE일</span> 
-						</c:otherwise>
-					</c:choose>
+							<span class="_22-span2"></span>
 						<span class="_22-span3">남았어요!</span>
 						</span>
 					</div>
@@ -170,7 +177,6 @@ margin-bottom: 100px;
 				</div>
 				<img id="closePopup" src="/images/map/close.svg" />
 			</div>
-			</c:forEach>
 		</div>
 	</main>
 	<!-- jQuery -->
@@ -273,8 +279,9 @@ margin-bottom: 100px;
 	                .then(response => response.json())
 	                .then(data => {
 	                    data.forEach(location => {
-	                        const { title, latitude, longitude } = location;
-	                        console.log(`Title: \${title}, Lat: \${latitude}, Lng: \${longitude}`);
+	                        const { title, latitude, longitude, hit, start_date, end_date, igdate} = location;
+	                        /*const { title, latitude, longitude, hit, start_date, end_date, igdate, image_path, reivewcontent} = location;*/
+	                        console.log(`Title: \${title}, Lat: \${latitude}, Lng: \${longitude}, 기간:\${start_date}, 종료기간:\${end_date}, 기간2:\${igdate}, 조회수:\${hit}`);
 
 	                        var coords = new naver.maps.LatLng(latitude, longitude);
 
@@ -292,10 +299,10 @@ margin-bottom: 100px;
 	                         // 마커 객체에 관련 데이터를 추가
 	                            marker.set("popupData", {
 	                                title: title,
-	                                content: "팝업 내용",
-	                                hit: 100,
-	                                start_date: "2025-01-01",
-	                                end_date: "2025-01-15"
+	                                hit: hit,
+	                                start_date: start_date,
+	                                end_date: end_date,
+	                                igdate: igdate
 	                            });
 	                         
 	                            markers.push(marker);
@@ -306,13 +313,54 @@ margin-bottom: 100px;
 	                                // 클릭한 마커의 데이터 가져오기
 	                                var popupData = marker.get("popupData");
 	                                
+	                                var popupContainer = document.getElementById("popup-container");
+	                                
+
+	                                var startDate = null;
+	                                var endDate =null;
+	                                var igdateDisplay = null;
+
+	                                // igdate가 있는 경우
+	                                if (popupData.start_date === null && popupData.end_date === null) {
+	                                    if (popupData.igdate.includes('~')) {
+	                                        [startDate, endDate] = popupData.igdate.split(' ~ ');
+	                                        igdateDisplay = `\${startDate} - \${endDate}`;
+	                                    } else if (popupData.igdate.includes('-')) {
+	                                        [startDate, endDate] = popupData.igdate.split(' - ');
+	                                        igdateDisplay = `\${startDate} - \${endDate}`;
+	                                    } else {
+	                                        igdateDisplay = popupData.igdate;
+	                                    }
+	                                } else {
+	                                    igdateDisplay = `\${popupData.start_date} - \${popupData.end_date}`;
+	                                }
 	                                // 팝업 컨테이너에 데이터 삽입
 	                                document.querySelector("#popup-container .ootd-of").innerText = popupData.title;
-	                                document.querySelector("#popup-container .popup-period").innerText = `${popupData.start_date} - ${popupData.end_date}`;
-	                                document.querySelector("#popup-container ._100-span").innerText = `${popupData.hit}명`;
+	                                document.querySelector("#popup-container .popup-period").innerText = igdateDisplay;
+	                                document.querySelector("#popup-container ._100-span").innerText = `\${popupData.hit}명`;
 
-	                                // 팝업 표시
-	                                var popupContainer = document.getElementById("popup-container");
+	                             // 현재 날짜를 가져오는 부분
+	                                const currentDate = new Date();
+	                                const formattedCurrentDate = currentDate.toISOString().split('T')[0]; // yyyy-mm-dd 형식으로 변환
+
+	                             // 종료까지 남은 날짜 계산
+	                                let remainingDays;
+	                                const endDateObj = new Date(endDate); // endDate를 Date 객체로 변환
+	                                const currentDateObj = new Date(); // 현재 날짜를 Date 객체로 생성
+	                                if (popupData.start_date === null || popupData.end_date === null) {
+	                                    if (endDate) {
+	                                        const daysRemaining = Math.ceil((endDateObj - currentDateObj) / (1000 * 60 * 60 * 24)); // 남은 날짜 계산
+	                                        remainingDays = `\${daysRemaining}일`;
+	                                    } else {
+	                                        remainingDays = ""; // endDate가 없을 경우 빈 문자열
+	                                    }
+	                                } else {
+	                                    const endDateObj = new Date(popupData.end_date); // end_date를 Date 객체로 변환
+	                                    const daysRemaining = Math.ceil((endDateObj - currentDateObj) / (1000 * 60 * 60 * 24)); // 남은 날짜 계산
+	                                    remainingDays = `\${daysRemaining}일`;
+	                                }
+
+	                                document.querySelector("#popup-container ._22-span2").innerText = remainingDays;
 	                                
 	                                document.getElementById('popup-container').style.display = 'block';
 	                            });
@@ -335,31 +383,95 @@ margin-bottom: 100px;
 	                                }
 	                            });
 	                            
+	                            //마커 객체에 관련 데이터를 추가
+	                            titleMarker.set("popupData", {
+	                                title: title,
+	                                hit: hit,
+	                                start_date: start_date,
+	                                end_date: end_date,
+	                                igdate: igdate
+	                            });
+	                            
 	                            markers.push(titleMarker);
 	                            
-	                    	    var markerClustering = new MarkerClustering({
-	                    	        minClusterSize: 2,
-	                    	        maxZoom: 13,
-	                    	        map: map,
-	                    	        markers: markers,
-	                    	        disableClickZoom: false,
-	                    	        gridSize: 120,
-	                    	        icons: [htmlMarker1, htmlMarker2, htmlMarker3, htmlMarker4, htmlMarker5],
-	                    	        indexGenerator: [10, 100, 200, 500, 1000],
-	                    	        stylingFunction: function(clusterMarker, count) {
-	                    	            $(clusterMarker.getElement()).find('div:first-child').text(count);
-	                    	        }
-	                    	    });
+	                            
+	                            
+	                            var markerClustering = new MarkerClustering({
+	                                minClusterSize: 2,
+	                                maxZoom: 13,
+	                                map: map,
+	                                markers: markers, // markers 배열을 그대로 사용
+	                                disableClickZoom: false,
+	                                gridSize: 120,
+	                                icons: [htmlMarker1, htmlMarker2, htmlMarker3, htmlMarker4, htmlMarker5],
+	                                indexGenerator: [10, 100, 200, 500, 1000],
+	                                stylingFunction: function(clusterMarker, count) {
+	                                    const displayedCount = Math.floor(count / 2); // 클러스터 수를 2로 나눔
+	                                    $(clusterMarker.getElement()).find('div:first-child').text(displayedCount); // 클러스터 수를 표시
+	                                }
+	                            });
+	                    	    
+	                    	    
+	                    	   
 
 	                            // 마커 클릭 이벤트 추가
 	                            naver.maps.Event.addListener(titleMarker, 'click', function() {
+
+	                                // 클릭한 마커의 데이터 가져오기
+	                                var popupData = marker.get("popupData");
+	                                
+	                                var popupContainer = document.getElementById("popup-container");
+	                                
+
+	                                var startDate = null;
+	                                var endDate =null;
+	                                var igdateDisplay = null;
+
+	                                // igdate가 있는 경우
+	                                if (popupData.start_date === null || popupData.end_date === null) {
+	                                    if (popupData.igdate.includes('~')) {
+	                                        [startDate, endDate] = popupData.igdate.split(' ~ ');
+	                                        igdateDisplay = `\${startDate} - \${endDate}`;
+	                                    } else if (popupData.igdate.includes('-')) {
+	                                        [startDate, endDate] = popupData.igdate.split(' - ');
+	                                        igdateDisplay = `\${startDate} - \${endDate}`;
+	                                    } else {
+	                                        igdateDisplay = popupData.igdate;
+	                                    }
+	                                } else {
+	                                    igdateDisplay = `\${popupData.start_date} - \${popupData.end_date}`;
+	                                }
+	                                // 팝업 컨테이너에 데이터 삽입
+	                                document.querySelector("#popup-container .ootd-of").innerText = popupData.title;
+	                                document.querySelector("#popup-container .popup-period").innerText = igdateDisplay;
+	                                document.querySelector("#popup-container ._100-span").innerText = `\${popupData.hit}명`;
+
+	                             // 현재 날짜를 가져오는 부분
+	                                const currentDate = new Date();
+	                                const formattedCurrentDate = currentDate.toISOString().split('T')[0]; // yyyy-mm-dd 형식으로 변환
+
+	                             // 종료까지 남은 날짜 계산
+	                                let remainingDays;
+	                                const endDateObj = new Date(endDate); // endDate를 Date 객체로 변환
+	                                const currentDateObj = new Date(); // 현재 날짜를 Date 객체로 생성
+	                                if (popupData.start_date === null || popupData.end_date === null) {
+	                                    if (endDate) {
+	                                        const daysRemaining = Math.ceil((endDateObj - currentDateObj) / (1000 * 60 * 60 * 24)); // 남은 날짜 계산
+	                                        remainingDays = `\${daysRemaining}일`;
+	                                    } else {
+	                                        remainingDays = ""; // endDate가 없을 경우 빈 문자열
+	                                    }
+	                                } else {
+	                                    const endDateObj = new Date(popupData.end_date); // end_date를 Date 객체로 변환
+	                                    const daysRemaining = Math.ceil((endDateObj - currentDateObj) / (1000 * 60 * 60 * 24)); // 남은 날짜 계산
+	                                    remainingDays = `\${daysRemaining}일`;
+	                                }
+
+	                                document.querySelector("#popup-container ._22-span2").innerText = remainingDays;
+
 	                                document.getElementById('popup-container').style.display = 'block';
 	                            });
 
-	                            // 팝업 닫기 버튼 클릭 이벤트
-	                            document.getElementById('closePopup').onclick = function() {
-	                                document.getElementById('popup-container').style.display = 'none';
-	                            };
 	                        });
 	                    })
 	                    .catch(error => console.error('Error:', error));
@@ -414,5 +526,6 @@ margin-bottom: 100px;
 	    };
 	});
 	</script>
+	<%@include file="/WEB-INF/include/header.jsp"%>
 </body>
 </html>

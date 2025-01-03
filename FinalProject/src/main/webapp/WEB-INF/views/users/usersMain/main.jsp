@@ -403,7 +403,6 @@
 		   <div class ="maintext">
 		    <h2 class="maintitle">랭킹</h2>
 		    <a href="/Users/Rankdetail"class="view-all" >전체보기 ☞</a>
-		    <p>${user.id}</p>
 		    </div>
 		    <div class="slide-wrapper">
 		        <ul class="slides">
