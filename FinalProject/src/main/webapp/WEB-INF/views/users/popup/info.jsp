@@ -422,82 +422,7 @@ const infoPage = `<div class="content">
 	     </c:forEach>  
 	   </div> 
 	  `;
-	  
-  const instagramPage = ` 
-	  <!-- instagram header-->
-	  <div class="review_header">
-	    <div class="review_title">
-	      <p>인스타그램 </p><p>조회수 기반 HOT 리뷰</p>
-	    </div>
-	  </div>
-	  
-	   <!-- instagram body-->
-	   <div class="review_body">
-	   <c:forEach  var = "HotReviews" items="${HotReviews}" >
-	   <div class="review_box" onclick="moveHotReviewDetail(this)" 
-		     data-idx="${HotReviews.store_idx}" 
-		     data-user-idx="${HotReviews.user_idx}"
-		     data-login-idx = "${user.userIdx}"
-		     data-review-idx = "${HotReviews.review_idx}">
-	     <div class ="review_preview">
-	     <img class= "review_img"src="/images/example/exampleimg6.png">     
-	     <div class="review_like">
-	     <img src="/images/icon/heart.png">
-	     <p>${HotReviews.like}</p>
-	     </div>
-	     </div>
-	     <div class="review_info">
-	       <p>${HotReviews.name} 님</p>
-	       <div><img src="/images/icon/eye2.png">&nbsp;${HotReviews.score}&nbsp;</div>
-	     </div>
-	     <div class="review_score">평점 ${HotReviews.score}</div>
-	     <div class="review_time"><div>3시간 전</div></div>
-	     <div class="review_cdate">${HotReviews.review_date}</div>
-	     </div>
-	     </c:forEach> 
-	   </div> 
-	  
-	  <!-- instagram header-->
-	    <div class="review_header">
-	    <div class="review_title">
-	      <p>전체 리뷰</p>
-	    </div>
-	  </div>
-	  <div class="review_sub">
-	    <p>전체리뷰수&nbsp; | &nbsp;${totalcount.review_idx} &nbsp;&nbsp; 평균&nbsp; |&nbsp; ${totalcount.score}</p>
-	    <div class="review_filter">
-	    <div id="review_slike">좋아요순</div>
-	    <div id="review_sscore">평점순</div>
-	    <div id="review_snew">최신순</div>
-	    </div>
-	   </div>
-	  
-	   <!-- instagram body-->
-	<div class="review_body">
-	  <c:forEach  var = "review" items="${totalreviews}" >
-	  <div class="review_box" onclick="moveHotReviewDetail(this)"
-	  data-idx="${review.store_idx}" 
-		     data-user-idx="${review.user_idx}"
-			     data-login-idx = "${user.userIdx}"
-			     data-review-idx = "${review.review_idx}">
-	     <div class ="review_preview">
-	     <img class= "review_img"src="/images/example/exampleimg6.png">     
-	     <div class="review_like">
-	     <img src="/images/icon/heart.png">
-	     <p>${review.like}</p>
-	     </div>
-	     </div>
-	     <div class="review_info">
-	       <p>${review.name} 님</p>
-	       <div><img src="/images/icon/eye2.png">&nbsp;${review.hit}&nbsp;</div>
-	     </div>
-	     <div class="review_score">평점 ${review.score}</div>
-	     <div class="review_time"><div>3시간 전</div></div>
-	     <div class="review_cdate">${review.review_date}</div>
-	     </div>        
-	     </c:forEach>  
-	   </div> 
-	  `;
+
   
 const mapPage = `
     <div class="review_header">
@@ -605,18 +530,6 @@ function moveReviewBack(e) {
 	 e.preventDefault();
 	$('#contents').html('');
 	  $('#contents').html(reviewPage);
-}
-
-function moveInstagram() {
-	$('#contents').html('');
-	  $('#contents').html(instagramPage);
-}
-
-function moveInstagramBack(e) {
-	
-	 e.preventDefault();
-	$('#contents').html('');
-	  $('#contents').html(instagramPage);
 }
 
 function initMap() {
