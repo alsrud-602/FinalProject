@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -46,7 +47,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
-        http.csrf().disable()
+        http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers( "/**", "/Users/Signup","/Users/CheckDuplication", "/Users/Login", "/Users/LoginForm", "/Users/SignupForm", "/resources/**", "/WEB-INF/views/**").permitAll()
                         .requestMatchers( "/CompanyAuth/**").permitAll()
@@ -81,7 +82,7 @@ public class SecurityConfig {
                         .sessionFixation().changeSessionId()) //새로운 세션을 생성하지 않는다. 대신에, Servelet Container에서 제공되는 세션 고정 보호를 사용
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
-        http.cors().configurationSource(request -> {
+        CorsConfigurer<HttpSecurity> httpSecurityCorsConfigurer = http.cors().configurationSource(request -> {
             CorsConfiguration config = new CorsConfiguration();
             config.addAllowedOriginPattern("*");
             config.addAllowedMethod("*");

@@ -33,9 +33,19 @@
     <div class="swiper-container">
   <div class="swiper-wrapper">
   <!-- 이미지 들어갈곳 -->
+  
+<%--   <c:choose>
+  	<c:when test="${PopImgPath}==null">
+	      <c:forEach var="img" items="${IgImgPath}">
+	        <div class="swiper-slide"><img src="${img}" alt="User Image" class="profileSize"></div>
+	      </c:forEach>
+     </c:when>
+     <c:otherwise> --%>
       <c:forEach var="img" items="${PopImgPath}">
         <div class="swiper-slide"><img src="/image/read?path=${img}" alt="User Image" class="profileSize"></div>
       </c:forEach>
+<%--       </c:otherwise>
+  </c:choose> --%>
   </div>
   <!-- Navigation buttons -->
   <div class="swiper-button-next"></div>
@@ -117,6 +127,7 @@
       <div onclick="moveInfo()">팝업정보</div>
       <div onclick="moveReiview()">리뷰</div>
       <div onclick="moveMap()">위치</div>
+      <div onclick="moveInstagram()">instgram피드</div>
     </div>
     
     <div id="contents">  
@@ -124,28 +135,44 @@
     <div class="content_title"><img  src="/images/icon/speaker.png" ><p>팝업스토어 소개</p></div>
     <p class="content_detail">${storedetail.content}</p>
   </div>
-  <div class="content">
-    <div class="content_title"><img  src="/images/icon/clock.png" ><p>운영시간</p></div>
-    <c:choose>
-      <c:when test="${empty StoreOperation.igdate}">
-	    <p class="content_detail">
-	    월 : ${StoreOperation.smon} - ${StoreOperation.emon }<br>
-	    화 : ${StoreOperation.stue } - ${StoreOperation.etue }<br>
-	    수 : ${StoreOperation.swed } - ${StoreOperation.ewed }<br>
-	    목 : ${StoreOperation.sthu } - ${StoreOperation.ethu }<br>
-	    금 : ${StoreOperation.sfri } - ${StoreOperation.efri }<br>
-	    토 : ${StoreOperation.ssat } - ${StoreOperation.esat }<br>
-	    일 : ${StoreOperation.ssun } - ${StoreOperation.esun }<br>
-	    ※${StoreOperation.onotes }
-	    </p>
-     </c:when>
-       <c:otherwise>
-	       <p class="content_detail">
-	         상세페이지를 참고해주세요
-	       </p>
-       </c:otherwise>
-    </c:choose>
-  </div>
+	<div class="content">
+	    <div class="content_title"><img src="/images/icon/clock.png"><p>운영시간</p></div>
+	    <c:choose>
+	        <c:when test="${empty StoreOperation.igdate}">
+	            <c:set var="weekdaysSame" value="${StoreOperation.smon == StoreOperation.stue && StoreOperation.emon == StoreOperation.etue && StoreOperation.emon == StoreOperation.ewed && StoreOperation.emon == StoreOperation.efri}" />
+	            <c:set var="weekendSame" value="${StoreOperation.ssat == StoreOperation.ssun && StoreOperation.esat == StoreOperation.esun}" />
+	            <c:set var="allSame" value="${weekdaysSame && weekendSame && StoreOperation.smon == StoreOperation.ssat && StoreOperation.emon == StoreOperation.esun}" />
+	
+	            <c:if test="${allSame}">
+	                <p class="content_detail">매일: ${StoreOperation.smon} - ${StoreOperation.emon}</p>
+	            </c:if>
+	            <c:if test="${weekdaysSame && !allSame}">
+	                <p class="content_detail">월~금: ${StoreOperation.smon} - ${StoreOperation.emon}</p>
+	                <c:if test="${weekendSame}">
+	                    <p class="content_detail">주말: ${StoreOperation.ssat} - ${StoreOperation.esat}</p>
+	                </c:if>
+	            </c:if>
+	            <c:if test="${!weekdaysSame && weekendSame}">
+	                <p class="content_detail">주말: ${StoreOperation.ssat} - ${StoreOperation.esat}</p>
+	            </c:if>
+	            <c:if test="${!weekdaysSame && !weekendSame}">
+	                <p class="content_detail">
+	                    월: ${StoreOperation.smon} - ${StoreOperation.emon}<br>
+	                    화: ${StoreOperation.stue} - ${StoreOperation.etue}<br>
+	                    수: ${StoreOperation.swed} - ${StoreOperation.ewed}<br>
+	                    목: ${StoreOperation.sthu} - ${StoreOperation.ethu}<br>
+	                    금: ${StoreOperation.sfri} - ${StoreOperation.efri}<br>
+	                    토: ${StoreOperation.ssat} - ${StoreOperation.esat}<br>
+	                    일: ${StoreOperation.ssun} - ${StoreOperation.esun}
+	                </p>
+	            </c:if>
+	        </c:when>
+	        <c:otherwise>
+	            <p class="content_detail">상세페이지를 참고해주세요</p>
+	        </c:otherwise>
+	    </c:choose>
+	</div>
+
   <div class="content">
     <div class="content_title"><img  src="/images/icon/check.png" ><p>팝업환경</p></div>
     <div class="content_sit">
@@ -395,6 +422,82 @@ const infoPage = `<div class="content">
 	     </c:forEach>  
 	   </div> 
 	  `;
+	  
+  const instagramPage = ` 
+	  <!-- instagram header-->
+	  <div class="review_header">
+	    <div class="review_title">
+	      <p>인스타그램 </p><p>조회수 기반 HOT 리뷰</p>
+	    </div>
+	  </div>
+	  
+	   <!-- instagram body-->
+	   <div class="review_body">
+	   <c:forEach  var = "HotReviews" items="${HotReviews}" >
+	   <div class="review_box" onclick="moveHotReviewDetail(this)" 
+		     data-idx="${HotReviews.store_idx}" 
+		     data-user-idx="${HotReviews.user_idx}"
+		     data-login-idx = "${user.userIdx}"
+		     data-review-idx = "${HotReviews.review_idx}">
+	     <div class ="review_preview">
+	     <img class= "review_img"src="/images/example/exampleimg6.png">     
+	     <div class="review_like">
+	     <img src="/images/icon/heart.png">
+	     <p>${HotReviews.like}</p>
+	     </div>
+	     </div>
+	     <div class="review_info">
+	       <p>${HotReviews.name} 님</p>
+	       <div><img src="/images/icon/eye2.png">&nbsp;${HotReviews.score}&nbsp;</div>
+	     </div>
+	     <div class="review_score">평점 ${HotReviews.score}</div>
+	     <div class="review_time"><div>3시간 전</div></div>
+	     <div class="review_cdate">${HotReviews.review_date}</div>
+	     </div>
+	     </c:forEach> 
+	   </div> 
+	  
+	  <!-- instagram header-->
+	    <div class="review_header">
+	    <div class="review_title">
+	      <p>전체 리뷰</p>
+	    </div>
+	  </div>
+	  <div class="review_sub">
+	    <p>전체리뷰수&nbsp; | &nbsp;${totalcount.review_idx} &nbsp;&nbsp; 평균&nbsp; |&nbsp; ${totalcount.score}</p>
+	    <div class="review_filter">
+	    <div id="review_slike">좋아요순</div>
+	    <div id="review_sscore">평점순</div>
+	    <div id="review_snew">최신순</div>
+	    </div>
+	   </div>
+	  
+	   <!-- instagram body-->
+	<div class="review_body">
+	  <c:forEach  var = "review" items="${totalreviews}" >
+	  <div class="review_box" onclick="moveHotReviewDetail(this)"
+	  data-idx="${review.store_idx}" 
+		     data-user-idx="${review.user_idx}"
+			     data-login-idx = "${user.userIdx}"
+			     data-review-idx = "${review.review_idx}">
+	     <div class ="review_preview">
+	     <img class= "review_img"src="/images/example/exampleimg6.png">     
+	     <div class="review_like">
+	     <img src="/images/icon/heart.png">
+	     <p>${review.like}</p>
+	     </div>
+	     </div>
+	     <div class="review_info">
+	       <p>${review.name} 님</p>
+	       <div><img src="/images/icon/eye2.png">&nbsp;${review.hit}&nbsp;</div>
+	     </div>
+	     <div class="review_score">평점 ${review.score}</div>
+	     <div class="review_time"><div>3시간 전</div></div>
+	     <div class="review_cdate">${review.review_date}</div>
+	     </div>        
+	     </c:forEach>  
+	   </div> 
+	  `;
   
 const mapPage = `
     <div class="review_header">
@@ -502,6 +605,18 @@ function moveReviewBack(e) {
 	 e.preventDefault();
 	$('#contents').html('');
 	  $('#contents').html(reviewPage);
+}
+
+function moveInstagram() {
+	$('#contents').html('');
+	  $('#contents').html(instagramPage);
+}
+
+function moveInstagramBack(e) {
+	
+	 e.preventDefault();
+	$('#contents').html('');
+	  $('#contents').html(instagramPage);
 }
 
 function initMap() {
