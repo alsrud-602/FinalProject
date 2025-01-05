@@ -1,5 +1,6 @@
 package com.board.admin.controller;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,24 +8,20 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.board.admin.mapper.AdminMapper;
 import com.board.admin.vo.AdminVo;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/Admin")
@@ -241,16 +238,113 @@ public class AdminController {
 	    }
 
 	    
+	    @PostMapping("/UpdateUserStatus")
+	    public ResponseEntity<Map<String, String>> updateUserStatus(@RequestBody Map<String, String> requestBody) {
+	        String userId = requestBody.get("userId");
+	        String status = requestBody.get("status");
+	        System.out.println(userId);
+	        System.out.println(status);
+	        try {
+	            // 사용자 상태 업데이트 로직
+	            boolean isUpdated = adminMapper.updateUserStatus(userId, status);
+
+	            // 결과를 JSON 형식으로 반환
+	            Map<String, String> response = new HashMap<>();
+	            if (isUpdated) {
+	                response.put("message", "회원 상태가 업데이트되었습니다.");
+	                return ResponseEntity.ok(response);
+	            } else {
+	                response.put("message", "회원 상태 업데이트에 실패했습니다.");
+	                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+	            }
+	        } catch (Exception e) {
+	            // 예외 처리: 오류 발생 시 로그에 기록하고 500 에러 반환
+	            e.printStackTrace();
+	            Map<String, String> response = new HashMap<>();
+	            response.put("message", "서버 오류가 발생했습니다. 다시 시도해 주세요.");
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+	        }
+	    }
 	    
-	
-	
-	// 스토어관리 - 담당자관리
-	@RequestMapping("/Managerlist")
-	public  ModelAndView  managerlist() {
-		ModelAndView mv = new ModelAndView();
-		mv.setViewName("/admin/manager/managerlist");
-		return mv;
-	}
+	    
+	    @PostMapping("/UpdateCompnanyStatus")
+	    public ResponseEntity<Map<String, String>> updateCompnanyStatus(@RequestBody Map<String, String> requestBody) {
+	    	String companyId = requestBody.get("companyId");
+	    	String status = requestBody.get("status");
+	    	System.out.println(companyId);
+	    	System.out.println(status);
+	    	try {
+	    		// 사용자 상태 업데이트 로직
+	    		boolean isUpdated = adminMapper.UpdateCompnanyStatus(companyId, status);
+	    		
+	    		// 결과를 JSON 형식으로 반환
+	    		Map<String, String> response = new HashMap<>();
+	    		if (isUpdated) {
+	    			response.put("message", "회원 상태가 업데이트되었습니다.");
+	    			return ResponseEntity.ok(response);
+	    		} else {
+	    			response.put("message", "회원 상태 업데이트에 실패했습니다.");
+	    			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+	    		}
+	    	} catch (Exception e) {
+	    		// 예외 처리: 오류 발생 시 로그에 기록하고 500 에러 반환
+	    		e.printStackTrace();
+	    		Map<String, String> response = new HashMap<>();
+	    		response.put("message", "서버 오류가 발생했습니다. 다시 시도해 주세요.");
+	    		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+	    	}
+	    }
+	    
+	    @RequestMapping("/Managerlist")
+	    public ModelAndView managerlist() {
+	        // 모든 company 유저 정보
+	        List<AdminVo> allcompanys = adminMapper.getallcompanyinfo();
+	        // company 유저 별 팝업개수
+	        List<Map<String, Object>> popupCounts = adminMapper.getPopupCountsByCompany();
+	        // company 유저 별 팝업정보
+	        List<Map<String, Object>> allpopupByCompany = adminMapper.getAllPopupByCompany();
+	        
+	        System.out.println("모든 컴퍼니유저:" + allcompanys);
+	        System.out.println("컴퍼니 유저별 팝업개수:" + popupCounts);
+	        
+	        // popupCounts에서 storeCount를 각 company에 매핑
+	        for (AdminVo company : allcompanys) {
+	            Integer storeCount = 0;
+	            boolean found = false; // 일치하는 값이 있는지 확인하는 플래그
+	            for (Map<String, Object> popupCount : popupCounts) {
+	                System.out.println("Company ID: " + company.getCompany_idx()); // company의 ID 출력
+	                System.out.println("Popup Company ID: " + popupCount.get("COMPANY_IDX")); // popupCount의 COMPANY_IDX 출력
+	                
+	                // COMPANY_IDX 비교 시 Integer와 String 타입 일치 여부 확인
+	                if (Integer.valueOf(popupCount.get("COMPANY_IDX").toString()).equals(company.getCompany_idx())) {
+	                    // STORE_COUNT가 BigDecimal일 경우 int로 변환
+	                    Object storeCountObj = popupCount.get("STORE_COUNT");
+	                    if (storeCountObj instanceof BigDecimal) {
+	                        storeCount = ((BigDecimal) storeCountObj).intValue(); // BigDecimal을 int로 변환
+	                    } else {
+	                        storeCount = (Integer) storeCountObj; // 이미 Integer인 경우
+	                    }
+	                    found = true;
+	                    break;
+	                }
+	            }
+	            
+	            // storeCount가 찾지 못한 경우를 로깅
+	            if (!found) {
+	                System.out.println("No matching popupCount found for company: " + company.getCompany_idx());
+	            }
+	            
+	            company.setStore_idx(storeCount); // 회사에 storeCount 추가
+	            System.out.println("Store Count for company " + company.getCompany_idx() + ": " + storeCount); // 최종 storeCount 출력
+	        }
+	        
+	        ModelAndView mv = new ModelAndView();
+	        mv.addObject("allcompanys", allcompanys);
+	        mv.addObject("popupCounts", popupCounts); // popupCounts도 뷰로 전달
+	        mv.setViewName("/admin/manager/managerlist");
+	        return mv;
+	    }
+
 	
 	@RequestMapping("/Advertise")
 	public ModelAndView advertise() {
@@ -259,10 +353,9 @@ public class AdminController {
 		return mv;
 	}
 	
-}
-
-    @Autowired
-    private HttpServletRequest request;
+/*
+ @Autowired
+ private HttpServletRequest request;
 
     // MFA 인증 확인
     private boolean isMfaAuthenticated(HttpServletRequest request) {
@@ -288,7 +381,7 @@ public class AdminController {
         return mv;
     }
 
-    // 유저관리 상세
+   // 유저관리 상세
     @RequestMapping("/Userdetail")
     public ModelAndView userdetail(HttpServletResponse response) throws Exception {
         // MFA 인증 확인
@@ -302,18 +395,6 @@ public class AdminController {
         return mv;
     }
 
-    @RequestMapping("/M1")
-    public ModelAndView M1(HttpServletResponse response) throws Exception {
-        // MFA 인증 확인
-        if (!isMfaAuthenticated(request)) {
-            response.sendRedirect("/Users/2fa"); 
-            return null; 
-        }
-
-        ModelAndView mv = new ModelAndView();
-        mv.setViewName("/admin/manager/detail");
-        return mv;
-    }
 
     // 스토어관리 - 담당자관리
     @RequestMapping("/Managerlist")
@@ -352,4 +433,6 @@ public class AdminController {
 
         return "admin/dashboard/dashboard";
     }
+    */
 }
+

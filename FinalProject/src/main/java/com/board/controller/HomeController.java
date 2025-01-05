@@ -19,10 +19,6 @@ public class HomeController {
 	// http://localhost:9090
 	@RequestMapping("/")
 
-	public  String   home() {
-		return "users/usersMain/main";
-
-
 	public  ModelAndView   home() {
 		//랭킹 팝업
 		List<UsersDto> ranklist = usersMapper.getRanklist();

@@ -53,7 +53,7 @@ public interface UsersMapper {
 	UsersDto getStoreReservation(UsersDto usersdto);
 
 
-	UsersDto getUserById(Integer userIdx);
+	UsersDto getUserById1(Integer userIdx);
 
 	// 상세페이지 운영시간 
 	UsersDto getStoreOperation(UsersDto usersdto);

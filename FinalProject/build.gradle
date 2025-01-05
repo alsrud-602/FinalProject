@@ -68,9 +68,8 @@ dependencies {
 
     //WebSocket
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
-    implementation 'org.springframework.messaging:spring-messaging'
-
-
+  //  implementation 'org.springframework.messaging:spring-messaging'  오류 주석 1.3
+    
     //topt
     implementation files('lib/googleauth-1.5.0.jar')
     implementation 'com.google.zxing:core:3.3.0'

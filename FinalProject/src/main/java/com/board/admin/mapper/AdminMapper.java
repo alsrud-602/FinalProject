@@ -53,7 +53,15 @@ public interface AdminMapper {
 
 	List<AdminVo> getUserReview(String selUserId);
 
-	void updateUserStatus(String userId, String status);
+	  boolean updateUserStatus(@Param("userId") String userId, @Param("status") String status);
+
+	  
+	 //매니저관리
+	List<AdminVo> getallcompanyinfo();
+	List<Map<String, Object>> getPopupCountsByCompany();
+	List<Map<String, Object>> getAllPopupByCompany();
+
+	boolean UpdateCompnanyStatus(@Param("userId") String companyId, @Param("status") String status);
 
 
 
