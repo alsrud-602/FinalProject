@@ -383,7 +383,7 @@
                         <div class="div2">등록</div>
                     </div>
                 </a>
-                 <a href="/Business/admin/View">
+                 <a href="/Admin/Store/View">
                     <div class="frame-2068">
                         <div class="div2">고객센터</div>
                     </div>

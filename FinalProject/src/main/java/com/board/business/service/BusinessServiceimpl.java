@@ -22,7 +22,9 @@ import com.board.business.dto.ReservationDateListDto;
 import com.board.business.dto.ReservationPlanDto;
 import com.board.business.dto.ReservationStoreDto;
 import com.board.business.dto.ReservationUserListDto;
+import com.board.business.dto.ResponseDto;
 import com.board.business.dto.StoreCategoryDto;
+import com.board.business.dto.StoreDto;
 import com.board.business.dto.StoreListDto;
 import com.board.business.dto.StoreTagDto;
 import com.board.business.dto.StoreUpdateDto;
@@ -436,6 +438,35 @@ public class BusinessServiceimpl  implements BusinessService{
 		
 		 List<ReservationUserListDto> ruList = businessMapper.getReservationUserList(map);
 		return ruList;
+	}
+
+	@Override
+	public StoreDto ApprovalUpdate(StoreDto storeDto) {
+		businessMapper.ApprovalUpdate(storeDto);
+		StoreDto sDto = businessMapper.getStore(storeDto);
+		return sDto;
+	}
+
+	@Override
+	public StoreDto ApprovalBan(StoreDto storeDto) {
+		System.out.println("상황확인"+storeDto);
+		businessMapper.ApprovalBan(storeDto);
+		StoreDto sDto = businessMapper.getStore(storeDto);
+		
+		return sDto;
+	}
+
+	@Override
+	public List <ResponseDto> getRequestList(int store_idx) {
+		 List<ResponseDto> rqList = businessMapper.getRequestList( store_idx);
+		return rqList;
+	}
+
+	@Override
+	public RequestDto UpdateResponse(RequestDto requestDto) {
+		businessMapper.UpdateResponse(requestDto);
+		RequestDto rDto =  businessMapper.getRequest(requestDto.getRequest_idx());		
+		return rDto;
 	}
 
 

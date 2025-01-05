@@ -283,7 +283,9 @@ align-items: center;
 display: flex;
 justify-content: flex-start;
 gap:10px;
-
+width: 100%;
+flex-wrap: wrap;
+margin-top: 20px;
 }
 .table_padding1 {
 padding: 10px 0;
@@ -429,12 +431,7 @@ span{
 cursor: pointer;
 }
 }
-.sub_flex{
-display: flex;
-justify-content: flex-start;
-gap:10px;
 
-}
 #inputHash{
 
 margin: 10px 0;
@@ -586,7 +583,7 @@ align-items: baseline;
 display: flex;
 justify-content: center;
 }
-.modeal_area{
+.modal_area{
 width: 100%;
 height:152px;
 border: 1px solid #9A9A9A;

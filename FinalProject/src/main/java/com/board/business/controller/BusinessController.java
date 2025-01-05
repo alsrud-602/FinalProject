@@ -445,7 +445,8 @@ public class BusinessController {
 	public ModelAndView mobile() {		
 		
 	ModelAndView mv = new ModelAndView();
-	mv.setViewName("mobile/info");
+	//mv.setViewName("mobile/info");
+	mv.setViewName("admin/store/view");
 	return mv;	
 		
 	}	
@@ -457,13 +458,9 @@ public class BusinessController {
 	mv.setViewName("mobile/mypage");
 	return mv;	
 		
-	}	
-	@RequestMapping("/admin/View")
-	public ModelAndView view() {				
-		ModelAndView mv = new ModelAndView();
-		mv.setViewName("admin/store/view");
-	        return mv;
 	}
+	
+
 
 	
 }

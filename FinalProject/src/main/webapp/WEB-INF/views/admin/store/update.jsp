@@ -34,7 +34,11 @@
 <div class="container">
   <%@include file="/WEB-INF/include/admin-slidebar2.jsp" %>
 <form action="">
-  <main>
+  <input type="hidden" name="detail_idx" value="${store.detail_idx}">      
+ <input type="hidden" name="store_idx" value="${store.store_idx}">      
+ <input type="hidden" name="company_idx" value="${store.company_idx}">      
+ <input type="hidden" name="operation_idx" value="${store.operation_idx}">  
+ <main>
 
 
      <div id="view_header">

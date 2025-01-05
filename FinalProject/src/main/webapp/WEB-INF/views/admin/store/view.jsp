@@ -19,6 +19,31 @@ border-radius: 5px;
 font-size: 20px;
 cursor: pointer;
 }
+.imageSize{
+width: 250px;
+height: 250px;
+}
+.image_box{
+
+display: flex;
+flex-direction: column; 
+align-items: center; 
+justify-content: center;
+
+}
+.image_name{
+font-size: 18px;
+font-weight: 600;
+padding: 8px;
+background: #E4E4E4;
+margin: 5px;
+border-radius: 10px;
+}
+#image_display{
+display: flex;
+gap:10px;
+padding:20px;
+}
 </style>
 </head>
 <body>
@@ -40,19 +65,32 @@ cursor: pointer;
       <table class="sub_table">
         <tr>
            <td>팝업스토어명칭</td>
-           <td>메시X스텐리1942 콜라보 팝업스토어</td>
+           <td>${store.title}</td>
         </tr>
         <tr>
            <td>카테고리</td>
-           <td>잡화 | 스포츠</td>
+           <td>
+          <c:forEach var="c" items="${categoryList}" varStatus="status">
+            ${c.category_name} 
+		    <c:if test="${!status.last}">
+		    &nbsp;&nbsp;|&nbsp;&nbsp;
+		    </c:if>                     
+           </c:forEach>  
+           
+           </td>
         </tr>        
         <tr>
            <td>브랜드</td>
-           <td>스텐리 | 메시</td>
+           <td>
+             ${store.brand1} 
+              <c:if test="${not empty store.brand2}">
+               &nbsp;&nbsp;|&nbsp;&nbsp;${store.brand2} 
+              </c:if>                    
+           </td>
         </tr>        
         <tr>
            <td>주 타겟 연령대</td>
-           <td>2030세대</td>
+           <td>${store.age}</td>
         </tr>        
       </table>
   </div>
@@ -64,38 +102,38 @@ cursor: pointer;
       <table class="sub_table">
         <tr>
            <td>팝업스토어 주소</td>
-           <td>서울특별시 성동구 성수동 132-2</td>
+           <td>${store.address}</td>
         </tr>
         <tr>
            <td>운영기간</td>
-           <td>2024-12-12 ~ 2024-12-25</td>
+           <td>${store.start_date} ~ ${store.end_date}</td>
         </tr>        
         <tr>
            <td>영업시간</td>
            <td class="table_padding1">
             <div class="sub_day">
-               <p>월</p><p>11:00 &nbsp; - &nbsp; 12:00</p>
+               <p>월</p><p>${store.smon} &nbsp; - &nbsp; ${store.emon}</p>
             </div>
             <div class="sub_day">
-               <p>화</p><p>11:00 &nbsp; - &nbsp; 12:00</p>
+               <p>화</p><p>${store.stue} &nbsp; - &nbsp; ${store.etue}</p>
             </div>            
             <div class="sub_day">
-               <p>수</p><p>11:00 &nbsp; - &nbsp; 12:00</p>
+               <p>수</p><p>${store.swed} &nbsp; - &nbsp; ${store.ewed}</p>
             </div>            
             <div class="sub_day">
-               <p>목</p><p>11:00 &nbsp; - &nbsp; 12:00</p>
+               <p>목</p><p>${store.sthu} &nbsp; - &nbsp; ${store.ethu}</p>
             </div>            
             <div class="sub_day">
-               <p>금</p><p>11:00 &nbsp; - &nbsp; 12:00</p>
+               <p>금</p><p>${store.sfri} &nbsp; - &nbsp; ${store.efri}</p>
             </div>            
             <div class="sub_day">
-               <p>토</p><p>11:00 &nbsp; - &nbsp; 12:00</p>
+               <p>토</p><p>${store.ssat} &nbsp; - &nbsp; ${store.esat}</p>
             </div>            
             <div class="sub_day">
-               <p>일</p><p>11:00 &nbsp; - &nbsp; 12:00</p>
+               <p>일</p><p>${store.ssun} &nbsp; - &nbsp; ${store.esun}</p>
             </div>            
              <div class="sub_p">
-             <p> * 팝업특성상 운영시간은 유동적으로 변동될 수 있습니다</p>
+             <p>${store.onotes}</p>
              </div>
            </td>
         </tr>        
@@ -103,7 +141,7 @@ cursor: pointer;
            <td>홈페이지 링크</td>
            <td>
              <div class="sub_p">
-             <p>http://localhost:9090/Review/Storeview</p>
+             <p><a href="${store.homepage}">${store.homepage}</a></p>
              </div>
            </td>
         </tr>        
@@ -111,7 +149,7 @@ cursor: pointer;
            <td>SNS 링크</td>
            <td>
              <div class="sub_p">
-             <p>http://localhost:9090/Review/Storeview</p>
+             <p><a href="${store.sns}">${store.sns}</a></p>
              </div>
            </td>
         </tr>        
@@ -119,8 +157,9 @@ cursor: pointer;
            <td>해시태그</td>
            <td>
            <div class="sub_flex">
-             <div class="sub_hash_div">굿즈판매</div>
-             <div class="sub_hash_div">포토부스</div>
+           <c:forEach var="tag" items="${tagList}" >
+             <div class="sub_hash_div">${tag.tag_name}</div>
+              </c:forEach>	
            </div>
            </td>
         </tr>        
@@ -136,29 +175,33 @@ cursor: pointer;
          <td>소개 한 줄</td>      
          <td>
            <div class="sub_p">
-             <p>스텐리x메시 드디어 서울에 착륙!!</p>
+             <p>${store.introduction}</p>
            </div>
          </td>      
        </tr>
        <tr >
          <td>상세내용</td>      
          <td >
-         <div class="sub_textarea"> 형형색색의 텐트와 화려한 벨벳 커튼
-다양한 캐릭터들이 펼치는 화려한 쇼를 만날 수 있는 움직이는 대극장이 더현대 서울에서 펼처집니다.
-사운즈 포레스트를 수 놓은 웅장한 무대 위, 발 딛는 곳곳이 포토존이 이곳에서 잊지 못할 환상의 경험을 즐길 준비가 됬나요??</div>
+         <div class="sub_textarea">${store.content}</div>
          </td>      
        </tr>
        <tr>
          <td>팝업환경</td>      
          <td>
-           주차불가&nbsp;&nbsp; 무료&nbsp;&nbsp; 노키즈존&nbsp;&nbsp; 촬영가능      
+           ${store.parking}&nbsp;&nbsp;${store.fare}&nbsp;&nbsp;${store.age_limit}&nbsp;&nbsp;${store.shooting}     
          </td>      
        </tr>
        <tr>
          <td>홍보이미지</td>
          <td>
-          <div class="file_shape">retdsfe.pdf</div>
-         
+         <div id ="image_display">
+         <c:forEach var="image" items="${imageList}">       
+         <div class="image_box">
+          <img src="/Image/Read?path=${image.image_path}"alt="${image.imagename}" class="imageSize">
+          <div class="image_name">${image.imagename}</div>
+          </div>
+         </c:forEach>
+         </div>
          </td>
        </tr>
       
@@ -167,11 +210,11 @@ cursor: pointer;
  </div>
  
  <div class="btn_layout">
- <a class="btnful" id="btn_green" href="#">승인하기</a>
- <a class="btnful" id="btn_red" href="#">승인거부</a>
- <a class="btnful" id="btn_white" href="/Review/Storeupdate">수정하기</a>
+ <a class="btnful" id="btn_green" href="#" onclick="Approval(event)" data-status="승인">승인하기</a>
+ <a class="btnful" id="btn_red" href="#" onclick="Approval(event)" data-status="불가">승인거부</a>
+ <a class="btnful" id="btn_white" href="/Admin/Store/UpdateForm?store_idx=${store.store_idx}">수정하기</a>
  <a class="btnful" id="btn_blue" href="#">담당자 요청 조회</a>
- <a class="btnful" id="btn_black" href="#">스토어 삭제</a>
+ <a class="btnful" id="btn_black" href="#"onclick="banUpdate(event)" data-ban="${store.ban}">스토어 삭제</a>
  </div> 
   </main>	
 </div>
@@ -191,21 +234,34 @@ cursor: pointer;
 
    
     <div class="dropdown-menu" id="dropdown-menu">
-      <div class="custom-option" data-value="1">
-        <div class="option_left-align">팝업명 변경</div>
-        <div class="option_right-align">
-          <div class="status-pre">미완</div>
-          <div class="option_date">2024.12.13</div>
-        </div>
-      </div>
-      <div class="custom-option" data-value="2">
-        <div class="option_left-align">다른 작업</div>
-        <div class="option_right-align">
-          <div class="status-con">완료</div>
-          <div class="option_date">2024.12.14</div>
-        </div>
-      </div>
+        <c:choose>
+            <c:when test="${not empty requestList}">
+                <c:forEach var="request" items="${requestList}" varStatus="status">
+                    <div class="custom-option" data-value="${status.index}">
+                        <div class="option_left-align" data-idx="${request.request_idx}">${request.field}</div>
+                        <div class="option_right-align">
+                            <c:choose>
+                                <c:when test="${request.status == '미완'}">
+                                    <div class="status-pre">미완</div>
+                                </c:when>
+                                <c:when test="${request.status == '완료'}">
+                                    <div class="status-con">완료</div>
+                                </c:when>
+                            </c:choose>
+                            <div class="option_date">${request.cdate}</div>
+                        </div>
+                    </div>
+                </c:forEach>
+            </c:when>
+            <c:otherwise>
+                <div class="custom-option">
+                    <div class="option_left-align"> 요청 내역 없음</div>
+                </div>
+            </c:otherwise>
+        </c:choose>
     </div>
+    
+    
   </div>
 
 
@@ -217,14 +273,13 @@ cursor: pointer;
      
 
       <h2>요청 내역</h2>
-      <div class="modeal_area">요청 수락해주세요요청 
-수락해주세요요청 수락해주세요요청 수락해주세요요청 수락해주세요요청 수락해주세요요청 수락해주세요요청 수락해주세요요청 수락해주세요요청 수락해주세요요청 수락해주세요요청 수락해주세요
+      <div class="modal_area">요청내역없음
         </div>
      <div class="modal_box">
       <h2>답변하기</h2>
-          <textarea class="model_textarea" rows="" cols="" placeholder="요청처리에 대한 답변을 입력하세요">답변입력하기</textarea>
+      <textarea class="model_textarea" rows="" cols="" placeholder="요청처리에 대한 답변을 입력하세요">답변없음</textarea>
      </div>
-     
+      <input type="hidden" value="" id="modal_idx"/>
       <div class="modal_layout_confirm" >
       <div id="btn5" onclick="requestConfirm()">확인</div>
       </div>
@@ -235,6 +290,62 @@ cursor: pointer;
 <%@include file="/WEB-INF/include/admin-footer.jsp" %>
 </body>
 <script>
+let store_idx = ${store.store_idx}; // store_idx 값 설정
+//승인 거부 RESTAPI
+function Approval(event) {
+    event.preventDefault(); 
+    let status = event.target.getAttribute('data-status');
+ console.log(status);
+    // fetch 요청 보내기
+    fetch('/Approval/Update', {
+        method: 'POST', 
+        headers: {  'Content-Type': 'application/json' },
+        body: JSON.stringify({ store_idx: store_idx, status: status }) 
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data && data.message) {
+            alert(data.message + ' 처리 되었습니다');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error); // 에러 처리
+    });
+}
+//삭제 RESTAPI
+function banUpdate(event) {
+    event.preventDefault(); 
+    let banStatus = event.target.getAttribute('data-ban'); 
+    
+    // banStatus가 'N'이면 'Y'로, 'Y'이면 'N'으로 변경
+    let newBanStatus = (banStatus === 'N') ? 'Y' : 'N';
+
+    console.log('Current ban status:', banStatus);
+    console.log('New ban status:', newBanStatus);
+
+    // fetch 요청 보내기
+    fetch('/Approval/Ban', {
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ store_idx: store_idx, ban: newBanStatus }) 
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data && data.status) { 
+        	
+        	 let ban = (data.status === 'N') ? '삭제해제' : '삭제';
+            alert(ban + ' 처리 되었습니다');
+            // a 태그의 data-ban 속성 업데이트
+            event.target.setAttribute('data-ban', newBanStatus);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error); // 에러 처리
+    });
+}
+
+
+
 //예약하기 버튼 클릭 시 모달 열기
 document.getElementById('btn_blue').addEventListener('click', function() {
     document.getElementById('modalBg').style.display = 'block';
@@ -265,13 +376,67 @@ document.addEventListener('click', (e) => {
 options.forEach(option => {
   option.addEventListener('click', () => {
       const selectedText = option.querySelector('.option_left-align').textContent;
-      dropdownToggle.textContent = selectedText; 
-    dropdownMenu.classList.remove('show'); // Close dropdown
+
+      const requestIdx = option.querySelector('.option_left-align').getAttribute('data-idx');
+      
+     dropdownToggle.textContent = selectedText; 
+    
+     
+     // fetch 요청 보내기
+     fetch('/Request/Request', {
+         method: 'POST', 
+         headers: { 'Content-Type': 'application/json' },
+         body: JSON.stringify({ request_idx: requestIdx }) 
+     })
+     .then(response => response.json())
+     .then(data => {
+         if (data && data.rDto) {      	
+        	 let request = data.rDto;
+     const modalArea = document.querySelector('.modal_area');
+     modalArea.textContent = request.content;
+     const textarea = document.querySelector('.model_textarea');
+     textarea.value = request.response;    
+     const requesthidden = document.querySelector('#modal_idx');
+     requesthidden.value = requestIdx;    
+           
+        }
+     })
+     .catch(error => {
+         console.error('Error:', error); // 에러 처리
+     });          
+     
+     
+    dropdownMenu.classList.remove('show'); 
+    
   });
 });
 
+//답변 restAPI
 function requestConfirm(){
-	//restAPI 로 구현 하기~
+   const request_idx = document.querySelector('#modal_idx').value;
+   const response = document.querySelector('.model_textarea').value;
+	
+   console.log(request_idx);
+   console.log(response);
+   
+   // fetch 요청 보내기
+   fetch('/Request/Response', {
+       method: 'POST', 
+       headers: { 'Content-Type': 'application/json' },
+       body: JSON.stringify({ response: response, request_idx: request_idx }) 
+   })
+   .then(response => response.json())
+   .then(data => {
+       if (data && data.msg) {      	
+      	 let msg = data.msg;
+          alert('답변완료 했습니다');
+          document.querySelector('.model_textarea').value = msg;
+         
+      }
+   })
+   .catch(error => {
+       console.error('Error:', error); // 에러 처리
+   });
 	
 }
 
