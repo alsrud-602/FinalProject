@@ -194,7 +194,7 @@
  
 
  <div id="recent-searches">
-    <h2 class="content-text">최근 검색내역</h2>
+    <h2 class="content-text">마지막 검색내역</h2>
     <div id="search-records-container">
         <!-- 선택된 위치들이 여기에 나열됩니다 -->
     </div>
