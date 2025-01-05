@@ -21,9 +21,18 @@
 
 <div class="container">
   <main>
-  
+   
+   <div>
+    <div>팝업명</div>
+    <div>순서</div>
+     
+     <div id="mynumber"></div>
+     <div>현재 대기인원</div>
+     <div id="watingp"> </div>
+   </div>
+   
   <button id="reserveButton"> 대기상황 </button>
-  <div >92번 대기인원</div>
+  <div >90번 대기인원</div>
   <div id ="waiting-count"></div>
   </main>
   
@@ -32,7 +41,7 @@
 
 </body>
   <script>
-  const store_idx = 92;
+  const store_idx = 90;
   
   const socket = new SockJS('/ws');  // 웹소켓 연결
   const stompClient = Stomp.over(socket);

@@ -970,8 +970,8 @@ margin: 30px 42px;
 
 		<div class="buttons-footer">
 			<a href="/Business/moblie">예약 일정 수정하기</a> 
-			<a id="infoUpdate" href="/Business/Operation/UpdateFormStore?store_idx=91">기본정보
-				수정하기</a> <a href="">팝업 페이지 이동하기</a>
+			<a id="infoUpdate" href="/Business/Operation/UpdateFormStore?store_idx=91">기본정보 수정하기</a>
+		    <a href="/Admin/Store/View">팝업 페이지 이동하기</a>
 			<c:if test="">
 				<button>예약 기능 사용하기</button>
 				<button>기본정보 수정하기</button>
@@ -1085,6 +1085,8 @@ margin: 30px 42px;
                     <td colspan="7" style="text-align:center;"> 대기인원이 없습니다.</td>
                 </tr>
             `;   
+            
+            $('#waiting-count').html('대기 0팀'); 
         }
 
         isWaitingConfigCalled = false;
@@ -1133,6 +1135,7 @@ margin: 30px 42px;
 	          const waitingList = JSON.parse(message.body);
 	          updateWaitingList(waitingList);
 	      });
+	      currentCompanyIdx = initIdx;
 
 	  });
 	  
@@ -1189,7 +1192,8 @@ margin: 30px 42px;
    	    		store_idx : store_idx,   
    	    		onsite_use: ableStatus  };
      if (stompClient) {
-        stompClient.send("/app/Waiting/StoreStatus", {}, JSON.stringify(storeStatus));
+        stompClient.send("/app/Waiting/StoreStatus", {}, JSON.stringify(storeStatus));      
+        loadUserWaitingList(store_idx)
      } else {
         console.error("WebSocket is not connected.");
      }  

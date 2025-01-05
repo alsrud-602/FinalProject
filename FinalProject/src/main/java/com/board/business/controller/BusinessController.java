@@ -449,6 +449,21 @@ public class BusinessController {
 	return mv;	
 		
 	}	
-	
+
+	@RequestMapping("/mypage")
+	public ModelAndView mypage() {		
+		
+	ModelAndView mv = new ModelAndView();
+	mv.setViewName("mobile/mypage");
+	return mv;	
+		
+	}	
+	@RequestMapping("/admin/View")
+	public ModelAndView view() {				
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("admin/store/view");
+	        return mv;
+	}
+
 	
 }
