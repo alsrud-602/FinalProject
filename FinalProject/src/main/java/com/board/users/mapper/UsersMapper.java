@@ -111,5 +111,11 @@ public interface UsersMapper {
 	UsersDto getUserById(Integer userIdx);
 
 	
+	//Wallet 코스추천
+	List<UsersDto> getallStorelist();
+
+	List<UsersDto> getAddressesByStoreIdx();
+
+	
 
 }

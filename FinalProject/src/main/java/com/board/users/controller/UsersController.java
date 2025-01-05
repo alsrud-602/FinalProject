@@ -1,5 +1,6 @@
 package com.board.users.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,9 +44,51 @@ public class UsersController {
 	}
 	
 	@RequestMapping("/RouteRecommend")
-	public  String   routeRecommend() {
-		return "users/usersWallet/routeRecommend";
-		//return "/WEB-INF/views/home.jsp";
+	public  String   routeRecommend(Model model) {
+	    // 모든 매장 리스트 가져오기
+	    List<UsersDto> allStoreList = usersMapper.getallStorelist();
+	    System.out.println("All Store List: " + allStoreList);  // 전체 매장 리스트 출력
+
+	    Map<Integer, List<UsersDto>> storeAddressMap = new HashMap<>();
+	    
+	    // 모든 주소 리스트 가져오기
+	    List<UsersDto> allAddresses = usersMapper.getAddressesByStoreIdx();
+	    System.out.println(allAddresses);
+	        
+	    // 주소를 storeIdx 기준으로 그룹화
+	    for (UsersDto address : allAddresses) {
+	        int storeIdx = address.getStore_idx();  // 주소에 해당하는 storeIdx 가져오기
+	        storeAddressMap.computeIfAbsent(storeIdx, k -> new ArrayList<>()).add(address);
+	    }
+	    
+	    // 매장 정보와 주소를 결합하여 storeInfoMap에 담기
+	    Map<Integer, Map<String, Object>> storeInfoMap = new HashMap<>();
+
+	    for (UsersDto store : allStoreList) {
+	        int storeIdx = store.getStore_idx();  // 매장 idx
+	        String storeTitle = store.getTitle();  // 매장 이름
+
+	        // 해당 storeIdx에 맞는 주소들 가져오기
+	        List<UsersDto> addresses = storeAddressMap.get(storeIdx);
+
+	        // 매장 이름과 주소가 모두 존재할 때만 storeInfoMap에 추가
+	        if (storeTitle != null && !storeTitle.isEmpty() && addresses != null && !addresses.isEmpty()) {
+	            // 매장 정보와 주소를 하나의 Map으로 결합
+	            Map<String, Object> storeDetails = new HashMap<>();
+	            storeDetails.put("storeTitle", storeTitle);  // 매장 이름
+	            storeDetails.put("addresses", addresses);   // 해당 매장의 주소 리스트
+
+	            // storeIdx를 기준으로 storeDetails 추가
+	            storeInfoMap.put(storeIdx, storeDetails);
+	        }
+	    }
+	    
+
+	    System.out.println(storeInfoMap);  // storeInfoMap 출력
+	    // 모델에 데이터를 추가하여 뷰로 전달
+	    model.addAttribute("storeInfoMap", storeInfoMap);
+
+	    return "users/usersWallet/routeRecommend";
 	}
 	
 	
