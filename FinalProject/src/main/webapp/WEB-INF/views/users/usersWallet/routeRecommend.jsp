@@ -139,6 +139,23 @@
 }
 
 
+.store-address-text {
+    font-size: 13px;      
+    color: gray;      
+    display: block;       
+    margin-top: 5px;      
+    margin-left: 7px;      
+    font-weight: normal;  
+}
+
+.details-btn{
+color : #00FF84;
+cursor : pointer;
+fontWeight : 700;
+fontSize : 16px;
+ margin-right:5px;
+}
+
 
     </style>
 </head>
@@ -146,6 +163,7 @@
 <%@include file="/WEB-INF/include/header.jsp" %>
 <div class="container">
     <h2 class="content-text">원하는 팝업 매장 선택하기</h2>
+    <h2 class="content-text">${address.address}</h2>
 
     <div class="button-group">
         <select class="filter-select" id="region-select">
@@ -155,6 +173,11 @@
             <option value="인천">인천</option>
             <option value="대구">대구</option>
         </select>
+     
+        <select class="filter-select" id="district-select">
+        <option value="">군/구</option>
+       </select>
+
 
         <select class="filter-select" id="popup-select">
     <option value="" >팝업</option>
@@ -162,14 +185,12 @@
     <!-- 매장 정보 목록을 순회하며 각 매장과 주소를 옵션으로 출력 -->
     <c:forEach var="entry" items="${storeInfoMap}">
         <c:forEach var="address" items="${entry.value.addresses}">
-            <option class="leftResult" value="${address.address}" data-region="${address.address}" name="${entry.value.storeTitle}"> ${entry.value.storeTitle} </option>
+            <option class="leftResult" value="${address.address}" data-region="${address.address}" name="${entry.value.storeTitle}" 
+             data-storeIdx="${address.store_idx}"> ${entry.value.storeTitle} </option>
         </c:forEach>
     </c:forEach>
 </select>
-        
-   
     </div>
-    
     
    
 
@@ -186,7 +207,7 @@
 	
     <div class="flex-container">
         <div class="store-list" ></div>
-        <button type="button" class="search-btn" id="search-btn">검색하기</button>
+        <button type="button" class="search-btn" id="search-btn">경로 검색</button>
     </div>
 
 </div>
@@ -196,9 +217,9 @@
  <div id="recent-searches">
     <h2 class="content-text">마지막 검색내역</h2>
     <div id="search-records-container">
-        <!-- 선택된 위치들이 여기에 나열됩니다 -->
     </div>
 </div>
+
 
 
 <%-- <%@include file="/WEB-INF/include/footer.jsp" %> --%>
@@ -221,13 +242,51 @@ document.getElementById("popup-select").addEventListener("change", function () {
         // 네모칸 생성
         const storeNameBox = document.createElement("div");
         storeNameBox.classList.add("store-name");
-        storeNameBox.textContent = selectedName; // 선택한 팝업 이름 표시
+        
+        // 이름을 표시할 span
+        const nameElement = document.createElement("span");
+        nameElement.classList.add("store-name-text");
+        nameElement.textContent = selectedName;
+        storeNameBox.appendChild(nameElement);
 
+        
+        // 주소를 표시할 span
+        const addressElement = document.createElement("span");
+        addressElement.classList.add("store-address-text");
+
+         // 주소를 분리해서 텍스트로 표시
+        const addressParts = selectedValue.split(' ');
+        const truncatedAddress = addressParts.slice(0, 2).join(' ');
+        addressElement.appendChild(document.createTextNode(truncatedAddress));
+
+        addressElement.textContent = truncatedAddress;
+        storeNameBox.appendChild(addressElement);
+        
+        storeNameBox.style.display = "flex"; 
+        storeNameBox.style.justifyContent = "space-between"; 
+        
+        // 상세보기 버튼 생성
+        const detailsBtn = document.createElement("a");
+        detailsBtn.textContent = "상세보기";
+        detailsBtn.classList.add("details-btn");
+        detailsBtn.style.marginLeft = "auto";
+        detailsBtn.onclick = function() {
+            const selectedOption = document.getElementById("popup-select").options[document.getElementById("popup-select").selectedIndex];
+            const storeIdx = selectedOption.getAttribute('data-storeIdx');
+            const userId = '${sessionScope.user_id}';  
+            const detailsUrl = "/Users/Info?store_idx=" + storeIdx + "&user_id=" + userId;
+            
+            // 새 창을 열어서 해당 URL로 이동
+            window.open(detailsUrl, '_blank');  // 새 창을 열고 크기와 위치 설정
+        };
+        storeNameBox.appendChild(detailsBtn);
+        
         // X 버튼 생성 및 삭제 기능
         const removeBtn = document.createElement("span");
         removeBtn.textContent = "x";
         removeBtn.classList.add("remove-btn");
-
+        removeBtn.style.marginLeft = "10px"; 
+        
         removeBtn.onclick = function () {
             // 네모칸 삭제
             storeList.removeChild(storeNameBox);
@@ -269,9 +328,15 @@ document.getElementById("popup-select").addEventListener("change", function () {
 });
 
 
-// 검색 버튼 클릭 시, 선택된 주소들과 이름들을 숨겨진 필드에 추가 후 폼 제출
+
 document.getElementById('search-btn').addEventListener('click', function () {
     if (selectedAddresses.length > 0) {
+        if (selectedAddresses.length === 1) {
+            // 하나만 선택되었을 때는 경고 메시지를 띄우고, 검색을 하지 않음
+            alert('두 개 이상의 매장을 선택해주세요.');
+            return;
+        }
+
         const hiddenFields = document.getElementById('hidden-fields');
         hiddenFields.innerHTML = ""; // 이전 값을 초기화
 
@@ -325,7 +390,7 @@ document.getElementById('search-btn').addEventListener('click', function () {
 	        }
 	    }
 
-	    // 모든 옵션을 순회하면서 선택된 지역과 일치하는 주소만 보이도록 설정
+	    // 모든 옵션을 순회하면서 선택된 지역을 포함하는 주소만 보이도록 설정
 	    for (let option of options) {
 	        const address = option.getAttribute("data-region");  // 옵션의 data-region 값을 가져옴
 
@@ -333,11 +398,17 @@ document.getElementById('search-btn').addEventListener('click', function () {
 	        if (option === popupOption) continue;
 
 	        // address가 유효한지 먼저 체크
-	        if (address && (region === "" || address.includes(region))) {
-	            option.style.display = "block";  // 선택된 지역에 해당하는 옵션을 보이도록
-	            noResults = false;  // 결과가 있으면 noResults를 false로 설정
-	        } else {
-	            option.style.display = "none";   // 선택된 지역에 해당하지 않으면 숨기기
+	        if (address) {
+	            // 첫 번째 띄어쓰기 전까지의 부분만 추출
+	            const addressPrefix = address.split(' ')[0]; // 첫 공백 전까지의 값을 가져옴
+
+	            // 선택된 지역이 addressPrefix에 포함되는지 확인
+	            if (region === "" || addressPrefix.includes(region)) {
+	                option.style.display = "block";  // 선택된 지역을 포함하는 옵션을 보이도록
+	                noResults = false;  // 결과가 있으면 noResults를 false로 설정
+	            } else {
+	                option.style.display = "none";   // 선택된 지역을 포함하지 않으면 숨기기
+	            }
 	        }
 	    }
 
@@ -357,8 +428,47 @@ document.getElementById('search-btn').addEventListener('click', function () {
 	        }
 	    }
 	});
+
 	</script>
 
+<script>
+document.getElementById("region-select").addEventListener("change", function() {
+    const region = this.value; // 선택된 지역
+    const districtSelect = document.getElementById("district-select"); // 군/구 선택
+
+    // 군/구 목록을 초기화
+    districtSelect.innerHTML = '<option value="">군/구</option>'; // 기본 "군/구" 옵션 추가
+
+    // 각 지역별 군/구 목록을 정의
+    const districts = {
+        "서울": [
+            "강남구", "강동구", "강북구", "강서구", "관악구", "광진구", "구로구", "금천구", "노원구", 
+            "도봉구", "동대문구", "동작구", "마포구", "서대문구", "서초구", "성동구", "성북구", 
+            "송파구", "양천구", "영등포구", "용산구", "은평구", "종로구", "중구", "중랑구"
+        ],
+        "부산": [
+            "강서구", "금정구", "기장군", "남구", "동래구", "동구", "부산진구", "북구", "사상구", 
+            "사하구", "수영구", "연제구", "영도구", "중구", "진구", "하단구"
+        ],
+        "인천": [
+            "강화군", "계양구", "남동구", "동구", "부평구", "서구", "연수구", "중구", "옹진군"
+        ],
+        "대구": [
+            "남구", "달서구", "달성군", "동구", "북구", "서구", "수성구", "중구"
+        ]  
+    };
+
+    // 선택된 지역에 맞는 군/구 목록을 가져와서 동적으로 추가
+    if (districts[region]) {
+        districts[region].forEach(function(district) {
+            const option = document.createElement("option");
+            option.value = district;
+            option.textContent = district;
+            districtSelect.appendChild(option); // 군/구를 <select>에 추가
+        });
+    }
+});
+</script>
 
 
 <script>
@@ -386,123 +496,13 @@ window.onload = function() {
             recordItem.appendChild(locationText);
             recordContainer.appendChild(recordItem);
         });
-
-        var detailsButton = document.createElement("a");
-        detailsButton.textContent = "상세정보";
-        detailsButton.style.color = "#00FF84";
-        detailsButton.style.cursor = "pointer";
-        detailsButton.style.marginTop = "20px";
-        detailsButton.style.fontWeight = "700";
-        detailsButton.style.fontSize = "16px";
-
-        // 팝업 오버레이 및 닫기 버튼 생성
-        var popupOverlay = document.createElement("div");
-        popupOverlay.classList.add("popup-overlay");
-        popupOverlay.style.position = "fixed";
-        popupOverlay.style.top = "0";
-        popupOverlay.style.left = "0";
-        popupOverlay.style.width = "100%";
-        popupOverlay.style.height = "100%";
-        popupOverlay.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
-        popupOverlay.style.display = "none";
-        popupOverlay.style.justifyContent = "center";
-        popupOverlay.style.alignItems = "center";
-        popupOverlay.style.zIndex = "1000";
-
-        var popupContent = document.createElement("div");
-        popupContent.style.backgroundColor = "#fff";
-        popupContent.style.padding = "20px";
-        popupContent.style.borderRadius = "5px";
-        popupContent.style.maxWidth = "500px";
-        popupContent.style.color = "#333";
-        popupContent.style.position = "relative";  // 상대적인 위치 설정
-
-        var popupText = document.createElement("div");
-
-        // HTML 콘텐츠를 삽입
-        popupText.innerHTML = `
-            <div class="ex" style="border:5px solid green">
-                <p>피그닉팝업</p>
-                <p>운영기간 : 12.11 ~ 12.13</p>
-                <p>홈페이지 링크</p>
-                <p>sns 링크</p>
-                <p>카테고리</p>
-                <p>브랜드</p>
-                <p>주타겟연령층</p>
-                <p>일주일평균 혼잡도 ? 그래프</p>
-                <p>예약시간</p>
-                <p>11:00 ~ 12:00</p>
-                <p>11:00 ~ 12:00</p>
-                <p>11:00 ~ 12:00</p>
-                <p>11:00 ~ 12:00</p>
-                <p>리뷰</p>
-                <p>테스트1: 정말 최고였어요!!. 몇월몇일</p>
-                <p>테스트1: 정말 최고였어요!!. 몇월몇일</p>
-                <p>테스트1: 정말 최고였어요!!. 몇월몇일</p>
-            </div>
-            <div class="ex2" style="border:5px solid green; margin-top:10px;">
-                <p>피그닉100</p>
-                <p>운영기간 : 12.11 ~ 12.13</p>
-                <p>홈페이지 링크</p>
-                <p>sns 링크</p>
-                <p>카테고리</p>
-                <p>브랜드</p>
-                <p>주타겟연령층</p>
-                <p>일주일평균 혼잡도 ? 그래프</p>
-                <p>예약시간</p>
-                <p>11:00 ~ 12:00</p>
-                <p>11:00 ~ 12:00</p>
-                <p>11:00 ~ 12:00</p>
-                <p>11:00 ~ 12:00</p>
-                <p>리뷰</p>
-                <p>테스트1: 정말 최고였어요!!. 몇월몇일</p>
-                <p>테스트1: 정말 최고였어요!!. 몇월몇일</p>
-                <p>테스트1: 정말 최고였어요!!. 몇월몇일</p>
-            </div>
-        `;
-
-        // 선택된 위치들을 동적으로 popupText에 추가
-        selectedLocations.forEach(function(location) {
-            var locationItem = document.createElement("div");
-            locationItem.textContent = location;  // 현재 항목에 대한 상세 정보 표시
-            popupText.appendChild(locationItem);  // popupText에 추가
-        });
-
-        popupContent.appendChild(popupText);
-
-        // 닫기 버튼 생성 및 우측 상단 배치
-        var closeButton = document.createElement("button");
-        closeButton.textContent = "닫기";
-        closeButton.style.backgroundColor = "#FF4D4D";
-        closeButton.style.color = "#fff";
-        closeButton.style.border = "none";
-        closeButton.style.padding = "5px 10px";
-        closeButton.style.cursor = "pointer";
-        closeButton.style.position = "absolute";  // 절대 위치로 설정
-        closeButton.style.top = "10px";  // 상단 10px
-        closeButton.style.right = "10px";  // 우측 10px
-
-        closeButton.onclick = function() {
-            popupOverlay.style.display = "none";  // 팝업을 숨김
-        };
-
-        popupContent.appendChild(closeButton);
-        popupOverlay.appendChild(popupContent);
-        document.body.appendChild(popupOverlay);
-
-        // 상세정보 버튼 클릭 시 팝업 표시
-        detailsButton.onclick = function() {
-            popupOverlay.style.display = "flex";  // 팝업 표시
-        };
-
-        recordContainer.appendChild(detailsButton);
     } else {
         console.log("선택된 위치 기록이 없습니다.");
     }
 };
-
-
 </script>
+
+
 
 
 </body>

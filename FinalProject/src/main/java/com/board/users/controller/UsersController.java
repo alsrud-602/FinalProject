@@ -9,6 +9,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -44,7 +46,7 @@ public class UsersController {
 	}
 	
 	@RequestMapping("/RouteRecommend")
-	public  String   routeRecommend(Model model) {
+	public String routeRecommend(Model model) {
 	    // 모든 매장 리스트 가져오기
 	    List<UsersDto> allStoreList = usersMapper.getallStorelist();
 	    System.out.println("All Store List: " + allStoreList);  // 전체 매장 리스트 출력
@@ -53,8 +55,8 @@ public class UsersController {
 	    
 	    // 모든 주소 리스트 가져오기
 	    List<UsersDto> allAddresses = usersMapper.getAddressesByStoreIdx();
-	    System.out.println(allAddresses);
-	        
+	    System.out.println("여기:" + allAddresses);
+	    
 	    // 주소를 storeIdx 기준으로 그룹화
 	    for (UsersDto address : allAddresses) {
 	        int storeIdx = address.getStore_idx();  // 주소에 해당하는 storeIdx 가져오기
@@ -82,14 +84,15 @@ public class UsersController {
 	            storeInfoMap.put(storeIdx, storeDetails);
 	        }
 	    }
-	    
 
-	    System.out.println(storeInfoMap);  // storeInfoMap 출력
+	    System.out.println("나야:" + storeInfoMap);  // storeInfoMap 출력
 	    // 모델에 데이터를 추가하여 뷰로 전달
 	    model.addAttribute("storeInfoMap", storeInfoMap);
 
 	    return "users/usersWallet/routeRecommend";
 	}
+
+	
 	
 	
 	// 메인 화면

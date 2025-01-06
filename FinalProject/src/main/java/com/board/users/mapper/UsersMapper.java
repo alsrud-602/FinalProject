@@ -116,6 +116,7 @@ public interface UsersMapper {
 
 	List<UsersDto> getAddressesByStoreIdx();
 
+
 	
 
 }

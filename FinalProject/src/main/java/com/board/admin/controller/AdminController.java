@@ -22,19 +22,40 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.board.admin.mapper.AdminMapper;
 import com.board.admin.vo.AdminVo;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 
 @Controller
 @RequestMapping("/Admin")
 public class AdminController {
 	
+	 @Autowired
+	 private HttpServletRequest request;
 	@Autowired
 	private AdminMapper adminMapper;
 	
+	
+	 // MFA 인증 확인
+    private boolean isMfaAuthenticated(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            Boolean mfaAuthenticated = (Boolean) session.getAttribute("mfaAuthenticated");
+            return mfaAuthenticated != null && mfaAuthenticated;
+        }
+        return false;
+    }
+    
 	// http://localhost:9090
 	// 유저관리
 	@RequestMapping("/User")
-	public  ModelAndView  user() {
+	public  ModelAndView  user(HttpServletResponse response) throws Exception {
 		
+		  if (!isMfaAuthenticated(request)) {
+	            response.sendRedirect("/Users/2fa"); 
+	            return null;
+	        }
 		List<AdminVo> allusers = adminMapper.getalluserinfo();
 		
 		System.out.println(allusers);
@@ -47,8 +68,14 @@ public class AdminController {
 	
 	//유저관리 상세
 	@RequestMapping("/Userdetail")
-	public String userDetail(@RequestParam("id") String userId , Model model) {
+	public String userDetail(@RequestParam("id") String userId , Model model,HttpServletResponse response) throws Exception  {
 		
+		  // MFA 인증 확인
+        if (!isMfaAuthenticated(request)) {
+            response.sendRedirect("/Users/2fa"); 
+            return null; 
+        }
+        
 		//전체 좋아요 정보(REVUEW 테이블)
 		List<AdminVo> allreview = adminMapper.getallReview();
 		System.out.println("모든 리뷰:"+allreview);
@@ -296,7 +323,12 @@ public class AdminController {
 	    }
 	    
 	    @RequestMapping("/Managerlist")
-	    public ModelAndView managerlist() {
+	    public ModelAndView managerlist(HttpServletResponse response)throws Exception {
+	    	// MFA 인증 확인
+	        if (!isMfaAuthenticated(request)) {
+	            response.sendRedirect("/Users/2fa"); 
+	            return null; 
+	        }
 	        // 모든 company 유저 정보
 	        List<AdminVo> allcompanys = adminMapper.getallcompanyinfo();
 	        // company 유저 별 팝업개수
@@ -346,93 +378,29 @@ public class AdminController {
 	    }
 
 	
-	@RequestMapping("/Advertise")
-	public ModelAndView advertise() {
-		ModelAndView mv = new ModelAndView();
-		mv.setViewName("/admin/manager/advertise");
-		return mv;
-	}
-	
-/*
- @Autowired
- private HttpServletRequest request;
+	    @RequestMapping("/Advertise")
+	    public ModelAndView advertise(HttpServletResponse response) throws Exception {
+	        // MFA 인증 확인
+	        if (!isMfaAuthenticated(request)) {
+	            response.sendRedirect("/Users/2fa");
+	            return null; 
+	        }
 
-    // MFA 인증 확인
-    private boolean isMfaAuthenticated(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            Boolean mfaAuthenticated = (Boolean) session.getAttribute("mfaAuthenticated");
-            return mfaAuthenticated != null && mfaAuthenticated;
-        }
-        return false;
-    }
+	        ModelAndView mv = new ModelAndView();
+	        mv.setViewName("/admin/manager/advertise");
+	        return mv;
+	    }
 
-    // 유저관리
-    @RequestMapping("/User")
-    public ModelAndView user(HttpServletResponse response) throws Exception {
-        // MFA 인증 확인
-        if (!isMfaAuthenticated(request)) {
-            response.sendRedirect("/Users/2fa"); 
-            return null;
-        }
+	    @RequestMapping("/Home")
+	    public String adminhome(HttpServletResponse response) throws Exception {
+	        // MFA 인증 확인
+	        if (!isMfaAuthenticated(request)) {
+	            response.sendRedirect("/Users/2fa"); 
+	            return null; 
+	        }
 
-        ModelAndView mv = new ModelAndView();
-        mv.setViewName("/admin/user/user");
-        return mv;
-    }
-
-   // 유저관리 상세
-    @RequestMapping("/Userdetail")
-    public ModelAndView userdetail(HttpServletResponse response) throws Exception {
-        // MFA 인증 확인
-        if (!isMfaAuthenticated(request)) {
-            response.sendRedirect("/Users/2fa"); 
-            return null; 
-        }
-
-        ModelAndView mv = new ModelAndView();
-        mv.setViewName("/admin/user/userdetail");
-        return mv;
-    }
-
-
-    // 스토어관리 - 담당자관리
-    @RequestMapping("/Managerlist")
-    public ModelAndView managerlist(HttpServletResponse response) throws Exception {
-        // MFA 인증 확인
-        if (!isMfaAuthenticated(request)) {
-            response.sendRedirect("/Users/2fa"); 
-            return null; 
-        }
-
-        ModelAndView mv = new ModelAndView();
-        mv.setViewName("/admin/manager/managerlist");
-        return mv;
-    }
-
-    @RequestMapping("/Advertise")
-    public ModelAndView advertise(HttpServletResponse response) throws Exception {
-        // MFA 인증 확인
-        if (!isMfaAuthenticated(request)) {
-            response.sendRedirect("/Users/2fa");
-            return null; 
-        }
-
-        ModelAndView mv = new ModelAndView();
-        mv.setViewName("/admin/manager/advertise");
-        return mv;
-    }
-
-    @RequestMapping("/Home")
-    public String adminhome(HttpServletResponse response) throws Exception {
-        // MFA 인증 확인
-        if (!isMfaAuthenticated(request)) {
-            response.sendRedirect("/Users/2fa"); 
-            return null; 
-        }
-
-        return "admin/dashboard/dashboard";
-    }
-    */
+	        return "admin/dashboard/dashboard";
+	    }
+    
 }
 

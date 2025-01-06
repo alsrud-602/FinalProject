@@ -96,11 +96,11 @@
              
                  <c:if test="${status.index == 0}">
                      // 첫 번째 위치는 출발지로 설정
-                     url += "${location.lon},${location.lat},${location.name}/";
+                     url += "${location.lon},${location.lat},${location.name},${location.placePoiId}/";
                  </c:if>
                  <c:if test="${status.index > 0}">
                      // 두 번째 위치는 도착지로 설정
-                     url += "${location.lon},${location.lat},${location.name}/";
+                     url += "${location.lon},${location.lat},${location.name},${location.placePoiId}/";
                  </c:if>
              </c:if>
          </c:forEach>
