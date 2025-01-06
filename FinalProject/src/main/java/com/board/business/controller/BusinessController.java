@@ -26,8 +26,10 @@ import com.board.business.dto.ReservationStoreDto;
 import com.board.business.dto.StoreListDto;
 import com.board.business.dto.StoreTagDto;
 import com.board.business.dto.StoreUpdateDto;
+import com.board.business.dto.WaitingDto;
 import com.board.business.service.BusinessService;
 import com.board.business.service.PdsService;
+import com.board.business.service.WaitingService;
 import com.board.companys.dto.Company;
 import com.board.companys.service.CompanyService;
 import com.board.jwt.JwtUtil;
@@ -48,6 +50,9 @@ public class BusinessController {
 	
 	@Autowired
 	private PdsService pdsService;
+	
+	@Autowired
+	private WaitingService waitingService;
 	
 	@RequestMapping
 	public ModelAndView businesshome() {
@@ -452,10 +457,17 @@ public class BusinessController {
 	}	
 
 	@RequestMapping("/moblie/reservation")
-	public ModelAndView mypage() {		
-		
+	public ModelAndView mypage() {
+	int user_idx = 	100;
+	WaitingDto wDTO =waitingService.getUserWaiting(user_idx);
+	List<WaitingDto> wList = waitingService.getUserWaitingList(user_idx);
+	
+	
 	ModelAndView mv = new ModelAndView();
+	mv.addObject("wList",wList);
+	mv.addObject("wDTO",wDTO);
 	mv.setViewName("mobile/reservation");
+	
 	return mv;	
 		
 	}

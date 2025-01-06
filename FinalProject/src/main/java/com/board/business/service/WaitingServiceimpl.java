@@ -87,6 +87,18 @@ public class WaitingServiceimpl  implements WaitingService {
 		return onsiteDto;
 	}
 
+	@Override
+	public WaitingDto getUserWaiting(int user_idx) {
+		WaitingDto wDto = watingMapper.getUserWaiting(user_idx);
+		return wDto;
+	}
+
+	@Override
+	public List<WaitingDto> getUserWaitingList(int user_idx) {
+		List<WaitingDto> wList = watingMapper.getUserWaitingList(user_idx);
+		return null;
+	}
+
 
 	
 	

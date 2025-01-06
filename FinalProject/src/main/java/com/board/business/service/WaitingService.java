@@ -19,6 +19,10 @@ public interface WaitingService {
 
 	StoreStatusDto getStoreStauts(int store_idx);
 
+	WaitingDto getUserWaiting(int user_idx);
+
+	List<WaitingDto> getUserWaitingList(int user_idx);
+
 
 
 

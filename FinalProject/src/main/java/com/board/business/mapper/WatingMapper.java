@@ -24,6 +24,12 @@ public interface WatingMapper {
 
 	StoreStatusDto getStoreStauts(int store_idx);
 
+	WaitingDto getUser_idxWating(int waiting_idx);
+
+	WaitingDto getUserWaiting(int user_idx);
+
+	List<WaitingDto> getUserWaitingList(int user_idx);
+
 	
 
 }

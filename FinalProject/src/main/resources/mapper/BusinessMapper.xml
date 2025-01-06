@@ -637,6 +637,7 @@ SET RESPONSE = #{response} , STATUS = '완료'
 WHERE REQUEST_IDX = #{request_idx}
 </update>
 
+
 </mapper>
 
 
