@@ -16,8 +16,8 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import com.board.handle.UserAlreadyLinkedToSocialException;
-import com.board.handle.UserNotFoundOAuth2Exception;
+import com.board.exception.UserAlreadyLinkedToSocialException;
+import com.board.exception.UserNotFoundOAuth2Exception;
 import com.board.users.dto.User;
 import com.board.users.repo.UserRepository;
 @Service

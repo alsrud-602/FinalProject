@@ -83,6 +83,7 @@ console.log(viewportHeight);
 container.style.height = `\${Math.max(mainHeight, viewportHeight)}px`;
 
 </script>
+ <script src="/js/authcompany.js" defer></script> 
 </body>
  
 </html>

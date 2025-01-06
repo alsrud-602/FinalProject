@@ -383,7 +383,7 @@
                         <img class="popcornfactory" src="/images/header/popcornfactory.png" alt="팝콘 팩토리 아이콘" />
                     </div>
                 </a>
-                <a href="#">
+                <a href="/Users/Map">
                     <div class="frame-2068">
                         <div class="div2">지도</div>
                         <img class="map-2" src="/images/header/map-2.svg" alt="지도 아이콘" />
@@ -422,7 +422,7 @@
             <div class="menu-list">팝콘 팩토리</div>
         </div>
         </a>
-        <a href="#">
+        <a href="/Users/Map">
         <div class="menu-2068">
             <img class="map-20" src="/images/header/map-2.svg" />
             <div class="menu-list">지도</div>
@@ -488,8 +488,12 @@
  document.addEventListener('DOMContentLoaded', function() {
     const authContent = document.querySelector('.header-util');
     const userJwt = localStorage.getItem('userJwt');
+    const userJwtExpiration = localStorage.getItem('userJwtExpiration');
     const kakaoAccessToken = localStorage.getItem('kakaoAccessToken');
-    if (userJwt || kakaoAccessToken) {
+    const kakaoTokenExpiration = localStorage.getItem('kakaoTokenExpiration');
+    const adminjwt = localStorage.getItem('adminjwt');
+    const currentTime = Date.now();
+    if (userJwt || kakaoAccessToken || adminjwt) {
         // 토큰이 있는 경우 (인증된 사용자)
         authContent.innerHTML = `
             <form id="logoutForm">
@@ -497,10 +501,25 @@
             </form>
         `;
         
+        if (currentTime > kakaoTokenExpiration){ 
+            localStorage.removeItem('kakaoAccessToken');
+            localStorage.removeItem('kakaoTokenExpiration');
+        }
+        if(currentTime > userJwtExpiration) {
+            localStorage.removeItem('userJwt');
+            localStorage.removeItem('userJwtExpiration');
+        }
+        if(currentTime > userJwtExpiration) {
+            localStorage.removeItem('adminjwt');
+            localStorage.removeItem('userJwtExpiration');
+        }
         // 로그아웃 버튼 이벤트 리스너
         document.getElementById('logout-button').addEventListener('click', function() {
             localStorage.removeItem('userJwt');
+            localStorage.removeItem('adminjwt');
+            localStorage.removeItem('userJwtExpiration');
             localStorage.removeItem('kakaoAccessToken');
+            localStorage.removeItem('kakaoTokenExpiration');
             
             window.location.href = '/Users/Logout';
         });

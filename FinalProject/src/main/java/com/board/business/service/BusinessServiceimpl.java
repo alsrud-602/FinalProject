@@ -22,7 +22,9 @@ import com.board.business.dto.ReservationDateListDto;
 import com.board.business.dto.ReservationPlanDto;
 import com.board.business.dto.ReservationStoreDto;
 import com.board.business.dto.ReservationUserListDto;
+import com.board.business.dto.ResponseDto;
 import com.board.business.dto.StoreCategoryDto;
+import com.board.business.dto.StoreDto;
 import com.board.business.dto.StoreListDto;
 import com.board.business.dto.StoreTagDto;
 import com.board.business.dto.StoreUpdateDto;
@@ -436,6 +438,85 @@ public class BusinessServiceimpl  implements BusinessService{
 		
 		 List<ReservationUserListDto> ruList = businessMapper.getReservationUserList(map);
 		return ruList;
+	}
+
+	@Override
+	public StoreDto ApprovalUpdate(StoreDto storeDto) {
+		businessMapper.ApprovalUpdate(storeDto);
+		StoreDto sDto = businessMapper.getStore(storeDto);
+		return sDto;
+	}
+
+	@Override
+	public StoreDto ApprovalBan(StoreDto storeDto) {
+		System.out.println("상황확인"+storeDto);
+		businessMapper.ApprovalBan(storeDto);
+		StoreDto sDto = businessMapper.getStore(storeDto);
+		
+		return sDto;
+	}
+
+	@Override
+	public List <ResponseDto> getRequestList(int store_idx) {
+		 List<ResponseDto> rqList = businessMapper.getRequestList( store_idx);
+		return rqList;
+	}
+
+	@Override
+	public RequestDto UpdateResponse(RequestDto requestDto) {
+		businessMapper.UpdateResponse(requestDto);
+		RequestDto rDto =  businessMapper.getRequest(requestDto.getRequest_idx());		
+		return rDto;
+	}
+
+	@Override
+	public void updateAdminStore(HashMap<String, Object> map, String[] tag_name, String[] category_id) {
+		//0. 기본정보
+		int store_idx = Integer.valueOf(map.get("store_idx").toString());
+		//1.기본정보수정
+		businessMapper.updateStore(map);
+		//2. 디테일정보수정
+		businessMapper.updateStoreDetail(map);
+		//3.카테고리 수정			
+		businessMapper.deleteStoreCategory(store_idx);
+		if(category_id != null && category_id.length > 0)   {
+			
+			System.out.println("111111"+ category_id.toString());
+			System.out.println("111111"+ category_id);
+			
+			List<StoreCategoryDto> scList = new ArrayList<>();
+		    for (String id : category_id) {
+		    	StoreCategoryDto scDto = new StoreCategoryDto(Integer.parseInt(id),store_idx);
+		    	scList.add(scDto);       
+		    }
+			//1.삭제
+			System.out.println("111111"+ scList.toString());
+			//2. 추가
+			businessMapper.insertStoreCategoryListUpdate(scList);
+			}
+			
+		//4.태그 네임 수정
+		//1.삭제
+		businessMapper.deleteStoreTage(store_idx);
+		System.out.println("store_idx의 값" +store_idx);
+		System.out.println("tag_name의 값" +tag_name.toString());
+		System.out.println("tag_name의 값" +tag_name);
+		
+		if(tag_name != null && tag_name.length > 0)   {
+			
+			List<StoreTagDto> TagList = new ArrayList<>();
+		    for (String tag : tag_name) {
+		    	StoreTagDto tagDto = new StoreTagDto(tag,store_idx);
+		    	TagList.add(tagDto);           
+		    } 			
+     		//2. 추가
+		    businessMapper.insertStoreTageUpdate(TagList);
+		    System.out.println("TagList의 값" +TagList);
+			}		
+		//5.운영정보
+		businessMapper.updateStoreOperation(map);
+		
+		
 	}
 
 

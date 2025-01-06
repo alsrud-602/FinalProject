@@ -368,22 +368,22 @@
         <div class="header">
             <a href="/Business/Operation/View"><img class="logo" src="/images/icon/logo_company.png" alt="로고" /></a>
             <div class="header-nav">
-                <a href="/Operation">
+                <a href="/Business/Operation/View">
                     <div class="frame-2066">
                         <div class="div1">운영</div>
                     </div>
                 </a>
-                <a href="#">
+                <a href="/Business/Management/Main/List">
                     <div class="frame-2067">
                         <div class="div2">관리</div>
                     </div>
                 </a>
-                <a href="#">
+                <a href="/Business/Registraion/Writefrom">
                     <div class="frame-2068">
                         <div class="div2">등록</div>
                     </div>
                 </a>
-                 <a href="#">
+                 <a href="/Admin/Store/View">
                     <div class="frame-2068">
                         <div class="div2">고객센터</div>
                     </div>
@@ -483,7 +483,15 @@
  document.addEventListener('DOMContentLoaded', function() {
     const authContent = document.querySelector('.header-util');
     const companyJwt = localStorage.getItem('companyJwt');
+    const companyJwtExpiration = localStorage.getItem('companyJwtExpiration');
+    const currentTime = Date.now();
     if (companyJwt) {
+
+        if (currentTime > companyJwtExpiration) {
+            // 만료된 경우, 토큰 삭제
+            localStorage.removeItem('companyJwt');
+            localStorage.removeItem('companyJwtExpiration');
+        }
         // 토큰이 있는 경우 (인증된 사용자)
         authContent.innerHTML = `
             <form id="logoutForm">
@@ -494,6 +502,7 @@
         // 로그아웃 버튼 이벤트 리스너
         document.getElementById('logout-button').addEventListener('click', function() {
         	localStorage.removeItem('companyJwt');
+        	localStorage.removeItem('companyJwtExpiration');
             window.location.href = '/CompanyAuth/Logout';
         });
     } else {

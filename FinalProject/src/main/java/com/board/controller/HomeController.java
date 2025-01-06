@@ -18,7 +18,6 @@ public class HomeController {
 	
 	// http://localhost:9090
 	@RequestMapping("/")
-
 	public  ModelAndView   home() {
 		//랭킹 팝업
 		List<UsersDto> ranklist = usersMapper.getRanklist();
@@ -52,7 +51,13 @@ public class HomeController {
 
 	
 	
+	@RequestMapping("/admin")
+	public  String   admin() {
+		return "admin/store/list";
+		
 
+		//return "/WEB-INF/views/home.jsp";
+	}
 
 	
 }

@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,8 +28,14 @@ import com.board.business.dto.StoreTagDto;
 import com.board.business.dto.StoreUpdateDto;
 import com.board.business.service.BusinessService;
 import com.board.business.service.PdsService;
+import com.board.companys.dto.Company;
+import com.board.companys.service.CompanyService;
+import com.board.util.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 
 
 //@PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -47,6 +55,12 @@ public class BusinessController {
 		mv.setViewName("/business/login");
 		return mv;
 	}
+	
+	@Autowired
+	private JwtUtil jwtUtil;
+	
+	@Autowired
+	private CompanyService companyService;
 	
 	
 	
@@ -75,8 +89,6 @@ public class BusinessController {
 
 		System.out.println("!!!!!!!!"+ map);
 		System.out.println("!!!!!!!!"+ map.get("title"));
-;
-
 		
 		int company_idx =1;
         map.put("company_idx", company_idx );
@@ -90,13 +102,44 @@ public class BusinessController {
 		return mv;
 	}
 	@RequestMapping("/Registraion/Writefrom")
-	public ModelAndView registrationWritefrom() {
-	
-	List <CategoryDto> cList = businessService.getCategoryList();	
+	public ModelAndView registrationWritefrom(HttpServletRequest request, Model model) {
 		
-	ModelAndView mv = new ModelAndView();
-	mv.addObject("cList", cList);
-	mv.setViewName("business/registration/write");
+		 Cookie[] cookies = request.getCookies();
+	        String jwtToken = null;
+	        boolean isKakaoUser = false;  // 카카오 사용자 여부를 판단하는 변수
+
+	        if (cookies != null) {
+	            for (int i = cookies.length - 1; i >= 0; i--) {
+	                Cookie cookie = cookies[i];
+	                if ("companyJwt".equals(cookie.getName())) {
+	                    jwtToken = cookie.getValue();
+	                    System.out.println("토큰: " + jwtToken);
+	                    break; 
+	                }
+	            }
+	        }
+	    	ModelAndView mv = new ModelAndView();
+	    	
+	        if (jwtToken != null) {
+	            String username = jwtUtil.extractUsername(jwtToken);
+	            System.out.println("사용자 정보1: " + username);
+
+	                // 일반 사용자라면 기존 방식으로 사용자 조회
+	                Optional<Company> company = companyService.findByUserId(username);  // DB에서 사용자 정보 조회
+	                System.out.println("사용자 정보: " + company);
+	                model.addAttribute("user", company.orElse(null));  // 사용자가 없을 경우 null 반환
+	        		
+	                Long company_idx_long = company.get().getCompanyIdx();
+	                int company_idx = company_idx_long.intValue();	 
+	                
+	                List <CategoryDto> cList = businessService.getCategoryList();	
+	            	mv.addObject("cList", cList);
+	            	mv.addObject("company_idx", company_idx);
+	            	mv.setViewName("business/registration/write");
+	            	
+	            } else {
+	            model.addAttribute("error", "JWT 토큰이 없습니다.");
+	        }		
 	return mv;	
 	}
 	
@@ -106,16 +149,49 @@ public class BusinessController {
 	}
 	
 	@RequestMapping("/Management/Main/List")
-	public ModelAndView managementMlist(int company_idx) {
-	     
-    List <StoreListDto>	shList = businessService.getStoreHistoryList(company_idx);
-    List <StoreListDto> soList = businessService.getStoreOpertaionList(company_idx);
-	ModelAndView mv = new ModelAndView();
-	mv.addObject("shList", shList);	
-	mv.addObject("soList", soList);	
-	mv.addObject("company_idx", company_idx);	
-	mv.setViewName("business/management/main/list");
-	return mv;
+	public ModelAndView managementMlist(HttpServletRequest request, Model model ) {
+		
+        Cookie[] cookies = request.getCookies();
+        String jwtToken = null;
+        boolean isKakaoUser = false;  // 카카오 사용자 여부를 판단하는 변수
+
+        if (cookies != null) {
+            for (int i = cookies.length - 1; i >= 0; i--) {
+                Cookie cookie = cookies[i];
+                if ("companyJwt".equals(cookie.getName())) {
+                    jwtToken = cookie.getValue();
+                    System.out.println("토큰: " + jwtToken);
+                    break; 
+                }
+            }
+        }
+    	ModelAndView mv = new ModelAndView();
+    	
+        if (jwtToken != null) {
+            String username = jwtUtil.extractUsername(jwtToken);
+            System.out.println("사용자 정보1: " + username);
+
+                // 일반 사용자라면 기존 방식으로 사용자 조회
+                Optional<Company> company = companyService.findByUserId(username);  // DB에서 사용자 정보 조회
+                System.out.println("사용자 정보: " + company);
+                model.addAttribute("user", company.orElse(null));  // 사용자가 없을 경우 null 반환
+        		
+                Long company_idx_long = company.get().getCompanyIdx();
+                int company_idx = company_idx_long.intValue();
+                
+                List <StoreListDto>	shList = businessService.getStoreHistoryList(company_idx);
+                List <StoreListDto> soList = businessService.getStoreOpertaionList(company_idx);
+            
+            	mv.addObject("shList", shList);	
+            	mv.addObject("soList", soList);	
+            	mv.addObject("company_idx", company_idx);	
+            	mv.setViewName("business/management/main/list");
+            	
+            } else {
+            model.addAttribute("error", "JWT 토큰이 없습니다.");
+        }
+        return mv;
+
 	}
 	@RequestMapping("/Management/Main/UpdateForm")
 	public ModelAndView managementMupdateFrom( int store_idx) {
@@ -324,14 +400,43 @@ public class BusinessController {
 	}	
 	
 	@RequestMapping("/Operation/View")
-	public ModelAndView operationView() {		
-		
-	int company_idx =1;			
-	List<StoreListDto> sovList = businessService.getStoreOperationView(company_idx);
+	public ModelAndView operationView(HttpServletRequest request, Model model) {		
 	
-	ModelAndView mv = new ModelAndView();
-	mv.addObject("storeList",sovList);
-	mv.setViewName("business/operation/view");
+		 Cookie[] cookies = request.getCookies();
+	        String jwtToken = null;
+	        boolean isKakaoUser = false;  // 카카오 사용자 여부를 판단하는 변수
+
+	        if (cookies != null) {
+	            for (int i = cookies.length - 1; i >= 0; i--) {
+	                Cookie cookie = cookies[i];
+	                if ("companyJwt".equals(cookie.getName())) {
+	                    jwtToken = cookie.getValue();
+	                    System.out.println("토큰: " + jwtToken);
+	                    break; 
+	                }
+	            }
+	        }
+	    	ModelAndView mv = new ModelAndView();
+	    	
+	        if (jwtToken != null) {
+	            String username = jwtUtil.extractUsername(jwtToken);
+	            System.out.println("사용자 정보1: " + username);
+
+	                // 일반 사용자라면 기존 방식으로 사용자 조회
+	                Optional<Company> company = companyService.findByUserId(username);  // DB에서 사용자 정보 조회
+	                System.out.println("사용자 정보: " + company);
+	                model.addAttribute("user", company.orElse(null));  // 사용자가 없을 경우 null 반환
+	        		
+	                Long company_idx_long = company.get().getCompanyIdx();
+	                int company_idx = company_idx_long.intValue();	 
+	            	List<StoreListDto> sovList = businessService.getStoreOperationView(company_idx);
+	            	mv.addObject("storeList",sovList);
+	            	mv.setViewName("business/operation/view");
+	            	
+	            } else {
+	            model.addAttribute("error", "JWT 토큰이 없습니다.");
+	        }			
+
 	return mv;	
 		
 	}
@@ -340,10 +445,22 @@ public class BusinessController {
 	public ModelAndView mobile() {		
 		
 	ModelAndView mv = new ModelAndView();
+	//mv.setViewName("mobile/info");
 	mv.setViewName("mobile/info");
 	return mv;	
 		
 	}	
+
+	@RequestMapping("/mypage")
+	public ModelAndView mypage() {		
+		
+	ModelAndView mv = new ModelAndView();
+	mv.setViewName("mobile/mypage");
+	return mv;	
+		
+	}
 	
+
+
 	
 }

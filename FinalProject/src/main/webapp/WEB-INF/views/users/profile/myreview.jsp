@@ -282,6 +282,6 @@ main {
   </div>
   </main>	
  <%@include file="/WEB-INF/include/footer.jsp" %>
- <script src="/js/authuser.js" defer></script> 
+ <!-- <script src="/js/authuser.js" defer></script> --> 
 </body>
 </html>

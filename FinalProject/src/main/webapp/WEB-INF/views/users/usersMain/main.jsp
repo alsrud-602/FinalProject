@@ -14,6 +14,7 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
 <link rel="stylesheet"  href="/css/common.css" />
+<link rel="stylesheet"  href="/css/main-pagination.css" />
 <style>
 
   body {
@@ -29,37 +30,6 @@
   a  {text-align : center;
       color: #00ff84;
   }
-  /*----------------------------*/
-  /*페이징*/
-.pagination {
-    display: flex;
-    justify-content: center;
-    padding-top: 30px;
-    width: 200px;
-    height: 70px;
-}
-
-.pagination a {
-    margin: 0 5px;
-    padding: 8px 12px;
-    text-decoration: none;
-    color: #333;
-    border: 1px solid #e0e0e0;
-    border-radius: 5px;
-    transition: background-color 0.3s, color 0.3s;
-}
-
-.pagination a:hover {
-    background-color: #007bff;
-    color: #fff;
-}
-
-/* Active page number styling (if possible to apply) */
-.pagination a.active {
-    background-color: #007bff;
-    color: #fff;
-    font-weight: bold;
-}
 
   /*--------------------------------------------------------------*/
   /*검색창*/
@@ -403,7 +373,6 @@
 		   <div class ="maintext">
 		    <h2 class="maintitle">랭킹</h2>
 		    <a href="/Users/Rankdetail"class="view-all" >전체보기 ☞</a>
-		    <p>${user.id}</p>
 		    </div>
 		    <div class="slide-wrapper">
 		        <ul class="slides">
@@ -411,7 +380,7 @@
 		            <li>
 					 <a href="/Users/Info?store_idx=${rank.store_idx}">
 					    <div class="slides-href">
-				            <img src="/images/main/popup1.png" alt="/images/main/popup1.png">
+				            <img src="/image/read?path=${rank.image_path}" alt="Store Image" >
 				            <div class="slides-title">${rank.title}</div>
 				            <div class="slides-info">주소: ${rank.address}</div>
 					    </div>
@@ -437,7 +406,7 @@
 		            <li>
 			              <div class="slides-href">
 		              <a href="/Users/Info?store_idx=${opend.store_idx}">
-				              <img src="/images/main/popup1.png" alt="/images/main/popup1.png">
+				              <img src="/image/read?path=${opend.image_path}" alt="Store Image" >
 						      <div class="slides-title">${opend.title}</div>
 						      <div class="slides-info">주소:${opend.address}</div>
 					  </a>
@@ -486,14 +455,14 @@
 		   <c:forEach var="popup" items="${popuplist}">
 		   <a href="/Users/Info?store_idx=${popup.store_idx}">	   
 			    <div class="card">
-				      <img src="/images/main/popup1.png" alt="/images/main/popup1.png">
+				      <img src="/image/read?path=${popup.image_path}" alt="Store Image" >
 				      <div class="title">${popup.title}</div>
 				      <div class="info">주소:${popup.address}<br>기간: ${popup.start_date} ~ ${popup.end_date}</div>
 			    </div>
 		    </a>
 		    </c:forEach>
-		  <%@include file="/WEB-INF/include/pagination.jsp" %>
 		  </div>
+		  <%@include file="/WEB-INF/include/main-pagination.jsp" %>
 		  
 		</div>
 	</div>
@@ -542,9 +511,22 @@
 
 //검색창 클릭했을때 
 $(function (){
+    // 클릭 이벤트
     $('.imgsearch').on('click', function(e) {
         e.preventDefault(); // 기본 동작 방지 (버튼 클릭 시 페이지 이동 방지)
-        
+        performSearch();
+    });
+
+    // 엔터 키 입력 이벤트
+    $('.search-input').on('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // 기본 동작 방지 (엔터 키에 의한 폼 제출 방지)
+            performSearch();
+        }
+    });
+
+    // 검색 수행 함수
+    function performSearch() {
         let search = $('.search-input').val().trim(); // 입력값의 앞뒤 공백 제거
 
         // 입력값이 비어있지 않을 경우에만 AJAX 요청 수행
@@ -564,7 +546,7 @@ $(function (){
         } else {
             alert("검색어를 입력해주세요."); // 빈 입력값에 대한 안내 메시지
         }
-    });
+    }
 });
 /*
 //팝업스토어 클릭했을때
@@ -597,11 +579,13 @@ $(function() {
             if (data.filterlist && Array.isArray(data.filterlist)) {
                 if (data.filterlist.length > 0) { // filterlist가 비어있지 않으면
                     data.filterlist.forEach(function(a) {
-                        html += "<div class='card'>" +
-                                    "<img src='/images/main/popup1.png' alt='/images/main/popup1.png'>" +
+                        html +="<a href='/Users/Info?store_idx=" + a.store_idx + "'>" + 
+                        	   "<div class='card'>" +
+                                    "<img src='/image/read?path="+a.image_path+"' alt='Store Image' >"+
                                     "<div class='title'>" + a.title + "</div>" +
                                     "<div class='info'>주소: " + a.address + "<br>기간: " + a.start_date + " ~ " + a.end_date + "</div>" +
-                                 "</div>";
+                                 "</div>"+
+                                 "</a>"; 
                     });
                 } else {
                     html = "<div class='nodata'>데이터가 없습니다.</div>"; // filterlist가 비어있을 때 메시지
@@ -617,5 +601,6 @@ $(function() {
     });
 });
 </script>
+
 
 </html>

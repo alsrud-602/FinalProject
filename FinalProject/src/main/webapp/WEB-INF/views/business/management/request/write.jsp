@@ -105,6 +105,7 @@ function goBack() {
     window.history.back();  // 이전 페이지로 돌아가기
 }
 </script>
+ <script src="/js/authcompany.js" defer></script> 
 </body>
 </html>
 

@@ -35,9 +35,10 @@
 
   .card img {
     width: 100%; /* 카드 크기에 맞춤 */
-    max-width: 500px; /* 최대 너비를 400px로 설정 */
+    max-width: 300px; /* 최대 너비를 400px로 설정 */
     height: auto; /* 비율 유지 */
     border-radius: 10px; /* 이미지 모서리 둥글게 */
+    object-fit: contain; /* 비율 유지하며 크기 조정 */
 }
 
   .title {
@@ -52,47 +53,7 @@
     color: white; /* 정보 색상 */
     
     }
-   .mainfilter {    
-    cursor: pointer;
-    padding: 10px;
-    background: #121212;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-family:'Pretendard';
-    font-size:20px;
-    border: 2px solid #00ff84;
-    margin-left:21%; 
-    padding-left:20px;
-    padding-right:20px;   
-    }
-    
-  .regionfilter{
-    cursor: pointer;
-    padding: 10px;
-    background: #121212;
-    color: white;
-    border: none;
-    border-radius:10px;
-    font-family:'Pretendard';
-    font-size:20px;
-    border: 2px solid #00ff84;
-    display: inline-block;
-    padding : 13px;
-    }
-   .agefilter{
-    cursor: pointer;
-    padding: 10px;
-    background: #121212;
-    color: white;
-    border: none;
-    border-radius:10px;
-    font-family:'Pretendard';
-    font-size:20px;
-    border: 2px solid #00ff84;
-    display: inline-block;
-    padding : 13px;
-    }
+
     
     #calendarInput{
     background: #121212;
@@ -115,6 +76,7 @@
     margin: 0 auto;
     font-family:'Pretendard';
     font-size:40px;
+    padding-left: 100px;
     
     }
     
@@ -148,38 +110,17 @@
 <main>
 	<div>
 	<h2 class="h2text">랭킹</h2>
-	  <div class="ongoingfilter">
-		    <input type="date"class="mainfilter" id="datepickerButton" >
-		    <select class="regionfilter">
-		      <option value="">지역</option>
-		      <option value="서울">서울</option>
-		      <option value="부산">부산</option>
-		      <option value="대구">대구</option>
-		      <option value="대전">대전</option>
-		      <option value="울산">울산</option>
-		      <option value="광주">광주</option>
-		      <option value="인천">인천</option>
-		      <option value="제주도">제주도</option>
-		    </select>
-		    <select class="agefilter">
-		      <option value="">연령대</option>
-		      <option value="10대">10대</option>
-		      <option value="20대">20대</option>
-		      <option value="30대">30대</option>
-		      <option value="40대">40대</option>
-		      <option value="50대">50대</option>
-		    </select>
-		    <button type="reset" onclick='window.location.reload()' class="resetbutton">※초기화</button>
-		  </div>
 	</div>
 	
 	<div class="container">
 	    <c:forEach var="rank" items="${ranklist}">
+	      <a href="/Users/Info?store_idx=${rank.store_idx}">
 		    <div class="card">
-		      <img src="/images/main/popup1.png" alt="/images/main/popup1.png">
+		      <img src="/image/read?path=${rank.image_path}" alt="Store Image" >
 		      <div class="title">${rank.title}</div>
 		      <div class="info">주소:${rank.address}<br>기간: ${rank.start_date} ~ ${rank.end_date}</div>
 		    </div>
+		   </a>
 		 </c:forEach>
 	  </div>
   </main>
@@ -207,11 +148,13 @@ $(function() {
             if (data.filterlist && Array.isArray(data.filterlist)) {
                 if (data.filterlist.length > 0) { // filterlist가 비어있지 않으면
                     data.filterlist.forEach(function(a) {
-                        html += "<div class='card'>" +
-                                    "<img src='/images/main/popup1.png' alt='/images/main/popup1.png'>" +
-                                    "<div class='title'>" + a.title + "</div>" +
-                                    "<div class='info'>주소: " + a.address + "<br>기간: " + a.start_date + " ~ " + a.end_date + "</div>" +
-                                 "</div>";
+                        html += "<a href='/Users/Info?store_idx=" + a.store_idx + "'>" +
+                        "<div class='card'>" +
+                        "<img src='/images/main/popup1.png' alt='/images/main/popup1.png'>" +
+                        "<div class='title'>" + a.title + "</div>" +
+                        "<div class='info'>주소: " + a.address + "<br>기간: " + a.start_date + " ~ " + popup.end_date + "</div>" +
+                    "</div>" +
+                "</a>";
                     });
                 } else {
                     html = "<div class='nodata'>데이터가 없습니다.</div>"; // filterlist가 비어있을 때 메시지

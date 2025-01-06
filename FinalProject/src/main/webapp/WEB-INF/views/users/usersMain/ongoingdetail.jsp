@@ -174,12 +174,14 @@
 	
 	<div class="container">
 	    <c:forEach var="popup" items="${popuplist}">
+	     <a href="/Users/Info?store_idx=${popup.store_idx}">
 		    <div class="card">
-		      <img src="/images/main/popup1.png" alt="/images/main/popup1.png">
+		      <img src="/image/read?path=${popup.image_path}" alt="Store Image" >
 		      <div class="title">${popup.title}</div>
 		      <div class="info">주소:${popup.address}<br>기간: ${popup.start_date} ~ ${popup.end_date}</div>
 		    </div>
-		    </c:forEach>
+		   </a>
+		  </c:forEach>
 	  </div>
  </main>
 <%@include file="/WEB-INF/include/footer.jsp" %>
@@ -201,16 +203,18 @@ $(function() {
             console.log(data); // 응답 확인
             $('.container').html(""); // 기존 내용 비우기
             let html = "";
-
-            // filterlist가 존재하고 배열인지 확인
+            
+         // filterlist가 존재하고 배열인지 확인
             if (data.filterlist && Array.isArray(data.filterlist)) {
                 if (data.filterlist.length > 0) { // filterlist가 비어있지 않으면
                     data.filterlist.forEach(function(a) {
-                        html += "<div class='card'>" +
-                                    "<img src='/images/main/popup1.png' alt='/images/main/popup1.png'>" +
-                                    "<div class='title'>" + a.title + "</div>" +
-                                    "<div class='info'>주소: " + a.address + "<br>기간: " + a.start_date + " ~ " + a.end_date + "</div>" +
-                                 "</div>";
+                        html += "<a href='/Users/Info?store_idx=" + a.store_idx + "'>" + 
+                 	   "<div class='card'>" +
+                       "<img src='/image/read?path="+a.image_path+"' alt='Store Image' >"+
+                       "<div class='title'>" + a.title + "</div>" +
+                       "<div class='info'>주소: " + a.address + "<br>기간: " + a.start_date + " ~ " + a.end_date + "</div>" +
+                    "</div>"+
+                    "</a>";
                     });
                 } else {
                     html = "<div class='nodata'>데이터가 없습니다.</div>"; // filterlist가 비어있을 때 메시지
@@ -218,6 +222,7 @@ $(function() {
             }
 
             $('.container').append(html); // 생성된 HTML 추가
+            
         })
         .fail(function(err) {
             console.log(err);
