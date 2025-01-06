@@ -6,7 +6,8 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.board.admin.vo.AdminVo;
+import com.board.admin.dto.AdminVo;
+import com.board.users.dto.UsersDto;
 
 @Mapper
 public interface AdminMapper {
@@ -54,7 +55,6 @@ public interface AdminMapper {
 	List<AdminVo> getUserReview(String selUserId);
 
 	void updateUserStatus(String userId, String status);
-
 
 
 

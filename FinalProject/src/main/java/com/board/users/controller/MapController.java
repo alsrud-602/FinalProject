@@ -41,7 +41,7 @@ public class MapController {
     @GetMapping("/Map/popuplist")
     @ResponseBody
     public List<Map<String, Object>> getPopupList() {
-        List<UsersDto> popupList = usersMapper.getPopuplist();
+        List<UsersDto> popupList = usersMapper.getStoresHitAtMap();
         List<Map<String, Object>> coordinatesList = new ArrayList<>();
 
         for (UsersDto popup : popupList) {
@@ -52,13 +52,12 @@ public class MapController {
                 // 데이터를 맵에 담아 리스트에 추가
                 Map<String, Object> data = new HashMap<>();
                 data.put("title", popup.getTitle());
+                data.put("hit", popup.getHit());
                 data.put("start_date", popup.getStart_date());
                 data.put("end_date", popup.getEnd_date());
                 data.put("igdate", popup.getIgdate());
                 data.put("latitude", coords[0]);
                 data.put("longitude", coords[1]);
-
-                // 추가적인 데이터 처리 (필요 시)
                 // data.put("image_path", popup.getImage_path());
                 // data.put("reviewcontent", review.getContent());
 

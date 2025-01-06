@@ -1,6 +1,6 @@
 package com.board.users.controller;
 
-import java.net.URI;	
+import java.net.URI;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -34,12 +34,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import com.board.handle.UserAlreadyLinkedToSocialException;
-import com.board.handle.UserNotFoundOAuth2Exception;
-import com.board.jwt.JwtUtil;
+import com.board.exception.UserAlreadyLinkedToSocialException;
+import com.board.exception.UserNotFoundOAuth2Exception;
 import com.board.users.dto.LoginRequest;
 import com.board.users.repo.UserRepository;
 import com.board.users.service.CustomOAuth2UserService;
+import com.board.util.JwtUtil;
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 
@@ -100,7 +100,7 @@ public class RestUserSignController {
                Cookie jwtCookie = new Cookie("adminjwt", jwt);
                jwtCookie.setHttpOnly(true);
                jwtCookie.setSecure(true); // HTTPS에서만 사용
-               jwtCookie.setMaxAge(60 * 120); // 2시간
+               jwtCookie.setMaxAge(60 * 60 * 10); // 2시간
                jwtCookie.setPath("/");
                response.addCookie(jwtCookie);
 

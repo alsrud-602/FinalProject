@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.board.jwt.JwtUtil;
 import com.board.users.dto.User;
 import com.board.users.dto.UsersDto;
 import com.board.users.mapper.UsersMapper;
 import com.board.users.service.UserService;
+import com.board.util.JwtUtil;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -233,6 +233,7 @@ public class UsersController {
 	public ModelAndView info(UsersDto usersdto,
 			Model model,HttpServletRequest request
 			){
+		ModelAndView mv = new ModelAndView();
 		
 		// 유저 번호 가지고 오기
 				 Cookie[] cookies = request.getCookies();
@@ -293,6 +294,7 @@ public class UsersController {
 			                System.out.println("스토어 번호 : " + store_idx);
 			                
 			                useruseridx = user.get().getUserIdx();
+			                
 			                System.out.println("useruseridx : " + useruseridx);
 			                
 			                
@@ -309,6 +311,11 @@ public class UsersController {
 			        }
 
 	
+	    if (useruseridx == null) {
+	        mv.addObject("needLoginMessage", "이 기능을 사용하기 위해선 로그인이 필요합니다.");
+	        mv.setViewName("/login");
+	        return mv;
+	    }
 		
 		//System.out.println("스토어 HIT : " + insertStoreHit);
 		System.out.println("usersdto  : " + usersdto);
@@ -379,7 +386,7 @@ public class UsersController {
 		System.out.println("수정된 이미지 패스 : " + PopImgPath);
 
 		
-		ModelAndView mv = new ModelAndView();
+		
 		mv.addObject("storedetail", storedetail);
 		mv.addObject("storetag", storetag);
 		mv.addObject("StoreReservation", StoreReservation);

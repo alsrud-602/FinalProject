@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,9 +16,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.board.admin.dto.AdminVo;
 import com.board.admin.mapper.AdminMapper;
-import com.board.admin.vo.AdminVo;
+import com.board.admin.mapper.StoreMapper;
+import com.board.users.dto.User;
+import com.board.users.service.UserService;
+import com.board.util.JwtUtil;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -26,16 +32,66 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/Admin")
 public class AdminController {
 	
+
+	/*모든 메소드에 MFA인증확인 넣으신 분... 매우 센스 있으십니다!짱짱👍👍*/
+	
+	
 	@Autowired
 	private AdminMapper adminMapper;
+
+	@Autowired
+	private StoreMapper storeMapper;
 	
     @Autowired
     private HttpServletRequest request;
 	
+    
+    @Autowired
+    private UserService userService;
+    
+    @Autowired
+    private JwtUtil jwtUtil;
+    
+    private Optional<User> getJwtTokenFromCookies(HttpServletRequest request, Model model) {
+    	// 유저 번호 가지고 오기
+   	 Cookie[] cookies = request.getCookies();
+          String jwtToken = null;
+
+          if (cookies != null) {
+              for (int i = cookies.length - 1; i >= 0; i--) {
+                  Cookie cookie = cookies[i];
+                  if ("adminjwt".equals(cookie.getName())) {
+                      jwtToken = cookie.getValue();
+                      System.out.println("토큰1 : " +jwtToken );
+                      break; 
+                  }
+              }
+          }
+          
+          Optional<User> user= null;
+
+          if (jwtToken != null) {
+              String username = jwtUtil.extractUsername(jwtToken);
+              System.out.println("사용자 정보1: " + username);
+
+                  // 일반 사용자라면 기존 방식으로 사용자 조회
+                  user = userService.getUserByUsername(username);  // DB에서 사용자 정보 조회
+                  System.out.println("사용자 정보: " + user);
+                  model.addAttribute("user", user.orElse(null));  // 사용자가 없을 경우 null 반환
+              } else {
+              model.addAttribute("error", "JWT 토큰이 없습니다.");
+          }
+          return user;
+    }
+    
+    
+    
+
+    
 	// http://localhost:9090
 	// 유저관리
 	@RequestMapping("/User")
-	public  ModelAndView  user(HttpServletResponse response) throws Exception {
+	public  ModelAndView  user(HttpServletResponse response, Model model) throws Exception {
 		
         // MFA 인증 확인
         if (!isMfaAuthenticated(request)) {
@@ -46,7 +102,9 @@ public class AdminController {
 		List<AdminVo> allusers = adminMapper.getalluserinfo();
 		
 		System.out.println(allusers);
-		
+        Optional<User> user=null;
+        user = getJwtTokenFromCookies(request, model);
+        model.addAttribute("user", user.orElse(null));
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("allusers", allusers);
 		mv.setViewName("/admin/user/user");
@@ -56,13 +114,16 @@ public class AdminController {
 	//유저관리 상세
     // 유저관리 상세
     @RequestMapping("/Userdetail")
-    public String userdetail(HttpServletResponse response, @RequestParam("id") String userId , Model model) throws Exception {
+    public String userdetail(HttpServletResponse response, Model model, @RequestParam("id") String userId) throws Exception {
     	// 에러 떠서 일단 mav -> String 으로 바꿔놓은 상태.
         // MFA 인증 확인
         if (!isMfaAuthenticated(request)) {
             response.sendRedirect("/Users/2fa"); 
             return null; 
         }
+        Optional<User> user=null;
+        user = getJwtTokenFromCookies(request, model);
+        model.addAttribute("user", user.orElse(null));
 		//전체 좋아요 정보(REVUEW 테이블)
 		List<AdminVo> allreview = adminMapper.getallReview();
 		System.out.println("모든 리뷰:"+allreview);
@@ -192,7 +253,7 @@ public class AdminController {
 	            @RequestParam String content, 
 	            @RequestParam int points, 
 	            @RequestParam String userIds,
-	            RedirectAttributes redirectAttributes) {
+	            RedirectAttributes redirectAttributes, Model model) {
 	        
 	        // userIds는 콤마로 구분된 문자열이므로, 이를 배열로 변환
 	        String[] userIdArray = userIds.split(",");
@@ -224,7 +285,7 @@ public class AdminController {
 	            @RequestParam String content2,
 	            @RequestParam int points2,
 	            @RequestParam String userIds2,
-	            RedirectAttributes redirectAttributes) {
+	            RedirectAttributes redirectAttributes, Model model) {
 
 	        // userIds2는 콤마로 구분된 문자열이므로, 이를 배열로 변환
 	        String[] userIdArray = userIds2.split(",");
@@ -252,18 +313,16 @@ public class AdminController {
 	    }
 
 	    
-	  
-	
-
-
-
     @RequestMapping("/M1")
-    public ModelAndView M1(HttpServletResponse response) throws Exception {
+    public ModelAndView M1(HttpServletResponse response, Model model) throws Exception {
         // MFA 인증 확인
         if (!isMfaAuthenticated(request)) {
             response.sendRedirect("/Users/2fa"); 
             return null; 
         }
+        Optional<User> user=null;
+        user = getJwtTokenFromCookies(request, model);
+        model.addAttribute("user", user.orElse(null));
 
         ModelAndView mv = new ModelAndView();
         mv.setViewName("/admin/manager/detail");
@@ -272,12 +331,15 @@ public class AdminController {
 
     // 스토어관리 - 담당자관리
     @RequestMapping("/Managerlist")
-    public ModelAndView managerlist(HttpServletResponse response) throws Exception {
+    public ModelAndView managerlist(HttpServletResponse response, Model model) throws Exception {
         // MFA 인증 확인
         if (!isMfaAuthenticated(request)) {
             response.sendRedirect("/Users/2fa"); 
             return null; 
         }
+        Optional<User> user=null;
+        user = getJwtTokenFromCookies(request, model);
+        model.addAttribute("user", user.orElse(null));
 
         ModelAndView mv = new ModelAndView();
         mv.setViewName("/admin/manager/managerlist");
@@ -285,25 +347,32 @@ public class AdminController {
     }
 
     @RequestMapping("/Advertise")
-    public ModelAndView advertise(HttpServletResponse response) throws Exception {
+    public ModelAndView advertise(HttpServletResponse response, Model model) throws Exception {
         // MFA 인증 확인
         if (!isMfaAuthenticated(request)) {
             response.sendRedirect("/Users/2fa");
             return null; 
         }
+        Optional<User> user=null;
+        user = getJwtTokenFromCookies(request, model);
+        model.addAttribute("user", user.orElse(null));
 
         ModelAndView mv = new ModelAndView();
         mv.setViewName("/admin/manager/advertise");
         return mv;
     }
 
-    @RequestMapping("/Home")
-    public String adminhome(HttpServletResponse response) throws Exception {
+    @RequestMapping("/Dashboard")
+    public String adminhome(HttpServletResponse response, Model model) throws Exception {
         // MFA 인증 확인
         if (!isMfaAuthenticated(request)) {
             response.sendRedirect("/Users/2fa"); 
             return null; 
         }
+        
+        Optional<User> user=null;
+        user = getJwtTokenFromCookies(request, model);
+        model.addAttribute("user", user.orElse(null));
 
         return "admin/dashboard/dashboard";
     
@@ -314,6 +383,7 @@ public class AdminController {
         HttpSession session = request.getSession(false);
         if (session != null) {
             Boolean mfaAuthenticated = (Boolean) session.getAttribute("mfaAuthenticated");
+            //Model model = model.addAttribute(userService.get);
             return mfaAuthenticated != null && mfaAuthenticated;
         }
         return false;

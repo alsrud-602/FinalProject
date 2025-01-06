@@ -488,8 +488,12 @@
  document.addEventListener('DOMContentLoaded', function() {
     const authContent = document.querySelector('.header-util');
     const userJwt = localStorage.getItem('userJwt');
+    const userJwtExpiration = localStorage.getItem('userJwtExpiration');
     const kakaoAccessToken = localStorage.getItem('kakaoAccessToken');
-    if (userJwt || kakaoAccessToken) {
+    const kakaoTokenExpiration = localStorage.getItem('kakaoTokenExpiration');
+    const adminjwt = localStorage.getItem('adminjwt');
+    const currentTime = Date.now();
+    if (userJwt || kakaoAccessToken || adminjwt) {
         // 토큰이 있는 경우 (인증된 사용자)
         authContent.innerHTML = `
             <form id="logoutForm">
@@ -497,10 +501,25 @@
             </form>
         `;
         
+        if (currentTime > kakaoTokenExpiration){ 
+            localStorage.removeItem('kakaoAccessToken');
+            localStorage.removeItem('kakaoTokenExpiration');
+        }
+        if(currentTime > userJwtExpiration) {
+            localStorage.removeItem('userJwt');
+            localStorage.removeItem('userJwtExpiration');
+        }
+        if(currentTime > userJwtExpiration) {
+            localStorage.removeItem('adminjwt');
+            localStorage.removeItem('userJwtExpiration');
+        }
         // 로그아웃 버튼 이벤트 리스너
         document.getElementById('logout-button').addEventListener('click', function() {
             localStorage.removeItem('userJwt');
+            localStorage.removeItem('adminjwt');
+            localStorage.removeItem('userJwtExpiration');
             localStorage.removeItem('kakaoAccessToken');
+            localStorage.removeItem('kakaoTokenExpiration');
             
             window.location.href = '/Users/Logout';
         });

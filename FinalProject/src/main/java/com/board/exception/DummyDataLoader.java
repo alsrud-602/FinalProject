@@ -1,4 +1,4 @@
-package com.board.handle;
+package com.board.exception;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
