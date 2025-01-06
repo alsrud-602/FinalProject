@@ -264,6 +264,49 @@ WHERE
 <!--         /Admin/Userdetail    끝      -->
 
 
+
+<!-- 모든 스토어 리스트 -->
+<select id="getTotalStore">
+SELECT
+    co.company_idx, co.id, co.password, co.name, co.code,co.email, co.phone,
+    TO_CHAR(co.cdate,'YYYY-MM-DD') AS cdate, co.enabled, co.role,co.social_id,co.social_type,
+    st.store_idx, st.company_idx,st.title,st. age,
+    st.brand1, st.brand2, st.cdate, st.status, st.ban
+FROM
+    companys co join stores st on co.company_idx = st.company_idx
+</select>
+
+<!-- 검색한 스토어 리스트 -->
+<select id="getSearchStoreList">
+SELECT
+    co.company_idx, co.id, co.password, co.name, co.code,co.email, co.phone,
+    TO_CHAR(co.cdate,'YYYY-MM-DD') AS cdate, co.enabled, co.role,co.social_id,co.social_type,
+    st.store_idx, st.company_idx,st.title,st. age,
+    st.brand1, st.brand2, st.cdate, st.status, st.ban
+FROM
+    companys co join stores st on co.company_idx = st.company_idx
+WHERE 1=1
+     <if test="search != null and search != ''">
+	     AND st.brand1 LIKE '%' || #{search} || '%'
+	 </if>
+</select>
+
+<!-- 선택한 스토어 리스트 -->
+<select id="getSelectStoreList">
+SELECT
+    co.company_idx, co.id, co.password, co.name, co.code,co.email, co.phone,
+    TO_CHAR(co.cdate,'YYYY-MM-DD') AS cdate, co.enabled, co.role,co.social_id,co.social_type,
+    st.store_idx, st.company_idx,st.title,st. age,
+    st.brand1, st.brand2, st.cdate, st.status, st.ban
+FROM
+    companys co join stores st on co.company_idx = st.company_idx
+WHERE 1=1
+     <if test="filter != null and filter != ''">
+	     AND st.status=#{filter}
+	 </if>
+</select>
+
+
 </mapper>
 
 

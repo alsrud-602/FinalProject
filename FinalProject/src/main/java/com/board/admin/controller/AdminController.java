@@ -12,11 +12,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.board.admin.mapper.AdminMapper;
 import com.board.admin.vo.AdminVo;
+import com.board.admin.vo.AdminStoreVo;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -273,7 +275,7 @@ public class AdminController {
     // 스토어관리 - 담당자관리
     @RequestMapping("/Managerlist")
     public ModelAndView managerlist(HttpServletResponse response) throws Exception {
-        // MFA 인증 확인
+         // MFA 인증 확인
         if (!isMfaAuthenticated(request)) {
             response.sendRedirect("/Users/2fa"); 
             return null; 
@@ -318,6 +320,70 @@ public class AdminController {
         }
         return false;
     }
+    
+    
+    @RequestMapping("/List")
+    public ModelAndView list(){
+    	
+    	// MFA 인증 확인
+       // if (!isMfaAuthenticated(request)) {
+       //     response.sendRedirect("/Users/2fa");
+       //     return null; 
+       // }
+    	
+    	
+    	//모든 스토어 입점 요청 내역
+    	List<AdminStoreVo> TotalStore = adminMapper.getTotalStore();
+    	System.out.println("모든 스토어 리스트 TotalStore : "+TotalStore);
+    	
+    	ModelAndView mv= new ModelAndView();
+    	mv.addObject("TotalStore", TotalStore);
+    	mv.setViewName("/admin/store/list");
+    	return mv;
+    }
+    
+    // List페이지 검색필터
+    @RequestMapping("/Listsearch")
+    @ResponseBody
+    public Map<String,Object> listsearch(
+    		@RequestParam(required = false, value = "search") String search){
+    	System.out.println("검색한 search : "+ search);
+    	
+    	//검색한 스토어 리스트
+    	List<AdminStoreVo> SearchStoreList = adminMapper.getSearchStoreList(search);
+    	System.out.println("검색한 리스트 : " + SearchStoreList);
+    	
+    	Map<String,Object> response = new HashMap<>();
+    	response.put("SearchStoreList", SearchStoreList);
+    	return response;
+    }
+    
+    // List페이지 선택필터
+    @RequestMapping("/Listfilter")
+    @ResponseBody
+    public Map<String,Object> listfilter(
+    		@RequestParam(required = false, value = "filter") String filter){
+    	System.out.println("선택한 filter : "+ filter);
+    	
+    	//선택한한 스토어 리스트
+    	List<AdminStoreVo> SelectStoreList = adminMapper.getSelectStoreList(filter);
+    	System.out.println("검색한 리스트 : " + SelectStoreList);
+    	
+    	Map<String,Object> response = new HashMap<>();
+    	response.put("SearchStoreList", SelectStoreList);
+    	return response;
+    }
+    
+    // 담당자 디테일
+    @RequestMapping("/Detail")
+    public ModelAndView detail(){
+    	
+    	ModelAndView mv = new ModelAndView();
+    	mv.setViewName("/admin/manager/detail");
+    	return mv;
+    }
+
+    
 }
     
 

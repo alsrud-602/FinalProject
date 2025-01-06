@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.board.admin.vo.AdminStoreVo;
 import com.board.admin.vo.AdminVo;
 
 @Mapper
@@ -54,6 +55,15 @@ public interface AdminMapper {
 	List<AdminVo> getUserReview(String selUserId);
 
 	void updateUserStatus(String userId, String status);
+
+	//모든 스토어 리스트
+	List<AdminStoreVo> getTotalStore();
+
+	//검색한 스토어 리스트
+	List<AdminStoreVo> getSearchStoreList(@Param("search") String search);
+
+	// 선택한 스토어 리스트
+	List<AdminStoreVo> getSelectStoreList(@Param("filter") String filter);
 
 
 

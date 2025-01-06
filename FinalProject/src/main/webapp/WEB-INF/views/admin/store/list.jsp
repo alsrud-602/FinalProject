@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,10 +11,17 @@
 <link rel="stylesheet" href="/css/admin_s.css" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/browser-scss@1.0.3/dist/browser-scss.min.js"></script>
-<style>
-.slidebar{
 
+<style>
+.resetbutton{
+width: 80px;
+background: #F9FBFF;
+border-radius: 5px;
+border:none;
+font-size: 16px;
+text-align: center;
 }
+
 </style>
 </head>
 <body>
@@ -73,13 +81,14 @@
    <div class="content_box2">
     <p id ="box_title">모든 스토어 입점 요청 내역</p>    
    <div class="box_filter">
-   <input id="box_search"type="text" placeholder="Search">
+   <input id="box_search" class="box_search" type="text" placeholder="기업명 검색">
    <select id="box_sort">
-   <option>최신순</option>
-   <option>미승인</option>
-   <option>승인</option>
-   <option>담당자 요청</option>
+   <option value=" ">-선택-</option>
+   <option value="미승인">미승인</option>
+   <option value="승인">승인</option>
+   <option value="담당자요청">담당자 요청</option>
    </select>
+   <button type="reset" onclick='window.location.reload()' class="resetbutton">※초기화</button>
    </div>
    
    <table id="box_table2">
@@ -91,37 +100,21 @@
        <th>지역</th>
        <th>상태</th>
      </tr>
+     <tbody class="storelist">
+     <c:forEach var="store"  items="${TotalStore}">
      <tr>
-       <td>스텐리</td>
-       <td><a href="/Review/Storeview">스텐리X메시 콜라보 1943 팝업스토어</a></td>
-       <td>2024.12.12</td>
-       <td>4342@email.come</td>
-       <td>서울</td>
+       <td>${store.brand1}</td>
+       <td><a href="/Review/Storeview">${store.title}</a></td>
+       <td>${store.cdate}</td>
+       <td>${store.email}</td>
+       <td>지역?:서울</td>
        <td>
-         <div class="status_green">승인완료</div>
-         <div class="status_purple">담당자요청</div>
+         <div class="status_green">${store.status}</div>
+         <div class="status_purple">??담당자요청${store.date}</div>
        </td>
      </tr>
-     <tr>
-       <td>스텐리</td>
-       <td><a href="/Review/Storeview">스텐리X메시 콜라보 1943 팝업스토어 특집 한정판도 공개예정</a></td>
-       <td>2024.12.12</td>
-       <td>4ddddd42@email.com</td>
-       <td>서울</td>
-       <td>
-         <div class="status_red">미승인</div>
-       </td>
-     </tr>
-     <tr>
-       <td>스텐리</td>
-       <td><a href="/Review/Storeview">침착맨 팝업스토어</a></td>
-       <td>2024.12.12</td>
-       <td>4342@email.come</td>
-       <td>서울</td>
-       <td>
-         <div class="status_green">승인완료</div>
-       </td>
-     </tr>
+     </c:forEach>
+     </tbody>
    
    </table>
    <p>페이징 예정</p>
@@ -132,6 +125,90 @@
   </div>
 <%@include file="/WEB-INF/include/admin-footer.jsp" %>
 </body>
+<script>
+$(function() {
+    $('.box_search').on('keydown', function(event) {
+        if (event.key === 'Enter') { // Enter 키가 눌렸는지 확인
+        	let search = $('.box_search').val().trim();
+            $.ajax({
+            	url  : "/Admin/Listsearch",
+            	type : "GET",
+            	data : {search:search}
+            })
+            .done(function(data){
+            	alert("ok")
+            	$('.storelist').html("");
+            	let html = "";
+            	
+            	if (data.SearchStoreList && Array.isArray(data.SearchStoreList)) {
+                    if (data.SearchStoreList.length > 0) { // filterlist가 비어있지 않으면
+                        data.SearchStoreList.forEach(function(a) {
+                        	html += "<tr>";
+                            html += "<td>" + a.brand1 + "</td>";
+                            html += "<p>팝업스토어 명: <a href='/Review/Storeview'>" + a.title + "</a></p>";
+                            html += "<td><a href='/Review/Storeview'>"+a.title+"</a></td>";
+                            html += "<td>" + a.brand1 + "</td>";
+                            html += "<td>" + a.brand1 + "</td>";
+                            html += "<td>지역?:서울</td>";
+                            html += "<td>";
+                            html += "<div class='status_green'>" + a.status + "</div>";
+                            html += "<div class='status_purple'>??담당자요청 " + a.date + "</div>";
+                            html += "</td>";
+                            html += "</tr>";
+                            
+                        });
+                    } else {
+                        html = "<div class='storelist'>데이터가 없습니다.</div>"; // filterlist가 비어있을 때 메시지
+                    }
+                }
+            	$('.storelist').append(html);
+            	
+            })
+        }
+    });
+});</script>
+
+<script>
+$(function(){
+	$('#box_sort').on('change',function(){
+		let filter = $('#box_sort').val();
+		alert(filter)
+		$.ajax({
+			url : "/Admin/Listfilter",
+			type : "GET",
+			data : {filter : filter}
+		})
+		.done(function(data){
+			$('.storelist').html("");
+        	let html = "";
+        	if (data.SearchStoreList && Array.isArray(data.SearchStoreList)) {
+                if (data.SearchStoreList.length > 0) { // filterlist가 비어있지 않으면
+                    data.SearchStoreList.forEach(function(a) {
+                    	html += "<tr>";
+                        html += "<td>" + a.brand1 + "</td>";
+                        html += "<p>팝업스토어 명: <a href='/Review/Storeview'>" + a.title + "</a></p>";
+                        html += "<td><a href='/Review/Storeview'>"+a.title+"</a></td>";
+                        html += "<td>" + a.brand1 + "</td>";
+                        html += "<td>" + a.brand1 + "</td>";
+                        html += "<td>지역?:서울</td>";
+                        html += "<td>";
+                        html += "<div class='status_green'>" + a.status + "</div>";
+                        html += "<div class='status_purple'>??담당자요청 " + a.date + "</div>";
+                        html += "</td>";
+                        html += "</tr>";
+                        
+                    });
+                } else {
+                    html = "<div class='storelist'>데이터가 없습니다.</div>"; // filterlist가 비어있을 때 메시지
+                }
+            }
+        	$('.storelist').append(html);
+        	
+		})
+		
+	})
+})
+</script>
 </html>
   
 
