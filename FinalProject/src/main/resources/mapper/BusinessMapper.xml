@@ -598,6 +598,45 @@ ORDER BY
 
 
 </select>
+
+<update id="ApprovalUpdate">
+UPDATE STORES
+SET STATUS = #{status}
+WHERE STORE_IDX = #{store_idx}
+</update>
+
+<select id="getStore">
+SELECT STORE_IDX, STATUS,BAN
+FROM STORES
+WHERE STORE_IDX = #{store_idx}
+</select>
+
+<update id="ApprovalBan">
+UPDATE STORES
+SET BAN = #{ban}
+WHERE STORE_IDX = #{store_idx}
+</update>
+
+
+<select id="getRequestList">
+SELECT REQUEST_IDX, 
+      STORE_IDX, 
+      FIELD, 
+      CONTENT, 
+      RESPONSE, 
+      TO_CHAR(CDATE, 'YYYY"년 "MM"월 "DD"일"') AS CDATE, 
+      STATUS 
+FROM REQUESTS
+WHERE STORE_IDX = #{store_idx}
+</select>
+
+
+<update id="UpdateResponse">
+UPDATE REQUESTS
+SET RESPONSE = #{response} , STATUS = '완료'
+WHERE REQUEST_IDX = #{request_idx}
+</update>
+
 </mapper>
 
 
