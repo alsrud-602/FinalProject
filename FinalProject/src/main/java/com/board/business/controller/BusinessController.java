@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -444,17 +445,17 @@ public class BusinessController {
 	public ModelAndView mobile() {		
 		
 	ModelAndView mv = new ModelAndView();
-	//mv.setViewName("mobile/info");
+	
 	mv.setViewName("mobile/info");
 	return mv;	
 		
 	}	
 
-	@RequestMapping("/mypage")
+	@RequestMapping("/moblie/reservation")
 	public ModelAndView mypage() {		
 		
 	ModelAndView mv = new ModelAndView();
-	mv.setViewName("mobile/mypage");
+	mv.setViewName("mobile/reservation");
 	return mv;	
 		
 	}
