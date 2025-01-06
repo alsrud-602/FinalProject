@@ -96,11 +96,11 @@
              
                  <c:if test="${status.index == 0}">
                      // 첫 번째 위치는 출발지로 설정
-                     url += "${location.lon},${location.lat},${location.name}/";
+                     url += "${location.lon},${location.lat},${location.name},${location.placePoiId}/";
                  </c:if>
                  <c:if test="${status.index > 0}">
                      // 두 번째 위치는 도착지로 설정
-                     url += "${location.lon},${location.lat},${location.name}/";
+                     url += "${location.lon},${location.lat},${location.name},${location.placePoiId}/";
                  </c:if>
              </c:if>
          </c:forEach>
@@ -114,12 +114,25 @@
             } else if (locationCount > 2) {
                 url += "walk"; // 3개 이상의 위치일 경우
             }
-             window.open(url, "_blank");  // 자동으로 창 열기
-             window.location.href = "/Users/RouteRecommend";
-         } else {
-             console.log("출발지와 도착지가 제대로 설정되지 않았습니다.");
-         }
-     };
+            
+            // 선택된 위치를 localStorage에 저장
+            var selectedLocations = [];
+            <c:forEach var="location" items="${locations}" varStatus="status">
+                <c:if test="${location.lat != null && location.lon != null}">
+                    selectedLocations.push("${location.name}");  // 선택된 위치 추가
+                </c:if>
+            </c:forEach>
+            localStorage.setItem("selectedLocations", JSON.stringify(selectedLocations));  // localStorage에 저장
+
+            // URL을 새 창으로 열기
+            window.open(url, "_blank");
+
+            // 페이지 이동
+            window.location.href = "/Users/RouteRecommend";
+        } else {
+            console.log("출발지와 도착지가 제대로 설정되지 않았습니다.");
+        }
+    }; 
 </script>
 </body>
 </html>

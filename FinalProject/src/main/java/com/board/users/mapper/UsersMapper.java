@@ -59,7 +59,7 @@ public interface UsersMapper {
 	UsersDto getStoreReservation(UsersDto usersdto);
 
 
-	UsersDto getUserById(Integer userIdx);
+	UsersDto getUserById1(Integer userIdx);
 
 
 	// 상세페이지 운영시간 
@@ -145,6 +145,13 @@ public interface UsersMapper {
 	List<UsersDto> getReviewImgList(int storeidx, int useridx, int review_idx);
 
  
+
+
+	
+	//Wallet 코스추천
+	List<UsersDto> getallStorelist();
+
+	List<UsersDto> getAddressesByStoreIdx();
 
 
 	

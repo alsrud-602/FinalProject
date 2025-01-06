@@ -6,9 +6,8 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-
+import com.board.admin.dto.AdminStoreVo;
 import com.board.admin.dto.AdminVo;
-import com.board.users.dto.UsersDto;
 
 
 @Mapper
@@ -56,7 +55,15 @@ public interface AdminMapper {
 
 	List<AdminVo> getUserReview(String selUserId);
 
-	void updateUserStatus(String userId, String status);
+	  boolean updateUserStatus(@Param("userId") String userId, @Param("status") String status);
+
+	  
+	 //매니저관리
+	List<AdminVo> getallcompanyinfo();
+	List<Map<String, Object>> getPopupCountsByCompany();
+	List<Map<String, Object>> getAllPopupByCompany();
+
+	boolean UpdateCompnanyStatus(@Param("userId") String companyId, @Param("status") String status);
 
 	//모든 스토어 리스트
 	List<AdminStoreVo> getTotalStore();

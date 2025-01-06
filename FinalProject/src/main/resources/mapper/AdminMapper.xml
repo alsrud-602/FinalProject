@@ -101,10 +101,9 @@ FROM
 
 <!-- 유저 등급 바꾸기 -->
 <update id="updateUserStatus">
- UPDATE USERS
- SET STATUS = #{status}
- WHERE USER_ID = #{userId}
-
+    UPDATE USERS
+    SET STATUS = #{status}
+    WHERE ID = #{userId}
 </update>
 
 
@@ -263,6 +262,73 @@ WHERE
 
 <!--         /Admin/Userdetail    끝      -->
 
+
+<!-- /Admin/Managerlist 시작  -->
+
+<select id="getallcompanyinfo">
+SELECT 
+    COMPANY_IDX,
+    ID,
+    PASSWORD,
+    NAME,
+    CODE,
+    EMAIL,
+    PHONE,
+    COMPULSORY_AGREEMENT,
+    INFO_AGREEMENT,
+    MESSAGE_AGREEMENT,
+    MARKETING_AGREEMENT,
+    ALERT_AGREEMENT,
+    STATUS,
+    TO_CHAR(CDATE, 'YYYY-MM-DD') AS CDATE,
+    ENABLED,
+    ROLE,
+    SOCIAL_ID,
+    SOCIAL_TYPE
+FROM COMPANYS
+</select>
+
+<select id="getAllPopupByCompany"  resultType="map">
+ SELECT
+    C.COMPANY_IDX,
+    C.NAME AS COMPANY_NAME,
+    S.STORE_IDX,
+    S.TITLE AS STORE_TITLE,
+    S.BRAND1,
+    S.BRAND2,
+    S.AGE,
+    TO_CHAR(S.CDATE, 'YYYY-MM-DD') AS STORE_CREATION_DATE,
+    S.STATUS AS STORE_STATUS,
+    S.BAN AS STORE_BAN_STATUS
+FROM
+    COMPANYS C
+LEFT JOIN
+    STORES S ON C.COMPANY_IDX = S.COMPANY_IDX
+ORDER BY
+    C.COMPANY_IDX, S.STORE_IDX	
+</select>
+
+<select id="getPopupCountsByCompany"  resultType="map">
+SELECT
+    C.COMPANY_IDX,
+    C.NAME AS COMPANY_NAME,
+    COUNT(S.STORE_IDX) AS STORE_COUNT
+FROM
+    COMPANYS C
+LEFT JOIN
+    STORES S ON C.COMPANY_IDX = S.COMPANY_IDX
+GROUP BY
+    C.COMPANY_IDX, C.NAME
+ORDER BY
+    C.COMPANY_IDX
+</select>
+
+<!-- 컴퍼니 등급 바꾸기 -->
+<update id="UpdateCompnanyStatus">
+    UPDATE COMPANYS
+    SET STATUS = #{status}
+    WHERE ID = #{userId}
+</update>
 
 
 <!-- 모든 스토어 리스트 -->

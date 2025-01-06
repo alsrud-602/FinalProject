@@ -1,4 +1,4 @@
-package com.board.admin.vo;
+package com.board.admin.dto;
 
 import java.util.List;
 
