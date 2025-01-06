@@ -30,7 +30,7 @@
   <img id="icon_back" src="/images/icon/back.png" alt="뒤로가기">
   <main>
   
-    <div class="swiper-container">
+  <div class="swiper-container">
   <div class="swiper-wrapper">
   <!-- 이미지 들어갈곳 -->
       <c:forEach var="img" items="${PopImgPath}">
@@ -40,8 +40,6 @@
   <!-- Navigation buttons -->
   <div class="swiper-button-next"></div>
   <div class="swiper-button-prev"></div>
-
-
 </div>
     
     <div class='title'>
@@ -337,7 +335,7 @@ const infoPage = `<div class="content">
 		     data-login-idx = "${user.userIdx}"
 		     data-review-idx = "${HotReviews.review_idx}">
 	     <div class ="review_preview">
-	     <img class= "review_img"src="/images/example/exampleimg6.png">     
+	     <img class= "review_img" src="/image/read?path=${HotReviews.image_path}" alt="Review Image" > 
 	     <div class="review_like">
 	     <img src="/images/icon/heart.png">
 	     <p>${HotReviews.like}</p>
@@ -345,10 +343,10 @@ const infoPage = `<div class="content">
 	     </div>
 	     <div class="review_info">
 	       <p>${HotReviews.name} 님</p>
-	       <div><img src="/images/icon/eye2.png">&nbsp;${HotReviews.score}&nbsp;</div>
+	       <div><img src="/images/icon/eye2.png">&nbsp;${HotReviews.hit}&nbsp;</div>
 	     </div>
 	     <div class="review_score">평점 ${HotReviews.score}</div>
-	     <div class="review_time"><div>3시간 전</div></div>
+	     <div class="review_time"><div></div></div>
 	     <div class="review_cdate">${HotReviews.review_date}</div>
 	     </div>
 	     </c:forEach> 
@@ -378,7 +376,7 @@ const infoPage = `<div class="content">
 			     data-login-idx = "${user.userIdx}"
 			     data-review-idx = "${review.review_idx}">
 	     <div class ="review_preview">
-	     <img class= "review_img"src="/images/example/exampleimg6.png">     
+	     <img class= "review_img" src="/image/read?path=${review.image_path}" alt="Store Image" >     
 	     <div class="review_like">
 	     <img src="/images/icon/heart.png">
 	     <p>${review.like}</p>
@@ -423,7 +421,7 @@ const mapPage = `
     $.ajax({
     	url : '/Users/ReviewDetail',
     	type : 'GET',
-    	data : { storeidx:storeIdx, useridx:userIdx,review_idx:reviewIdx}
+    	data : { storeidx:storeIdx, useridx:userIdx,review_idx:reviewIdx,loginidx:loginIdx}
     })
     .done(function(response){
     	const reviewData = response.ReviewDetail; // 서버에서 받아온 데이터
@@ -436,11 +434,9 @@ const mapPage = `
     "</div>" +
     "<div class='swiper-container2'>" +
         "<div class='swiper-wrapper'>" +
-            "<div class='swiper-slide ss'><img src='/images/example/exampleimg1.png' alt='1'></div>" +
-            "<div class='swiper-slide ss'><img src='/images/example/exampleimg1.png' alt='2'></div>" +
-            "<div class='swiper-slide ss'><img src='/images/example/exampleimg1.png' alt='3'></div>" +
-            "<div class='swiper-slide ss'><img src='/images/example/exampleimg1.png' alt='4'></div>" +
-            "<div class='swiper-slide ss'><img src='/images/example/exampleimg1.png' alt='5'></div>" +
+            "<c:forEach var='img' items='${PopImgPath}'>"+
+            "<div class='swiper-slide'><img src='/image/read?path=${img}' alt='User Image' class='profileSize'></div>"+
+          "</c:forEach>"+
         "</div>" +
         "<div class='swiper-button-next'></div>" +
         "<div class='swiper-button-prev'></div>" +

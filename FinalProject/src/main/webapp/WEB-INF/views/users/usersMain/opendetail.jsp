@@ -103,7 +103,6 @@
     margin: 0 auto;
     font-family:'Pretendard';
     font-size:40px;
-    
     }
     .agefilter{
     cursor: pointer;
@@ -180,7 +179,7 @@
 	    <c:forEach var="popup" items="${opendpopuplist}">
 	      <a href="/Users/Info?store_idx=${popup.store_idx}">
 		    <div class="card">
-		      <img src="/images/main/popup1.png" alt="/images/main/popup1.png">
+		      <img src="/image/read?path=${popup.image_path}" alt="Store Image" >
 		      <div class="title">${popup.title}</div>
 		      <div class="info">주소:${popup.address}<br>기간: ${popup.start_date} ~ ${popup.end_date}</div>
 		    </div>
@@ -218,12 +217,12 @@ $(function() {
             if (data.filterlist && Array.isArray(data.filterlist)) {
                 if (data.filterlist.length > 0) { // filterlist가 비어있지 않으면
                     data.filterlist.forEach(function(a) {
-                    	html += "<a href='/Users/Info?store_idx=" + a.store_idx + "'>" +
-                        "<div class='card'>" +
-                            "<img src='/images/main/popup1.png' alt='/images/main/popup1.png'>" +
-                            "<div class='title'>" + a.title + "</div>" +
-                            "<div class='info'>주소: " + a.address + "<br>기간: " + a.start_date + " ~ " + popup.end_date + "</div>" +
-                        "</div>" +
+                    	html += "<a href='/Users/Info?store_idx=" + a.store_idx + "'>" + 
+                 	   "<div class='card'>" +
+                       "<img src='/image/read?path="+a.image_path+"' alt='Store Image' >"+
+                       "<div class='title'>" + a.title + "</div>" +
+                       "<div class='info'>주소: " + a.address + "<br>기간: " + a.start_date + " ~ " + a.end_date + "</div>" +
+                    "</div>"+
                     "</a>";
                     });
                 } else {
