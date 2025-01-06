@@ -30,9 +30,9 @@ public interface UsersMapper {
 			@Param("date") String date);
 	
     // 메인화면 검색창
-	List<UsersDto> getOngoingsearchlist(@Param("search") String search);
+	List<UsersDto> getOngoingsearchlist(@Param("search") String search, @Param("start") int start, @Param("size") int size);
 	
-	List<UsersDto> getClosesearchlist(@Param("search") String search);
+	List<UsersDto> getClosesearchlist(@Param("search") String search, @Param("start") int start, @Param("size") int size);
     
 	
 	int updateUserProfile(UsersDto usersDto);
@@ -50,8 +50,9 @@ public interface UsersMapper {
 
 	List<UsersDto> getPopuppaginglist(@Param("start") int start,@Param("size") int size);
 	
-    //메인화면 검색
-	int getOngoingsearchcount(@Param("search") String search);
+    //메인화면 검색 - &페이징
+	
+	int getOpendsearchcount(@Param("search") String search);
 	List<UsersDto> getOpendsearchlist(@Param("search") String search, @Param("start") int start, @Param("size") int size);
     
 	// 상세 페이지 예약 구분
@@ -133,6 +134,17 @@ public interface UsersMapper {
 
 	//리뷰 삭제
 	int deleteReview(@Param("storeidx") int storeidx,@Param("useridx") int useridx,@Param("review_idx") int review_idx);
+
+	// 전체 리뷰 조회
+	UsersDto getselectReviewHit(@Param("storeidx") int storeidx,@Param("useridx") int useridx,@Param("review_idx") int review_idx, @Param("loginidx") int loginidx);
+	
+	// 리뷰 조회수 증가
+	int insertReviewHit(@Param("storeidx") int storeidx,@Param("useridx") int useridx,@Param("review_idx") int review_idx, @Param("loginidx") int loginidx);
+
+	// 리뷰 상세 이미지
+	List<UsersDto> getReviewImgList(int storeidx, int useridx, int review_idx);
+
+ 
 
 
 	

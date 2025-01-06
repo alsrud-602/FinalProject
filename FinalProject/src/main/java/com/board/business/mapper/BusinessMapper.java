@@ -15,7 +15,9 @@ import com.board.business.dto.ReservationDateListDto;
 import com.board.business.dto.ReservationPlanDto;
 import com.board.business.dto.ReservationStoreDto;
 import com.board.business.dto.ReservationUserListDto;
+import com.board.business.dto.ResponseDto;
 import com.board.business.dto.StoreCategoryDto;
+import com.board.business.dto.StoreDto;
 import com.board.business.dto.StoreListDto;
 import com.board.business.dto.StoreTagDto;
 import com.board.business.dto.StoreUpdateDto;
@@ -112,6 +114,16 @@ public interface BusinessMapper {
 	List<ReservationDateListDto> getReservationDateList(HashMap<String, Object> map);
 
 	List<ReservationUserListDto> getReservationUserList(HashMap<String, Object> map);
+
+	void ApprovalUpdate(StoreDto storeDto);
+
+	StoreDto getStore(StoreDto storeDto);
+
+	void ApprovalBan(StoreDto storeDto);
+
+	List<ResponseDto> getRequestList(int store_idx);
+
+	void UpdateResponse(RequestDto requestDto);
 
 
 
