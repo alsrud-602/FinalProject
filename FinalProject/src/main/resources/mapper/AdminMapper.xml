@@ -271,9 +271,12 @@ SELECT
     co.company_idx, co.id, co.password, co.name, co.code,co.email, co.phone,
     TO_CHAR(co.cdate,'YYYY-MM-DD') AS cdate, co.enabled, co.role,co.social_id,co.social_type,
     st.store_idx, st.company_idx,st.title,st. age,
-    st.brand1, st.brand2, st.cdate, st.status, st.ban
+    st.brand1, st.brand2, st.cdate, st.status, st.ban,
+    re.request_idx, re.store_idx,re.field,
+    re.content,re.response,re.cdate, re.status AS restatus
 FROM
     companys co join stores st on co.company_idx = st.company_idx
+                left join requests re on st.store_idx = re.store_idx
 </select>
 
 <!-- 검색한 스토어 리스트 -->

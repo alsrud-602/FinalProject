@@ -326,9 +326,9 @@ public class AdminController {
     public ModelAndView list(){
     	
     	// MFA 인증 확인
-       // if (!isMfaAuthenticated(request)) {
-       //     response.sendRedirect("/Users/2fa");
-       //     return null; 
+        //if (!isMfaAuthenticated(request)) {
+        //    response.sendRedirect("/Users/2fa");
+        //    return null; 
        // }
     	
     	

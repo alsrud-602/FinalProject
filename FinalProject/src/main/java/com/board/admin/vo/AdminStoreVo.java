@@ -40,6 +40,12 @@ public class AdminStoreVo {
 	private String social_id;
 	private String social_type;
 	private String name;
+	
+	private int request_idx;
+	private String field;
+	private String content;
+	private String response;
+	private String restatus;
     
 }
 

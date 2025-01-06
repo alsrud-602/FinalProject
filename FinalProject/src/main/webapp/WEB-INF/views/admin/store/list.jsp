@@ -97,23 +97,28 @@ text-align: center;
        <th>팝업스토어 명</th>
        <th>요청일</th>
        <th>이메일</th>
-       <th>지역</th>
        <th>상태</th>
      </tr>
      <tbody class="storelist">
-     <c:forEach var="store"  items="${TotalStore}">
-     <tr>
-       <td>${store.brand1}</td>
-       <td><a href="/Review/Storeview">${store.title}</a></td>
-       <td>${store.cdate}</td>
-       <td>${store.email}</td>
-       <td>지역?:서울</td>
-       <td>
-         <div class="status_green">${store.status}</div>
-         <div class="status_purple">??담당자요청${store.date}</div>
-       </td>
-     </tr>
-     </c:forEach>
+     <c:forEach var="store" items="${TotalStore}">
+<tr>
+  <td>${store.brand1}</td>
+  <td><a href="/Review/Storeview">${store.title}</a></td>
+  <td>${store.cdate}</td>
+  <td>${store.email}</td>
+  <td>
+    <div class="status_green">${store.status}</div>
+	    <c:if test="${store.restatus != null}">
+	      <div class="status_purple">
+	        <c:choose>
+	          <c:when test="${store.restatus == '미완'}">담당자요청</c:when>
+	          <c:otherwise>${store.restatus}</c:otherwise>
+	        </c:choose>
+	      </div>
+	    </c:if>
+	  </td>
+	</tr>
+	</c:forEach>
      </tbody>
    
    </table>
