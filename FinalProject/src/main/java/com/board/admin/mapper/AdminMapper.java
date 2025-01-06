@@ -6,8 +6,10 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.board.admin.vo.AdminStoreVo;
-import com.board.admin.vo.AdminVo;
+
+import com.board.admin.dto.AdminVo;
+import com.board.users.dto.UsersDto;
+
 
 @Mapper
 public interface AdminMapper {
@@ -64,7 +66,6 @@ public interface AdminMapper {
 
 	// 선택한 스토어 리스트
 	List<AdminStoreVo> getSelectStoreList(@Param("filter") String filter);
-
 
 
 

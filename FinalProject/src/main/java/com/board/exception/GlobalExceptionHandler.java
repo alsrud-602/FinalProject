@@ -1,4 +1,4 @@
-package com.board.handle;
+package com.board.exception;
 
 import java.io.IOException;
 

@@ -1,4 +1,4 @@
-package com.board.handle;
+package com.board.exception;
 
 public class UserAlreadyLinkedToSocialException extends RuntimeException {
     public UserAlreadyLinkedToSocialException(String message) {

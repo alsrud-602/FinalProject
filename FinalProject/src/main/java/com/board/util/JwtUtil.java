@@ -1,4 +1,4 @@
-package com.board.jwt;
+package com.board.util;
 
 import java.util.Date;
 import java.util.HashMap;

@@ -483,7 +483,15 @@
  document.addEventListener('DOMContentLoaded', function() {
     const authContent = document.querySelector('.header-util');
     const companyJwt = localStorage.getItem('companyJwt');
+    const companyJwtExpiration = localStorage.getItem('companyJwtExpiration');
+    const currentTime = Date.now();
     if (companyJwt) {
+
+        if (currentTime > companyJwtExpiration) {
+            // 만료된 경우, 토큰 삭제
+            localStorage.removeItem('companyJwt');
+            localStorage.removeItem('companyJwtExpiration');
+        }
         // 토큰이 있는 경우 (인증된 사용자)
         authContent.innerHTML = `
             <form id="logoutForm">
@@ -494,6 +502,7 @@
         // 로그아웃 버튼 이벤트 리스너
         document.getElementById('logout-button').addEventListener('click', function() {
         	localStorage.removeItem('companyJwt');
+        	localStorage.removeItem('companyJwtExpiration');
             window.location.href = '/CompanyAuth/Logout';
         });
     } else {

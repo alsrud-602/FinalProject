@@ -87,6 +87,11 @@
 <body>
     <%@include file="/WEB-INF/include/header.jsp" %>
     <main>
+<c:if test="${not empty needLoginMessage}">
+    <script type="text/javascript">
+        alert('${needLoginMessage}');
+    </script>
+</c:if>
         <div class="user-login">
             <a href="/"><img class="_32" src="/images/mainlogo.png" /></a>
 <form id="loginForm">
@@ -109,6 +114,7 @@
             <a href="#" class="link">회원가입</a>
             </div>
         </div>
+
 <script type="text/javascript">
 document.getElementById('loginForm').addEventListener('submit', function(event) {
     event.preventDefault();
@@ -152,14 +158,18 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         return response.json(); // JSON 응답 파싱
     })
     .then(function(data) {
-        if (data && data.userJwt) {
+        if (data || data.userJwt) {
             // JWT 토큰 저장
             // 로그인 성공 후, JWT를 Authorization 헤더에 추가
+			const expirationTime = Date.now() + 10 * 60 * 60 * 1000; // 10시간 후
 			localStorage.setItem('userJwt', data.userJwt);
+			localStorage.setItem('userJwtExpiration', expirationTime);
             console.log('JWT 토큰 저장 완료:', data.userJwt);
 
             if (data.redirect) {
-                // ADMIN user, redirect to 2FA page
+    			const expirationTime = Date.now() + 24 * 60 * 60 * 1000; // 24시간 후
+    			localStorage.setItem('adminjwt', data.adminjwt);
+    			localStorage.setItem('userJwtExpiration', expirationTime);
                 window.location.href = data.redirect;
             } else {
                 // Regular user, redirect to home
@@ -212,6 +222,8 @@ window.onload = function() {
             })
             .then(data => {
                 const accessToken = data.access_token; // 백엔드에서 반환한 토큰
+                const expirationTime = Date.now() + 24 * 60 * 60 * 1000; // 24시간 후
+                localStorage.setItem('kakaoTokenExpiration', expirationTime); // localStorage에 저장
                 localStorage.setItem('kakaoAccessToken', accessToken); // localStorage에 저장
                 console.log('토큰이 localStorage에 저장되었습니다:', accessToken);
                 // 홈 화면으로 리다이렉트 (필요 시)

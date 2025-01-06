@@ -1,6 +1,6 @@
 package com.board.config;
 
-import org.slf4j.Logger;	
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -24,11 +24,10 @@ import org.springframework.security.web.firewall.StrictHttpFirewall;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsUtils;
 
-import com.board.jwt.JwtAuthenticationFilter;
-import com.board.jwt.JwtUtil;
+import com.board.util.JwtAuthenticationFilter;
+import com.board.util.JwtUtil;
 
 import jakarta.servlet.DispatcherType;
-import jakarta.servlet.http.Cookie;
 
 @Configuration
 @EnableWebSecurity
@@ -66,7 +65,6 @@ public class SecurityConfig {
                        .loginPage("/Users/LoginForm")
                         .failureUrl("/Users/LoginForm?error=true")
                         .successHandler((request, response, authentication) -> {
-                            // SecurityContext 설정
                             SecurityContextHolder.getContext().setAuthentication(authentication);
                             response.sendRedirect("/"); // 로그인 성공 후 리다이렉트할 URL
                         })

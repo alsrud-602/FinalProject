@@ -144,7 +144,9 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         if (data && data.companyJwt) {
             // JWT 토큰 저장
             // 로그인 성공 후, JWT를 Authorization 헤더에 추가
+            const expirationTime = Date.now() + 10 * 60 * 60 * 1000; // 10시간 후
 			localStorage.setItem('companyJwt', data.companyJwt);
+			localStorage.setItem('companyJwtExpiration', expirationTime);
             console.log('JWT 토큰 저장 완료:', data.companyJwt);
 
             // 홈 화면으로 리다이렉션
