@@ -82,57 +82,54 @@
     </table>
 
     <a href="/">돌아가기</a>
-     <script>
 
-     window.onload = function() {
-         // 페이지 로드 시 경로 자동 열기
-         var url = "https://map.naver.com/p/directions/";
-         var locationCount = 0; 
+<script>
+        window.onload = function() {
+            var url = "https://map.naver.com/p/directions/";
+            var locationCount = 0;
 
-         // JSP에서 처리된 데이터를 JavaScript에 삽입
-         <c:forEach var="location" items="${locations}" varStatus="status">
-             <c:if test="${location.lat != null && location.lon != null}">
-             locationCount = ${status.index + 1};
-             
-                 <c:if test="${status.index == 0}">
-                     // 첫 번째 위치는 출발지로 설정
-                     url += "${location.lon},${location.lat},${location.name},${location.placePoiId}/";
-                 </c:if>
-                 <c:if test="${status.index > 0}">
-                     // 두 번째 위치는 도착지로 설정
-                     url += "${location.lon},${location.lat},${location.name},${location.placePoiId}/";
-                 </c:if>
-             </c:if>
-         </c:forEach>
-	
-         
-         
-         // URL 끝에 /walk추가
-         if (url !== "" && url !== "https://map.naver.com/p/directions/") {
-            if (locationCount === 2) {
-                url += "-/walk"; // 2개의 위치일 경우
-            } else if (locationCount > 2) {
-                url += "walk"; // 3개 이상의 위치일 경우
-            }
-            
-            // 선택된 위치를 localStorage에 저장
-            var selectedLocations = [];
+            // JSP에서 처리된 데이터를 JavaScript로 삽입하여 URL 생성
             <c:forEach var="location" items="${locations}" varStatus="status">
                 <c:if test="${location.lat != null && location.lon != null}">
-                    selectedLocations.push("${location.name}");  // 선택된 위치 추가
+                    locationCount = ${status.index + 1};
+
+                    // location.name을 사용하여 URL에 추가
+                    var locationName = "${location.name}";
+                    var encodedLocationName = encodeURIComponent(locationName); // URL 인코딩
+
+                    // 주소가 띄어쓰기 한 개이고, 시, 군, 구로 끝날 때 address_poi 추가
+                    var address = "${location.address}";
+                    if (address.split(" ").length == 2 && 
+                        (address.endsWith("시") || address.endsWith("군") || address.endsWith("구"))) {
+                        encodedLocationName += ",address_poi"; // address_poi 추가
+                    }
+
+                    // URL에 출발지와 도착지 추가
+                    if (${status.index} == 0) {
+                        url += "${location.lon},${location.lat}," + encodedLocationName + "/";
+                    } else {
+                        url += "${location.lon},${location.lat}," + encodedLocationName + "/";
+                    }
                 </c:if>
             </c:forEach>
-            localStorage.setItem("selectedLocations", JSON.stringify(selectedLocations));  // localStorage에 저장
 
-            // URL을 새 창으로 열기
-            window.open(url, "_blank");
+            // URL 끝에 /walk 추가
+            if (url !== "" && url !== "https://map.naver.com/p/directions/") {
+                if (locationCount === 2) {
+                    url += "-/walk";  // 2개의 위치일 경우
+                } else if (locationCount > 2) {
+                    url += "walk";  // 3개 이상의 위치일 경우
+                }
 
-            // 페이지 이동
-            window.location.href = "/Users/RouteRecommend";
-        } else {
-            console.log("출발지와 도착지가 제대로 설정되지 않았습니다.");
-        }
-    }; 
-</script>
+               
+                
+                window.open(url, "_blank");
+                window.location.href = "/Users/RouteRecommend";
+            } else {
+                console.log("출발지와 도착지가 제대로 설정되지 않았습니다.");
+            }
+        };
+    </script>
+
 </body>
 </html>

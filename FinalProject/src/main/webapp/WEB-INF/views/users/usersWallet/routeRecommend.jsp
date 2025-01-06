@@ -172,10 +172,14 @@ fontSize : 16px;
             <option value="부산">부산</option>
             <option value="인천">인천</option>
             <option value="대구">대구</option>
+            <option value="경기">경기</option>
+            <option value="강원">강원</option>
+            <option value="대전">대전</option>
+            <option value="울산">울산</option>
         </select>
      
         <select class="filter-select" id="district-select">
-        <option value="">군/구</option>
+        <option value="">시/군/구</option>
        </select>
 
 
@@ -368,94 +372,59 @@ document.getElementById('search-btn').addEventListener('click', function () {
     
 	</script>
 	
-	<script>
-	document.getElementById("region-select").addEventListener("change", function() {
-	    const region = this.value; // 선택된 지역
-	    const popupSelect = document.getElementById("popup-select"); // 팝업 선택
-
-	    // 모든 옵션을 가져옴
-	    const options = popupSelect.getElementsByTagName("option");
-
-	    let noResults = true; // 결과가 없을 경우를 체크하는 변수
-
-	    // "지역"을 선택했을 때만 팝업 옵션을 보이도록 설정
-	    const popupOption = popupSelect.querySelector("option[value='']");  // "팝업" option을 찾기
-	    if (region === "") { // 지역이 "지역"일 때만 팝업 옵션을 보이게
-	        if (popupOption) {
-	            popupOption.style.display = "block"; // "팝업" option은 보이도록
-	        }
-	    } else {
-	        if (popupOption) {
-	            popupOption.style.display = "none"; // 다른 지역을 선택하면 "팝업" 옵션을 숨김
-	        }
-	    }
-
-	    // 모든 옵션을 순회하면서 선택된 지역을 포함하는 주소만 보이도록 설정
-	    for (let option of options) {
-	        const address = option.getAttribute("data-region");  // 옵션의 data-region 값을 가져옴
-
-	        // "팝업" 옵션은 건너뛰기
-	        if (option === popupOption) continue;
-
-	        // address가 유효한지 먼저 체크
-	        if (address) {
-	            // 첫 번째 띄어쓰기 전까지의 부분만 추출
-	            const addressPrefix = address.split(' ')[0]; // 첫 공백 전까지의 값을 가져옴
-
-	            // 선택된 지역이 addressPrefix에 포함되는지 확인
-	            if (region === "" || addressPrefix.includes(region)) {
-	                option.style.display = "block";  // 선택된 지역을 포함하는 옵션을 보이도록
-	                noResults = false;  // 결과가 있으면 noResults를 false로 설정
-	            } else {
-	                option.style.display = "none";   // 선택된 지역을 포함하지 않으면 숨기기
-	            }
-	        }
-	    }
-
-	    // 결과가 없으면 "옵션이 없습니다" 메시지를 보이도록 설정
-	    const noResultsOption = document.getElementById("no-results-option");
-	    if (noResults) {
-	        if (!noResultsOption) {
-	            const newOption = document.createElement("option");
-	            newOption.id = "no-results-option";
-	            newOption.disabled = true;
-	            newOption.textContent = "등록 스토어가 없습니다";
-	            popupSelect.appendChild(newOption);
-	        }
-	    } else {
-	        if (noResultsOption) {
-	            popupSelect.removeChild(noResultsOption);
-	        }
-	    }
-	});
-
-	</script>
-
 <script>
 document.getElementById("region-select").addEventListener("change", function() {
     const region = this.value; // 선택된 지역
     const districtSelect = document.getElementById("district-select"); // 군/구 선택
+    const popupSelect = document.getElementById("popup-select"); // 팝업 선택
 
     // 군/구 목록을 초기화
-    districtSelect.innerHTML = '<option value="">군/구</option>'; // 기본 "군/구" 옵션 추가
+    districtSelect.innerHTML = '<option value="">시/군/구</option>'; // 기본 "시/군/구" 옵션 추가
+
+    // 팝업 필터 초기화
+    const options = popupSelect.getElementsByTagName("option");
+    for (let option of options) {
+        option.style.display = "block"; // 모든 팝업 옵션을 다시 보이도록 설정
+    }
+
+    // "지역"을 선택하면 군/구를 숨기고 기본 상태로 되돌리기
+    if (region === "") {
+        return; // "지역"을 선택했을 때 군/구와 팝업을 초기화하고 종료
+    }
 
     // 각 지역별 군/구 목록을 정의
     const districts = {
-        "서울": [
-            "강남구", "강동구", "강북구", "강서구", "관악구", "광진구", "구로구", "금천구", "노원구", 
-            "도봉구", "동대문구", "동작구", "마포구", "서대문구", "서초구", "성동구", "성북구", 
-            "송파구", "양천구", "영등포구", "용산구", "은평구", "종로구", "중구", "중랑구"
-        ],
-        "부산": [
-            "강서구", "금정구", "기장군", "남구", "동래구", "동구", "부산진구", "북구", "사상구", 
-            "사하구", "수영구", "연제구", "영도구", "중구", "진구", "하단구"
-        ],
-        "인천": [
-            "강화군", "계양구", "남동구", "동구", "부평구", "서구", "연수구", "중구", "옹진군"
-        ],
-        "대구": [
-            "남구", "달서구", "달성군", "동구", "북구", "서구", "수성구", "중구"
-        ]  
+    	    "서울": [
+    	        "강남구", "강동구", "강북구", "강서구", "관악구", "광진구", "구로구", "금천구", "노원구", 
+    	        "도봉구", "동대문구", "동작구", "마포구", "서대문구", "서초구", "성동구", "성북구", 
+    	        "송파구", "양천구", "영등포구", "용산구", "은평구", "종로구", "중구", "중랑구"
+    	    ],
+    	    "부산": [
+    	        "강서구", "금정구", "기장군", "남구", "동래구", "동구", "부산진구", "북구", "사상구", 
+    	        "사하구", "수영구", "연제구", "영도구", "중구", "진구", "하단구", "해운대구"
+    	    ],
+    	    "인천": [
+    	        "강화군", "계양구", "남동구", "동구", "부평구", "서구", "연수구", "중구", "옹진군"
+    	    ],
+    	    "대구": [
+    	        "남구", "달서구", "달성군", "동구", "북구", "서구", "수성구", "중구"
+    	    ],
+    	    "경기도": [
+    	        "가평군", "고양시", "과천시", "광명시", "광주시", "구리시", "군포시", "김포시", "남양주시",
+    	        "동두천시", "부천시", "성남시", "수원시", "시흥시", "안산시", "안성시", "안양시", "양주시",
+    	        "양평군", "여주군", "연천군", "오산시", "용인시", "의왕시", "의정부시", "이천시", "파주시",
+    	        "평택시", "하남시", "화성시"
+    	    ],
+    	    "강원도": [
+    	        "강릉시", "고성군", "동해시", "삼척시", "속초시", "양구군", "양양군", "영월군", "원주시",
+    	        "인제군", "정선군", "철원군", "춘천시", "태백시", "평창군", "홍천군", "화천군"
+    	    ],
+    	    "대전": [
+    	        "대덕구", "동구", "서구", "유성구", "중구"
+    	    ],
+    	    "울산": [
+    	        "남구", "동구", "북구", "울주군", "중구"
+    	    ]
     };
 
     // 선택된 지역에 맞는 군/구 목록을 가져와서 동적으로 추가
@@ -467,8 +436,131 @@ document.getElementById("region-select").addEventListener("change", function() {
             districtSelect.appendChild(option); // 군/구를 <select>에 추가
         });
     }
+
+    // 팝업에서 "지역"을 선택했을 때, "팝업" 옵션을 보이도록 설정
+    const popupOption = popupSelect.querySelector("option[value='']"); 
+    if (region === "") { // 지역이 "지역"일 때만 팝업 옵션을 보이게
+        if (popupOption) {
+            popupOption.style.display = "block"; // "팝업" option을 보이도록
+        }
+    } else {
+        if (popupOption) {
+            popupOption.style.display = "none"; // 다른 지역을 선택하면 "팝업" 옵션을 숨김
+        }
+    }
+
+    // 팝업을 필터링하려면 선택된 지역에 맞는 데이터를 확인해야 함
+    const popupOptions = popupSelect.getElementsByTagName("option");
+
+    let noResults = true; // 결과가 없을 경우를 체크하는 변수
+
+    // 모든 옵션을 순회하면서 선택된 지역을 포함하는 주소만 보이도록 설정
+    for (let option of popupOptions) {
+        const address = option.getAttribute("data-region");  // 옵션의 data-region 값을 가져옴
+
+        // "지역", "군/구", "팝업" 옵션은 건너뛰기
+        if (option.value === "" || option.textContent === "지역" || option.textContent === "군/구" || option.textContent === "팝업") continue;
+
+        // address가 유효한지 먼저 체크
+        if (address) {
+            // 첫 번째 띄어쓰기 전까지의 부분을 지역으로 사용
+            const addressPrefix = address.split(' ')[0];  // 첫 공백 전까지의 값을 가져옴
+
+            // 선택된 지역이 addressPrefix에 포함되는지 확인
+            if (region !== "" && addressPrefix.includes(region)) {
+                option.style.display = "block";  // 선택된 지역이 포함되면 옵션을 보이도록
+                noResults = false;  // 결과가 있으면 noResults를 false로 설정
+            } else {
+                option.style.display = "none";   // 선택된 지역이 포함되지 않으면 숨기기
+            }
+        }
+    }
+
+    // 결과가 없으면 "옵션이 없습니다" 메시지를 보이도록 설정
+    const noResultsOption = document.getElementById("no-results-option");
+    if (noResults) {
+        if (!noResultsOption) {
+            const newOption = document.createElement("option");
+            newOption.id = "no-results-option";
+            newOption.disabled = true;
+            newOption.textContent = "등록 스토어가 없습니다";
+            popupSelect.appendChild(newOption);
+        }
+    } else {
+        if (noResultsOption) {
+            popupSelect.removeChild(noResultsOption);
+        }
+    }
 });
+
+document.getElementById("district-select").addEventListener("change", function() {
+    const region = document.getElementById("region-select").value; // 선택된 지역
+    const district = this.value; // 선택된 군/구
+    const popupSelect = document.getElementById("popup-select"); // 팝업 선택
+
+    // "군/구"를 선택한 후 다시 "군/구"를 선택하면 초기화
+    if (district === "") {
+        // 군/구가 선택되지 않은 경우 팝업 필터를 초기화
+        const options = popupSelect.getElementsByTagName("option");
+        for (let option of options) {
+            option.style.display = "block"; // 모든 팝업 옵션을 다시 보이도록 설정
+        }
+        return; // 군/구를 비워두면 필터링을 초기화하고 종료
+    }
+
+    // "지역"이 선택된 상태라면 필터링을 하지 않도록 처리
+    if (region === "") return;
+
+    // 모든 옵션을 가져옴
+    const options = popupSelect.getElementsByTagName("option");
+
+    let noResults = true; // 결과가 없을 경우를 체크하는 변수
+
+    // 선택된 지역과 군/구에 맞는 데이터만 보이도록 필터링
+    for (let option of options) {
+        const address = option.getAttribute("data-region");  // 옵션의 data-region 값을 가져옴
+
+        // "지역", "군/구", "팝업" 옵션은 건너뛰기
+        if (option.value === "" || option.textContent === "지역" || option.textContent === "군/구" || option.textContent === "팝업") continue;
+
+        // address가 유효한지 먼저 체크
+        if (address) {
+            // 첫 번째 띄어쓰기 전까지의 부분을 지역으로 사용
+            const addressPrefix = address.split(' ')[0];  // 첫 공백 전까지의 값을 가져옴
+            // 두 번째 띄어쓰기 전까지의 부분을 군/구로 사용
+            const districtPrefix = address.split(' ')[1];  // 두 번째 공백 전까지의 값을 가져옴
+
+            // 지역과 군/구가 정확히 일치하는지 확인
+            if (region && district && addressPrefix.includes(region) && districtPrefix === district) {
+                option.style.display = "block";  // 지역은 포함, 군/구는 정확히 일치하면 옵션을 보이도록
+                noResults = false;  // 결과가 있으면 noResults를 false로 설정
+            } else {
+                option.style.display = "none";   // 지역이 포함되지 않거나 군/구가 일치하지 않으면 숨기기
+            }
+        }
+    }
+
+    // 결과가 없으면 "옵션이 없습니다" 메시지를 보이도록 설정
+    const noResultsOption = document.getElementById("no-results-option");
+    if (noResults) {
+        if (!noResultsOption) {
+            const newOption = document.createElement("option");
+            newOption.id = "no-results-option";
+            newOption.disabled = true;
+            newOption.textContent = "등록 스토어가 없습니다";
+            popupSelect.appendChild(newOption);
+        }
+    } else {
+        if (noResultsOption) {
+            popupSelect.removeChild(noResultsOption);
+        }
+    }
+});
+
+
 </script>
+
+
 
 
 <script>
