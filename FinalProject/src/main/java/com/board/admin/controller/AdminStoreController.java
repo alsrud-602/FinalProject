@@ -2,11 +2,14 @@ package com.board.admin.controller;
 
 
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.board.business.dto.CategoryDto;
@@ -23,6 +26,8 @@ import com.board.business.service.PdsService;
 @RequestMapping("/Admin")
 public class AdminStoreController {
     
+	// 1./Store/View - store_idx 연결   
+	
 	@Autowired
 	private  BusinessService businessService;
     
@@ -62,15 +67,35 @@ public class AdminStoreController {
 	    List<StoreTagDto> stList = businessService.getStoreTag(store_idx);
 	    List <CategoryDto> scList = businessService.getStoreCategory(store_idx);
 	    List<ImageStoreDTO> isList= pdsService.getImageStorList(store_idx);
+	    List <CategoryDto> cList = businessService.getCategoryList();
 
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("store",suDto);
 	    mv.addObject("tagList", stList);	
 	    mv.addObject("categoryList", scList);	
 	    mv.addObject("imageList", isList);
+	    mv.addObject("cList", cList);
 		mv.setViewName("admin/store/update");
 		 return mv;
 	}
 	
+	@RequestMapping("/Store/Update")
+	public ModelAndView StoreUpdate(@RequestParam HashMap<String, Object> map,
+									            @RequestParam (value="tag_name", 
+									            required = false) String[] tag_name,
+		                                        @RequestParam (value="category_id", 
+				                                required = false) String[] category_id,
+									            @RequestParam(value="upfile",required = false) MultipartFile[] uploadfiles) {	
+	
+	ModelAndView mv = new ModelAndView();
+	businessService.updateAdminStore(map,tag_name,category_id);
+	pdsService.setUpdate(map, uploadfiles);
+	
+	System.out.println("!!!!map 확인중 "+map);
+	int company_idx = Integer.valueOf(map.get("company_idx").toString());
+	mv.setViewName("redirect:/Admin/Store/View");
+	return mv;	
+		
+	}
 
 }

@@ -209,7 +209,8 @@ color:red;
              <span id="brand_red">*</span>
              <input value="스텐리"name="brand1"  required type="text" class="sub_brand" placeholder="메인브랜드를 작성하세요" >
              콜라보 브랜드
-             <input name="brand2" type="text"  class="sub_brand" placeholder="콜라보 브랜드를 작성하세요" ></td>
+             <input name="brand2" type="text"  class="sub_brand" placeholder="콜라보 브랜드를 작성하세요" >
+           </td>
         </tr>        
         <tr>
            <td>주 타겟 연령대</td>
@@ -249,8 +250,7 @@ color:red;
          <div class="sub_day">
           <input   value="2024-12-30" name="start_date" required onchange="vailddateOperation(this,document.getElementById('pop_end'))"  id="pop_start"class="sub_input_date"type="date" placeholder="시작날짜"> 
           &nbsp;&nbsp;<p>-</p>&nbsp;&nbsp;
-           <input   value="2025-01-15" name="end_date" required onchange="vailddateOperation(document.getElementById('pop_start'),this)"  id="pop_end"class="sub_input_date"type="date" placeholder="마감날짜">
-               
+           <input   value="2025-01-15" name="end_date" required onchange="vailddateOperation(document.getElementById('pop_start'),this)"  id="pop_end"class="sub_input_date"type="date" placeholder="마감날짜">              
              
                </div> 
           </td>

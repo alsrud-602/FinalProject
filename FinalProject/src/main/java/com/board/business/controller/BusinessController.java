@@ -446,7 +446,7 @@ public class BusinessController {
 		
 	ModelAndView mv = new ModelAndView();
 	//mv.setViewName("mobile/info");
-	mv.setViewName("admin/store/view");
+	mv.setViewName("mobile/info");
 	return mv;	
 		
 	}	

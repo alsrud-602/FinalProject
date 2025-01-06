@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%
     // 요일을 키-값 쌍으로 설정
     java.util.Map<String, String> daysOfWeek = new java.util.HashMap<>();
@@ -33,7 +34,7 @@
   <%@include file="/WEB-INF/include/admin-header.jsp" %>
 <div class="container">
   <%@include file="/WEB-INF/include/admin-slidebar2.jsp" %>
-<form action="">
+<form action="/Admin/Store/Update" method="POST" enctype="multipart/form-data"  onsubmit="return validateForm()">
   <input type="hidden" name="detail_idx" value="${store.detail_idx}">      
  <input type="hidden" name="store_idx" value="${store.store_idx}">      
  <input type="hidden" name="company_idx" value="${store.company_idx}">      
@@ -52,43 +53,53 @@
       <table class="sub_table">
         <tr>
            <td>팝업스토어명칭</td>
-           <td><input class="sub_link"type="text" placeholder="팝업스토어 이름을 입력하시오"></td>
+           <td><input value="${store.title}"type="text" required name="title" class="sub_link" placeholder="팝업스토어명을 입력하세요"></td>
         </tr>
         <tr>
            <td>카테고리</td>
            <td>
-             <select class="sub_select">
-             <option>카테고리1</option>
-             <option>잡화</option>
-             <option>스포츠</option>
-           </select>
-             <select class="sub_select">
-             <option>카테고리2</option>
-             <option>잡화</option>
-             <option>스포츠</option>
-           </select>
+			<c:set var="firstCategory" value="${categoryList[0].category_name}" />
+			<c:set var="lastCategory" value="${categoryList[fn:length(categoryList) - 1].category_name}" />
+         
+			<select id="popup_cg1" name="category_id" class="sub_select" required>
+			    <option>카테고리1</option>
+			    <c:forEach var="c" items="${cList}">
+			        <option value="${c.category_id}" 
+			            <c:if test="${c.category_name == firstCategory}">selected</c:if>
+			            >${c.category_name}</option>
+			    </c:forEach>
+			</select>
+			
+			<select id="popup_cg2" name="category_id" class="sub_select" >
+			    <option>카테고리2</option>
+			    <c:forEach var="c" items="${cList}">
+			        <option value="${c.category_id}" 
+			            <c:if test="${c.category_name == lastCategory}">selected</c:if>
+			            >${c.category_name}</option>
+			    </c:forEach>
+			</select>
            
            </td>
         </tr>        
         <tr>
            <td>브랜드</td>
            <td>
-           메인<span class="star_red">*</span><input class="sub_short"type="text" placeholder="브랜드명을 입력하시오"> 
-           콜라보브랜드<input class="sub_short"type="text" placeholder="콜라보  브랜드명을 입력하시오">
+           메인<span class="star_red">*</span><input value="${store.brand1}" class="sub_short" required name="brand1" type="text" placeholder="브랜드명을 입력하시오"> 
+           콜라보브랜드<input value="${store.brand2}" class="sub_short"type="text" required  name="brand2" placeholder="콜라보  브랜드명을 입력하시오">
            </td>
         </tr>        
         <tr>
            <td>주 타겟 연령대</td>
            <td>
-             <select class="sub_select">
-             <option>연령대</option>
-             <option>어린이</option>
-             <option>10대</option>
-             <option>10~20대</option>
-             <option>20~30대</option>
-             <option>30대~40대</option>
-             <option>40대 ~</option>
-             <option>전연령층</option>
+             <select name="age" class="sub_select" required>
+             <option value="">연령대</option>
+             <option value="어린이"<c:if test="${store.age == '어린이'}"> selected</c:if>>어린이</option>
+             <option value="10대"<c:if test="${store.age == '10대'}"> selected</c:if>>10대</option>
+             <option value="10~20대"<c:if test="${store.age == '10~20대'}"> selected</c:if>>10~20대</option>
+             <option value="20~30대"<c:if test="${store.age == '20~30대'}"> selected</c:if>>20~30대</option>
+             <option value="30대~40대"<c:if test="${store.age == '30대~40대'}"> selected</c:if>>30대~40대</option>
+             <option value="40대 ~"<c:if test="${store.age == '40대 ~'}"> selected</c:if>>40대 ~</option>
+             <option value="전연령층"<c:if test="${store.age == '전연령층'}"> selected</c:if>>전연령층</option>
            </select>
            </td>
         </tr>        
@@ -102,59 +113,72 @@
       <table class="sub_table">
         <tr>
            <td>팝업스토어 주소</td>
-           <td><input class="sub_link"type="text" placeholder="상세정보"></td>
+           <td>
+            <div id="sub_adress">
+             <input value="${store.address}"   name="address"  required type="text"  id="roadFullAddr" class="sub_link" placeholder="주소검색 버튼을 눌러주세요" style="width:620px; margin: 0 10px 0 0;">
+             <div class="btn3" onclick="searchAddress()" >주소검색</div>
+           </div>
+           
+           </td>
         </tr>
         <tr>
            <td>운영기간</td>
            <td>
-           <input onchange="vailddateOperation(this,document.getElementById('pop_end'))"  id="pop_start"class="sub_input_date"type="date" placeholder="시작날짜"> ~
-           <input  onchange="vailddateOperation(document.getElementById('pop_start'),this)"  id="pop_end"class="sub_input_date"type="date" placeholder="마감날짜">
+           <input value="${store.start_date}" required  onchange="vailddateOperation(this,document.getElementById('pop_end'))"  name="start_date"id="pop_start"class="sub_input_date"type="date" placeholder="시작날짜"> ~
+           <input value="${store.end_date}" required  onchange="vailddateOperation(document.getElementById('pop_start'),this)"  name="end_date" id="pop_end"class="sub_input_date"type="date" placeholder="마감날짜">
            
            </td>
         </tr>        
         <tr>
            <td>영업시간</td>
            <td>
-            <c:forEach var="entry" items="${daysOfWeek}">
+                       <c:forEach var="entry" items="${daysOfWeek}">
             <div class="sub_day">
                <p>${entry.value}</p>
-               <input type="time" id="${entry.key}_START" class="time_start" 
+
+               <input                  
+                name="S${entry.key}" required type="time" id="${entry.key}_START" class="time_start" 
                 onchange="validateTimes(this,document.getElementById('${entry.key}_END') )">
                <p>-</p>&nbsp;&nbsp;
-               <input type="time" id="${entry.key}_END" class="time_end" 
+               <input   
+               name="E${entry.key}" required type="time" id="${entry.key}_END" class="time_end" 
                  onchange="validateTimes(document.getElementById('${entry.key}_START'), this)">
              </div>
              </c:forEach>
             
              <div class="sub_day_full">
              <p>전체</p>
-             <input  type="time" id="FULL_START"
+             <input  type="time" id="FULL_START" 
              onchange="validateTimes( this,document.getElementById('FULL_END'))">
              <p>-</p>&nbsp;&nbsp;
-             <input type="time"   id="FULL_END"
+             <input type="time"   id="FULL_END" 
              onchange="validateTimes(document.getElementById('FULL_START'), this)">
              <div class="btn3" onclick="applyAllTimes()">일괄적용</div>
              </div>
              <div class="sub_day_full">
-             <input class="sub_note"type="text" placeholder="특이사항이 있으면 남겨주세요">
+             <input name="onotes" value="${store.onotes}"class="sub_note"type="text" placeholder="특이사항이 있으면 남겨주세요">
              </div>
            </td>
         </tr>        
         <tr>
            <td>홈페이지 링크</td>
-           <td><input class="sub_link"type="text" placeholder="홈페이지 링크를 복사해 주세요"></td>
+           <td><input value="${store.homepage}" name="homepage" class="sub_link"type="text" placeholder="홈페이지 링크를 복사해 주세요"></td>
         </tr>        
         <tr>
            <td>SNS 링크</td>
-           <td><input class="sub_link"type="text" placeholder="SNS 링크를 복사해 주세요"></td>
+           <td><input value="${store.sns}" name="sns" class="sub_link"type="text" placeholder="SNS 링크를 복사해 주세요"></td>
         </tr>        
         <tr>
            <td>해시태그</td>
            <td>
-           <input type="text" id="inputHash" onkeydown="checkEnter(event)" placeholder="#없이 입력 후 ENTER로 해쉬태그를 입력하세요">
+          <input type="text" id="inputHash" onkeydown="checkEnter(event)" placeholder="#없이 입력 후 ENTER로 해쉬태그를 입력하세요">
            <div class="sub_flex">
-             <div class="sub_hash">굿즈판매<span onclick="deleteHash(this)"><img src="/images/icon/delete2.png"></span></div>
-             <div class="sub_hash">포토부스<span onclick="deleteHash(this)"><img src="/images/icon/delete2.png"></span></div>
+           <c:forEach var="tag" items="${tagList}" >
+            <div class="sub_hash">${tag.tag_name}<span onclick="deleteHash(this)">
+			<img src="/images/icon/delete2.png"></span><input type="hidden" name="tag_name"value="${tag.tag_name}"/></div>
+			
+		  </c:forEach>	
+			
            </div>
            </td>
         </tr>        
@@ -168,37 +192,41 @@
       <table class="sub_table">
        <tr>
          <td>소개 한 줄</td>      
-         <td><input class="sub_link"  type="text" placeholder="팝업을 소개할 문구를 완성해 보세요">
+         <td><input value="${store.introduction}" required name="introduction"  class="sub_link"  type="text" placeholder="팝업을 소개할 문구를 완성해 보세요">
          <p class="sub_guide" >소개 한줄은 목록상단에 기재되어 고객들에게 안내될 예정입니다</p></td>      
        </tr>
        <tr >
          <td>상세내용</td>      
-         <td><textarea id="sub_textarea" placeholder="팝업스토어에 구체적인 내용을 작성하세요" ></textarea></td>      
+         <td><textarea name="content" required  id="sub_textarea" placeholder="팝업스토어에 구체적인 내용을 작성하세요" >${store.content}</textarea></td>      
        </tr>
+       <tr>
+         <td>굿즈 특이사항</td>      
+         <td><input value="${store.goods}" name="goods" class="sub_link"  type="text" placeholder="강조하고 싶은 굿즈가 있다면 작성하세요"></td>      
+       </tr>            
        <tr>
          <td>팝업환경</td>      
          <td>
-           <select class="sub_select">
-             <option>주차정보</option>
-             <option>주차불가</option>
-             <option>주차가능</option>
+           <select name="parking" class="sub_select">
+             <option value="" >주차정보</option>
+             <option  value="주차불가" <c:if test="${store.parking == '주차불가'}"> selected</c:if>>주차불가</option>
+             <option  value="주차가능" <c:if test="${store.parking == '주차가능'}"> selected</c:if>>주차가능</option>
            </select>
-           <select class="sub_select">
-             <option>요금</option>
-             <option>무료</option>
-             <option>유료</option>
+           <select name="fare" class="sub_select">
+             <option value="">요금</option>
+             <option value="무료"<c:if test="${store.fare == '무료'}"> selected</c:if>>무료</option>
+             <option value="유료"<c:if test="${store.fare == '유료'}"> selected</c:if>>유료</option>
            </select>
-           <select class="sub_select">
-             <option>연령제한</option>
-             <option>19세 이상</option>
-             <option>15세 이상</option>
-             <option>전 연령 가능</option>
-             <option>노키즈 존</option>
+           <select name="age_limit"  class="sub_select">
+             <option value="">연령제한</option>
+             <option value="19세 이상"<c:if test="${store.age_limit == '19세 이상'}"> selected</c:if>>19세 이상</option>
+             <option value="15세 이상"<c:if test="${store.age_limit == '15세 이상'}"> selected</c:if>>15세 이상</option>
+             <option value="전 연령 가능"<c:if test="${store.age_limit == '전 연령 가능'}"> selected</c:if>>전 연령 가능</option>
+             <option value="노키즈 존"<c:if test="${store.age_limit == '노키즈 존'}"> selected</c:if>>노키즈 존</option>
            </select>
-           <select class="sub_select">
-             <option>사진촬영여부</option>
-             <option>촬영 가능</option>
-             <option>촬영 불가</option>
+           <select name="shooting"  class="sub_select">
+             <option value="">사진촬영여부</option>
+             <option value="촬영 가능"<c:if test="${store.shooting == '촬영 가능'}"> selected</c:if>>촬영 가능</option>
+             <option value="촬영 불가"<c:if test="${store.shooting == '촬영 불가'}"> selected</c:if>>촬영 불가</option>
            </select>        
          </td>      
        </tr>
@@ -209,10 +237,16 @@
 		    <label for="file-input" class="btn4">
 		        파일 선택
 		    </label>
-           <input id="file-input" type="file" accept="image/*" style="display: none;" multiple />
+           <input id="file-input" name="upfile" type="file" accept=".jpg, .jpeg, .png" style="display: none;" multiple  />
          </div>
-    <div id="file-name-container">
-    </div>
+
+        <div >
+         <c:forEach var="img" items="${imageList}">
+        <div class="file-item"><span>${img.imagename}</span>&nbsp;<a class="deleteImage" href="/DeleteImage?is_idx=${img.is_idx}">x</a></div>   
+        </c:forEach>
+       </div>
+       <div id="file-name-container">
+       </div>
          
          </td>
        </tr>
@@ -231,13 +265,68 @@
 </div>
 <%@include file="/WEB-INF/include/admin-footer.jsp" %>
 <script>
+
+ $('.deleteImage').on('click',function(event){
+	
+	event.preventDefault();   
+	event.stopPropagation();  
+	let aDelete = this; 
+	
+	//서버에서 파일과 Files table의 정보를 삭제하고 돌아온다
+	$.ajax({
+		url : this.href,
+		method:'GET'
+	}).done(function(result){
+		$(aDelete).parent().remove();
+	}).fail(function(error){
+		console.log(error);
+		alert('서버오류발생:' + error + '관리자에게문의하세요')
+	})
+	
+  })
+
+// 운영시간 값 넣기
+    document.querySelector('input[name="SMON"]').value = '${store.smon}';
+    document.querySelector('input[name="EMON"]').value = '${store.emon}';   
+    document.querySelector('input[name="STUE"]').value = '${store.stue}';
+    document.querySelector('input[name="ETUE"]').value = '${store.etue}';   
+    document.querySelector('input[name="SWED"]').value = '${store.swed}';
+    document.querySelector('input[name="EWED"]').value = '${store.ewed}';
+    document.querySelector('input[name="SFRI"]').value = '${store.sfri}';
+    document.querySelector('input[name="EFRI"]').value = '${store.efri}';    
+    document.querySelector('input[name="SSAT"]').value = '${store.ssat}';
+    document.querySelector('input[name="ESAT"]').value = '${store.esat}';    
+    document.querySelector('input[name="SSUN"]').value = '${store.ssun}';
+    document.querySelector('input[name="ESUN"]').value = '${store.esun}';
+    
+    document.querySelector('input[name="STHU"]').value = '${store.sthu}';
+    document.querySelector('input[name="ETHU"]').value = '${store.ethu}';
+
+/* 여기서 부터 등록 코딩 */
+ 
+function searchAddress() {
+    window.open("/Business/SearchAddress","pop","width=570,height=430, scrollbars=yes, resizable=yes");
+}
+function jusoCallBack(roadFullAddr){
+    document.getElementById('roadFullAddr').value = roadFullAddr;
+}
+
+
+
 function vailddateOperation(startDate, endDate){
 
-	const start = startDate.value;
-	const end = endDate.value;
-	
-	if(start && end && start >= end){
-		alert("시작 날짜는 종료 날짜보다 나중이어야 합니다");	
+    const start = new Date(startDate.value);
+    const end = new Date(endDate.value);
+    const today = new Date(); // 현재 날짜
+    // 시작 날짜가 현재 날짜보다 미래인 경우 시작 날짜 비우기
+    if (start < today) {
+        alert("선택 날짜는 현재 날짜보다 이후여야 합니다.");
+        startDate.value = "";
+    }else if (end < today) {
+        alert("선택 날짜는 현재 날짜보다 이후여야 합니다.");
+        endDate.value = "";
+    }else if(start && end && start  >= end){
+		alert("시작 날짜는 종료 날짜보다 빨라야 합니다");	
 		startDate.value ="";
 		endDate.value ="";	
 	}
@@ -250,7 +339,7 @@ function validateTimes(startInput, endInput) {
     const endTime = endInput.value;
 
     if (startTime && endTime && startTime >= endTime) {
-        alert("종료 시간은 시작 시간보다 나중이어야 합니다.");
+        alert("마감시간은 오픈시간보다 이전일 수 없습니다.");
         endInput.value = "";   
         startInput.value="";
     }
@@ -291,7 +380,10 @@ function checkEnter(event){
 		if(hashValue === '' || hashValue.length < 1){
 			alert('태그명을 입력하세요')
 		}else{
-			const divHashInput = `<div class="sub_hash">\${hashValue}<span onclick="deleteHash(this)"><img src="/images/icon/delete2.png"></span></div>`
+			const divHashInput = `<div class="sub_hash">\${hashValue}<span onclick="deleteHash(this)">
+			<img src="/images/icon/delete2.png"></span><input type="hidden" name="tag_name"value="\${hashValue}"/></div>
+			
+			`
 		    hashContainer.innerHTML += divHashInput;
 			hashInput.value="";
 		}		
@@ -369,6 +461,59 @@ $(formEl).on('keydown', function(event) {
 	    }
  }
 });
+
+
+
+function validateForm() {
+    const statusElement = document.querySelector('input[name="status"]');
+    const TagElement = document.querySelectorAll('input[name="tag_name"]');
+
+    const parkingElement = document.querySelector('select[name="parking"]');
+    const fareElement = document.querySelector('select[name="fare"]');
+    const ageLimitElement = document.querySelector('select[name="age_limit"]');
+    const shootingElement = document.querySelector('select[name="shooting"]');
+
+
+
+    const inputsToValidate = [
+        { element: parkingElement, defaultValue: '', message: '주차정보를 선택하세요' },
+        { element: fareElement, defaultValue: '', message: '요금정보를 선택하세요' },
+        { element: ageLimitElement, defaultValue: '', message: '연령제한 정보를 선택하세요' },
+        { element: shootingElement, defaultValue: '', message: '사진촬영여부를 선택하세요' }
+       
+    ];       
+    
+    
+    if (TagElement.length === 0) {
+        alert('해시태그를 만들어주세요.');
+        return false;
+    }      
+
+    if (!validateInputs(inputsToValidate)) {
+        return false; // 폼 제출을 방지
+    }
+    
+    
+    return true; // 폼 제출 허용
+}
+
+function validateInputs(inputs) {
+    for (const { element, defaultValue, message } of inputs) {
+        if (element.value === defaultValue) {
+            alert(message);
+            element.focus();
+            return false; // 유효하지 않음
+        }
+    }
+    return true; // 모든 입력값이 유효함
+}
+
+
+
+////////////////////////////////////////////////////////////////////////
+
+
+
 </script>
 </body>
 </html>

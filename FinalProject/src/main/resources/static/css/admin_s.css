@@ -715,3 +715,7 @@ margin: 0 10px;
 .star_red{
 color: red;
 }
+#sub_adress{
+display:flex;
+
+}

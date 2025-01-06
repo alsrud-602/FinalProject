@@ -76,6 +76,8 @@ public interface BusinessService {
 
 	RequestDto UpdateResponse(RequestDto requestDto);
 
+	void updateAdminStore(HashMap<String, Object> map, String[] tag_name, String[] category_id);
+
 	
 
 }
