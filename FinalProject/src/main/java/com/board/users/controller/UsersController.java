@@ -24,6 +24,7 @@ import com.board.util.JwtUtil;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 @RequestMapping("/Users")
@@ -39,23 +40,22 @@ public class UsersController {
 	   private JwtUtil jwtUtil;
 	
 	// http://localhost:9090
-	@RequestMapping("/Wallet")
-	public  String  wallet() {
-		return "users/usersWallet/wallet";
-		//return "/WEB-INF/views/users/Wallet/wallet.jsp";
-	}
 	
 	@RequestMapping("/RouteRecommend")
 	public String routeRecommend(Model model) {
-	    // 모든 매장 리스트 가져오기
-	    List<UsersDto> allStoreList = usersMapper.getallStorelist();
-	    System.out.println("All Store List: " + allStoreList);  // 전체 매장 리스트 출력
+	    //모든 지역 가져오기
+		List<UsersDto> allRegionList = usersMapper.getallRegionlist();
+		System.out.println("지역이름:"+allRegionList);
+		// 모든 매장 리스트 가져오기
+
+		List<UsersDto> allStoreList = usersMapper.getallStorelist();
+	    //System.out.println("All Store List: " + allStoreList);  // 전체 매장 리스트 출력
 
 	    Map<Integer, List<UsersDto>> storeAddressMap = new HashMap<>();
 	    
 	    // 모든 주소 리스트 가져오기
 	    List<UsersDto> allAddresses = usersMapper.getAddressesByStoreIdx();
-	    System.out.println("여기:" + allAddresses);
+	    //System.out.println("여기:" + allAddresses);
 	    
 	    // 주소를 storeIdx 기준으로 그룹화
 	    for (UsersDto address : allAddresses) {
@@ -85,9 +85,10 @@ public class UsersController {
 	        }
 	    }
 
-	    System.out.println("나야:" + storeInfoMap);  // storeInfoMap 출력
+	    //System.out.println("나야:" + storeInfoMap);  // storeInfoMap 출력
 	    // 모델에 데이터를 추가하여 뷰로 전달
 	    model.addAttribute("storeInfoMap", storeInfoMap);
+	    model.addAttribute("allRegionList", allRegionList);
 
 	    return "users/usersWallet/routeRecommend";
 	}

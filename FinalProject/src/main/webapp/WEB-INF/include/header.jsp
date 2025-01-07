@@ -377,7 +377,7 @@
                         <img class="personal-collection" src="/images/header/personal-collection.svg" alt="프로필 아이콘" />
                     </div>
                 </a>
-                <a href="#">
+                <a href="/Wallet/Wallet">
                     <div class="frame-2067">
                         <div class="div2">팝콘 팩토리</div>
                         <img class="popcornfactory" src="/images/header/popcornfactory.png" alt="팝콘 팩토리 아이콘" />

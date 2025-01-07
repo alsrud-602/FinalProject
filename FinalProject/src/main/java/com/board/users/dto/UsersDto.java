@@ -94,9 +94,10 @@ public class UsersDto {
     private String imagename;
     private String imageext;
     private String image_path;
-    
     private int total_points;
 
-  
+    private int region_idx;
+    private String region_name; 
+    private int region_id;
     
 }

@@ -380,7 +380,7 @@ input[type="number"]{
 <%@include file="/WEB-INF/include/admin-footer.jsp" %>
 
 <script>
-//새로고침 (새로운 주 갱신 후 새로고침 주기)
+//새로고침 (새로고침 주기)
 window.onload = function() {
     // 세션 스토리지에서 'refreshed' 값 확인
     if (!sessionStorage.getItem('refreshed')) {

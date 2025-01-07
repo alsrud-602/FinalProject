@@ -97,12 +97,6 @@
                     var locationName = "${location.name}";
                     var encodedLocationName = encodeURIComponent(locationName); // URL 인코딩
 
-                    // 주소가 띄어쓰기 한 개이고, 시, 군, 구로 끝날 때 address_poi 추가
-                    var address = "${location.address}";
-                    if (address.split(" ").length == 2 && 
-                        (address.endsWith("시") || address.endsWith("군") || address.endsWith("구"))) {
-                        encodedLocationName += ",address_poi"; // address_poi 추가
-                    }
 
                     // URL에 출발지와 도착지 추가
                     if (${status.index} == 0) {
@@ -110,6 +104,11 @@
                     } else {
                         url += "${location.lon},${location.lat}," + encodedLocationName + "/";
                     }
+                    // 마지막 바로 전 애는 마지막에 ":" 붙이기
+                    if (${status.index} == ${locations.size() - 2}) {
+                        url = url.slice(0, -1) + ":";  // 마지막 "/"를 ":"로 변경
+                    }
+                    
                 </c:if>
             </c:forEach>
 

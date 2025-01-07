@@ -153,6 +153,8 @@ public interface UsersMapper {
 
 	List<UsersDto> getAddressesByStoreIdx();
 
+	List<UsersDto> getallRegionlist();
+
 
 	
 

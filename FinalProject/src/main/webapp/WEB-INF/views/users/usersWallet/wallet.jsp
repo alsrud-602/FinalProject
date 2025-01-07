@@ -290,14 +290,6 @@ th {
             filter: blur(5px);
             pointer-events: none;
         }
-
-
-		
-
-    
-    
-    
-    
     </style>
     
     
@@ -407,8 +399,6 @@ th {
         
 
 
-
-
         <!-- 팝콘 내역 -->
         <h1 class="content-text">팝콘 내역</h1>
         <div class="popcorn-history">
@@ -470,12 +460,13 @@ th {
 	  </div>
 	
     </div>
-<%-- <%@include file="/WEB-INF/include/footer.jsp" %> --%>
+    
+ <%@include file="/WEB-INF/include/footer.jsp" %>
+<script src="/js/authuser.js" defer></script>
 
 
 
     <script>
-    
     // 팝콘이란? 팝업 
     const popupTrigger = document.getElementById('popup-trigger');
     const popupOverlay = document.getElementById('popup-overlay');
@@ -514,7 +505,7 @@ th {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: 'earnedPoints=' + points
+                body: `userId=${useruserid}&earnedPoints=` + points
             })
             .then(response => {
                 return response.text(); 
@@ -559,20 +550,20 @@ th {
         }
     });
     
-    //새로고침 (새로운 주 갱신 후 새로고침 주기)
-window.onload = function() {
-    // 세션 스토리지에서 'refreshed' 값 확인
-    if (!sessionStorage.getItem('refreshed')) {
-        // 세션 스토리지에 'refreshed' 값 저장
-        sessionStorage.setItem('refreshed', 'true');
+  //새로고침 ( 새로고침 주기)
+    window.onload = function() {
+        // 세션 스토리지에서 'refreshed' 값 확인
+        if (!sessionStorage.getItem('refreshed')) {
+            // 세션 스토리지에 'refreshed' 값 저장
+            sessionStorage.setItem('refreshed', 'true');
+            window.location.reload();
+        } else {
+            // 새로고침 후 'refreshed' 값이 저장된 상태에서는 값 삭제
+            sessionStorage.removeItem('refreshed');
+        }
+    };
 
-        // 1초 후 페이지 새로고침
-        window.location.reload();
-    } else {
-        // 새로고침 후 'refreshed' 값이 저장된 상태에서는 값 삭제
-        sessionStorage.removeItem('refreshed');
-    }
-};
+
     </script>
 </body>
 </html>

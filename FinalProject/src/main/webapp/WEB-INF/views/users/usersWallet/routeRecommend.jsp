@@ -75,7 +75,7 @@
 
         .store-name {
             display: flex;
-   			justify-content: space-between;
+   			justify-content: flex-start;
             padding: 10px;
             margin: 10px 0; 
             border: 2px solid #00FF84;
@@ -86,6 +86,8 @@
         }
 
         .remove-btn {
+             position: absolute;
+              right: 10px;
             cursor: pointer;
             color: red;
             margin-right:5px;
@@ -166,30 +168,19 @@ fontSize : 16px;
     <h2 class="content-text">${address.address}</h2>
 
     <div class="button-group">
-        <select class="filter-select" id="region-select">
-            <option value=""  >지역</option>
-            <option value="서울">서울</option>
-            <option value="부산">부산</option>
-            <option value="인천">인천</option>
-            <option value="대구">대구</option>
-            <option value="경기">경기</option>
-            <option value="강원">강원</option>
-            <option value="대전">대전</option>
-            <option value="울산">울산</option>
-        </select>
+    <select class="filter-select" id="region-select">
+    		<option value="">지역</option>
+        <c:forEach var="region" items="${allRegionList}">
+            <option value="${region.region_name}">${region.region_name}</option>
+        </c:forEach>
+    </select>
      
-        <select class="filter-select" id="district-select">
-        <option value="">시/군/구</option>
-       </select>
 
-
-        <select class="filter-select" id="popup-select">
+        <select class="filter-select" id="popup-select" style="width:320px;">
     <option value="" >팝업</option>
-    
-    <!-- 매장 정보 목록을 순회하며 각 매장과 주소를 옵션으로 출력 -->
     <c:forEach var="entry" items="${storeInfoMap}">
         <c:forEach var="address" items="${entry.value.addresses}">
-            <option class="leftResult" value="${address.address}" data-region="${address.address}" name="${entry.value.storeTitle}" 
+            <option  value="${address.address}" data-region="${address.address}" name="${entry.value.storeTitle}" 
              data-storeIdx="${address.store_idx}"> ${entry.value.storeTitle} </option>
         </c:forEach>
     </c:forEach>
@@ -218,19 +209,16 @@ fontSize : 16px;
 
  
 
- <div id="recent-searches">
-    <h2 class="content-text">마지막 검색내역</h2>
-    <div id="search-records-container">
-    </div>
-</div>
 
 
 
 <%-- <%@include file="/WEB-INF/include/footer.jsp" %> --%>
 
 <script>
+
 let selectedAddresses = []; // 선택된 주소 목록
 let selectedNames = []; // 선택된 이름 목록
+let isFirstPopupSelected = false; // 첫 번째 팝업이 선택되었는지 여부
 
 document.getElementById("popup-select").addEventListener("change", function () {
     const selectedOption = this.options[this.selectedIndex]; // 선택된 option 요소
@@ -246,51 +234,31 @@ document.getElementById("popup-select").addEventListener("change", function () {
         // 네모칸 생성
         const storeNameBox = document.createElement("div");
         storeNameBox.classList.add("store-name");
-        
+
         // 이름을 표시할 span
         const nameElement = document.createElement("span");
         nameElement.classList.add("store-name-text");
         nameElement.textContent = selectedName;
         storeNameBox.appendChild(nameElement);
 
-        
         // 주소를 표시할 span
         const addressElement = document.createElement("span");
         addressElement.classList.add("store-address-text");
 
-         // 주소를 분리해서 텍스트로 표시
+        // 주소를 분리해서 텍스트로 표시
         const addressParts = selectedValue.split(' ');
         const truncatedAddress = addressParts.slice(0, 2).join(' ');
         addressElement.appendChild(document.createTextNode(truncatedAddress));
 
         addressElement.textContent = truncatedAddress;
         storeNameBox.appendChild(addressElement);
-        
-        storeNameBox.style.display = "flex"; 
-        storeNameBox.style.justifyContent = "space-between"; 
-        
-        // 상세보기 버튼 생성
-        const detailsBtn = document.createElement("a");
-        detailsBtn.textContent = "상세보기";
-        detailsBtn.classList.add("details-btn");
-        detailsBtn.style.marginLeft = "auto";
-        detailsBtn.onclick = function() {
-            const selectedOption = document.getElementById("popup-select").options[document.getElementById("popup-select").selectedIndex];
-            const storeIdx = selectedOption.getAttribute('data-storeIdx');
-            const userId = '${sessionScope.user_id}';  
-            const detailsUrl = "/Users/Info?store_idx=" + storeIdx + "&user_id=" + userId;
-            
-            // 새 창을 열어서 해당 URL로 이동
-            window.open(detailsUrl, '_blank');  // 새 창을 열고 크기와 위치 설정
-        };
-        storeNameBox.appendChild(detailsBtn);
-        
+
         // X 버튼 생성 및 삭제 기능
         const removeBtn = document.createElement("span");
         removeBtn.textContent = "x";
         removeBtn.classList.add("remove-btn");
-        removeBtn.style.marginLeft = "10px"; 
-        
+        removeBtn.style.marginLeft = "10px";
+
         removeBtn.onclick = function () {
             // 네모칸 삭제
             storeList.removeChild(storeNameBox);
@@ -303,9 +271,21 @@ document.getElementById("popup-select").addEventListener("change", function () {
             const optionToEnable = Array.from(document.getElementById("popup-select").options)
                 .find(option => option.value === selectedValue);
             if (optionToEnable) {
-            	  optionToEnable.disabled = false;
-                  optionToEnable.selected = false; 
-                
+                optionToEnable.disabled = false;
+                optionToEnable.selected = false;
+            }
+            
+            // 선택된 팝업이 모두 제거되었을 경우 옵션 초기화
+            if (storeList.children.length === 0) {
+                const popupOptions = document.getElementById("popup-select").options;
+                for (let option of popupOptions) {
+                    option.style.display = "block";
+                }
+
+                // 모든 팝업이 제거되면 지역 칸을 기본값으로 돌려놓기
+                const regionSelect = document.getElementById("region-select");
+                regionSelect.disabled = false; // 지역 칸을 활성화
+                regionSelect.value = ""; // 지역 칸을 기본값으로 돌려놓기
             }
         };
 
@@ -326,10 +306,44 @@ document.getElementById("popup-select").addEventListener("change", function () {
         if (optionToDisable) {
             optionToDisable.disabled = true;
         }
+
+        // ** 필터링 로직 추가: 첫 번째 선택된 팝업의 시/군/구로 필터링 ** 
+        if (selectedAddresses.length === 1) {
+            isFirstPopupSelected = true; // 첫 번째 팝업이 선택됨
+
+            // 지역 필터링을 비활성화
+            const regionSelect = document.getElementById("region-select");
+            regionSelect.disabled = true;
+
+            const selectedAddressParts = selectedValue.split(' '); // 선택된 주소를 공백으로 분리
+            const selectedCity = selectedAddressParts[0]; // 지역
+            const selectedDistrict = selectedAddressParts[1]; // 군/구
+
+            // 모든 팝업 옵션 가져오기
+            const popupOptions = document.getElementById("popup-select").options;
+
+            for (let option of popupOptions) {
+                if (option.value === "" || option.textContent === "지역" || option.textContent === "팝업") continue;
+
+                const addressParts = option.value.split(' '); // 주소를 공백으로 분리
+                const city = addressParts[0]; // 지역
+                const district = addressParts[1]; // 시/군/구
+
+                const cityPrefix = city.substring(0, 2);
+                const selectedCityPrefix = selectedCity.substring(0, 2);
+
+                if (cityPrefix !== selectedCityPrefix || district !== selectedDistrict) {
+                    option.style.display = "none";
+                } else {
+                    option.style.display = "block";
+                }
+            }
+        }
     } else if (storeList.children.length >= 7) {
         alert("최대 7개까지 선택할 수 있습니다.");
     }
 });
+
 
 
 
@@ -375,11 +389,7 @@ document.getElementById('search-btn').addEventListener('click', function () {
 <script>
 document.getElementById("region-select").addEventListener("change", function() {
     const region = this.value; // 선택된 지역
-    const districtSelect = document.getElementById("district-select"); // 군/구 선택
     const popupSelect = document.getElementById("popup-select"); // 팝업 선택
-
-    // 군/구 목록을 초기화
-    districtSelect.innerHTML = '<option value="">시/군/구</option>'; // 기본 "시/군/구" 옵션 추가
 
     // 팝업 필터 초기화
     const options = popupSelect.getElementsByTagName("option");
@@ -387,66 +397,14 @@ document.getElementById("region-select").addEventListener("change", function() {
         option.style.display = "block"; // 모든 팝업 옵션을 다시 보이도록 설정
     }
 
-    // "지역"을 선택하면 군/구를 숨기고 기본 상태로 되돌리기
+    // "지역"을 선택하면 필터링을 하지 않고 종료
     if (region === "") {
-        return; // "지역"을 선택했을 때 군/구와 팝업을 초기화하고 종료
-    }
-
-    // 각 지역별 군/구 목록을 정의
-    const districts = {
-    	    "서울": [
-    	        "강남구", "강동구", "강북구", "강서구", "관악구", "광진구", "구로구", "금천구", "노원구", 
-    	        "도봉구", "동대문구", "동작구", "마포구", "서대문구", "서초구", "성동구", "성북구", 
-    	        "송파구", "양천구", "영등포구", "용산구", "은평구", "종로구", "중구", "중랑구"
-    	    ],
-    	    "부산": [
-    	        "강서구", "금정구", "기장군", "남구", "동래구", "동구", "부산진구", "북구", "사상구", 
-    	        "사하구", "수영구", "연제구", "영도구", "중구", "진구", "하단구", "해운대구"
-    	    ],
-    	    "인천": [
-    	        "강화군", "계양구", "남동구", "동구", "부평구", "서구", "연수구", "중구", "옹진군"
-    	    ],
-    	    "대구": [
-    	        "남구", "달서구", "달성군", "동구", "북구", "서구", "수성구", "중구"
-    	    ],
-    	    "경기도": [
-    	        "가평군", "고양시", "과천시", "광명시", "광주시", "구리시", "군포시", "김포시", "남양주시",
-    	        "동두천시", "부천시", "성남시", "수원시", "시흥시", "안산시", "안성시", "안양시", "양주시",
-    	        "양평군", "여주군", "연천군", "오산시", "용인시", "의왕시", "의정부시", "이천시", "파주시",
-    	        "평택시", "하남시", "화성시"
-    	    ],
-    	    "강원도": [
-    	        "강릉시", "고성군", "동해시", "삼척시", "속초시", "양구군", "양양군", "영월군", "원주시",
-    	        "인제군", "정선군", "철원군", "춘천시", "태백시", "평창군", "홍천군", "화천군"
-    	    ],
-    	    "대전": [
-    	        "대덕구", "동구", "서구", "유성구", "중구"
-    	    ],
-    	    "울산": [
-    	        "남구", "동구", "북구", "울주군", "중구"
-    	    ]
-    };
-
-    // 선택된 지역에 맞는 군/구 목록을 가져와서 동적으로 추가
-    if (districts[region]) {
-        districts[region].forEach(function(district) {
-            const option = document.createElement("option");
-            option.value = district;
-            option.textContent = district;
-            districtSelect.appendChild(option); // 군/구를 <select>에 추가
-        });
-    }
-
-    // 팝업에서 "지역"을 선택했을 때, "팝업" 옵션을 보이도록 설정
-    const popupOption = popupSelect.querySelector("option[value='']"); 
-    if (region === "") { // 지역이 "지역"일 때만 팝업 옵션을 보이게
-        if (popupOption) {
-            popupOption.style.display = "block"; // "팝업" option을 보이도록
+        // 지역이 비어있는 경우 "등록된 스토어가 없습니다" 메시지 제거
+        const noResultsOption = document.getElementById("no-results-option");
+        if (noResultsOption) {
+            popupSelect.removeChild(noResultsOption);
         }
-    } else {
-        if (popupOption) {
-            popupOption.style.display = "none"; // 다른 지역을 선택하면 "팝업" 옵션을 숨김
-        }
+        return; // "지역"을 선택했을 때 필터링을 초기화하고 종료
     }
 
     // 팝업을 필터링하려면 선택된 지역에 맞는 데이터를 확인해야 함
@@ -458,8 +416,8 @@ document.getElementById("region-select").addEventListener("change", function() {
     for (let option of popupOptions) {
         const address = option.getAttribute("data-region");  // 옵션의 data-region 값을 가져옴
 
-        // "지역", "군/구", "팝업" 옵션은 건너뛰기
-        if (option.value === "" || option.textContent === "지역" || option.textContent === "군/구" || option.textContent === "팝업") continue;
+        // "지역", "팝업" 옵션은 건너뛰기
+        if (option.value === "" || option.textContent === "지역" || option.textContent === "팝업") continue;
 
         // address가 유효한지 먼저 체크
         if (address) {
@@ -493,108 +451,9 @@ document.getElementById("region-select").addEventListener("change", function() {
     }
 });
 
-document.getElementById("district-select").addEventListener("change", function() {
-    const region = document.getElementById("region-select").value; // 선택된 지역
-    const district = this.value; // 선택된 군/구
-    const popupSelect = document.getElementById("popup-select"); // 팝업 선택
-
-    // "군/구"를 선택한 후 다시 "군/구"를 선택하면 초기화
-    if (district === "") {
-        // 군/구가 선택되지 않은 경우 팝업 필터를 초기화
-        const options = popupSelect.getElementsByTagName("option");
-        for (let option of options) {
-            option.style.display = "block"; // 모든 팝업 옵션을 다시 보이도록 설정
-        }
-        return; // 군/구를 비워두면 필터링을 초기화하고 종료
-    }
-
-    // "지역"이 선택된 상태라면 필터링을 하지 않도록 처리
-    if (region === "") return;
-
-    // 모든 옵션을 가져옴
-    const options = popupSelect.getElementsByTagName("option");
-
-    let noResults = true; // 결과가 없을 경우를 체크하는 변수
-
-    // 선택된 지역과 군/구에 맞는 데이터만 보이도록 필터링
-    for (let option of options) {
-        const address = option.getAttribute("data-region");  // 옵션의 data-region 값을 가져옴
-
-        // "지역", "군/구", "팝업" 옵션은 건너뛰기
-        if (option.value === "" || option.textContent === "지역" || option.textContent === "군/구" || option.textContent === "팝업") continue;
-
-        // address가 유효한지 먼저 체크
-        if (address) {
-            // 첫 번째 띄어쓰기 전까지의 부분을 지역으로 사용
-            const addressPrefix = address.split(' ')[0];  // 첫 공백 전까지의 값을 가져옴
-            // 두 번째 띄어쓰기 전까지의 부분을 군/구로 사용
-            const districtPrefix = address.split(' ')[1];  // 두 번째 공백 전까지의 값을 가져옴
-
-            // 지역과 군/구가 정확히 일치하는지 확인
-            if (region && district && addressPrefix.includes(region) && districtPrefix === district) {
-                option.style.display = "block";  // 지역은 포함, 군/구는 정확히 일치하면 옵션을 보이도록
-                noResults = false;  // 결과가 있으면 noResults를 false로 설정
-            } else {
-                option.style.display = "none";   // 지역이 포함되지 않거나 군/구가 일치하지 않으면 숨기기
-            }
-        }
-    }
-
-    // 결과가 없으면 "옵션이 없습니다" 메시지를 보이도록 설정
-    const noResultsOption = document.getElementById("no-results-option");
-    if (noResults) {
-        if (!noResultsOption) {
-            const newOption = document.createElement("option");
-            newOption.id = "no-results-option";
-            newOption.disabled = true;
-            newOption.textContent = "등록 스토어가 없습니다";
-            popupSelect.appendChild(newOption);
-        }
-    } else {
-        if (noResultsOption) {
-            popupSelect.removeChild(noResultsOption);
-        }
-    }
-});
 
 
 </script>
-
-
-
-
-<script>
-window.onload = function() {
-    var selectedLocations = JSON.parse(localStorage.getItem("selectedLocations"));
-    if (selectedLocations && selectedLocations.length > 0) {
-        var recordContainer = document.getElementById("search-records-container");
-
-        // 위치 목록을 화면에 표시
-        recordContainer.style.display = "flex";
-        recordContainer.style.flexWrap = "wrap";  // 여러 항목이 한 줄에 다 들어가지 않으면 줄 바꿈 처리
-
-        selectedLocations.forEach(function(location) {
-            var recordItem = document.createElement("div");
-            recordItem.classList.add("store-name");
-            recordItem.style.display = "flex";
-            recordItem.style.alignItems = "center";
-            recordItem.style.marginBottom = "10px";
-            recordItem.style.marginRight = "10px";  // 항목들 간의 간격을 줌
-
-            var locationText = document.createElement("span");
-            locationText.textContent = location;
-            locationText.style.marginRight = "10px";
-
-            recordItem.appendChild(locationText);
-            recordContainer.appendChild(recordItem);
-        });
-    } else {
-        console.log("선택된 위치 기록이 없습니다.");
-    }
-};
-</script>
-
-
 
 
 </body>

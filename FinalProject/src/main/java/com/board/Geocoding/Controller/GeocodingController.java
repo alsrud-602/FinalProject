@@ -24,7 +24,6 @@ public class GeocodingController {
     private  String clientId = "bbxvghdj60";  // 네이버 클라이언트ID
     private  String clientSecret = "5LicDuIvnyyXPfq5Exp2RrOCLm9hh6Zk3sSkUlRH";  // 네이버 클라이언트Secret 
 
-    
     @RequestMapping("/GetCoordinates")
     public String getCoordinates(@RequestParam("address") List<String> addresses, 
                                   @RequestParam("name") List<String> names, Model model) {
@@ -58,16 +57,58 @@ public class GeocodingController {
             }
         }
 
+        // 첫 번째 위치에서 가장 먼 위치를 두 번째로 설정하는 로직
+        if (locations.size() > 1) {
+            Map<String, String> firstLocation = locations.get(0);
+            double firstLat = Double.parseDouble(firstLocation.get("lat"));
+            double firstLon = Double.parseDouble(firstLocation.get("lon"));
+
+            Map<String, String> farthestLocation = null;
+            double maxDistance = -1;
+
+            // 첫 번째 위치에서 가장 먼 위치를 찾기
+            for (Map<String, String> location : locations) {
+                if (location != firstLocation && location.containsKey("lat") && location.containsKey("lon")) {
+                    double lat = Double.parseDouble(location.get("lat"));
+                    double lon = Double.parseDouble(location.get("lon"));
+                    double distance = calculateDistance(firstLat, firstLon, lat, lon);
+
+                    if (distance > maxDistance) {
+                        maxDistance = distance;
+                        farthestLocation = location;
+                    }
+                }
+            }
+
+            // 가장 먼 위치를 두 번째 위치로 설정하고, 나머지 위치는 그대로 유지
+            if (farthestLocation != null) {
+                locations.remove(farthestLocation);  // 가장 먼 위치를 목록에서 제거
+                locations.add(1, farthestLocation);  // 두 번째로 추가
+            }
+        }
+
         // 모델에 위치 정보를 추가하여 JSP로 전달
         model.addAttribute("locations", locations);
+        System.out.println("위치정보:"+locations);
         return "users/usersWallet/getCoordinates"; // 위치 정보를 JSP로 전달
     }
 
+    // Haversine 공식을 사용한 두 지점 간 거리 계산
+    public double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+        final double R = 6371; // 지구 반경 (단위: km)
+        double latDistance = Math.toRadians(lat2 - lat1);
+        double lonDistance = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2) +
+                   Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                   Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;  // 반환값은 km
+    }
 
     public String[] getLocation(String address) {
         String apiUrl = "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=" + address;
 
-        System.out.println("geocode작동완료:"+apiUrl); // api 작동 확인용 주석처리
+        System.out.println("geocode작동완료:" + apiUrl); // api 작동 확인용 주석처리
 
         // RestTemplate을 사용하여 API 호출
         RestTemplate restTemplate = new RestTemplate();
@@ -94,7 +135,8 @@ public class GeocodingController {
                 return new String[]{lat, lon};
             }
         } catch (Exception e) {
-            e.printStackTrace(); // 예외 처리
+            System.out.println("API 호출 중 오류 발생: " + e.getMessage());
+            e.printStackTrace();
         }
 
         return null; // 위치 정보가 없을 경우 null 반환
