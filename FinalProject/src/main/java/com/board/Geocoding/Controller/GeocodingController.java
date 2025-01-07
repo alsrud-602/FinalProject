@@ -21,8 +21,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Controller
 public class GeocodingController {
 
-    private  String clientId = "bbxvghdj60";  // 네이버 클라이언트ID
-    private  String clientSecret = "5LicDuIvnyyXPfq5Exp2RrOCLm9hh6Zk3sSkUlRH";  // 네이버 클라이언트Secret 
+    private  String clientId = "";  // 네이버 클라이언트ID
+    private  String clientSecret = "";  // 네이버 클라이언트Secret 
 
     @RequestMapping("/GetCoordinates")
     public String getCoordinates(@RequestParam("address") List<String> addresses, 
