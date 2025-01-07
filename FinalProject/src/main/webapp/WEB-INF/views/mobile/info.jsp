@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>    
 <!DOCTYPE html>
 <html>
 <head>
@@ -91,13 +92,20 @@
       <div class="section-title">주의사항</div>
     </div>
       <div class="section-content">
-        현재순번 연락 후 15분이 지나면 자동으로 예약이 취소됩니다.
+   <c:choose>
+   <c:when test="${not empty anDTO.notes}">
+      ${anDTO.notes}   
+   </c:when>
+   <c:otherwise>
+        현재순번 연락 후 15분이 지나면 예약이 취소될 수 있습니다.
+   </c:otherwise>
+   </c:choose>
       </div>
       
     <div class="section">
       <div class="section-title">오시는 길</div>
     </div>
-      <div class="section-content">서울 성동구 3432-123 1호</div>
+      <div class="section-content">${anDTO.address}</div>
       
   
   </div>
@@ -110,7 +118,8 @@
 
 </body>
   <script>
-  const store_idx = 92;
+  const store_idx = 90;
+  const user_idx = 35;
   
   const socket = new SockJS('/ws');  // 웹소켓 연결
   const stompClient = Stomp.over(socket);
@@ -122,11 +131,29 @@
       document.getElementById("reserveButton").addEventListener("click", function() {
           const waitingRequest = {
               store_idx: store_idx, // 예약할 가게 ID
-              user_idx: 85,  // 사용자 ID
+              user_idx: user_idx,  // 사용자 ID
               reservation_number: 2
           };
-
-          stompClient.send("/app/Waiting/Update", {}, JSON.stringify(waitingRequest));  // 서버로 대기 등록 요청
+          
+          fetch(`/api/waiting/check?user_idx=\${encodeURIComponent(user_idx)}`)
+          .then(response => response.json())
+          .then(data => {
+              // data가 null, undefined, 또는 길이가 없는 경우
+              if (!data || data.length === 0) {
+                  // 대기 등록 요청
+                  stompClient.send("/app/Waiting/Update", {}, JSON.stringify(waitingRequest));
+              } else {
+                  // 대기 내역이 있는 경우
+                  alert('대기내역이 있습니다! 예약취소 후 등록하세요;)');
+              }
+          })
+          .catch(error => {
+              console.error('Error fetching waiting list:', error);
+              alert('대기 목록을 가져오는 중 오류가 발생했습니다.');
+          }); 
+                 
+          
+          
       });
 
       // 대기 리스트 실시간 업데이트

@@ -98,6 +98,54 @@
 	WHERE  W.USER_IDX = #{user_idx}
 	
 	</select>
+	
+	
+	<select id="getadvanceList">
+SELECT
+    RU.RESERVATION_IDX,
+    RU.USER_IDX,
+    RU.STATUS,
+    RU.RESERVATION_NUMBER,
+    TO_CHAR(RU.CDATE, 'YYYY-MM-DD') AS CDATE,
+    RU.RP_IDX,
+    '20'||TO_CHAR( TO_DATE(RU.reservation_date, 'YYYY-MM-DD'),'YY-MM-DD') AS RESERVATION_DATE,
+    RU.STORE_IDX,
+    S.TITLE,
+    TO_CHAR(RP.start_time, 'HH24:MI') || ' - ' || TO_CHAR(RP.end_time, 'HH24:MI') AS TIME_SLOT
+FROM
+    RESERVATION_USERS RU JOIN STORES S ON RU.STORE_IDX = S.STORE_IDX
+                         JOIN RESERVATION_PLANS RP ON RP.RP_IDX =RU.RP_IDX
+WHERE USER_IDX =#{user_idx}
+</select>
+
+
+<select id="getonStieList">
+SELECT W.WAITING_IDX, W.STORE_IDX, W.WATING_ORDER, W.USER_IDX, W.STATUS, W.RESERVATION_NUMBER, W.EDATE, W.CDATE, S.TITLE
+FROM  WAITINGS W JOIN STORES S ON W.STORE_IDX = S.STORE_IDX
+WHERE W.USER_IDX =#{user_idx} AND ( W.STATUS ='예약취소' OR W.STATUS ='노쇼'  OR W.STATUS ='현장방문' )
+</select>
+
+
+
+<select id="getcheckWaiting">
+SELECT WAITING_IDX
+FROM WAITINGS
+WHERE USER_IDX =#{user_idx} AND (STATUS ='대기' OR STATUS ='현재순번')
+</select>
+
+<select id="getStoreAddressNote">
+SELECT RS.NOTES, SD.ADDRESS
+FROM RESERVATION_STORES RS JOIN STORES_DETAIL SD ON RS.STORE_IDX = SD.STORE_IDX
+WHERE RS.STORE_IDX =#{store_idx}
+</select>
+
+
+<select id="getWatingTime">
+SELECT EDATE, CDATE
+FROM WAITINGS
+WHERE STORE_IDX = #{store_idx} AND STATUS = '현장방문' AND TRUNC(TO_DATE(CDATE, 'YYYY-MM-DD HH24:MI:SS')) = TRUNC(SYSDATE)
+</select>
+
 </mapper>
 
 

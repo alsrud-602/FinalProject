@@ -40,7 +40,7 @@ public class BusinessApiController {
 		System.out.println("확인" + map.get("rp_idx"));
 		System.out.println("확인" + map.get("rs_idx"));
 		System.out.println("확인year" + map.get("date"));
-;
+
 		return    ResponseEntity.status(HttpStatus.OK).body( ruList );
 	}	
 	

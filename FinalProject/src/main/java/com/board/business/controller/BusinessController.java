@@ -23,6 +23,7 @@ import com.board.business.dto.RequestDto;
 import com.board.business.dto.ReservationDateDto;
 import com.board.business.dto.ReservationPlanDto;
 import com.board.business.dto.ReservationStoreDto;
+import com.board.business.dto.StoreAddNoteDto;
 import com.board.business.dto.StoreListDto;
 import com.board.business.dto.StoreTagDto;
 import com.board.business.dto.StoreUpdateDto;
@@ -446,11 +447,16 @@ public class BusinessController {
 		
 	}
 	
+		
+	
 	@RequestMapping("/moblie")
 	public ModelAndView mobile() {		
-		
+    int store_idx =  90;	
+    
 	ModelAndView mv = new ModelAndView();
-	
+	StoreAddNoteDto anDTO = waitingService.getStoreAddressNote(store_idx);
+	System.out.println("!!!!!!!값 anDto"+ anDTO);
+	mv.addObject("anDTO",anDTO);
 	mv.setViewName("mobile/info");
 	return mv;	
 		

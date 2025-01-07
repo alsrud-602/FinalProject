@@ -1,7 +1,10 @@
 package com.board.business.service;
 
 import java.util.List;
+import java.util.Map;
 
+import com.board.business.dto.ReservationUserDto;
+import com.board.business.dto.StoreAddNoteDto;
 import com.board.business.dto.StoreStatusDto;
 import com.board.business.dto.WaitingDto;
 
@@ -23,6 +26,15 @@ public interface WaitingService {
 
 	List<WaitingDto> getUserWaitingList(int user_idx);
 
+	List<ReservationUserDto> getadvanceList(int user_idx);
+
+	List<WaitingDto> getonStieList(int user_idx);
+
+	List<WaitingDto> getcheckWaiting(int user_idx);
+	
+	StoreAddNoteDto getStoreAddressNote(int store_idx);
+
+	List<Map<String, Object>> getTimeGrape(int store_idx);
 
 
 

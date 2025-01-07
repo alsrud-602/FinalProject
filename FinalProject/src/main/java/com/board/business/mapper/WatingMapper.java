@@ -1,9 +1,13 @@
 package com.board.business.mapper;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.board.business.dto.ReservationUserDto;
+import com.board.business.dto.StoreAddNoteDto;
 import com.board.business.dto.StoreStatusDto;
 import com.board.business.dto.WaitingDto;
 
@@ -29,6 +33,16 @@ public interface WatingMapper {
 	WaitingDto getUserWaiting(int user_idx);
 
 	List<WaitingDto> getUserWaitingList(int user_idx);
+
+	List<ReservationUserDto> getadvanceList(int user_idx);
+
+	List<WaitingDto> getonStieList(int user_idx);
+
+	List<WaitingDto> getcheckWaiting(int user_idx);
+
+	StoreAddNoteDto getStoreAddressNote(int store_idx);
+
+	List<Map<String, String>> getWatingTime(int store_idx);
 
 	
 

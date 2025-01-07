@@ -638,6 +638,8 @@ WHERE REQUEST_IDX = #{request_idx}
 </update>
 
 
+
+
 </mapper>
 
 

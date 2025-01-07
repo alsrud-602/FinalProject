@@ -172,6 +172,9 @@ h3 {
 	position: relative;
 	overflow: hidden;
 	background-color: #fff; /* 배경색 추가 */
+	h3{
+	margin-bottom: 30px; 
+	}
 }
 
 .traffic-update {
@@ -224,7 +227,7 @@ button.use-btn:hover {
 }
 
 canvas {
-	max-width: 48%; /* 그래프의 너비 조정 */
+	max-width: 100%; /* 그래프의 너비 조정 */
 	height: 500px; /* 그래프의 높이 조정 */
 	background-color: rgba(200, 200, 200, 0.1); /* 그래프 배경색 */
 	border-radius: 4px; /* 모서리 둥글게 */
@@ -233,7 +236,7 @@ canvas {
 
 .chart-labels {
 	display: flex;
-	justify-content: space-between; /* 텍스트 사이의 간격 */
+	justify-content: center;
 	margin-top: 10px; /* 그래프와 텍스트 간격 */
 }
 
@@ -771,24 +774,14 @@ margin: 30px 42px;
 		</div>
 
 		<section class="real-time-updates">
-			<h3>실시간 혼잡도 업데이트</h3>
-			<div class="traffic-update">
-				<div class="traffic-update-controls">
-					<label for="traffic-range">혼잡도 업데이트</label>
-					<button class="use-btn">사용하기</button>
-				</div>
-				<input type="range" id="traffic-range" min="0" max="100"
-					style="width: 100%;">
-			</div>
+			<h3>평균 예약대기 확인하기</h3>
 			<hr>
-			<h4 class="graph">혼잡도 그래프</h4>
+			<h4 class="graph">평균 대기시간 그래프</h4>
 			<div class="charts">
 				<canvas id="trafficChart"></canvas>
-				<canvas id="dailyTrafficChart"></canvas>
 			</div>
 			<div class="chart-labels">
-				<p>하루 평균</p>
-				<p>일주일 평균</p>
+				<p>하루 30분 별 평균대기 시간 표기</p>
 			</div>
 		</section>
 		<input type="hidden" id="reservation_rsIdx" value="" /> 
@@ -916,24 +909,6 @@ margin: 30px 42px;
 					<th>상태</th>
 					<th>삭제하기</th>
 				</tr>
-				<tr data-status="current">
-					<td>1</td>
-					<td>김방글</td>
-					<td>bange</td>
-					<td>3명</td>
-					<td><button class="notify-btn">알림보내기</button></td>
-					<td>현재순번</td>
-					<td><button class="delete-btn">삭제하기</button></td>
-				</tr>
-				<tr data-status="waiting">
-					<td>2</td>
-					<td>김싱글</td>
-					<td>singe</td>
-					<td>3명</td>
-					<td><button class="notify-btn">알림보내기</button></td>
-					<td>대기</td>
-					<td><button class="delete-btn">삭제하기</button></td>
-				</tr>
 
 			</table>
 			</div>
@@ -983,6 +958,10 @@ margin: 30px 42px;
 
 	<script>
  
+	
+	
+	
+	
 
 	
    function onSiteList() {
@@ -1289,7 +1268,8 @@ margin: 30px 42px;
     	  console.log('확인 합니다 ');
     	  console.log(wc);
     	  reservationDisplay(link,rstaus);
-    	  waitingconfig(wc) 
+    	  waitingconfig(wc);
+    	  waitingTime(storeIdx)
     	  
     	}
     
@@ -1333,87 +1313,76 @@ margin: 30px 42px;
     
 /* 혼잡도 그래프 */
 const ctx = document.getElementById('trafficChart').getContext('2d');
-const dailyCtx = document.getElementById('dailyTrafficChart').getContext('2d');
 
-const trafficChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ['11:00', '1:00', '3:00', '5:00', '7:00'],
-        datasets: [{
-            label: '혼잡도',
-            data: [30, 50, 70, 100, 80],
-            backgroundColor: 'rgba(75, 192, 192, 0.5)',
-            borderColor: 'rgba(75, 192, 192, 1)',
-            borderWidth: 1
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-            y: {
-                min: 0,
-                max: 100,
-                ticks: {
-                    font: { size: 16 }
+let trafficChart = null; 
+function waitingTime(store_idx){
+	
+	console.log('store_idx웨이팅'+store_idx);
+fetch(`/api/waiting/timegrape?store_idx=\${store_idx}`)
+.then(response => response.json())
+.then(jsonData => {
+ 
+	console.log('jsonData값');
+	console.log(jsonData);
+    const labels = jsonData.map(item => {
+        const date = new Date(item.time);
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        return `\${hours}:\${minutes}`;
+    });
+
+    const data = jsonData.map(item => item.average);
+
+	console.log('data'+data);
+   
+    if (trafficChart) {
+        trafficChart.destroy();
+    }
+     trafficChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: '평균 대기 소요 시간 (분)',
+                data: data,
+                backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    min: 0,
+                    ticks: {
+                        font: { size: 16 }
+                    }
+                },
+                x: {
+                    ticks: {
+                        font: { size: 16 }
+                    }
                 }
             },
-            x: {
-                ticks: {
-                    font: { size: 16 }
-                }
-            }
-        },
-        plugins: {
-            legend: {
-                labels: {
-                    font: { size: 16 }
+            plugins: {
+                legend: {
+                    labels: {
+                        font: { size: 16 }
+                    }
                 }
             }
         }
-    }
-});
+    });
+})
+.catch(error => console.error('Error fetching data:', error));
 
-const dailyTrafficChart = new Chart(dailyCtx, {
-    type: 'bar',
-    data: {
-        labels: ['월', '화', '수', '목', '금', '토', '일'],
-        datasets: [{
-            label: '혼잡도',
-            data: [20, 40, 60, 80, 100, 50, 30],
-            backgroundColor: 'rgba(75, 192, 192, 0.5)',
-            borderColor: 'rgba(75, 192, 192, 1)',
-            borderWidth: 1
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-            y: {
-                min: 0,
-                max: 100,
-                ticks: {
-                    font: { size: 16 }
-                }
-            },
-            x: {
-                ticks: {
-                    font: { size: 16 }
-                }
-            }
-        },
-        plugins: {
-            legend: {
-                labels: {
-                    font: { size: 16 }
-                }
-            }
-        }
-    }
-});
+}
 
-// 현재 시간과 요일을 기반으로 혼잡도 업데이트
+
+
+/*
 function updateTraffic() {
     const now = new Date();
     const currentHour = now.getHours();
@@ -1434,6 +1403,7 @@ function updateTraffic() {
     dailyTrafficChart.update();
 }
 
+
 // 슬라이더 이벤트 리스너
 document.getElementById('traffic-range').addEventListener('input', function() {
     const value = this.value;
@@ -1449,12 +1419,13 @@ document.getElementById('traffic-range').addEventListener('input', function() {
     });
     dailyTrafficChart.update();
 });
+*/
 
 // 초기 혼잡도 업데이트
-updateTraffic();
+//dateTraffic();
 
 // 1분마다 혼잡도 업데이트
-setInterval(updateTraffic, 60000);
+//setInterval(updateTraffic, 60000);
 
 	
 	    /*

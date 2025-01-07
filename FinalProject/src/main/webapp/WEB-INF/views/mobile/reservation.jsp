@@ -12,6 +12,7 @@
 <script src="https://cdn.jsdelivr.net/npm/browser-scss@1.0.3/dist/browser-scss.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
   <style>
     body {
       margin: 0;
@@ -40,6 +41,7 @@
     #watinginfo{
      display: flex;
      gap:20px;
+      
      
     }
     
@@ -58,11 +60,12 @@
     
     }
     .section {
-      margin-top: 20px;
+      margin-top: 30px;
       margin-bottom:10px;
-      padding: 30px 50px;
       background-color: #333;
       border-radius: 25px;
+      padding-bottom: 30px;
+      
     }
     .section-title {
       font-size: 50px;
@@ -108,6 +111,7 @@
     #navi{
     display:flex;
     justify-content: space-around;
+    padding: 50px 0;
     }
     .navi_option{
         font-size: 40px;
@@ -115,6 +119,43 @@
     }
     .navi_option:hover{
     color: #00FF84;
+    }
+    #reservationbox{
+    margin: 0 auto;
+    width: 90%; 
+    }
+    .rtable{
+    width:100%;
+    td{
+    padding:30px 20px;
+    border-bottom: 1px solid #fff;   
+     }
+     td:last-child{
+     
+     }
+    }
+
+    .rtable-header{
+    margin:6px 0 10px;
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    p{
+      font-size: 40px;
+      font-weight: 300;
+    }
+    div{
+     font-size: 40px;
+      font-weight: 600;
+      padding: 10px 15px;
+      background: #fff;
+      color: #121212;
+      border-radius: 12px;
+    }
+    }
+    .rtable-footer{
+          font-size: 35px;
+      font-weight: 200;
     }
   </style>
 </head>
@@ -146,21 +187,35 @@
     <div class="info">예약 내역 없음</div>
     </c:otherwise>
     </c:choose>
-    <div class="section">
+
+  </div>
+  
+      <div class="section">
 
       <div id="navi">
         <div class="navi_option" onclick="advanceRes()">사전예약</div>
         <div class="navi_option" onclick="onSiteRes()">현장대기</div>
      </div> 
+     <hr>
      
      <div id="reservationbox">
-     <table></table>
-     <div>스텐리x메시</div>
+     <table class ="rtable">
+     <tr>
+       <td>
+       <div class="rtable-header">
+        <p id="title-warp"><a href="#">스텐리 x 메시</a></p><div>D-3</div> 
+       </div>
+       <div  class="rtable-footer">
+        2024.12.14 &nbsp;|&nbsp;11:00-12:00&nbsp;|&nbsp;4명&nbsp;
+       </div>
+        </td>
+     </tr>
+
+     </table>
+
      </div>
      
   </div>
-  </div>
-  
   
   </main>
   
@@ -169,7 +224,23 @@
 
 </body>
   <script>
+  
+  const textElement = document.getElementById('title-warp');
+  const text = textElement.innerText;
+
+  if (text.length > 20) {
+      // 20자 이상일 경우 줄바꿈 처리
+	  textElement.innerText = text.substring(0, 24) + '...'; 
+  }
+  
+  
+  
+  
+  
+  
+  //////////////////////////
   const waitingEl = document.querySelector(".waiting");
+  const rtableEl = document.querySelector(".rtable");
   const reservationBox = document.querySelector("#reservationbox");
   const user_idx = ${wDTO.user_idx};
   const waiting_idx = ${wDTO.waiting_idx};
@@ -248,6 +319,7 @@
 	    const waitingCount = waitingList.length;
 
 	    // 대기 인원 수 업데이트
+	    if(waitingCountElement)
 	    waitingCountElement.textContent = `대기 인원: \${waitingCount}`;
 	}
   function backPage() {
@@ -264,12 +336,10 @@
           // 일치하는 항목이 있을 경우 waiting_order를 가져와서 업데이트
           const waiting_order = userWaiting.wating_order;
           const curStatus = userWaiting.status;
-          indexnumEl.innerHTML = waiting_order; 
+         
       console.log(curStatus);
           if(curStatus=='현재순번'){
-        	alert('현재순번입니다! 15분내로 방문해주세요!')  
-        	
-        	
+        	alert('현재순번입니다! 15분내로 방문해주세요!')         	
             waitingEl.innerHTML = '';
 	        // 새로운 <div> 요소 생성
 	        const messageDiv2 = document.createElement("div");
@@ -278,29 +348,112 @@
 	        //alert('현재순번입니다 15분내로 입장해주세요')
 	        
 	        // 생성한 <div>를 waitingEl에 추가
-	        waitingEl.appendChild(messageDiv2);	
-        
+	        waitingEl.appendChild(messageDiv2);	    
         	
+          }else{
+        	  indexnumEl.innerHTML ='';
+        	  indexnumEl.innerHTML = waiting_order;
+        	  
           }
+            
           
-      } else {
-          // 일치하는 항목이 없을 경우 처리 (예: 기본값 설정)
-          indexnumEl.innerHTML = '대기 중'; // 또는 다른 기본값
-      }
-	  
-	  
+      }else{
+    	  waitingEl.innerHTML = '';
+    	  waitingEl.innerHTML = '대기 상태가 아닙니다';  
+      }  
   }
   
   function advanceRes(){
+
+	  fetch(`/api/waiting/advance?user_idx=\${encodeURIComponent(user_idx)}`)
+	  .then(response => {
+		    if (!response.ok) {
+		        throw new Error(`HTTP error! status: ${response.status}`);
+		      }
+		      return response.json();
+		    })
+	  .then(data => {
+       console.log(data);
+       if(data){
+       rtableEl.innerHTML = '';  
+	   data.forEach((item, index) => {
+		  
+		    let rdate = `\${item.reservation_date}`; 
+		    let cdateorgin = new Date(rdate);
+		    let currentDate = new Date(); // 현재 날짜
+		    let timeDiff = currentDate - cdateorgin; // 두 날짜의 차이
+		    let daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)); // 밀리초를 일로 변환
+		    console.log(rdate)
+		    console.log(cdateorgin)
+		    
+	 const result = `    
+		      <tr>
+		       <td>
+		       <div class="rtable-header">
+		        <p id="title-warp"><a href="#">\${item.title}</a></p>
+		        <div>\${cdateorgin < currentDate ? "마감" : `D-\${Math.ceil(timeDiff / (1000 * 3600 * 24))}`}</div> 
+		       </div>
+		       <div  class="rtable-footer">
+		       \${rdate} &nbsp;|&nbsp;\${item.time_slot}&nbsp;|&nbsp;\${item.reservation_number}명&nbsp;
+		       </div>
+		        </td>
+		     </tr>`		
+		
+			rtableEl.innerHTML+=result;
+		     
+	   
+	    })  
+		  
+       }  
+	  }).catch(error => {
+	      console.error('예약내역이 없습니다', error);
+	  }); 
+	  	
+	  
+  }
+  
+  function onSiteRes() {
+	 
+	  fetch(`/api/waiting/onsite?user_idx=\${encodeURIComponent(user_idx)}`)
+	  .then(response => {
+		    if (!response.ok) {
+		        throw new Error(`HTTP error! status: \${response.status}`);
+		      }
+		      return response.json();
+		    })
+	  .then(data => {
+       console.log(data);
+       if(data){
+       rtableEl.innerHTML = '';  
+	   data.forEach((item, index) => {
+		  
+		    
+	   const result = `    
+		      <tr>
+		       <td>
+		       <div class="rtable-header">
+		        <p id="title-warp"><a href="#">\${item.title}</a></p>	        
+		       </div>
+		       <div  class="rtable-footer">
+		       \${item.status}&nbsp;|&nbsp;\${item.reservation_number}명&nbsp;
+		       </div>
+		        </td>
+		     </tr>`		
+		
+			
+		     
+	    rtableEl.innerHTML+=result;
+	   
+	    }) 
+	    
+		  
+       }  
+	  }).catch(error => {
+	      console.error('예약내역이 없습니다', error);
+	  }); 
 	  
 	  
 	  
-	  
-	  reservationBox.innerHTML = '';
-	  
-	  const advanceList = `<div></div>`;
-	  
-	  reservationBox.appendChild(advanceList);	
 	  
   }
 
