@@ -150,7 +150,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
             console.log('JWT 토큰 저장 완료:', data.companyJwt);
 
             // 홈 화면으로 리다이렉션
-            window.location.href = '/Business/Operation/View';
+            window.location.href = '/Business/Operation';
         } else {
             if (data === undefined) {
                 const errorMessages = [];

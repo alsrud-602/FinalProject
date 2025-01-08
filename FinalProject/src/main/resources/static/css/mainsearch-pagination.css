@@ -1,6 +1,8 @@
 @charset "UTF-8";
 
-.mainsearch-pagination {
+     /*----------------------------*/
+  /*페이징*/
+.main-pagination {
     display: flex;
     justify-content: center;
     padding-top: 30px;
@@ -8,7 +10,7 @@
     margin-bottom: 40px;
 }
 
-.mainsearch-pagination a {
+.main-pagination a {
     margin: 0 5px;
     padding: 10px 20px; /* 패딩 크기 조정 */
     text-decoration: none;
@@ -20,14 +22,16 @@
     display: inline-block; /* 블록 요소가 아닌 인라인 블록으로 설정 */
 }
 
-.mainsearch-pagination a:hover {
+.main-pagination a:hover {
     background-color: #00FF84;
     color: black;
     font-weight: bold;
 }
 
-.mainsearch-pagination a.active {
+/* Active page number styling (if possible to apply) */
+.main-pagination a.active {
     background-color: #00FF84;
     color: black;
     font-weight: bold;
 }
+   

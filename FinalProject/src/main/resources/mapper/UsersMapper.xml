@@ -144,17 +144,17 @@ FETCH FIRST 9 ROWS ONLY
    <!-- 조회수 전체 조회 -->
    <select id="getSelectStoreHit">
    SELECT
-	    store_idx,
-	    user_id
-	FROM
-	    hit
-	WHERE store_idx=#{store_idx}
-	AND   user_id = #{username}
-	</select>
+       store_idx,
+       user_id
+   FROM
+       hit
+   WHERE store_idx=#{store_idx}
+   AND   user_id = #{username}
+   </select>
    <!-- 랭킹 조회수 증가 -->
    <insert id="insertStoreHit">
    INSERT INTO hit (store_idx,user_id) 
-	VALUES (#{store_idx},#{username})
+   VALUES (#{store_idx},#{username})
    </insert>
    
    <!-- 오픈예정 팝업 리스트 -->
@@ -211,18 +211,18 @@ ORDER BY store_idx ASC
   <!-- 종료된 팝업 리스트 -->
   <select id="getclosepopuplist">
   SELECT
-	    st.store_idx, st.company_idx,st.title,st.age,st.brand1,st.brand2,st.cdate,st.status,st.ban,
-	    std.detail_idx,std.address,TO_CHAR(std.start_date, 'YYYY-MM-DD') AS start_date,TO_CHAR(std.end_date, 'YYYY-MM-DD') AS end_date,
+       st.store_idx, st.company_idx,st.title,st.age,st.brand1,st.brand2,st.cdate,st.status,st.ban,
+       std.detail_idx,std.address,TO_CHAR(std.start_date, 'YYYY-MM-DD') AS start_date,TO_CHAR(std.end_date, 'YYYY-MM-DD') AS end_date,
 
-	    std.homepage, std.sns, std.introduction,std.content,std.parking,std.fare,std.age_limit, std.shooting,std.igdate,
-	    std."LIKE", std.goods
+       std.homepage, std.sns, std.introduction,std.content,std.parking,std.fare,std.age_limit, std.shooting,std.igdate,
+       std."LIKE", std.goods
 
-	FROM
-	    stores st JOIN stores_detail std ON st.store_idx = std.store_idx
-	WHERE st.ban='N' AND st.status='승인' 
-	AND std.start_date &lt; SYSDATE AND std.end_date &lt; SYSDATE
-	ORDER BY
-	    st.store_idx ASC
+   FROM
+       stores st JOIN stores_detail std ON st.store_idx = std.store_idx
+   WHERE st.ban='N' AND st.status='승인' 
+   AND std.start_date &lt; SYSDATE AND std.end_date &lt; SYSDATE
+   ORDER BY
+       st.store_idx ASC
   </select>
   
 
@@ -399,88 +399,88 @@ OFFSET #{start} ROWS FETCH NEXT #{size} ROWS ONLY
   <!-- 스토어 상세 정보 -->
   <select id="getStoredetail">
   SELECT
-	    st.store_idx,st.company_idx, st.title, st.age, st.brand1, st.brand2, st.cdate, st.status,  st.ban,
-	    std.detail_idx, std.store_idx, std.address,TO_CHAR(std.start_date, 'YYYY-MM-DD') AS start_date, TO_CHAR(std.end_date, 'YYYY-MM-DD') AS end_date, std.homepage, std.sns, std.introduction, 
-	    std.content, std.parking, std.fare, std.age_limit, std.shooting, std."LIKE", std.goods,std.igdate
-	
-	FROM
-	    stores st,stores_detail std
-	WHERE st.store_idx = std.store_idx
-	AND   st.store_idx = #{store_idx}
+       st.store_idx,st.company_idx, st.title, st.age, st.brand1, st.brand2, st.cdate, st.status,  st.ban,
+       std.detail_idx, std.store_idx, std.address,TO_CHAR(std.start_date, 'YYYY-MM-DD') AS start_date, TO_CHAR(std.end_date, 'YYYY-MM-DD') AS end_date, std.homepage, std.sns, std.introduction, 
+       std.content, std.parking, std.fare, std.age_limit, std.shooting, std."LIKE", std.goods,std.igdate
+   
+   FROM
+       stores st,stores_detail std
+   WHERE st.store_idx = std.store_idx
+   AND   st.store_idx = #{store_idx}
   </select>
   
   <!-- 스토어 태그 -->
   <select id="getStoretag">
   SELECT
-	    tage_idx, store_idx,tag_name
-	FROM
-	    stores_tag
-	WHERE store_idx = #{store_idx}
+       tage_idx, store_idx,tag_name
+   FROM
+       stores_tag
+   WHERE store_idx = #{store_idx}
   </select>
  
   <!-- 스토어 예약 구분 -->
   <select id="getStoreReservation">
   SELECT rs_idx, store_idx, notes,
-	    open_date, status, link
-	FROM
-	    reservation_stores
-	WHERE store_idx = #{store_idx}
+       open_date, status, link
+   FROM
+       reservation_stores
+   WHERE store_idx = #{store_idx}
   </select>
   
   <!-- 스토어 운영시간 -->
   <select id="getStoreOperation">
   SELECT
-	    so.operation_idx,
-	    so.store_idx,
-	    TO_CHAR(smon,'HH24:MI') AS smon,
-	    TO_CHAR(emon,'HH24:MI') AS emon,
-	    TO_CHAR(stue,'HH24:MI') AS stue,
-	    TO_CHAR(etue,'HH24:MI') AS etue,
-	    TO_CHAR(swed,'HH24:MI') AS swed,
-	    TO_CHAR(ewed,'HH24:MI') AS ewed,
-	    TO_CHAR(sthu,'HH24:MI') AS sthu,
-	    TO_CHAR(ethu,'HH24:MI') AS ethu,
-	    TO_CHAR(sfri,'HH24:MI') AS sfri,
-	    TO_CHAR(efri,'HH24:MI') AS efri,
-	    TO_CHAR(ssat,'HH24:MI') AS ssat,
-	    TO_CHAR(esat,'HH24:MI') AS esat,
-	    TO_CHAR(ssun,'HH24:MI') AS ssun,
-	    TO_CHAR(esun,'HH24:MI') AS esun,
-	    so.onotes,
-	    std.detail_idx,std.store_idx,std.address,TO_CHAR(std.start_date, 'YYYY-MM-DD') AS start_date, TO_CHAR(std.end_date, 'YYYY-MM-DD') AS end_date,std.homepage,
-	    std.sns, std.introduction, std.content, std.parking, std.fare, std.age_limit, std.shooting,
-	    std."LIKE", std.goods, std.igdate  
-	FROM
-	    stores_operation so JOIN stores_detail std ON so.store_idx = std.store_idx
-	WHERE so.store_idx = #{store_idx}
+       so.operation_idx,
+       so.store_idx,
+       TO_CHAR(smon,'HH24:MI') AS smon,
+       TO_CHAR(emon,'HH24:MI') AS emon,
+       TO_CHAR(stue,'HH24:MI') AS stue,
+       TO_CHAR(etue,'HH24:MI') AS etue,
+       TO_CHAR(swed,'HH24:MI') AS swed,
+       TO_CHAR(ewed,'HH24:MI') AS ewed,
+       TO_CHAR(sthu,'HH24:MI') AS sthu,
+       TO_CHAR(ethu,'HH24:MI') AS ethu,
+       TO_CHAR(sfri,'HH24:MI') AS sfri,
+       TO_CHAR(efri,'HH24:MI') AS efri,
+       TO_CHAR(ssat,'HH24:MI') AS ssat,
+       TO_CHAR(esat,'HH24:MI') AS esat,
+       TO_CHAR(ssun,'HH24:MI') AS ssun,
+       TO_CHAR(esun,'HH24:MI') AS esun,
+       so.onotes,
+       std.detail_idx,std.store_idx,std.address,TO_CHAR(std.start_date, 'YYYY-MM-DD') AS start_date, TO_CHAR(std.end_date, 'YYYY-MM-DD') AS end_date,std.homepage,
+       std.sns, std.introduction, std.content, std.parking, std.fare, std.age_limit, std.shooting,
+       std."LIKE", std.goods, std.igdate  
+   FROM
+       stores_operation so JOIN stores_detail std ON so.store_idx = std.store_idx
+   WHERE so.store_idx = #{store_idx}
   </select>
   
   <select id="getStoreCategory">
   SELECT
-	    c.category_idx,
-	    c.category_name,
-	    sc.category_id
-	FROM
-	    stores_category sc
-	JOIN
-	    category c ON sc.category_id = c.category_id
-	WHERE
-	    sc.store_idx = #{store_idx}
+       c.category_idx,
+       c.category_name,
+       sc.category_id
+   FROM
+       stores_category sc
+   JOIN
+       category c ON sc.category_id = c.category_id
+   WHERE
+       sc.store_idx = #{store_idx}
   </select>
   
   <!-- 메인 검색 페이징 -->
   <!-- 진행중 -->
   <select id="getOngoingcount">
   SELECT
-	    COUNT(*)  AS CNT
-	FROM
-	    stores st JOIN stores_detail std ON st.store_idx = std.store_idx
-	WHERE 
-	      st.ban='N' AND st.status='승인' 
-	      AND TRUNC(std.start_date) &lt;= TRUNC(SYSDATE) 
-	      AND TRUNC(std.end_date) &gt;= TRUNC(SYSDATE)
-	ORDER BY
-	    st.store_idx ASC
+       COUNT(*)  AS CNT
+   FROM
+       stores st JOIN stores_detail std ON st.store_idx = std.store_idx
+   WHERE 
+         st.ban='N' AND st.status='승인' 
+         AND TRUNC(std.start_date) &lt;= TRUNC(SYSDATE) 
+         AND TRUNC(std.end_date) &gt;= TRUNC(SYSDATE)
+   ORDER BY
+       st.store_idx ASC
   </select>
   
   <select id="getPopuppaginglist">
@@ -536,18 +536,18 @@ OFFSET #{start} ROWS FETCH NEXT #{size} ROWS ONLY
   <!-- 검색 페이징 -->
   <select id="getOpendsearchcount">
   SELECT
-	    COUNT(*)  AS CNT
+       COUNT(*)  AS CNT
 
-	FROM
-	    stores st JOIN stores_detail std ON st.store_idx = std.store_idx
-	WHERE 1=1 
-	      AND st.ban='N' AND st.status='승인' 
-	      AND TRUNC(std.start_date) &gt;= TRUNC(SYSDATE) AND TRUNC(std.end_date) &gt;= TRUNC(SYSDATE)
-	      <if test="search != null and search != ''">
-	        AND st.title LIKE '%' || #{search} || '%'
-	    </if>
-	      ORDER BY
-	          st.store_idx ASC
+   FROM
+       stores st JOIN stores_detail std ON st.store_idx = std.store_idx
+   WHERE 1=1 
+         AND st.ban='N' AND st.status='승인' 
+         AND TRUNC(std.start_date) &gt;= TRUNC(SYSDATE) AND TRUNC(std.end_date) &gt;= TRUNC(SYSDATE)
+         <if test="search != null and search != ''">
+           AND st.title LIKE '%' || #{search} || '%'
+       </if>
+         ORDER BY
+             st.store_idx ASC
   </select>
   
   <!-- 오픈예정 -->
@@ -608,34 +608,34 @@ OFFSET #{start} ROWS FETCH NEXT #{size} ROWS ONLY
   
   <!-- Map에서 종료일 -->
     <select id="getPopupDate">
-	SELECT
-	    st.store_idx, st.status,st.ban, TO_CHAR(std.start_date, 'YYYY-MM-DD') AS start_date,TO_CHAR(std.end_date, 'YYYY-MM-DD') AS end_date,
-	    std.igdate
-	FROM
-	    stores st JOIN stores_detail std ON st.store_idx = std.store_idx
-	    
-	WHERE st.ban='N' AND st.status='승인' 
-	      AND std.start_date &lt; SYSDATE 
-	      AND std.end_date &gt; SYSDATE
-	ORDER BY
-	    st.store_idx ASC
+   SELECT
+       st.store_idx, st.status,st.ban, TO_CHAR(std.start_date, 'YYYY-MM-DD') AS start_date,TO_CHAR(std.end_date, 'YYYY-MM-DD') AS end_date,
+       std.igdate
+   FROM
+       stores st JOIN stores_detail std ON st.store_idx = std.store_idx
+       
+   WHERE st.ban='N' AND st.status='승인' 
+         AND std.start_date &lt; SYSDATE 
+         AND std.end_date &gt; SYSDATE
+   ORDER BY
+       st.store_idx ASC
   </select>
   
 
-	<update id="updateUserProfile" parameterType="com.board.users.dto.UsersDto">
-    	UPDATE users
-    	SET NAME = #{name},
+   <update id="updateUserProfile" parameterType="com.board.users.dto.UsersDto">
+       UPDATE users
+       SET NAME = #{name},
         NIKNAME = #{nickname},
         EMAIL = #{email},
         PHONE = #{phone}
-  		WHERE user_idx = #{user_idx}
-	</update>
+        WHERE user_idx = #{user_idx}
+   </update>
 
-	<delete id="deleteUser" parameterType="int">
+   <delete id="deleteUser" parameterType="int">
         DELETE FROM Users WHERE user_idx = #{user_idx}
     </delete>
     
- 	<select id="getUserById" parameterType="string">
+    <select id="getUserById" parameterType="string">
         SELECT * FROM Users WHERE id = #{id}
     </select>
 
@@ -671,8 +671,8 @@ OFFSET #{start} ROWS FETCH NEXT #{size} ROWS ONLY
         AND TRUNC(std.end_date) &gt;= TRUNC(SYSDATE)
     ORDER BY
         st.store_idx ASC
-	</select>
-	
+   </select>
+   
     <select id="getStoresReviewAtMap">
     WITH RankedReviews AS (
         SELECT 
@@ -698,22 +698,22 @@ OFFSET #{start} ROWS FETCH NEXT #{size} ROWS ONLY
         rr.rn &lt;= 4
     ORDER BY
         rr.review_hit_count DESC
-	</select>
+   </select>
 
   <!-- 조회수 조회 -->
   <select id="getStoreHit">
     SELECT STORE_IDX, COUNT(user_id) AS hit
-	FROM HIT
-	WHERE store_idx = #{store_idx}
-	GROUP BY STORE_IDX
+   FROM HIT
+   WHERE store_idx = #{store_idx}
+   GROUP BY STORE_IDX
   </select>  
   
   <!-- 좋아요 조회 -->
   <select id="getStoreLike">
   SELECT store_idx, COUNT(user_idx) AS storelike
-	FROM like_stores
-	WHERE store_idx = #{store_idx}
-	GROUP BY store_idx
+   FROM like_stores
+   WHERE store_idx = #{store_idx}
+   GROUP BY store_idx
   </select>
   
   <!-- 전체 리뷰 조회 -->
@@ -761,14 +761,14 @@ WHERE rn = 1
   <!-- 전체 리뷰,평점 계산 -->
   <select id="getotalcount">
   SELECT
-	    count(review_idx) as review_idx,
-	    avg(score) as score,
-	    sum("LIKE") as "LIKE",
-	    sum(HIT) as hit
-	FROM
-	    reviews
-	WHERE
-	    store_idx = #{store_idx}
+       count(review_idx) as review_idx,
+       avg(score) as score,
+       sum("LIKE") as "LIKE",
+       sum(HIT) as hit
+   FROM
+       reviews
+   WHERE
+       store_idx = #{store_idx}
   </select>
   
   <!-- 핫리뷰 조회순(3개) -->
@@ -828,118 +828,118 @@ FETCH FIRST 3 ROWS ONLY
   <!-- 리뷰 상세 페이지 -->
   <select id="getReviewDetail">
   SELECT
-	    us.name,
-	    us.user_idx,
-	    re.review_idx,
-	    re.user_idx,
-	    re.store_idx,
-	    re.score,
-	    re.content,
-	    TO_CHAR(re.cdate, 'YYYY-MM-DD') AS review_date,
-	    COALESCE(rh.hit, 0) AS hit  -- 조회 수가 없으면 0으로 반환
-	FROM
-	    reviews re
-	JOIN
-	    users us ON re.user_idx = us.user_idx
-	LEFT JOIN
-	    (SELECT USER_IDX, REVIEW_IDX, COUNT(review_idx) AS hit
-	     FROM review_hit
-	     GROUP BY USER_IDX, REVIEW_IDX) rh ON re.user_idx = rh.user_idx AND re.review_idx = rh.review_idx
-	WHERE
-	    re.store_idx = #{storeidx}
-	AND
-	    us.user_idx = #{useridx}
-	AND
-	    re.review_idx = #{review_idx}
-	
-	
+       us.name,
+       us.user_idx,
+       re.review_idx,
+       re.user_idx,
+       re.store_idx,
+       re.score,
+       re.content,
+       TO_CHAR(re.cdate, 'YYYY-MM-DD') AS review_date,
+       COALESCE(rh.hit, 0) AS hit  -- 조회 수가 없으면 0으로 반환
+   FROM
+       reviews re
+   JOIN
+       users us ON re.user_idx = us.user_idx
+   LEFT JOIN
+       (SELECT USER_IDX, REVIEW_IDX, COUNT(review_idx) AS hit
+        FROM review_hit
+        GROUP BY USER_IDX, REVIEW_IDX) rh ON re.user_idx = rh.user_idx AND re.review_idx = rh.review_idx
+   WHERE
+       re.store_idx = #{storeidx}
+   AND
+       us.user_idx = #{useridx}
+   AND
+       re.review_idx = #{review_idx}
+   
+   
   </select>
   
   <!-- 리뷰 이미지 불러오기 -->
   <select id="getReviewImgList">
   SELECT
-	    is_idx, imagename, imageext, image_path,
-	    review_idx, user_idx, store_idx
-	FROM
-	    image_review
-	WHERE store_idx=#{storeidx}
-	AND user_idx = #{useridx}
-	AND review_idx=#{review_idx}
+       is_idx, imagename, imageext, image_path,
+       review_idx, user_idx, store_idx
+   FROM
+       image_review
+   WHERE store_idx=#{storeidx}
+   AND user_idx = #{useridx}
+   AND review_idx=#{review_idx}
   </select>
   
 
     <!-- 리뷰 작성 - store_idx로 스토어 디테일 데이터 불러오기 -->
   <select id="getStoredReviewtail">
   SELECT
-	    st.store_idx, st.company_idx, st.title, st.age, st.brand1, st.brand2,
-	    st.cdate, st.status, st.ban,
-	    std.detail_idx,std.store_idx, std.address, TO_CHAR(start_date,'YYYY-MM-DD') AS start_date, TO_CHAR(end_date,'YYYY-MM-DD') AS end_date, std.homepage, std.sns, std.introduction,
-	    std.content, std.parking, std.fare, std.age_limit, std.shooting, std."LIKE", std.goods, std.igdate
-	FROM
-	    stores st JOIN stores_detail std ON st.store_idx = std.store_idx
-	WHERE st.store_idx = #{storeidx}
+       st.store_idx, st.company_idx, st.title, st.age, st.brand1, st.brand2,
+       st.cdate, st.status, st.ban,
+       std.detail_idx,std.store_idx, std.address, TO_CHAR(start_date,'YYYY-MM-DD') AS start_date, TO_CHAR(end_date,'YYYY-MM-DD') AS end_date, std.homepage, std.sns, std.introduction,
+       std.content, std.parking, std.fare, std.age_limit, std.shooting, std."LIKE", std.goods, std.igdate
+   FROM
+       stores st JOIN stores_detail std ON st.store_idx = std.store_idx
+   WHERE st.store_idx = #{storeidx}
   </select>
   
   <!-- 리뷰 작성 - 스토어 카데고리 -->
   <select id="getStoreReviewtag">
   SELECT 
-	    c.category_idx,c.category_name,c.category_id,
-	    sc.sc_idx,sc.store_idx,sc.category_id
-	FROM
-	    category c JOIN stores_category sc ON c.category_id = sc.category_id
-	WHERE sc.store_idx=#{storeidx}
+       c.category_idx,c.category_name,c.category_id,
+       sc.sc_idx,sc.store_idx,sc.category_id
+   FROM
+       category c JOIN stores_category sc ON c.category_id = sc.category_id
+   WHERE sc.store_idx=#{storeidx}
   </select>
   
   <!-- 리뷰 작성 - 특정 스토어 전체 리뷰 평점등  -->
   <select id="getotalWriteCount">
   SELECT
-	    count(review_idx) as review_idx,
-	    avg(score) as score,
-	    sum("LIKE") as "LIKE",
-	    sum(HIT) as hit
-	FROM
-	    reviews
-	WHERE
-	    store_idx = #{storeidx}
+       count(review_idx) as review_idx,
+       avg(score) as score,
+       sum("LIKE") as "LIKE",
+       sum(HIT) as hit
+   FROM
+       reviews
+   WHERE
+       store_idx = #{storeidx}
   </select>
 
 
 <!-- 코스 추천 스토어 정보 다가져오기 -->
 <select id="getallStorelist">
-	SELECT * FROM STORES
+   SELECT * FROM STORES
 </select>
 
 <!-- 코스 추천 스토어 상세정보 가져오기 -->
 <select id="getAddressesByStoreIdx">
-	SELECT * FROM STORES_DETAIL
+   SELECT * FROM STORES_DETAIL
 </select>
 
 
  <!-- 내가 쓴 리뷰 개수 -->
  <select id="getMyTotalReview">
-	 SELECT
-	    COUNT(review_idx) AS review_idx
-	FROM
-	    reviews
-	WHERE user_idx=#{useruseridx}
+    SELECT
+       COUNT(review_idx) AS review_idx
+   FROM
+       reviews
+   WHERE user_idx=#{useruseridx}
  </select>
  
  <!-- 상세 페이지 이미지 -->
  <select id="getPopupImgList">
  SELECT is_idx,imagename, imageext, image_path,  store_idx
-	FROM
-	    image_store
-	WHERE store_idx = #{store_idx}
+   FROM
+       image_store
+   WHERE store_idx = #{store_idx}
  </select>
  
  <!-- 팝콘 보유 갯수 -->
  <select id="getTotalPopcorn">
  SELECT
-	    user_id,
-	    total_points
-	FROM
-	    popcorn_wallet
-	WHERE user_id = #{username}
+       user_id,
+       total_points
+   FROM
+       popcorn_wallet
+   WHERE user_id = #{username}
  </select>
  
  <!-- 리뷰작성 -->
@@ -951,22 +951,22 @@ FETCH FIRST 3 ROWS ONLY
  <!-- 리뷰 수정 -->
  <update id="updateReview">
  UPDATE reviews
-	SET
-	    content=#{content},
-	    score=#{score}
-	WHERE
-	        user_idx   = #{user_idx}
-	    AND store_idx  = #{store_idx}
-	    AND review_idx = #{review_idx} 
+   SET
+       content=#{content},
+       score=#{score}
+   WHERE
+           user_idx   = #{user_idx}
+       AND store_idx  = #{store_idx}
+       AND review_idx = #{review_idx} 
  </update>
  
  <!-- 리뷰 삭제 -->
  <delete id="deleteReview">
  DELETE FROM reviews
-	WHERE
-	        review_idx = #{review_idx}
-	    AND user_idx   = #{useridx}
-	    AND store_idx  = #{storeidx}
+   WHERE
+           review_idx = #{review_idx}
+       AND user_idx   = #{useridx}
+       AND store_idx  = #{storeidx}
  </delete>
 
 <!-- 리뷰 조회수 증가 -->
@@ -978,13 +978,13 @@ VALUES (#{storeidx},#{useridx},#{review_idx},#{loginidx})
 <!-- 전체 리뷰 조회 -->
 <select id="getselectReviewHit">
 SELECT
-	    store_idx,
-	    user_idx,
+       store_idx,
+       user_idx,
         review_idx
-	FROM
-	    review_hit
-	WHERE store_idx=#{storeidx}
-	AND   user_idx = #{useridx}
+   FROM
+       review_hit
+   WHERE store_idx=#{storeidx}
+   AND   user_idx = #{useridx}
     AND   review_idx=#{review_idx}
     AND   login_useridx=#{loginidx}
 </select>

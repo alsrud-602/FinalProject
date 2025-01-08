@@ -13,9 +13,7 @@ public class WaitingDto {
 	private String status;
 	private int reservation_number;
 	private String edate;
-	private String cdate;
 	private String id;
 	private String social_id;
 	private String name;
-	private String title;
 }

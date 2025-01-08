@@ -1,35 +1,27 @@
 package com.board.admin.controller;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.board.admin.dto.AdminStoreDto;
 import com.board.admin.dto.AdminVo;
 import com.board.admin.mapper.AdminMapper;
 import com.board.admin.mapper.StoreMapper;
 import com.board.users.dto.User;
 import com.board.users.dto.UsersDto;
 import com.board.users.mapper.UsersMapper;
-
 import com.board.users.service.UserService;
 import com.board.util.JwtUtil;
 
@@ -37,7 +29,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-
 
 @Controller
 @RequestMapping("/Admin")
@@ -115,11 +106,12 @@ public class AdminController {
 	@RequestMapping("/User")
 	public  ModelAndView  user(HttpServletResponse response, Model model) throws Exception {
 		
+        // MFA 인증 확인
+        if (!isMfaAuthenticated(request)) {
+            response.sendRedirect("/Users/2fa"); 
+            return null;
+        }
 		
-		  if (!isMfaAuthenticated(request)) {
-	            response.sendRedirect("/Users/2fa"); 
-	            return null;
-	        }
 		List<AdminVo> allusers = adminMapper.getalluserinfo();
 		
 		System.out.println(allusers);
@@ -131,7 +123,8 @@ public class AdminController {
 		mv.setViewName("/admin/user/user");
 		return mv;
 	}
-
+	
+	//유저관리 상세
     // 유저관리 상세
     @RequestMapping("/Userdetail")
     public String userdetail(HttpServletResponse response, Model model, @RequestParam("id") String userId) throws Exception {
@@ -141,7 +134,6 @@ public class AdminController {
             response.sendRedirect("/Users/2fa"); 
             return null; 
         }
-
         Optional<User> user=null;
         user = getJwtTokenFromCookies(request, model);
         model.addAttribute("user", user.orElse(null));
@@ -334,132 +326,6 @@ public class AdminController {
 	    }
 
 	    
-	    @PostMapping("/UpdateUserStatus")
-	    public ResponseEntity<Map<String, String>> updateUserStatus(@RequestBody Map<String, String> requestBody) {
-	        String userId = requestBody.get("userId");
-	        String status = requestBody.get("status");
-	        System.out.println(userId);
-	        System.out.println(status);
-	        try {
-	            // 사용자 상태 업데이트 로직
-	            boolean isUpdated = adminMapper.updateUserStatus(userId, status);
-
-	            // 결과를 JSON 형식으로 반환
-	            Map<String, String> response = new HashMap<>();
-	            if (isUpdated) {
-	                response.put("message", "회원 상태가 업데이트되었습니다.");
-	                return ResponseEntity.ok(response);
-	            } else {
-	                response.put("message", "회원 상태 업데이트에 실패했습니다.");
-	                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-	            }
-	        } catch (Exception e) {
-	            // 예외 처리: 오류 발생 시 로그에 기록하고 500 에러 반환
-	            e.printStackTrace();
-	            Map<String, String> response = new HashMap<>();
-	            response.put("message", "서버 오류가 발생했습니다. 다시 시도해 주세요.");
-	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-	        }
-	    }
-	    
-	    
-	    @PostMapping("/UpdateCompnanyStatus")
-	    public ResponseEntity<Map<String, String>> updateCompnanyStatus(@RequestBody Map<String, String> requestBody) {
-	    	String companyId = requestBody.get("companyId");
-	    	String status = requestBody.get("status");
-	    	System.out.println(companyId);
-	    	System.out.println(status);
-	    	try {
-	    		// 사용자 상태 업데이트 로직
-	    		boolean isUpdated = adminMapper.UpdateCompnanyStatus(companyId, status);
-	    		
-	    		// 결과를 JSON 형식으로 반환
-	    		Map<String, String> response = new HashMap<>();
-	    		if (isUpdated) {
-	    			response.put("message", "회원 상태가 업데이트되었습니다.");
-	    			return ResponseEntity.ok(response);
-	    		} else {
-	    			response.put("message", "회원 상태 업데이트에 실패했습니다.");
-	    			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-	    		}
-	    	} catch (Exception e) {
-	    		// 예외 처리: 오류 발생 시 로그에 기록하고 500 에러 반환
-	    		e.printStackTrace();
-	    		Map<String, String> response = new HashMap<>();
-	    		response.put("message", "서버 오류가 발생했습니다. 다시 시도해 주세요.");
-	    		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-	    	}
-	    }
-	    
-	    @RequestMapping("/Managerlist")
-	    public ModelAndView managerlist(){
-	    	// MFA 인증 확인
-	       // if (!isMfaAuthenticated(request)) {
-	        //    response.sendRedirect("/Users/2fa"); 
-	         //   return null; 
-	        //}
-	        // 모든 company 유저 정보
-	        List<AdminVo> allcompanys = adminMapper.getallcompanyinfo();
-	        System.out.println("allcompanys" + allcompanys);
-	        // company 유저 별 팝업개수
-	        List<Map<String, Object>> popupCounts = adminMapper.getPopupCountsByCompany();
-	        // company 유저 별 팝업정보
-	        List<Map<String, Object>> allpopupByCompany = adminMapper.getAllPopupByCompany();
-	        
-	        System.out.println("모든 컴퍼니유저:" + allcompanys);
-	        System.out.println("컴퍼니 유저별 팝업개수:" + popupCounts);
-	        
-	        // popupCounts에서 storeCount를 각 company에 매핑
-	        for (AdminVo company : allcompanys) {
-	            Integer storeCount = 0;
-	            boolean found = false; // 일치하는 값이 있는지 확인하는 플래그
-	            for (Map<String, Object> popupCount : popupCounts) {
-	                System.out.println("Company ID: " + company.getCompany_idx()); // company의 ID 출력
-	                System.out.println("Popup Company ID: " + popupCount.get("COMPANY_IDX")); // popupCount의 COMPANY_IDX 출력
-	                
-	                // COMPANY_IDX 비교 시 Integer와 String 타입 일치 여부 확인
-	                if (Integer.valueOf(popupCount.get("COMPANY_IDX").toString()).equals(company.getCompany_idx())) {
-	                    // STORE_COUNT가 BigDecimal일 경우 int로 변환
-	                    Object storeCountObj = popupCount.get("STORE_COUNT");
-	                    if (storeCountObj instanceof BigDecimal) {
-	                        storeCount = ((BigDecimal) storeCountObj).intValue(); // BigDecimal을 int로 변환
-	                    } else {
-	                        storeCount = (Integer) storeCountObj; // 이미 Integer인 경우
-	                    }
-	                    found = true;
-	                    break;
-	                }
-	            }
-	            
-	            // storeCount가 찾지 못한 경우를 로깅
-	            if (!found) {
-	                System.out.println("No matching popupCount found for company: " + company.getCompany_idx());
-	            }
-	            
-	            company.setStore_idx(storeCount); // 회사에 storeCount 추가
-	            System.out.println("Store Count for company " + company.getCompany_idx() + ": " + storeCount); // 최종 storeCount 출력
-	        }
-	        
-	        ModelAndView mv = new ModelAndView();
-	        mv.addObject("allcompanys", allcompanys);
-	        mv.addObject("popupCounts", popupCounts); // popupCounts도 뷰로 전달
-	        mv.setViewName("/admin/manager/managerlist");
-	        return mv;
-	    }
-
-	
-
-	    @RequestMapping("/Home")
-	    public String adminhome(HttpServletResponse response) throws Exception {
-	        // MFA 인증 확인
-	        if (!isMfaAuthenticated(request)) {
-	            response.sendRedirect("/Users/2fa"); 
-	            return null; 
-	        }
-
-	        return "admin/dashboard/dashboard";
-	    }
-    
     @RequestMapping("/M1")
     public ModelAndView M1(HttpServletResponse response, Model model) throws Exception {
         // MFA 인증 확인
@@ -476,6 +342,22 @@ public class AdminController {
         return mv;
     }
 
+    // 스토어관리 - 담당자관리
+    @RequestMapping("/Managerlist")
+    public ModelAndView managerlist(HttpServletResponse response, Model model) throws Exception {
+        // MFA 인증 확인
+        if (!isMfaAuthenticated(request)) {
+            response.sendRedirect("/Users/2fa"); 
+            return null; 
+        }
+        Optional<User> user=null;
+        user = getJwtTokenFromCookies(request, model);
+        model.addAttribute("user", user.orElse(null));
+
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/admin/manager/managerlist");
+        return mv;
+    }
 
     @RequestMapping("/Advertise")
     public ModelAndView advertise(HttpServletResponse response, Model model) throws Exception {
@@ -548,7 +430,6 @@ public class AdminController {
     	return "admin/store/list";
     	
     }
-
     /*============================================================*/
     
     @RequestMapping("/Search")
@@ -580,117 +461,6 @@ public class AdminController {
     }
     
 
-
-
-    
-    
-    @RequestMapping("/List")
-    public ModelAndView list(
-    		@RequestParam(defaultValue = "1") int page,
-			@RequestParam(defaultValue = "10") int size){
-    	
-    	// MFA 인증 확인
-        //if (!isMfaAuthenticated(request)) {
-        //    response.sendRedirect("/Users/2fa");
-        //    return null; 
-       // }
-    	
-    	
-    	// 페이징용
-    	int start = (page - 1) * size; 
-    	int totalStorePosts = adminMapper.gettotalPosts();
-    	int totalPages = (int) Math.ceil((double)totalStorePosts / size);
-    	System.out.println("전체 스토어 수 totalPagePosts : " + totalStorePosts);
-    	System.out.println("전체 페이지 수 totalPages : " + totalPages);
-    	
-    	//모든 스토어 입점 요청 내역
-    	List<AdminStoreDto> TotalStore = adminMapper.getTotalStore(start,size);
-    	System.out.println("모든 스토어 리스트 TotalStore : "+TotalStore);
-    	
-    	ModelAndView mv= new ModelAndView();
-    	mv.addObject("totalPages", totalPages);
-    	mv.addObject("currentPage", page);
-    	mv.addObject("TotalStore", TotalStore);
-    	mv.setViewName("/admin/store/list");
-    	return mv;
-    }
-    
-    // List페이지 검색필터
-    @RequestMapping("/Listsearch")
-    @ResponseBody
-    public Map<String,Object> listsearch(
-    		@RequestParam(required = false, value = "search") String search,
-    		@RequestParam(required = false, value = "filter") String filter){
-    	System.out.println("search" + search);
-    	System.out.println("filter" + filter);
-    	
-    	//검색한 스토어 리스트
-    	List<AdminStoreDto> SearchStoreList = adminMapper.getSearchStoreList(search,filter);
-    	System.out.println("검색한 리스트 : " + SearchStoreList);
-    	
-    	Map<String,Object> response = new HashMap<>();
-    	response.put("SearchStoreList", SearchStoreList);
-    	return response;
-    }
-    
-    
-    
-    // 담당자 디테일
-    @RequestMapping("/Detail")
-    public ModelAndView detail(AdminStoreDto adminstoredto) {
-        System.out.println("회사 정보 adminstoredto:" + adminstoredto);
-        
-        // 회사 정보 가져오기
-        AdminStoreDto CompanyDetail = adminMapper.getCompanyDetail(adminstoredto);
-        System.out.println("CompanyDetail: " + CompanyDetail);
-        
-        // 팝업 정보 가져오기
-        List<AdminStoreDto> CompanyPopupDetail = adminMapper.getCompanyPopupDetail(adminstoredto);
-        System.out.println("CompanyPopupDetail: " + CompanyPopupDetail);
-        for (AdminStoreDto dto : CompanyPopupDetail) {
-		     String imagePath = dto.getImage_path().replace("\\", "/"); // 경로 수정
-		     dto.setImage_path(imagePath); // 수정된 경로 다시 설정
-		     System.out.println("수정된 이미지 패스 : " + imagePath);
-		 }
-        System.out.println("최종 수정된 CompanyPopupDetail : " + CompanyPopupDetail);
-        
-        int compamy_idx = adminstoredto.getCompany_idx();
-        System.out.println("compamy_idx" +compamy_idx);
-        
-        // store_idx 값만 추출
-        List<Integer> storeIdxList = new ArrayList<>();
-        if (CompanyPopupDetail != null) {
-            storeIdxList = CompanyPopupDetail.stream()
-                                             .map(AdminStoreDto::getStore_idx) // store_idx 추출
-                                             .collect(Collectors.toList());
-        }
-        
-        System.out.println("Store IDX List: " + storeIdxList);
-        
-        // 카테고리 리스트 출력
-        List<AdminStoreDto> finalCategoryList = new ArrayList<>(); // List<AdminStoreDto>로 타입 수정
-        for (Integer storeIdx : storeIdxList) {
-            // storeIdx로 getCategoryList 호출
-            List<AdminStoreDto> categoryList = adminMapper.getCategoryList(storeIdx, compamy_idx);
-            
-            // categoryList가 비어 있지 않으면 finalCategoryList에 추가
-            if (categoryList != null && !categoryList.isEmpty()) {
-                finalCategoryList.addAll(categoryList);
-            }
-        }
-        System.out.println("finalCategoryList IDX List: " + finalCategoryList);
-        
-        // 결과를 ModelAndView에 추가
-        ModelAndView mv = new ModelAndView();
-        mv.addObject("CompanyDetail", CompanyDetail);
-        mv.addObject("CompanyPopupDetail", CompanyPopupDetail);
-        mv.addObject("storeIdxList", storeIdxList); // store_idx 리스트도 전달
-        mv.addObject("finalCategoryList", finalCategoryList); // finalCategoryList도 전달
-        mv.setViewName("/admin/manager/detail");
-        
-        return mv;
-    }
-    
 }
-
+    
 

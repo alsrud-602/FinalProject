@@ -40,7 +40,7 @@ public class PopcornController {
 	    
 	     
 	              LocalDate today = LocalDate.now(); 
-	         //  LocalDate today = LocalDate.of(2025,1, 13); 
+	         //  LocalDate today = LocalDate.of(2024, 12, 31); 
 	       
 		 if ("ON".equals(attendinfo.getAttendance_status())|| "OFF".equals(attendinfo.getAttendance_status())) { 
 			  String lastAttendDateStr    =  attendinfo.getAttendance_date(); 

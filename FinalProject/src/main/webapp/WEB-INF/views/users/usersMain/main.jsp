@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>POPCORN에서 팝업스토어 현황을 알아보세요!</title>
+<title>진행 중</title>
 <link rel="icon" type="image/png" href="/img/favicon.png" />
 
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -335,137 +335,137 @@
 <body>
 <%@include file="/WEB-INF/include/header.jsp" %>
  <main>
-	<div>
-	   <div class="search-container">
-	        <input type="text" class="search-input">
-	        <button class="search-button" type="submit">
-	            <img class="imgsearch" src="/images/main/search.png" alt="검색">
-	        </button>
-	    </div>
-		<div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
-		  <div class="carousel-indicators">
-		    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-		    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
-		    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
-		  </div>
-		  <div class="carousel-inner">
-		    <div class="carousel-item active">
-		      <img src="/images/main/main-banner4.png" class="d-block w-100" alt="/images/main/main-banner4.png">
-		    </div>
-		    <div class="carousel-item">
-		      <img src="/images/main/main-banner3.png" class="d-block w-100" alt="/images/main/main-banner3.png">
-		    </div>
-		    <div class="carousel-item">
-		      <img src="/images/main/main-banner5.png" class="d-block w-100" alt="/images/main/main-banner5.png">
-		    </div>
-		  </div>
-		  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-		    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-		    <span class="visually-hidden">Previous</span>
-		  </button>
-		  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-		    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-		    <span class="visually-hidden">Next</span>
-		  </button>
-		</div>
-	
-		<div class="carousel1">
-		   <div class ="maintext">
-		    <h2 class="maintitle">랭킹</h2>
-		    <a href="/Users/Rankdetail"class="view-all" >전체보기 ☞</a>
-		    </div>
-		    <div class="slide-wrapper">
-		        <ul class="slides">
-		            <c:forEach var="rank" items="${ranklist}">
-		            <li>
-					 <a href="/Users/Info?store_idx=${rank.store_idx}">
-					    <div class="slides-href">
-				            <img src="/image/read?path=${rank.image_path}" alt="Store Image" >
-				            <div class="slides-title">${rank.title}</div>
-				            <div class="slides-info">주소: ${rank.address}</div>
-					    </div>
-	                </a>
-					</li>
-		          </c:forEach>
-		        </ul>
-		    </div>
-		    <p class="controls">
-		        <span class="prev">이전</span>
-		        <span class="next">다음</span>
-		    </p>
-		</div>
-	
-		<div class="carousel1">
-		<div class ="maintext">
-		<h2 class="maintitle">오픈예정</h2>
-		<a href="/Users/Opendetail" class="view-all">전체보기 ☞</a>
-		</div>
-		    <div class="slide-wrapper">
-		        <ul class="slides">
-		          <c:forEach var="opend" items="${opendpopuplist}">
-		            <li>
-			              <div class="slides-href">
-		              <a href="/Users/Info?store_idx=${opend.store_idx}">
-				              <img src="/image/read?path=${opend.image_path}" alt="Store Image" >
-						      <div class="slides-title">${opend.title}</div>
-						      <div class="slides-info">주소:${opend.address}</div>
-					  </a>
-					      </div>
-		           </li>
-		          </c:forEach>
-		        </ul>
-		    </div>
-		    <p class="controls">
-		        <span class="prev">이전</span>
-		        <span class="next">다음</span>
-		    </p>
-		</div>
-	
-		<div class="carousel1">
-		  <div class ="maintext">
-		  <h2 class="maintitle">진행중</h2>
-		  <a href="/Users/Ongoingdetail"class="view-all">전체보기 ☞</a>
-		  </div>
-		  
-		  <div class="ongoingfilter">
-		    <input type="date"class="mainfilter" id="datepickerButton" >
-		    <select class="regionfilter">
-		      <option value="">지역</option>
-		      <option value="서울">서울</option>
-		      <option value="부산">부산</option>
-		      <option value="대구">대구</option>
-		      <option value="대전">대전</option>
-		      <option value="울산">울산</option>
-		      <option value="광주">광주</option>
-		      <option value="인천">인천</option>
-		      <option value="제주도">제주도</option>
-		    </select>
-		    <select class="agefilter">
-		      <option value="">연령대</option>
-		      <option value="10대">10대</option>
-		      <option value="20대">20대</option>
-		      <option value="30대">30대</option>
-		      <option value="40대">40대</option>
-		      <option value="50대">50대</option>
-		    </select>
-		    <button type="reset" onclick='window.location.reload()' class="resetbutton">※초기화</button>
-		  </div>
-		  
-		  <div class="container">
-		   <c:forEach var="popup" items="${popuplist}">
-		   <a href="/Users/Info?store_idx=${popup.store_idx}">	   
-			    <div class="card">
-				      <img src="/image/read?path=${popup.image_path}" alt="Store Image" >
-				      <div class="title">${popup.title}</div>
-				      <div class="info">주소:${popup.address}<br>기간: ${popup.start_date} ~ ${popup.end_date}</div>
-			    </div>
-		    </a>
-		    </c:forEach>
-		  </div>
-		  <%@include file="/WEB-INF/include/main-pagination.jsp" %>
-		  
-		</div>
-	</div>
+   <div>
+      <div class="search-container">
+           <input type="text" class="search-input">
+           <button class="search-button" type="submit">
+               <img class="imgsearch" src="/images/main/search.png" alt="검색">
+           </button>
+       </div>
+      <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img src="/images/main/main-banner4.png" class="d-block w-100" alt="/images/main/main-banner4.png">
+          </div>
+          <div class="carousel-item">
+            <img src="/images/main/main-banner3.png" class="d-block w-100" alt="/images/main/main-banner3.png">
+          </div>
+          <div class="carousel-item">
+            <img src="/images/main/main-banner5.png" class="d-block w-100" alt="/images/main/main-banner5.png">
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+   
+      <div class="carousel1">
+         <div class ="maintext">
+          <h2 class="maintitle">랭킹</h2>
+          <a href="/Users/Rankdetail"class="view-all" >전체보기 ☞</a>
+          </div>
+          <div class="slide-wrapper">
+              <ul class="slides">
+                  <c:forEach var="rank" items="${ranklist}">
+                  <li>
+                <a href="/Users/Info?store_idx=${rank.store_idx}">
+                   <div class="slides-href">
+                        <img src="/image/read?path=${rank.image_path}" alt="Store Image" >
+                        <div class="slides-title">${rank.title}</div>
+                        <div class="slides-info">주소: ${rank.address}</div>
+                   </div>
+                   </a>
+               </li>
+                </c:forEach>
+              </ul>
+          </div>
+          <p class="controls">
+              <span class="prev">이전</span>
+              <span class="next">다음</span>
+          </p>
+      </div>
+   
+      <div class="carousel1">
+      <div class ="maintext">
+      <h2 class="maintitle">오픈예정</h2>
+      <a href="/Users/Opendetail" class="view-all">전체보기 ☞</a>
+      </div>
+          <div class="slide-wrapper">
+              <ul class="slides">
+                <c:forEach var="opend" items="${opendpopuplist}">
+                  <li>
+                       <div class="slides-href">
+                    <a href="/Users/Info?store_idx=${opend.store_idx}">
+                          <img src="/image/read?path=${opend.image_path}" alt="Store Image" >
+                        <div class="slides-title">${opend.title}</div>
+                        <div class="slides-info">주소:${opend.address}</div>
+                 </a>
+                     </div>
+                 </li>
+                </c:forEach>
+              </ul>
+          </div>
+          <p class="controls">
+              <span class="prev">이전</span>
+              <span class="next">다음</span>
+          </p>
+      </div>
+   
+      <div class="carousel1">
+        <div class ="maintext">
+        <h2 class="maintitle">진행중</h2>
+        <a href="/Users/Ongoingdetail"class="view-all">전체보기 ☞</a>
+        </div>
+        
+        <div class="ongoingfilter">
+          <input type="date"class="mainfilter" id="datepickerButton" >
+          <select class="regionfilter">
+            <option value="">지역</option>
+            <option value="서울">서울</option>
+            <option value="부산">부산</option>
+            <option value="대구">대구</option>
+            <option value="대전">대전</option>
+            <option value="울산">울산</option>
+            <option value="광주">광주</option>
+            <option value="인천">인천</option>
+            <option value="제주도">제주도</option>
+          </select>
+          <select class="agefilter">
+            <option value="">연령대</option>
+            <option value="10대">10대</option>
+            <option value="20대">20대</option>
+            <option value="30대">30대</option>
+            <option value="40대">40대</option>
+            <option value="50대">50대</option>
+          </select>
+          <button type="reset" onclick='window.location.reload()' class="resetbutton">※초기화</button>
+        </div>
+        
+        <div class="container">
+         <c:forEach var="popup" items="${popuplist}">
+         <a href="/Users/Info?store_idx=${popup.store_idx}">      
+             <div class="card">
+                  <img src="/image/read?path=${popup.image_path}" alt="Store Image" >
+                  <div class="title">${popup.title}</div>
+                  <div class="info">주소:${popup.address}<br>기간: ${popup.start_date} ~ ${popup.end_date}</div>
+             </div>
+          </a>
+          </c:forEach>
+        </div>
+        <%@include file="/WEB-INF/include/main-pagination.jsp" %>
+        
+      </div>
+   </div>
   </main>
  <%@include file="/WEB-INF/include/footer.jsp" %>
 
@@ -552,9 +552,9 @@ $(function (){
 //팝업스토어 클릭했을때
 
 $(function(){
-	$('.slides-href').on('click',function(){
-		window.location.href = '/Users/Info';
-	})
+   $('.slides-href').on('click',function(){
+      window.location.href = '/Users/Info';
+   })
 })*/
 
 
@@ -580,7 +580,7 @@ $(function() {
                 if (data.filterlist.length > 0) { // filterlist가 비어있지 않으면
                     data.filterlist.forEach(function(a) {
                         html +="<a href='/Users/Info?store_idx=" + a.store_idx + "'>" + 
-                        	   "<div class='card'>" +
+                              "<div class='card'>" +
                                     "<img src='/image/read?path="+a.image_path+"' alt='Store Image' >"+
                                     "<div class='title'>" + a.title + "</div>" +
                                     "<div class='info'>주소: " + a.address + "<br>기간: " + a.start_date + " ~ " + a.end_date + "</div>" +

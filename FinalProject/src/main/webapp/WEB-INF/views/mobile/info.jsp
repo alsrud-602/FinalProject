@@ -114,7 +114,7 @@
   </main>
   
 
-</div>	
+</div>   
 
 </body>
   <script>
@@ -166,19 +166,19 @@
       
       // 가게 예약 대기 상태 실시간 업데이트
       stompClient.subscribe(`/topic/StoreStatus/\${store_idx}`, function(message) {
-    	  const data = JSON.parse(message.body);
-    	    const onsite_use = data.onsite_use;
-    	    const reserveButton = document.getElementById("reserveButton");
+         const data = JSON.parse(message.body);
+           const onsite_use = data.onsite_use;
+           const reserveButton = document.getElementById("reserveButton");
 
-    	    console.log('onsite_use의 값' + onsite_use);
-    	    console.log('data의 값' + data);
-    	    if (onsite_use === "able") {
-    	      reserveButton.disabled = false;
-    	      reserveButton.textContent = "대기하기";
-    	    } else {
-    	      reserveButton.disabled = true;
-    	      reserveButton.textContent = "대기불가";
-    	    }
+           console.log('onsite_use의 값' + onsite_use);
+           console.log('data의 값' + data);
+           if (onsite_use === "able") {
+             reserveButton.disabled = false;
+             reserveButton.textContent = "대기하기";
+           } else {
+             reserveButton.disabled = true;
+             reserveButton.textContent = "대기불가";
+           }
       });
      
   });
@@ -186,14 +186,14 @@
   //처음 로딩시  버튼
   fetch(`/api/waiting/status?store_idx=\${encodeURIComponent(store_idx)}`)
   .then(response => {
-	    if (!response.ok) {
-	        throw new Error('Network response was not ok');
-	      }
-	      return response.json();	  	  
+       if (!response.ok) {
+           throw new Error('Network response was not ok');
+         }
+         return response.json();          
   })
   .then(status => {
-	  console.log('처음로딩 버튼 상태');
-	  console.log(status);
+     console.log('처음로딩 버튼 상태');
+     console.log(status);
     const reserveButton = document.getElementById("reserveButton");
     if (status.onsite_use === 'able') {
       reserveButton.disabled = false;
@@ -203,34 +203,34 @@
       reserveButton.textContent = '대기불가';
     }
   }).catch(error => {
-	    console.error('There was a problem with the fetch operation:', error);
-	    // 오류 발생 시 버튼을 '대기불가'로 설정
-	    const reserveButton = document.getElementById("reserveButton");
-	    reserveButton.disabled = true;
-	    reserveButton.textContent = '대기불가';
-	  });
+       console.error('There was a problem with the fetch operation:', error);
+       // 오류 발생 시 버튼을 '대기불가'로 설정
+       const reserveButton = document.getElementById("reserveButton");
+       reserveButton.disabled = true;
+       reserveButton.textContent = '대기불가';
+     });
   
   //처음 로딩시 대기인원
   fetch(`/api/waiting/list?store_idx=\${encodeURIComponent(store_idx)}`)
   .then(response => response.json())
   .then(data => {
-	  if(data)
-	  updateWaitingList(data)
+     if(data)
+     updateWaitingList(data)
   });  
   
 
   //대기인원 업데이트
   function updateWaitingList(waitingList) {
-	    const waitingCountElement = document.getElementById("waiting-count");
-	    
-	    // 대기 인원 수 계산
-	    const waitingCount = waitingList.length;
+       const waitingCountElement = document.getElementById("waiting-count");
+       
+       // 대기 인원 수 계산
+       const waitingCount = waitingList.length;
 
-	    // 대기 인원 수 업데이트
-	    waitingCountElement.textContent = `대기 인원: \${waitingCount}`;
-	}
+       // 대기 인원 수 업데이트
+       waitingCountElement.textContent = `대기 인원: \${waitingCount}`;
+   }
   function backPage() {
-	  window.history.back();    
+     window.history.back();    
   }
 
  </script>
