@@ -1,11 +1,21 @@
 package com.board.business.service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.board.business.dto.ReservationUserDto;
+import com.board.business.dto.StoreAddNoteDto;
 import com.board.business.dto.StoreStatusDto;
 import com.board.business.dto.WaitingDto;
 import com.board.business.mapper.WatingMapper;
@@ -86,6 +96,94 @@ public class WaitingServiceimpl  implements WaitingService {
 		StoreStatusDto onsiteDto = watingMapper.getStoreStauts(store_idx);
 		return onsiteDto;
 	}
+
+	@Override
+	public WaitingDto getUserWaiting(int user_idx) {
+		WaitingDto wDto = watingMapper.getUserWaiting(user_idx);
+		return wDto;
+	}
+
+	@Override
+	public List<WaitingDto> getUserWaitingList(int user_idx) {
+		List<WaitingDto> wList = watingMapper.getUserWaitingList(user_idx);
+		return wList;
+	}
+
+	@Override
+	public List<ReservationUserDto> getadvanceList(int user_idx) {
+		 List<ReservationUserDto> ruList = watingMapper.getadvanceList(user_idx);
+		 System.out.println("확인합니다"+ruList);
+		return ruList;
+	}
+
+	@Override
+	public List<WaitingDto> getonStieList(int user_idx) {
+		List<WaitingDto> WList = watingMapper.getonStieList(user_idx);
+		 System.out.println("확인합니다WList"+WList);
+		return WList;
+	}
+
+	@Override
+	public List<WaitingDto> getcheckWaiting(int user_idx) {
+		List<WaitingDto> wcheck =  watingMapper.getcheckWaiting(user_idx);
+		System.out.println("확인합니다wcheck"+wcheck);
+		return wcheck;
+	}
+
+	@Override
+	public StoreAddNoteDto getStoreAddressNote(int store_idx) {
+		StoreAddNoteDto anDto = watingMapper.getStoreAddressNote(store_idx);
+		System.out.println("확인합니다anDto"+anDto);
+		return anDto;
+	}
+
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+	@Override
+    public List<Map<String, Object>> getTimeGrape(int store_idx) {
+        // DB에서 데이터 가져오기
+        List<Map<String, String>> waitingData = watingMapper.getWatingTime(store_idx);
+
+        System.out.println("timeBucket");
+        System.out.println(waitingData);
+        // 30분 단위로 대기 시간 계산 (대기 종료 시간 기준)
+        Map<LocalDateTime, List<Long>> timeBuckets = new TreeMap<>();
+
+        for (Map<String, String> entry : waitingData) {
+            String cdateStr = entry.get("CDATE");
+            String edateStr = entry.get("EDATE");
+
+            // String을 LocalDateTime으로 변환
+            LocalDateTime cdate = LocalDateTime.parse(cdateStr, formatter);
+            LocalDateTime edate = LocalDateTime.parse(edateStr, formatter);
+
+            System.out.println("cdate: " + cdate);
+            System.out.println("edate: " + edate);
+
+            // 대기 시간 계산
+            long waitMinutes = ChronoUnit.MINUTES.between(cdate, edate);
+            System.out.println("waitMinutes: " + waitMinutes);
+
+            // edate 기준 30분 단위 구간 생성
+            LocalDateTime bucket = edate.truncatedTo(ChronoUnit.HOURS)
+                    .plusMinutes((edate.getMinute() / 30) * 30);
+
+            // 구간별 대기 시간 저장
+            timeBuckets.computeIfAbsent(bucket, k -> new ArrayList<>()).add(waitMinutes);
+        }
+
+        // 구간별 평균 대기 시간 계산
+        return timeBuckets.entrySet().stream()
+                .map(entry -> {
+                    Map<String, Object> result = new HashMap<>();
+                    result.put("time", entry.getKey());
+                    result.put("average", entry.getValue().stream().mapToLong(Long::longValue).average().orElse(0.0));
+                    return result;
+                })
+                .collect(Collectors.toList());
+    }
+
+
 
 
 	
