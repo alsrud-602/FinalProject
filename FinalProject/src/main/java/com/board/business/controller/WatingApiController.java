@@ -1,5 +1,6 @@
 package com.board.business.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.board.business.dto.ReservationTimeSlotDto;
 import com.board.business.dto.ReservationUserDto;
 import com.board.business.dto.StoreStatusDto;
 import com.board.business.dto.WaitingDto;
@@ -40,8 +42,8 @@ public class WatingApiController {
 
     //유저 현장대기 리스트
     @GetMapping("/onsite")
-    public List<WaitingDto> getonSiteList(@RequestParam("user_idx") int user_idx) {
-        return waitingService.getonStieList(user_idx);
+    public List<WaitingDto> getonSiteList(@RequestParam HashMap<String, Object> Map) {
+        return waitingService.getonStieList(0);
     }
  
     //예약 확인 로직
@@ -53,6 +55,14 @@ public class WatingApiController {
     @GetMapping("/timegrape")
     public  List<Map<String, Object>>  gettimegrape(@RequestParam("store_idx") int store_idx) {
         return waitingService.getTimeGrape(store_idx);
+    }  
+    @GetMapping("/timeslot")
+    public  List<ReservationTimeSlotDto>  gettimeslot(@RequestParam("store_idx") int store_idx) {
+    	return waitingService.getadvanceTimeSlotList(store_idx);
+    }  
+    @GetMapping("/reservationwrite")
+    public  void reservationwrite(@RequestParam("store_idx") int store_idx) {
+    waitingService.getReservationWrite(store_idx);
     }  
     
     

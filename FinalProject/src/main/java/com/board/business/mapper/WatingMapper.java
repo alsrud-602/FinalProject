@@ -1,11 +1,11 @@
 package com.board.business.mapper;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.board.business.dto.ReservationTimeSlotDto;
 import com.board.business.dto.ReservationUserDto;
 import com.board.business.dto.StoreAddNoteDto;
 import com.board.business.dto.StoreStatusDto;
@@ -43,6 +43,10 @@ public interface WatingMapper {
 	StoreAddNoteDto getStoreAddressNote(int store_idx);
 
 	List<Map<String, String>> getWatingTime(int store_idx);
+
+	List<ReservationTimeSlotDto> getadvanceTimeSlotList(int store_idx);
+
+	List<ReservationTimeSlotDto> getadvanceDateList(int store_idx);
 
 	
 
