@@ -33,7 +33,9 @@ public class ImgusersController {
         
         try {
             // 이미지 파일의 절대 경로
+        	System.out.println("파일경로:"+image_path);
             Path filePath = Paths.get(uploadPath).resolve(image_path).normalize();
+            System.out.println("파일경로2:"+filePath);
            
             Resource resource = new UrlResource(filePath.toUri());
                        

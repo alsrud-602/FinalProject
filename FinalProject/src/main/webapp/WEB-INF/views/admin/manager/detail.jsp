@@ -6,11 +6,11 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <link rel="icon" type="image/png" href="/img/favicon.png" />
-<link rel="stylesheet" href="/css/common.css" />
+<link rel="stylesheet" href="/css/admin-common.css" />
 <link rel="stylesheet" href="/css/admin_s.css" />
  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/browser-scss@1.0.3/dist/browser-scss.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -102,8 +102,9 @@
 </style>
 </head>
 <body>
-  
+    <%@include file="/WEB-INF/include/admin-header.jsp" %>
   <div class="container">
+    <%@include file="/WEB-INF/include/admin-slidebar2.jsp" %>
   <main>
 
    <div class="content_box2">
@@ -126,14 +127,25 @@
                 <p>전화번호</p>
                 <input type="text" style="width: 80%;">
         </div>
-       		<div style="border: 1px solid black; padding:30px; height:500px;" >   
-	    		  	 <div class="chart-container">
-       				 <h2>성과</h2>
-      				  <canvas id="performanceChart"></canvas>
-      				  <p style="text-align:center">순위:n등</p>
-      				  <p style="font-size: 14px; color:gray; text-align:center">순위 산정 기준: 팝업 스토어 등록수*100 + 팝업 스토어 좋아요 수 || 10등 이내 시 우수회원 선정 및 메인 배너 광고</p>
-   				    </div>
-		   </div>
+<div style="border: 1px solid black;">   
+    <div class="chart-container">
+        <h3 style="text-align: center;">성과</h3>
+        <div style="text-align: center; margin-bottom: 2px;">
+            <label for="dateRange">기간 선택: </label>
+            <select id="dateRange">
+                <option value="week">일주일간 (일별)</option>
+                <option value="month" selected>한달간 (일별)</option>
+                <option value="year">1년간 (월별)</option>
+            </select>
+        </div>
+        <canvas id="performanceChart"></canvas>
+        <p style="text-align:center">순위: <span id="rank"></span>등</p>
+        <p style="font-size: 14px; color:gray; text-align:center">
+            순위 산정 기준: 팝업 스토어 등록수 * 100 + 팝업 스토어 좋아요 수 || 
+            10등 이내 시 우수회원 선정 및 메인 배너 광고
+        </p>
+    </div>
+</div>
 	</div>
 		
 <div class="popupsearch" style="padding:50px; margin-top:10px; background: #40c963;">
@@ -208,89 +220,193 @@
 
   
   
-  <script>
-  const ctx = document.getElementById('performanceChart').getContext('2d');
+<script>
+let performanceChart;
 
-  const data = {
-      labels: ['Oct 2021', 'Nov 2021', 'Dec 2021', 'Jan 2022', 'Feb 2022', 'Mar 2022'],
-      datasets: [
-          {
-              label: '팝업스토어 등록 수',
-              data: [4, 6, 8, 10, 9, 7],
-              borderColor: 'rgba(255, 99, 132, 1)',
-              backgroundColor: 'rgba(255, 99, 132, 0.2)',
-              tension: 0.4,
-              borderWidth: 2,
-              yAxisID: 'y2',
-              pointStyle: 'circle',
-              pointRadius: 5,
-          },
-          {
-              label: '팝업스토어 좋아요 수',
-              data: [700, 650, 720, 680, 700, 750],
-              borderColor: 'rgba(54, 162, 235, 1)',
-              backgroundColor: 'rgba(54, 162, 235, 0.2)',
-              tension: 0.4,
-              borderWidth: 2,
-              yAxisID: 'y', 
-              pointStyle: 'circle',
-              pointRadius: 5,
-          }
-      ]
-  };
+const companyIdx = 1;
 
-  const options = {
-          responsive: true,
-          plugins: {
-              legend: {
-                  display: true,
-                  position: 'top',
-              },
-              tooltip: {
-                  enabled: true,
-              }
-          },
-          scales: {
-              x: {
-                  grid: {
-                      display: false,
-                  }
-              },
-              y: {
-                  beginAtZero: true,
-                  position: 'left',
-                  grid: {
-                      color: 'rgba(200, 200, 200, 0.3)',
-                  },
-                  ticks: {
-                      stepSize: 100 // 왼쪽 축의 단위 (100씩 증가)
-                  },
-                  title: {
-                      display: true,
-                  }
-              },
-              y2: {
-                  beginAtZero: true,
-                  position: 'right',
-                  grid: {
-                      drawOnChartArea: false, // 오른쪽 축의 선을 차트 위에 그리지 않음
-                  },
-                  ticks: {
-                      stepSize: 2, // 오른쪽 축의 단위 (1씩 증가)
-                  },
-                  title: {
-                      display: true,
-                  }
-              }
-          }
-      };
 
-      const performanceChart = new Chart(ctx, {
-          type: 'line',
-          data: data,
-          options: options
-      });
-  </script>
+// 날짜 범위 계산 (일주일, 한달, 1년)
+const calculateDateRange = (range) => {
+    const now = new Date();
+
+    let startDate;
+    switch (range) {
+        case 'week':
+            startDate = new Date(now);
+            startDate.setDate(now.getDate() - 7);
+            break;
+        case 'month':
+            startDate = new Date(now);
+            startDate.setMonth(now.getMonth() - 1);
+            break;
+        case 'year':
+            startDate = new Date(now);
+            startDate.setFullYear(now.getFullYear() - 1);
+            break;
+        default:
+            startDate = new Date(now);
+            startDate.setMonth(now.getMonth() - 1);
+            break;
+    }
+
+    // 날짜를 yyyy-MM-dd 형식으로 포맷
+    const formatDate = (date) => {
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
+    // 시작일과 종료일 계산
+    return {
+        startDate: formatDate(startDate),
+        endDate: formatDate(now)
+    };
+};
+// 차트 업데이트 함수
+// 차트 업데이트 함수
+const updateChart = (data) => {
+    const labels = Object.keys(data.storeCounts);  // 날짜(혹은 월) 기준 라벨
+    const storeData = Object.values(data.storeCounts);  // 팝업 스토어 등록수
+    const likeData = Object.values(data.likeCounts);  // 팝업 스토어 좋아요 수
+
+    // 날짜 기준으로 데이터를 정렬
+    const sortedData = labels.map((label, index) => {
+        return { label, storeData: storeData[index], likeData: likeData[index] };
+    }).sort((a, b) => new Date(a.label) - new Date(b.label)); // 날짜를 기준으로 정렬
+
+    // 정렬된 데이터를 다시 labels, storeData, likeData로 분리
+    const sortedLabels = sortedData.map(item => item.label);
+    const sortedStoreData = sortedData.map(item => item.storeData);
+    const sortedLikeData = sortedData.map(item => item.likeData);
+
+    // 기존 차트가 있으면 삭제 후 새로 생성
+    if (performanceChart) {
+        performanceChart.destroy();
+    }
+
+    const ctx = document.getElementById('performanceChart').getContext('2d');
+    performanceChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: sortedLabels,  // 정렬된 날짜 라벨
+            datasets: [
+                {
+                    label: '팝업스토어 등록 수',
+                    data: sortedStoreData,
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    tension: 0.4,
+                    borderWidth: 2,
+                    pointStyle: 'circle',
+                    pointRadius: 5,
+                },
+                {
+                    label: '팝업스토어 좋아요 수',
+                    data: sortedLikeData,
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    tension: 0.4,
+                    borderWidth: 2,
+                    pointStyle: 'circle',
+                    pointRadius: 5,
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: true, position: 'top' },
+                tooltip: { enabled: true }
+            },
+            scales: {
+                x: { grid: { display: false } },
+                y: {
+                    beginAtZero: true,
+                    position: 'left',
+                    grid: { color: 'rgba(200, 200, 200, 0.3)' },
+                    ticks: { stepSize: 100 },
+                },
+            }
+        }
+    });
+};
+document.addEventListener('DOMContentLoaded', function() {
+    const { startDate, endDate } = calculateDateRange('week'); // 기본 기간 설정 (한달)
+    fetchPerformanceData(startDate, endDate);  // 기본 데이터 요청
+    fetchStorePerformanceRank(companyIdx, startDate, endDate);  // 기본 순위 요청
+});
+//기간 선택 이벤트
+document.getElementById('dateRange').addEventListener('change', (e) => {
+    const selectedRange = e.target.value; // 선택된 기간 값
+    let startDate = '';
+    let endDate = '';
+    
+    // 날짜 범위 계산
+    const now = new Date();
+    
+    if (selectedRange === 'week') {
+        // 일주일간 (일별)
+        startDate = new Date(now);
+        startDate.setDate(now.getDate() - 7); // 7일 전
+        endDate = now;
+    } else if (selectedRange === 'month') {
+        // 한달간 (일별)
+        startDate = new Date(now);
+        startDate.setMonth(now.getMonth() - 1); // 한 달 전
+        endDate = now;
+    } else if (selectedRange === 'year') {
+        // 1년간 (월별)
+        startDate = new Date(now);
+        startDate.setFullYear(now.getFullYear() - 1); // 1년 전
+        endDate = now;
+    }
+
+    // 날짜를 'YYYY-MM-DD' 형식으로 변환
+    const formattedStartDate = startDate.toISOString().split('T')[0];
+    const formattedEndDate = endDate.toISOString().split('T')[0];
+
+    // 서버에서 새 데이터 요청
+    fetchPerformanceData(formattedStartDate, formattedEndDate);
+    // 순위 계산을 위한 API 호출
+    fetchStorePerformanceRank(companyIdx, formattedStartDate, formattedEndDate);
+});
+
+const fetchPerformanceData = (startDate, endDate) => {
+    axios.get(`/Admin/daily-performance/\${companyIdx}`, {
+        params: {
+            startDate: startDate,  // 시작 날짜
+            endDate: endDate  // 종료 날짜
+        }
+    })
+    .then(response => {
+        const data = response.data;
+
+        // 서버에서 가져온 데이터로 차트 업데이트
+        updateChart(data);
+        
+    })
+    .catch(error => {
+        console.error('Error fetching performance data:', error);
+    });
+};
+const fetchStorePerformanceRank = (companyIdx, startDate, endDate) => {
+    axios.get(`/Admin/Store/PerformanceRank/\${companyIdx}`, {
+        params: { startDate: startDate, endDate: endDate }
+    })
+    .then(response => {
+        const rank = response.data.rank || 'n';
+        // 순위 업데이트
+        document.getElementById('rank').innerText = `\${rank}`;
+    })
+    .catch(error => {
+        console.error('Error fetching performance rank:', error);
+    });
+};
+
+</script>
+    <%@include file="/WEB-INF/include/admin-footer.jsp" %>
 </body>
 </html>
   

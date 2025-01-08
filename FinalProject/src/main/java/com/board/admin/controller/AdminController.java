@@ -20,6 +20,8 @@ import com.board.admin.dto.AdminVo;
 import com.board.admin.mapper.AdminMapper;
 import com.board.admin.mapper.StoreMapper;
 import com.board.users.dto.User;
+import com.board.users.dto.UsersDto;
+import com.board.users.mapper.UsersMapper;
 import com.board.users.service.UserService;
 import com.board.util.JwtUtil;
 
@@ -48,6 +50,8 @@ public class AdminController {
     
     @Autowired
     private UserService userService;
+    @Autowired
+    private UsersMapper usersMapper;
     
     @Autowired
     private JwtUtil jwtUtil;
@@ -85,7 +89,16 @@ public class AdminController {
     }
     
     
-    
+    // MFA 인증 확인
+    private boolean isMfaAuthenticated(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            Boolean mfaAuthenticated = (Boolean) session.getAttribute("mfaAuthenticated");
+            //Model model = model.addAttribute(userService.get);
+            return mfaAuthenticated != null && mfaAuthenticated;
+        }
+        return false;
+    }
 
     
 	// http://localhost:9090
@@ -378,16 +391,76 @@ public class AdminController {
     
     }
     
-    // MFA 인증 확인
-    private boolean isMfaAuthenticated(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            Boolean mfaAuthenticated = (Boolean) session.getAttribute("mfaAuthenticated");
-            //Model model = model.addAttribute(userService.get);
-            return mfaAuthenticated != null && mfaAuthenticated;
-        }
-        return false;
+    /* 스토어리스트 */
+    @RequestMapping("/Store/List")
+    public String storeList(HttpServletResponse response, Model model) throws Exception {
+    	// MFA 인증 확인
+    	if (!isMfaAuthenticated(request)) {
+    		response.sendRedirect("/Users/2fa");
+    		return null; 
+    	}
+    	
+    	Optional<User> user=null;
+    	user = getJwtTokenFromCookies(request, model);
+    	model.addAttribute("user", user.orElse(null));
+    	
+        int totalUsers = adminMapper.getTotalUsers();
+        Map<String, Integer> stats = adminMapper.getMonthlyStats();
+
+        int currentMonth = stats.getOrDefault("current_month_count", 0);
+        int previousMonth = stats.getOrDefault("previous_month_count", 0);
+        double growthRate = previousMonth == 0 ? 0 : ((double) (currentMonth - previousMonth) / previousMonth) * 100;
+
+        model.addAttribute("totalUsers", totalUsers);
+        model.addAttribute("currentMonth", currentMonth);
+        model.addAttribute("growthRate", growthRate);
+
+        int totalStores = adminMapper.getTotalStores();
+        Map<String, Integer> statsStores = adminMapper.getMonthlyStatsByStores();
+        int currentStoreMonth = stats.getOrDefault("current_month_count", 0);
+        int previousStoreMonth = stats.getOrDefault("previous_month_count", 0);
+        double growthStoreRate = previousStoreMonth == 0 ? 0 : ((double) (currentStoreMonth - previousStoreMonth) / previousStoreMonth) * 100;
+        model.addAttribute("totalStores", totalStores);
+        model.addAttribute("growthStoreRate", growthStoreRate);
+        
+        int popupListCount = adminMapper.getPopuplistCount();
+        
+        model.addAttribute("popupListCount", popupListCount);
+    	
+    	return "admin/store/list";
+    	
     }
+    /*============================================================*/
+    
+    @RequestMapping("/Search")
+    public ModelAndView searchFeatures(@RequestParam String query) {
+        // 검색어에 따라 이동할 경로 결정
+        String redirectUrl;
+        ModelAndView mv = new ModelAndView();
+        // 예시: 검색어에 따라 다른 경로로 이동
+        switch (query.toLowerCase()) {
+            case "기능1":
+                redirectUrl = "/feature1";
+                break;
+            case "기능2":
+                redirectUrl = "/feature2";
+                break;
+            case "기능3":
+                redirectUrl = "/feature3";
+                break;
+            case "기능4":
+                redirectUrl = "/feature4";
+                break;
+            default:
+                redirectUrl = "/not-found"; // 기능이 없을 경우
+                break;
+        }
+        mv.setViewName("redirect:"+redirectUrl);
+
+        return mv;
+    }
+    
+
 }
     
 

@@ -90,6 +90,7 @@ public class UsersDto {
     private String review_date;
     private int storeidx;
     
+    
     private int is_idx;
     private String imagename;
     private String imageext;

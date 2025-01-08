@@ -56,6 +56,26 @@ public interface AdminMapper {
 
 	void updateUserStatus(String userId, String status);
 
+	int getTotalUsers();
+
+	Map<String, Integer> getMonthlyStats();
+
+	int getTotalStores();
+
+	Map<String, Integer> getMonthlyStatsByStores();
+	
+	//팝업카운트
+	int getPopuplistCount();
+
+	//List<Map<String, Object>> getStorePerformance(Map<String, String> dateRange);
+
+	long getStoreCountForDate(@Param("companyIdx") int companyIdx, @Param("formattedDate") String formattedDate);
+
+	long getLikeCountForDate(@Param("companyIdx") int companyIdx, @Param("formattedDate") String formattedDate);
+
+
+	int getStorePerformanceRank(@Param("companyIdx") int companyIdx, @Param("startDate") String startDate, @Param("endDate") String endDate);
+
 
 
 

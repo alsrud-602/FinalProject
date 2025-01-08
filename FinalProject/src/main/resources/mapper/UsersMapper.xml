@@ -409,7 +409,63 @@
 
   <!-- MAP 리뷰 조회수 조회 -->
     <select id="getStoresHitAtMap">
-
+    SELECT
+        st.store_idx,
+        st.title,
+        TO_CHAR(std.start_date, 'YYYY-MM-DD') AS start_date,
+        TO_CHAR(std.end_date, 'YYYY-MM-DD') AS end_date,
+        std.igdate,
+        COALESCE(ims.IMAGE_PATH, '없음') AS image_path,
+        COALESCE(h.hit_count, 0) AS hit_count,
+        std.address
+    FROM
+        stores st
+    JOIN
+        stores_detail std ON st.store_idx = std.store_idx
+    LEFT JOIN (
+        SELECT store_idx, MAX(IMAGE_PATH) AS IMAGE_PATH
+        FROM image_store
+        GROUP BY store_idx
+    ) ims ON st.store_idx = ims.store_idx
+    LEFT JOIN (
+        SELECT store_idx, COUNT(*) AS hit_count
+        FROM HIT
+        GROUP BY store_idx
+    ) h ON st.store_idx = h.store_idx
+    WHERE
+        st.ban = 'N'
+        AND st.status = '승인'
+        AND TRUNC(std.start_date) &lt;= TRUNC(SYSDATE)
+        AND TRUNC(std.end_date) &gt;= TRUNC(SYSDATE)
+    ORDER BY
+        st.store_idx ASC
+	</select>
+	
+    <select id="getStoresReviewAtMap">
+    WITH RankedReviews AS (
+        SELECT 
+            r.store_idx,
+            r.review_idx,
+            r.content,
+            COUNT(rh.review_idx) AS review_hit_count,
+            ROW_NUMBER() OVER (PARTITION BY r.store_idx ORDER BY COUNT(rh.review_idx) DESC) AS rn
+        FROM 
+            REVIEWS r
+        LEFT JOIN 
+            REVIEW_HIT rh ON r.review_idx = rh.review_idx
+        WHERE 
+            r.store_idx = #{store_idx}
+        GROUP BY 
+            r.store_idx, r.review_idx, r.content
+    )
+    SELECT
+        COALESCE(rr.content, '없음') AS content
+    FROM
+        RankedReviews rr
+    WHERE
+        rr.rn &lt;= 4
+    ORDER BY
+        rr.review_hit_count DESC
 	</select>
 
   <!-- 조회수 조회 -->
