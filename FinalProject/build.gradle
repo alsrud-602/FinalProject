@@ -89,7 +89,7 @@ dependencies {
 	
 	//LocalDateTime을 직렬화하거나 역직렬화
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
-    
+   
 
 
 }
