@@ -261,7 +261,6 @@ input[type="number"]{
 /*팝콘내역*/
 .popcorndetail table{
     border: 1px solid #D8D8D8;
-    table-layout: fixed;
     margin-left: 50px;
     width : 1450px;
     height : 500px;
@@ -271,32 +270,18 @@ input[type="number"]{
 }
 
 .popcorndetail table th{
-   text-align: center; 
 }
 .popcorndetail table td:hover{
      background: #F5F5FF;
-     
 }
 .popcorndetail table td{
    border-bottom: 1px solid #D8D8D8;
    background: white;
-   text-align: center;  
 }
 .popcorndetail table tr:first-child td{
     background: #F5F5F5;
     
 }
-
-.popcorncenter {
-    text-align: center;
-    display: block; 
-}
-
-.popcornplus, .popcornminus, .popcorning {
-    display: inline-block; 
-}
-
-
 .popcornlayout3 p{
     font-family: 'Poppins';
     font-size: 22px;
@@ -327,7 +312,7 @@ input[type="number"]{
 .popcornplus p{
    text-align:center;
    color: #20573D;
-   font-family: 'Pretendard';
+   font-family: 'Inter';
    font-size:16px;
    margin-bottom: 0;
    height: 45px;
@@ -336,7 +321,7 @@ input[type="number"]{
 
 .popcorning p{
    color: #CD7B2E;
-   font-family: 'Pretendard';
+   font-family: 'Inter';
    font-size:16px;
    margin-bottom: 0;
    height: 45px;
@@ -346,7 +331,7 @@ input[type="number"]{
 .popcornminus p{
    text-align:center;
    color: #731912;
-   font-family: 'Pretendard';
+   font-family: 'Inter';
    font-size:16px;
    margin-bottom: 0;
    height: 45px;
@@ -395,16 +380,7 @@ span.center {
   font-size: 15px;
   transform: translate(-50%, -50%); //가운데 위
 }
-/*---------------------------------*/
-.userSelect{
-    font-weight: 600;
-    border: none;
-    border-radius: 30px;
-    width: 120px;
-    padding:5px;
-    text-align: center;
-    
-}
+
 </style>
 </head>
 
@@ -423,14 +399,7 @@ span.center {
 	    <table>
 	         <tr>
         <td>
-          <div style="margin-left: 200px;">
-             <select class="userSelect" data-user-id="${userinfo[0].id}" onchange="updateUserStatus(this)">
-             <option value="우수회원" ${userinfo[0].status == '우수회원' ? 'selected' : ''}>우수회원</option>
-             <option value="일반회원" ${userinfo[0].status == '일반회원' ? 'selected' : ''}>일반회원</option>
-             <option value="차단됨" ${userinfo[0].status == '차단됨' ? 'selected' : ''}>차단됨</option>
-             </select>
-           </div>
-            <h3>닉네임 </h3>
+            <h3>닉네임</h3>
             <div class="tableborder">${userinfo[0].nikname}</div>
         </td>
     </tr>
@@ -564,15 +533,14 @@ span.center {
 		
 		</div>
 	  
-<div class="popcorndetail"  >
+<div class="popcorndetail">
+
     <table>
         <tr>
-            <th>
-            거래명
-            </th>
+            <th>거래명</th>
             <th>팝콘량</th>
             <th>일자</th>
-            <th>상태</th>
+            <th style="padding-left: 30px; ">상태</th>
         </tr>
         <c:forEach var="log" items="${wallet}">
             <tr>
@@ -591,7 +559,7 @@ span.center {
                 <td >${log.add_date}</td> <!-- 일자 -->
                 
                 <td>
-                    <div class="popcorncenter" >
+                    <div class="popcorncenter">
                         <c:choose>
                             <c:when test="${log.earned_points > 0}">
                                 <div class="popcornplus"><p>지급완료</p></div>
@@ -608,6 +576,48 @@ span.center {
                 
             </tr>
         </c:forEach>
+
+          <tr>
+	           <td>리뷰 작성</td>
+	           <td>+200</td>
+	           <td>2024-12-16</td>
+	           <td>
+	             <div class="popcorncenter">
+	               <div class="popcorning"><p>지급대기</p></div>
+	             </div>
+	           </td>
+	         </tr>
+         <tr>
+          <tr>
+	           <td>리뷰 top3</td>
+	           <td>+2000</td>
+	           <td>2024-12-16</td>
+	           <td>
+	             <div class="popcorncenter">
+	               <div class="popcorning"><p>지급대기</p></div>
+	             </div>
+	           </td>
+	         </tr>
+         <tr>
+	           <td>팝콘 팩토리</td>
+	           <td>-50</td>
+	           <td>2024-12-20</td>
+	           <td>
+	             <div class="popcorncenter">
+	               <div class="popcorning"><p>차감대기</p></div>
+	             </div>
+	           </td>
+	         </tr>
+	         <tr>
+	           <td>예약 스토어 노쇼</td>
+	           <td>-500</td>
+	           <td>2024-12-18</td>
+	           <td>
+	             <div class="popcorncenter">
+	               <div class="popcorning"><p>차감대기</p></div>
+	             </div>
+	           </td>
+	         </tr>
     </table>
 </div>
      
@@ -622,74 +632,6 @@ span.center {
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
-
-
-<script>
-$(function() {
-    // 회원별 색깔
-    $('.userSelect').each(function() {
-        var value = $(this).val(); 
-        updateBackgroundColor($(this), value); 
-    });
-
-    $('.userSelect').on('change', function() {
-        var value = $(this).val(); 
-        updateBackgroundColor($(this), value); 
-        updateFontColor($(this), value); 
-    });
-    
-    function updateBackgroundColor(selectElement, value) {
-        if (value == '우수회원') {
-            selectElement.css('background-color', '#F7FF00'); // 우수회원: 노란색
-            selectElement.css('color', 'black');
-        } else if (value == '일반회원') {
-            selectElement.css('background-color', '#00522B'); // 일반회원: 녹색
-            selectElement.css('color', 'white');
-        } else if (value == '차단됨') {
-            selectElement.css('background-color', '#DC3545'); // 차단됨: 빨간색
-            selectElement.css('color', 'white'); // 차단됨: 빨간색
-        } else {
-            selectElement.css('background-color', ''); // 기본: 하양 
-        }
-    }
-    
-    function updateFontColor(selectElement, value) {
-        if (value == '우수회원') {
-            selectElement.css('color', 'black');
-        } else if (value == '일반회원') {
-            selectElement.css('color', 'white');
-        } else if (value == '차단됨') {
-            selectElement.css('color', 'white'); // 차단됨: 빨간색
-        } else {
-        }
-    }
-});
-</script>
-
-<script>
-//유저 등급 업데이트 스크립트
-function updateUserStatus(selectElement) {
-    const userId = $(selectElement).data('user-id');
-    const status = $(selectElement).val();
-
-    fetch('/Admin/UpdateUserStatus', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userId: userId, status: status })  // userId와 status를 명시적으로 보내도록 수정
-    })
-    .then(response => response.json())
-    .then(data => {
-        alert("회원 상태가 성공적으로 업데이트되었습니다.");
-    })
-    .catch(error => {
-        console.error("회원 상태 업데이트 오류:", error);
-        alert("회원 상태 업데이트에 실패했습니다. 다시 시도해주세요.");
-    });
-}
-</script>
-
 
 <script>
 
@@ -761,8 +703,8 @@ const doughnutChart = new Chart(ctx, {
     }
   }
 });
-</script>
 
+</script>
 
 
 

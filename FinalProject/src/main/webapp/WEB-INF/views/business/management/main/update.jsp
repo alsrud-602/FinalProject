@@ -1269,6 +1269,6 @@ function resetSubButtons() {
       //////////////////////////////////////////////////////////////////  
 
     </script>
- <script src="/js/authcompany.js" defer></script>    
+    
 </body>
 </html>

@@ -10,158 +10,158 @@ import com.board.users.dto.UsersDto;
 @Mapper
 public interface UsersMapper {
     
-	// 랭킹 팝업 리스트
-	List<UsersDto> getRanklist();
-	
-	// 진행중 팝업 리스트
-	List<UsersDto> getPopuplist();
+   // 랭킹 팝업 리스트
+   List<UsersDto> getRanklist();
+   
+   // 진행중 팝업 리스트
+   List<UsersDto> getPopuplist();
     
-	// 오픈예정 팝업 리스트
-	List<UsersDto> getOpendpopuplist();
+   // 오픈예정 팝업 리스트
+   List<UsersDto> getOpendpopuplist();
     
-	// 종료된 팝업 리스트
-	List<UsersDto> getclosepopuplist();
-	
-	
-	// 메인화면 필터링
-	List<UsersDto> getFilterlist(
-			@Param("region") String region,
-			@Param("age") String age,
-			@Param("date") String date);
-	
+   // 종료된 팝업 리스트
+   List<UsersDto> getclosepopuplist();
+   
+   
+   // 메인화면 필터링
+   List<UsersDto> getFilterlist(
+         @Param("region") String region,
+         @Param("age") String age,
+         @Param("date") String date);
+   
     // 메인화면 검색창
-	List<UsersDto> getOngoingsearchlist(@Param("search") String search, @Param("start") int start, @Param("size") int size);
-	
-	List<UsersDto> getClosesearchlist(@Param("search") String search, @Param("start") int start, @Param("size") int size);
+   List<UsersDto> getOngoingsearchlist(@Param("search") String search, @Param("start") int start, @Param("size") int size);
+   
+   List<UsersDto> getClosesearchlist(@Param("search") String search, @Param("start") int start, @Param("size") int size);
     
-	
-	int updateUserProfile(UsersDto usersDto);
-	
-	void deleteUser(int userIdx);
+   
+   int updateUserProfile(UsersDto usersDto);
+   
+   void deleteUser(int userIdx);
 
-	UsersDto getUserById(String userId);
+   UsersDto getUserById(String userId);
 
-	UsersDto getStoredetail(UsersDto usersdto);
+   UsersDto getStoredetail(UsersDto usersdto);
 
-	List<UsersDto> getStoretag(UsersDto usersdto);
+   List<UsersDto> getStoretag(UsersDto usersdto);
 
-	//메인화면
-	int getOngoingcount();
+   //메인화면
+   int getOngoingcount();
 
-	List<UsersDto> getPopuppaginglist(@Param("start") int start,@Param("size") int size);
-	
+   List<UsersDto> getPopuppaginglist(@Param("start") int start,@Param("size") int size);
+   
     //메인화면 검색 - &페이징
-	
-	int getOpendsearchcount(@Param("search") String search);
-	List<UsersDto> getOpendsearchlist(@Param("search") String search, @Param("start") int start, @Param("size") int size);
+   
+   int getOpendsearchcount(@Param("search") String search);
+   List<UsersDto> getOpendsearchlist(@Param("search") String search, @Param("start") int start, @Param("size") int size);
     
-	// 상세 페이지 예약 구분
-	UsersDto getStoreReservation(UsersDto usersdto);
+   // 상세 페이지 예약 구분
+   UsersDto getStoreReservation(UsersDto usersdto);
 
 
-	UsersDto getUserById1(Integer userIdx);
+   UsersDto getUserById1(Integer userIdx);
 
 
-	// 상세페이지 운영시간 
-	UsersDto getStoreOperation(UsersDto usersdto);
+   // 상세페이지 운영시간 
+   UsersDto getStoreOperation(UsersDto usersdto);
     
-	//상세 페이지 카테고리
-	List<UsersDto> getStoreCategory(UsersDto usersdto);
+   //상세 페이지 카테고리
+   List<UsersDto> getStoreCategory(UsersDto usersdto);
     
-	//전체 조회수 조회
-	List<UsersDto> getSelectStoreHit(@Param("store_idx") int store_idx, @Param("username") String username);
+   //전체 조회수 조회
+   List<UsersDto> getSelectStoreHit(@Param("store_idx") int store_idx, @Param("username") String username);
 
-	
-	//조회수 증가
-	int insertStoreHit(@Param("store_idx") int store_idx, @Param("username") String username);
+   
+   //조회수 증가
+   int insertStoreHit(@Param("store_idx") int store_idx, @Param("username") String username);
     
-	// 디테일 랭킹
-	List<UsersDto> getRankdetaillist();
+   // 디테일 랭킹
+   List<UsersDto> getRankdetaillist();
     
-	// 조회수 조회
-	UsersDto getStoreHit(UsersDto usersdto);
+   // 조회수 조회
+   UsersDto getStoreHit(UsersDto usersdto);
     
-	//좋아요 조회
-	UsersDto getStoreLike(UsersDto usersdto);
+   //좋아요 조회
+   UsersDto getStoreLike(UsersDto usersdto);
     
-	//전체 리뷰 조회
-	List<UsersDto> gettotalreviews(UsersDto usersdto);
+   //전체 리뷰 조회
+   List<UsersDto> gettotalreviews(UsersDto usersdto);
 
-	// 전체 리뷰,평점 계산 
-	UsersDto getotalcount(UsersDto usersdto);
+   // 전체 리뷰,평점 계산 
+   UsersDto getotalcount(UsersDto usersdto);
 
-	// 핫리뷰 조회순 3개
-	List<UsersDto> getHotReviews(UsersDto usersdto);
-
-
-	// 리뷰 상세 페이지
-	UsersDto getReviewDetail(@Param("storeidx") int storeidx,@Param("useridx") int useridx,@Param("review_idx") int review_idx);
-
-	// 리뷰 수정 - store_idx로 스토어 디테일 데이터 불러오기
-	UsersDto getStoredReviewtail(int storeidx);
-
-	// 리뷰 수정 - 스토어 태그
-	List<UsersDto> getStoreReviewtag(int storeidx);
-
-	//전체 리뷰&조회수
-	UsersDto getotalWriteCount(int storeidx);
+   // 핫리뷰 조회순 3개
+   List<UsersDto> getHotReviews(UsersDto usersdto);
 
 
+   // 리뷰 상세 페이지
+   UsersDto getReviewDetail(@Param("storeidx") int storeidx,@Param("useridx") int useridx,@Param("review_idx") int review_idx);
 
-	// 내가 쓴 리뷰 개수
-	UsersDto getMyTotalReview(UsersDto usersdto, @Param("useruseridx") Long useruseridx);
+   // 리뷰 수정 - store_idx로 스토어 디테일 데이터 불러오기
+   UsersDto getStoredReviewtail(int storeidx);
 
-	//igdate처리
-	List<UsersDto> getPopupDate();
+   // 리뷰 수정 - 스토어 태그
+   List<UsersDto> getStoreReviewtag(int storeidx);
 
-	//Map에서 리뷰 제목이나 내용가져오기 
-	List<UsersDto> getPopupReview();
+   //전체 리뷰&조회수
+   UsersDto getotalWriteCount(int storeidx);
 
 
 
+   // 내가 쓴 리뷰 개수
+   UsersDto getMyTotalReview(UsersDto usersdto, @Param("useruseridx") Long useruseridx);
 
-	// 이미지
-	List<UsersDto> getPopupImgList(UsersDto usersdto);
+   //igdate처리
+   List<UsersDto> getPopupDate();
 
-	//특정 유저 팝콘 보유수
-	UsersDto getTotalPopcorn(String username);
-
-	// 리뷰 작성
-	int insertReview(UsersDto usersdto);
-	
-	// 리뷰 수정
-	int updateReview(UsersDto usersdto);
-
-	//리뷰 삭제
-	int deleteReview(@Param("storeidx") int storeidx,@Param("useridx") int useridx,@Param("review_idx") int review_idx);
-
-	//지도 리뷰조회
-	List<String> getStoresReviewAtMap(@Param("storeIdx") int storeIdx);
-	
-	//지도 팝업상세조회
-	List<UsersDto> getStoresHitAtMap();
+   //Map에서 리뷰 제목이나 내용가져오기 
+   List<UsersDto> getPopupReview();
 
 
-	// 전체 리뷰 조회
-	UsersDto getselectReviewHit(@Param("storeidx") int storeidx,@Param("useridx") int useridx,@Param("review_idx") int review_idx, @Param("loginidx") int loginidx);
-	
-	// 리뷰 조회수 증가
-	int insertReviewHit(@Param("storeidx") int storeidx,@Param("useridx") int useridx,@Param("review_idx") int review_idx, @Param("loginidx") int loginidx);
 
-	// 리뷰 상세 이미지
-	List<UsersDto> getReviewImgList(@Param("storeidx") int storeidx, @Param("useridx") int useridx, @Param("review_idx") int review_idx);
+
+   // 이미지
+   List<UsersDto> getPopupImgList(UsersDto usersdto);
+
+   //특정 유저 팝콘 보유수
+   UsersDto getTotalPopcorn(String username);
+
+   // 리뷰 작성
+   int insertReview(UsersDto usersdto);
+   
+   // 리뷰 수정
+   int updateReview(UsersDto usersdto);
+
+   //리뷰 삭제
+   int deleteReview(@Param("storeidx") int storeidx,@Param("useridx") int useridx,@Param("review_idx") int review_idx);
+
+   //지도 리뷰조회
+   List<String> getStoresReviewAtMap(@Param("storeIdx") int storeIdx);
+   
+   //지도 팝업상세조회
+   List<UsersDto> getStoresHitAtMap();
+
+
+   // 전체 리뷰 조회
+   UsersDto getselectReviewHit(@Param("storeidx") int storeidx,@Param("useridx") int useridx,@Param("review_idx") int review_idx, @Param("loginidx") int loginidx);
+   
+   // 리뷰 조회수 증가
+   int insertReviewHit(@Param("storeidx") int storeidx,@Param("useridx") int useridx,@Param("review_idx") int review_idx, @Param("loginidx") int loginidx);
+
+   // 리뷰 상세 이미지
+   List<UsersDto> getReviewImgList(@Param("storeidx") int storeidx, @Param("useridx") int useridx, @Param("review_idx") int review_idx);
 
  
 
 
-	
-	//Wallet 코스추천
-	List<UsersDto> getallStorelist();
+   
+   //Wallet 코스추천
+   List<UsersDto> getallStorelist();
 
-	List<UsersDto> getAddressesByStoreIdx();
+   List<UsersDto> getAddressesByStoreIdx();
 
 
 
-	
+   
 
 }

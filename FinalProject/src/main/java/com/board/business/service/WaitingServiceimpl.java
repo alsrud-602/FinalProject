@@ -26,121 +26,121 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class WaitingServiceimpl  implements WaitingService {
-	
-	@Autowired
-	private WatingMapper watingMapper;
-	
-	@Override
-	public void insertWatingList(WaitingDto watingDto) {
-		watingMapper.insertWatingList(watingDto);
-		
-	}
+   
+   @Autowired
+   private WatingMapper watingMapper;
+   
+   @Override
+   public void insertWatingList(WaitingDto watingDto) {
+      watingMapper.insertWatingList(watingDto);
+      
+   }
 
-	@Override
-	public List <WaitingDto> getWatingList(int store_idx) {
-		List <WaitingDto> watingList = watingMapper.getWatingList(store_idx);
-		return watingList;
-	}
-	
-	@Override
-	@Transactional
-	public List<WaitingDto> updateWatingList(WaitingDto waitingDto) {
-		
-    	//해당 건 취소 업데이트
-		watingMapper.updateWatingList(waitingDto);
-		
-		//store 구하기
-		int store_idx =watingMapper.getStore_idxWaiting(waitingDto.getWaiting_idx());
-		
-	     
+   @Override
+   public List <WaitingDto> getWatingList(int store_idx) {
+      List <WaitingDto> watingList = watingMapper.getWatingList(store_idx);
+      return watingList;
+   }
+   
+   @Override
+   @Transactional
+   public List<WaitingDto> updateWatingList(WaitingDto waitingDto) {
+      
+       //해당 건 취소 업데이트
+      watingMapper.updateWatingList(waitingDto);
+      
+      //store 구하기
+      int store_idx =watingMapper.getStore_idxWaiting(waitingDto.getWaiting_idx());
+      
+        
         // 순번 업데이트
         List<WaitingDto> updatedListConfig = watingMapper.getWatingList(store_idx);   
         System.out.println("확인요방");
         System.out.println(updatedListConfig);
         int newOrder = 1;
         for (WaitingDto waiting : updatedListConfig) {
-        	watingMapper.updateWaitingOrder(store_idx, waiting.getWating_order(), newOrder);
+           watingMapper.updateWaitingOrder(store_idx, waiting.getWating_order(), newOrder);
             newOrder++;
         }  
         //최종 대기 리스트 추출
         List<WaitingDto> updatedList = watingMapper.getWatingList(store_idx);
-		
+      
         System.out.println(updatedList);
-		
-		return updatedList;
-		
-	}
+      
+      return updatedList;
+      
+   }
 
-	@Override
-	public List<WaitingDto> sendWatingList(WaitingDto waitingDto) {
-		
-		//해당건 현재순번으로 업데이트
-		watingMapper.updateWatingList(waitingDto);
+   @Override
+   public List<WaitingDto> sendWatingList(WaitingDto waitingDto) {
+      
+      //해당건 현재순번으로 업데이트
+      watingMapper.updateWatingList(waitingDto);
         System.out.println("확인요망합니다");
         System.out.println(waitingDto);
-		//store 구하기
-		int store_idx =watingMapper.getStore_idxWaiting(waitingDto.getWaiting_idx());
-		List<WaitingDto> updatedList = watingMapper.getWatingList(store_idx);
-		
-		return updatedList;
-	}
+      //store 구하기
+      int store_idx =watingMapper.getStore_idxWaiting(waitingDto.getWaiting_idx());
+      List<WaitingDto> updatedList = watingMapper.getWatingList(store_idx);
+      
+      return updatedList;
+   }
 
-	@Override
-	public void updateOnsiteUse(StoreStatusDto storeStatusDTO) {
-		System.out.println("한번더 확인" + storeStatusDTO);
-		watingMapper.updateOnsiteUse(storeStatusDTO);
-		
-	}
+   @Override
+   public void updateOnsiteUse(StoreStatusDto storeStatusDTO) {
+      System.out.println("한번더 확인" + storeStatusDTO);
+      watingMapper.updateOnsiteUse(storeStatusDTO);
+      
+   }
 
-	@Override
-	public StoreStatusDto getStoreStauts(int store_idx) {
-		StoreStatusDto onsiteDto = watingMapper.getStoreStauts(store_idx);
-		return onsiteDto;
-	}
+   @Override
+   public StoreStatusDto getStoreStauts(int store_idx) {
+      StoreStatusDto onsiteDto = watingMapper.getStoreStauts(store_idx);
+      return onsiteDto;
+   }
 
-	@Override
-	public WaitingDto getUserWaiting(int user_idx) {
-		WaitingDto wDto = watingMapper.getUserWaiting(user_idx);
-		return wDto;
-	}
+   @Override
+   public WaitingDto getUserWaiting(int user_idx) {
+      WaitingDto wDto = watingMapper.getUserWaiting(user_idx);
+      return wDto;
+   }
 
-	@Override
-	public List<WaitingDto> getUserWaitingList(int user_idx) {
-		List<WaitingDto> wList = watingMapper.getUserWaitingList(user_idx);
-		return wList;
-	}
+   @Override
+   public List<WaitingDto> getUserWaitingList(int user_idx) {
+      List<WaitingDto> wList = watingMapper.getUserWaitingList(user_idx);
+      return wList;
+   }
 
-	@Override
-	public List<ReservationUserDto> getadvanceList(int user_idx) {
-		 List<ReservationUserDto> ruList = watingMapper.getadvanceList(user_idx);
-		 System.out.println("확인합니다"+ruList);
-		return ruList;
-	}
+   @Override
+   public List<ReservationUserDto> getadvanceList(int user_idx) {
+       List<ReservationUserDto> ruList = watingMapper.getadvanceList(user_idx);
+       System.out.println("확인합니다"+ruList);
+      return ruList;
+   }
 
-	@Override
-	public List<WaitingDto> getonStieList(int user_idx) {
-		List<WaitingDto> WList = watingMapper.getonStieList(user_idx);
-		 System.out.println("확인합니다WList"+WList);
-		return WList;
-	}
+   @Override
+   public List<WaitingDto> getonStieList(int user_idx) {
+      List<WaitingDto> WList = watingMapper.getonStieList(user_idx);
+       System.out.println("확인합니다WList"+WList);
+      return WList;
+   }
 
-	@Override
-	public List<WaitingDto> getcheckWaiting(int user_idx) {
-		List<WaitingDto> wcheck =  watingMapper.getcheckWaiting(user_idx);
-		System.out.println("확인합니다wcheck"+wcheck);
-		return wcheck;
-	}
+   @Override
+   public List<WaitingDto> getcheckWaiting(int user_idx) {
+      List<WaitingDto> wcheck =  watingMapper.getcheckWaiting(user_idx);
+      System.out.println("확인합니다wcheck"+wcheck);
+      return wcheck;
+   }
 
-	@Override
-	public StoreAddNoteDto getStoreAddressNote(int store_idx) {
-		StoreAddNoteDto anDto = watingMapper.getStoreAddressNote(store_idx);
-		System.out.println("확인합니다anDto"+anDto);
-		return anDto;
-	}
+   @Override
+   public StoreAddNoteDto getStoreAddressNote(int store_idx) {
+      StoreAddNoteDto anDto = watingMapper.getStoreAddressNote(store_idx);
+      System.out.println("확인합니다anDto"+anDto);
+      return anDto;
+   }
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-	@Override
+   @Override
     public List<Map<String, Object>> getTimeGrape(int store_idx) {
         // DB에서 데이터 가져오기
         List<Map<String, String>> waitingData = watingMapper.getWatingTime(store_idx);
@@ -199,7 +199,7 @@ public class WaitingServiceimpl  implements WaitingService {
 
 
 
-	
-	
-	
+   
+   
+   
 }
