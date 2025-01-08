@@ -262,6 +262,81 @@ WHERE
 
 <!--         /Admin/Userdetail    끝      -->
 
+    <!-- 총 가입자 수 -->
+    <select id="getTotalUsers">
+        SELECT COUNT(*) FROM COMPANYS
+    </select>
+
+    <select id="getTotalStores">
+        SELECT COUNT(*) FROM STORES
+    </select>
+
+    <!-- 이번 달과 저번 달 가입자 수 비교 -->
+    <select id="getMonthlyStats">
+        SELECT
+            SUM(CASE WHEN TO_CHAR(CDATE, 'YYYY-MM') = TO_CHAR(SYSDATE, 'YYYY-MM') THEN 1 ELSE 0 END) AS current_month_count,
+            SUM(CASE WHEN TO_CHAR(CDATE, 'YYYY-MM') = TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYY-MM') THEN 1 ELSE 0 END) AS previous_month_count
+        FROM COMPANYS
+    </select>
+
+    
+    <!-- 진행중 팝업 수 -->
+      <select id="getPopuplistCount">
+	SELECT
+		COUNT(*)
+	FROM
+	    stores st JOIN stores_detail std ON st.store_idx = std.store_idx
+	    
+	WHERE st.ban='N' AND st.status='승인' 
+	      AND TRUNC(std.start_date) &lt;= TRUNC(SYSDATE) 
+	      AND TRUNC(std.end_date) &gt;= TRUNC(SYSDATE)
+	ORDER BY
+	    st.store_idx ASC
+  </select>
+  
+  <!-- 한달간 스토어 증가세 -->
+      <select id="getMonthlyStatsByStores">
+        SELECT
+            SUM(CASE WHEN TO_CHAR(CDATE, 'YYYY-MM') = TO_CHAR(SYSDATE, 'YYYY-MM') THEN 1 ELSE 0 END) AS current_month_count,
+            SUM(CASE WHEN TO_CHAR(CDATE, 'YYYY-MM') = TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYY-MM') THEN 1 ELSE 0 END) AS previous_month_count
+        FROM STORES
+    </select>
+    
+    <!-- 스토어상세추세 -->
+     <select id="getStorePerformanceRank">
+SELECT rank
+FROM (
+    SELECT
+        RANK() OVER (ORDER BY (COUNT(SD.STORE_IDX) * 100 + NVL(SUM(SDD."LIKE"), 0)) DESC) AS rank,
+        C.COMPANY_IDX
+    FROM COMPANYS C
+    LEFT JOIN STORES SD
+        ON C.COMPANY_IDX = SD.COMPANY_IDX
+    LEFT JOIN STORES_DETAIL SDD
+        ON SD.STORE_IDX = SDD.STORE_IDX
+    WHERE SD.CDATE BETWEEN TO_DATE(#{startDate}, 'YYYY-MM-DD') AND TO_DATE(#{endDate}, 'YYYY-MM-DD')
+    GROUP BY C.COMPANY_IDX
+) ranked_data
+WHERE COMPANY_IDX = #{companyIdx}
+    </select>
+    
+        <!-- 특정 날짜의 스토어 등록 수 가져오기 -->
+    <select id="getStoreCountForDate">
+        SELECT COUNT(*) 
+        FROM STORES SD
+        WHERE SD.COMPANY_IDX = #{companyIdx}
+          AND TO_CHAR(SD.CDATE, 'YYYY-MM-DD') = #{formattedDate}
+    </select>
+
+    <!-- 특정 날짜의 좋아요 수 가져오기 -->
+    <select id="getLikeCountForDate">
+    SELECT NVL(SUM(SDD."LIKE"), 0) AS likeCount
+    FROM STORES_DETAIL SDD
+    LEFT JOIN STORES SD ON SD.STORE_IDX = SDD.STORE_IDX
+    WHERE SD.COMPANY_IDX = #{companyIdx}
+      AND TO_CHAR(SD.CDATE, 'YYYY-MM-DD') = #{formattedDate}
+    </select>
+
 
 <!-- /Admin/Managerlist 시작  -->
 

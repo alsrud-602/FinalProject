@@ -117,7 +117,7 @@ public interface UsersMapper {
 	//Map에서 리뷰 제목이나 내용가져오기 
 	List<UsersDto> getPopupReview();
 
-	List<UsersDto> getStoresHitAtMap();
+
 
 
 	// 이미지
@@ -134,6 +134,13 @@ public interface UsersMapper {
 
 	//리뷰 삭제
 	int deleteReview(@Param("storeidx") int storeidx,@Param("useridx") int useridx,@Param("review_idx") int review_idx);
+
+	//지도 리뷰조회
+	List<String> getStoresReviewAtMap(@Param("storeIdx") int storeIdx);
+	
+	//지도 팝업상세조회
+	List<UsersDto> getStoresHitAtMap();
+
 
 	// 전체 리뷰 조회
 	UsersDto getselectReviewHit(@Param("storeidx") int storeidx,@Param("useridx") int useridx,@Param("review_idx") int review_idx, @Param("loginidx") int loginidx);
@@ -152,6 +159,7 @@ public interface UsersMapper {
 	List<UsersDto> getallStorelist();
 
 	List<UsersDto> getAddressesByStoreIdx();
+
 
 
 	

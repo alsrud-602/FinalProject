@@ -33,42 +33,52 @@ text-align: center;
   <div class="content_box">
      <table id ="box_table">
      <tr>
-       <td>  
-       <div class="box_layout">
-         <div class="box_circle"><img src="/images/icon/store3.png"></div>
-         <div class="box_info">
-          <p>총 스토어 수</p>
-          <p>5,423</p>
-          <div class="box_updown">
-            <img src="/images/icon/arrowdown.png">
-            <div><span class="green">16%</span>이번 달</div>
-          </div>
-          
-         </div>
-       </div>
-       </td>
-       
-              <td>  
-       <div class="box_layout">
-         <div class="box_circle"><img src="/images/icon/profilecheck.png"></div>
-         <div class="box_info">
-          <p>담당자 계정</p>
-          <p>1,893</p>
-          <div class="box_updown">
-            <img src="/images/icon/arrowup.png">
-            <div><span class="red">1%</span>이번 달</div>
-          </div>
-          
-         </div>
-       </div>
-       </td>
+<td>  
+    <div class="box_layout">
+        <div class="box_circle">
+            <img src="/images/icon/store3.png">
+        </div>
+        <div class="box_info">
+            <p>총 스토어 수</p>
+            <p>${totalStores}</p>
+            <div class="box_updown">
+                <img src="${growthStoreRate >= 0 ? '/images/icon/arrowup.png' : '/images/icon/arrowdown.png'}">
+                <div>
+                    <span class="${growthStoreRate >= 0 ? 'red' : 'blue'}">
+                        ${growthStoreRate >= 0 ? '+' : ''}${growthStoreRate}%
+                    </span> 이번 달
+                </div>
+            </div>
+        </div>
+    </div>
+</td>
+
+<td>  
+    <div class="box_layout">
+        <div class="box_circle">
+            <img src="/images/icon/profilecheck.png">
+        </div>
+        <div class="box_info">
+            <p>담당자 계정</p>
+            <p>${totalUsers}</p>
+            <div class="box_updown">
+                <img src="${growthRate >= 0 ? '/images/icon/arrowup.png' : '/images/icon/arrowdown.png'}">
+                <div>
+                    <span class="${growthRate >= 0 ? 'red' : 'blue'}">
+                        ${growthRate >= 0 ? '+' : ''}${growthRate}%
+                    </span> 이번 달
+                </div>
+            </div>
+        </div>
+    </div>
+</td>
        
         <td>  
        <div class="box_layout">
          <div class="box_circle"><img src="/images/icon/storemarker.png"></div>
          <div class="box_info">
           <p>현재 운영중인 스토어</p>
-          <p>192</p>
+          <p>${popupListCount}</p>
           
          </div>
        </div>

@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>진행 중</title>
+<title>POPCORN에서 팝업스토어 현황을 알아보세요!</title>
 <link rel="icon" type="image/png" href="/img/favicon.png" />
 
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
