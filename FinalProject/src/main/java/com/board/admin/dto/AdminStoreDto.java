@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdminStoreVo {
+public class AdminStoreDto {
 	
 	
 	private int store_idx;
@@ -40,6 +40,36 @@ public class AdminStoreVo {
 	private String social_id;
 	private String social_type;
 	private String name;
+	
+	private int request_idx;
+	private String field;
+	private String content;
+	private String response;
+	private String restatus;
+	
+	private int detail_idx;
+	private String address;
+	private String start_date;
+	private String end_date;
+	private String homepage;
+	private String sns;
+	private String introduction;
+	private String parking;
+	private String fare;
+	private String age_limit;
+	private String shooting;
+    private int LIKE;
+    private String goods;
+    private String igdate;
+    private String code;
     
+    private int category_idx;
+    private String category_name;
+    private int category_id;
+    
+    private int is_idx;
+    private String imagename;
+    private String imageext;
+    private String image_path;
 }
 

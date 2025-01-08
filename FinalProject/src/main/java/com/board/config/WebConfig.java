@@ -20,5 +20,6 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(visitorLoggingInterceptor)
                 .addPathPatterns("/Users/**", "/Business/**", "/CompanyAuth/**", "/", "/app/**")
                 .excludePathPatterns("Users/Admin/**","/static/**", "/css/**", "/js/**", "/images/**", "/image/**", "/WEB-INF/views/**", "/resources/**"); // 정적 리소스 제외
+        //.excludePathPatterns("/**"); // 정적 리소스 제외
     }
 }

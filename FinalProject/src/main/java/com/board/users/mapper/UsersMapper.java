@@ -142,7 +142,7 @@ public interface UsersMapper {
 	int insertReviewHit(@Param("storeidx") int storeidx,@Param("useridx") int useridx,@Param("review_idx") int review_idx, @Param("loginidx") int loginidx);
 
 	// 리뷰 상세 이미지
-	List<UsersDto> getReviewImgList(int storeidx, int useridx, int review_idx);
+	List<UsersDto> getReviewImgList(@Param("storeidx") int storeidx, @Param("useridx") int useridx, @Param("review_idx") int review_idx);
 
  
 

@@ -208,7 +208,7 @@ body {
         <tbody id="userTableBody">
           <c:forEach var="company" items="${allcompanys}">
             <tr>
-                <td>${company.name}</td>
+                <td><a href="/Admin/Detail?company_idx=${company.company_idx}">${company.name}</a></td>
                 <td class="Cdatetd">${company.cdate}</td>
                 <td class="storeCount">${company.storecount}</td>
                 <td>

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,11 +22,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.board.admin.dto.AdminStoreVo;
+import com.board.admin.dto.AdminStoreDto;
 import com.board.admin.dto.AdminVo;
 import com.board.admin.mapper.AdminMapper;
 import com.board.admin.mapper.StoreMapper;
 import com.board.users.dto.User;
+import com.board.users.dto.UsersDto;
 import com.board.users.service.UserService;
 import com.board.util.JwtUtil;
 
@@ -377,14 +379,15 @@ public class AdminController {
 	    }
 	    
 	    @RequestMapping("/Managerlist")
-	    public ModelAndView managerlist(HttpServletResponse response)throws Exception {
+	    public ModelAndView managerlist(){
 	    	// MFA 인증 확인
-	        if (!isMfaAuthenticated(request)) {
-	            response.sendRedirect("/Users/2fa"); 
-	            return null; 
-	        }
+	       // if (!isMfaAuthenticated(request)) {
+	        //    response.sendRedirect("/Users/2fa"); 
+	         //   return null; 
+	        //}
 	        // 모든 company 유저 정보
 	        List<AdminVo> allcompanys = adminMapper.getallcompanyinfo();
+	        System.out.println("allcompanys" + allcompanys);
 	        // company 유저 별 팝업개수
 	        List<Map<String, Object>> popupCounts = adminMapper.getPopupCountsByCompany();
 	        // company 유저 별 팝업정보
@@ -506,20 +509,31 @@ public class AdminController {
     
     
     @RequestMapping("/List")
-    public ModelAndView list(){
+    public ModelAndView list(
+    		@RequestParam(defaultValue = "1") int page,
+			@RequestParam(defaultValue = "10") int size){
     	
     	// MFA 인증 확인
-       // if (!isMfaAuthenticated(request)) {
-       //     response.sendRedirect("/Users/2fa");
-       //     return null; 
+        //if (!isMfaAuthenticated(request)) {
+        //    response.sendRedirect("/Users/2fa");
+        //    return null; 
        // }
     	
     	
+    	// 페이징용
+    	int start = (page - 1) * size; 
+    	int totalStorePosts = adminMapper.gettotalPosts();
+    	int totalPages = (int) Math.ceil((double)totalStorePosts / size);
+    	System.out.println("전체 스토어 수 totalPagePosts : " + totalStorePosts);
+    	System.out.println("전체 페이지 수 totalPages : " + totalPages);
+    	
     	//모든 스토어 입점 요청 내역
-    	List<AdminStoreVo> TotalStore = adminMapper.getTotalStore();
+    	List<AdminStoreDto> TotalStore = adminMapper.getTotalStore(start,size);
     	System.out.println("모든 스토어 리스트 TotalStore : "+TotalStore);
     	
     	ModelAndView mv= new ModelAndView();
+    	mv.addObject("totalPages", totalPages);
+    	mv.addObject("currentPage", page);
     	mv.addObject("TotalStore", TotalStore);
     	mv.setViewName("/admin/store/list");
     	return mv;
@@ -529,11 +543,13 @@ public class AdminController {
     @RequestMapping("/Listsearch")
     @ResponseBody
     public Map<String,Object> listsearch(
-    		@RequestParam(required = false, value = "search") String search){
-    	System.out.println("검색한 search : "+ search);
+    		@RequestParam(required = false, value = "search") String search,
+    		@RequestParam(required = false, value = "filter") String filter){
+    	System.out.println("search" + search);
+    	System.out.println("filter" + filter);
     	
     	//검색한 스토어 리스트
-    	List<AdminStoreVo> SearchStoreList = adminMapper.getSearchStoreList(search);
+    	List<AdminStoreDto> SearchStoreList = adminMapper.getSearchStoreList(search,filter);
     	System.out.println("검색한 리스트 : " + SearchStoreList);
     	
     	Map<String,Object> response = new HashMap<>();
@@ -541,31 +557,63 @@ public class AdminController {
     	return response;
     }
     
-    // List페이지 선택필터
-    @RequestMapping("/Listfilter")
-    @ResponseBody
-    public Map<String,Object> listfilter(
-    		@RequestParam(required = false, value = "filter") String filter){
-    	System.out.println("선택한 filter : "+ filter);
-    	
-    	//선택한한 스토어 리스트
-    	List<AdminStoreVo> SelectStoreList = adminMapper.getSelectStoreList(filter);
-    	System.out.println("검색한 리스트 : " + SelectStoreList);
-    	
-    	Map<String,Object> response = new HashMap<>();
-    	response.put("SearchStoreList", SelectStoreList);
-    	return response;
-    }
+    
     
     // 담당자 디테일
     @RequestMapping("/Detail")
-    public ModelAndView detail(){
-    	
-    	ModelAndView mv = new ModelAndView();
-    	mv.setViewName("/admin/manager/detail");
-    	return mv;
+    public ModelAndView detail(AdminStoreDto adminstoredto) {
+        System.out.println("회사 정보 adminstoredto:" + adminstoredto);
+        
+        // 회사 정보 가져오기
+        AdminStoreDto CompanyDetail = adminMapper.getCompanyDetail(adminstoredto);
+        System.out.println("CompanyDetail: " + CompanyDetail);
+        
+        // 팝업 정보 가져오기
+        List<AdminStoreDto> CompanyPopupDetail = adminMapper.getCompanyPopupDetail(adminstoredto);
+        System.out.println("CompanyPopupDetail: " + CompanyPopupDetail);
+        for (AdminStoreDto dto : CompanyPopupDetail) {
+		     String imagePath = dto.getImage_path().replace("\\", "/"); // 경로 수정
+		     dto.setImage_path(imagePath); // 수정된 경로 다시 설정
+		     System.out.println("수정된 이미지 패스 : " + imagePath);
+		 }
+        System.out.println("최종 수정된 CompanyPopupDetail : " + CompanyPopupDetail);
+        
+        int compamy_idx = adminstoredto.getCompany_idx();
+        System.out.println("compamy_idx" +compamy_idx);
+        
+        // store_idx 값만 추출
+        List<Integer> storeIdxList = new ArrayList<>();
+        if (CompanyPopupDetail != null) {
+            storeIdxList = CompanyPopupDetail.stream()
+                                             .map(AdminStoreDto::getStore_idx) // store_idx 추출
+                                             .collect(Collectors.toList());
+        }
+        
+        System.out.println("Store IDX List: " + storeIdxList);
+        
+        // 카테고리 리스트 출력
+        List<AdminStoreDto> finalCategoryList = new ArrayList<>(); // List<AdminStoreDto>로 타입 수정
+        for (Integer storeIdx : storeIdxList) {
+            // storeIdx로 getCategoryList 호출
+            List<AdminStoreDto> categoryList = adminMapper.getCategoryList(storeIdx, compamy_idx);
+            
+            // categoryList가 비어 있지 않으면 finalCategoryList에 추가
+            if (categoryList != null && !categoryList.isEmpty()) {
+                finalCategoryList.addAll(categoryList);
+            }
+        }
+        System.out.println("finalCategoryList IDX List: " + finalCategoryList);
+        
+        // 결과를 ModelAndView에 추가
+        ModelAndView mv = new ModelAndView();
+        mv.addObject("CompanyDetail", CompanyDetail);
+        mv.addObject("CompanyPopupDetail", CompanyPopupDetail);
+        mv.addObject("storeIdxList", storeIdxList); // store_idx 리스트도 전달
+        mv.addObject("finalCategoryList", finalCategoryList); // finalCategoryList도 전달
+        mv.setViewName("/admin/manager/detail");
+        
+        return mv;
     }
-
     
 }
 

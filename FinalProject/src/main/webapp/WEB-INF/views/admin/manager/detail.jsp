@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -80,6 +81,8 @@
     text-align:center;
     border-radius:25px;
     border: 1px solid green;
+    cursor: pointer; /* 커서가 손가락 모양으로 변경됨 */
+    cursor: pointer; /* 커서가 손가락 모양으로 변경됨 */
   }
   
  .chart-container {
@@ -98,7 +101,28 @@
     border-radius: 5px;
     cursor: pointer;
   }
-        
+  
+.upmenu_div{
+    background: white;
+    padding : 60px 40px 40px 70px;
+    font-family: 'ABeeZee';
+    border-radius: 10px;
+    
+
+}
+ 
+.upmenu input{
+    border: 3px solid black;
+    width:300px;
+    height: 40px;
+    border-radius: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 20px;
+    font-family: 'Pretendard';
+    padding-left: 10px;
+    margin-bottom: 15px; 
+}       
 </style>
 </head>
 <body>
@@ -107,24 +131,22 @@
   <main>
 
    <div class="content_box2">
-    <p id ="box_title">키스톤 마케팅</p>    
+    <p id ="box_title">${CompanyDetail.name}</p>    
     <img src="/images/icon/location.png" style="width:20px; margin-bottom:5px; "  />
     <div style="text-align: center"><p style="width:200px; border: 1px solid gray;">부산광역시 부산진구</p></div>
     
     <hr>
     
  	<div class="upmenu" style="display: flex; ">
-		    <div style="border: 1px solid black;  margin-right: 10px;  height: 500px; width: 500px;"> <!-- 너비 조정 -->
+		    <div   class="upmenu_div" style="border: 1px solid black; margin-right: 10px;  height: 500px; width: 500px;"> <!-- 너비 조정 -->
               <p>아이디</p>
-              <input type="text" style="width: 80%;"> 
-               <p>비밀번호</p>
-               <input type="text" style="width: 80%;">
+              <input type="text" style="width: 80%;" placeholder="${CompanyDetail.id}"> 
                <p>사업자코드</p>
-               <input type="text" style="width: 80%;">
+               <input type="text" style="width: 80%;" placeholder="${CompanyDetail.code}">
                 <p>이메일</p>
-                <input type="text" style="width: 80%;">
+                <input type="text" style="width: 80%;" placeholder="${CompanyDetail.email}">
                 <p>전화번호</p>
-                <input type="text" style="width: 80%;">
+                <input type="text" style="width: 80%;" placeholder="${CompanyDetail.phone}">
         </div>
        		<div style="border: 1px solid black; padding:30px; height:500px;" >   
 	    		  	 <div class="chart-container">
@@ -139,64 +161,34 @@
 <div class="popupsearch" style="padding:50px; margin-top:10px; background: #40c963;">
     <h2 style="color:white;">등록한 팝업스토어</h2>
     <div class="searchform" style="display: flex; gap: 10px; flex-wrap: wrap;">
-        <input type="text" style="flex: 1; padding: 10px;">
+        <input type="text" style="flex: 1; padding: 10px;" placeholder="팝업명을 입력하세요">
         <select style="padding: 10px; width: 150px;">
             <option>category</option>
         </select>
-        <select style="padding: 10px; width: 150px;">
-            <option>등록여부</option>
-        </select>
-        <select style="padding: 10px; width: 150px;">
-            <option>지역</option>
-        </select>
+        <input type="button" style="flex: 0.1; padding: 10px; background:white;" background:white value="조회">
     </div>
 </div>
 		
-<div class="list-container">
-  <div class="list-item">
-    <img src="/images/example/exampleimg5.png" alt="example">
-    <div class="content">
-      <span>잔망루피 대모험</span>
-      <span>Deall Jobs</span>
-      <span>좋아요 수: 500 스포츠잡화 online</span>
-    <div class="remote">Remote</div>
-    </div>
-    <div class="action">광고 등록</div>
-  </div>
-
-  <div class="list-item">
-    <img src="/images/example/exampleimg5.png" alt="example">
-    <div class="content">
-      <span>방방탄한 웃지맘</span>
-      <span>Deall Jobs</span>
-      <span>좋아요 수: 300 스포츠잡화 online</span>
-      <div class="remote">Remote</div>
-    </div>
-    <div class="action">광고 등록</div>
-  </div>
-
-  <div class="list-item">
-    <img src="/images/example/exampleimg5.png" alt="example">
-    <div class="content">
-      <span>잔망루피 대모험</span>
-      <span>Deall Jobs</span>
-      <span>좋아요 수: 500 스포츠잡화 online</span>
-      <div class="remote">Remote</div>
-    </div>
-    <div class="action">광고 등록</div>
-  </div>
-
-  <div class="list-item">
-    <img src="/images/example/exampleimg5.png" alt="example">
-    <div class="content">
-      <span>잔망루피 대모험</span>
-      <span>Deall Jobs</span>
-      <span>좋아요 수: 500 스포츠잡화 online</span>
-      <div class="remote">Remote</div>
-    </div>
-    <div class="action">광고 등록</div>
-  </div>
-</div>
+	<div class="list-container">
+	  <c:forEach var="popup" items="${CompanyPopupDetail}">
+	    <div class="list-item" data-store-idx="${popup.store_idx}">
+	      <img src="/image/read?path=${popup.image_path}" alt="Store Image" >
+	      <div class="content">
+	        <span>${popup.brand1}</span> <!-- 브랜드 이름 -->
+	        <span>${popup.title}</span> <!-- 팝업 제목 -->
+	        <!-- 카테고리 리스트 출력 -->
+	        <c:forEach var="category" items="${finalCategoryList}">
+	          <c:if test="${category.store_idx == popup.store_idx}">
+	            <span>${category.category_name}</span>
+	          </c:if>
+	        </c:forEach>
+	        
+	        <div class="remote" data-store-idx="${popup.store_idx}">Remote</div> <!-- 원격 조작 관련 정보 -->
+	      </div>
+	      <div class="action">광고 등록</div> <!-- 광고 등록 버튼 -->
+	    </div>
+	  </c:forEach>
+	</div>
    
    </div>	
 		
@@ -292,6 +284,20 @@
       });
   </script>
 </body>
+<script>
+$(function(){
+    $('.remote').on('click', function(){
+        let store_idx = $(this).data('store-idx'); // data-store-idx에서 값 가져오기
+         window.location.href = "/Users/Info?store_idx=" + store_idx; // URL로 이동
+    });
+});
+$(function(){
+    $('.action').on('click', function(){
+        let store_idx = $(this).data('store-idx'); // data-store-idx에서 값 가져오기
+         window.location.href = "/Users/Info?store_idx=" + store_idx; // URL로 이동
+    });
+});
+</script>
 </html>
   
 

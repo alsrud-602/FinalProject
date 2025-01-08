@@ -22,6 +22,8 @@
     color: #00ff84; /* 텍스트 색상 */
     font-weight: bold; /* 글씨 두껍게 */
 }
+.review_time{
+}
 </style>
 </head>
 <body>
@@ -449,7 +451,7 @@ const infoPage = `<div class="content">
 	       <div><img src="/images/icon/eye2.png">&nbsp;${HotReviews.score}&nbsp;</div>
 	     </div>
 	     <div class="review_score">평점 ${HotReviews.score}</div>
-	     <div class="review_time"><div>3시간 전</div></div>
+	     <div class="review_time"><div><a></a></div></div>
 	     <div class="review_cdate">${HotReviews.review_date}</div>
 	     </div>
 	     </c:forEach> 
@@ -518,9 +520,10 @@ const mapPage = `
     const userIdx = element.getAttribute('data-user-idx');
     const loginIdx = element.getAttribute('data-login-idx');
     const reviewIdx = element.getAttribute('data-review-idx');
-    console.log(storeIdx);
-    console.log(userIdx);
-    console.log(loginIdx);
+    console.log("storeIdx"+storeIdx);
+    console.log("userIdx"+userIdx);
+    console.log("loginIdx"+loginIdx);
+    console.log("reviewIdx"+reviewIdx);
     $.ajax({
     	url : '/Users/ReviewDetail',
     	type : 'GET',
