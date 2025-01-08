@@ -756,19 +756,19 @@ margin: 30px 42px;
 			<div class="frame-496">
 				<div class="frame-490">
 					<div class="review">현재 리뷰 수</div>
-					<div class="_4">4</div>
+					<div class="_4">0</div>
 				</div>
 				<div class="frame-492">
 					<div class="total-score">평균 평점</div>
-					<div class="_4-5">4.5</div>
+					<div class="_4-5">0</div>
 				</div>
 				<div class="frame-497">
 					<div class="heart">좋아요</div>
-					<div class="_200">200</div>
+					<div class="_200">0</div>
 				</div>
 				<div class="frame-498">
 					<div class="view">조회수</div>
-					<div class="_30">30</div>
+					<div class="_30">0</div>
 				</div>
 			</div>
 		</div>
@@ -891,11 +891,8 @@ margin: 30px 42px;
 			<div class="reservation-list">
 				<select id="status-filter" onchange="filterReservations()">
 					<option value="all">전체</option>
-					<option value="current">현재 순번</option>
-					<option value="completed">현장방문</option>
-					<option value="no-show">노쇼</option>
-					<option value="customer-request">고객 요청</option>
-					<option value="etc">기타</option>
+					<option value="현재순번">현재순번</option>
+					<option value="대기">대기</option>
 				</select>
 				<p id="waiting-count">대기 2팀</p>
 			</div>
@@ -966,6 +963,7 @@ margin: 30px 42px;
 	
    function onSiteList() {
 		let store_idx  = document.querySelector('#reservation_storeIdx').value	
+	
 		console.log(store_idx);
 		loadUserWaitingList(store_idx)	
 		let msg = '대기기능사용'
@@ -1009,7 +1007,7 @@ margin: 30px 42px;
         data.forEach((item, index) => {
         
             tableBody.innerHTML += `
-                <tr>
+                <tr data-status="\${item.status}">
 					<td>\${item.wating_order}</td>
 					<td>\${item.name}</td>
 					<td>\${item.id}</td>
@@ -1248,7 +1246,7 @@ margin: 30px 42px;
     	  const viewCount = currentSlide.getAttribute('data-hit'); 
     	  const viewLike = currentSlide.getAttribute('data-like');
     	  const rsIdx = currentSlide.getAttribute('data-rsIdx');
-    	  const rstaus = currentSlide.getAttribute('data-rstaus');
+    	  const  rstaus= currentSlide.getAttribute('data-rstaus');
     	  const link = currentSlide.getAttribute('data-link');
     	  const storeIdx = currentSlide.getAttribute('data-storeIdx'); 
     	  const wc = currentSlide.getAttribute('data-waitingCount'); 
@@ -1300,7 +1298,19 @@ margin: 30px 42px;
     
     function reservationDisplay(link, rstaus) {
         
-    	if (link === null || link === undefined || link === "") { // null과 비교할 때는 === 사용
+    console.log('rstaus'+ rstaus);
+    
+       if(rstaus ==='현장대기예약'){
+    	   document.querySelector('.real-time-updates').style.display = "block";
+    	   document.querySelector('.reservation-status').style.display = "block";
+    	   
+       }else {
+    	   document.querySelector('.real-time-updates').style.display = "none";	 	      	   
+    	   document.querySelector('.reservation-status').style.display = "none";
+       }    
+    
+    
+    	if (rstaus ==='사전예약') { // null과 비교할 때는 === 사용
             document.querySelector('#advanceReservation').style.display = "block";
         
         }else{
@@ -1382,60 +1392,9 @@ fetch(`/api/waiting/timegrape?store_idx=\${store_idx}`)
 
 
 
-/*
-function updateTraffic() {
-    const now = new Date();
-    const currentHour = now.getHours();
-    const currentDay = now.getDay(); // 0: 일요일, 1: 월요일, ..., 6: 토요일
 
-    // 시간에 따른 혼잡도 설정
-    const hourlyTraffic = [30, 50, 70, 100, 80]; // 기본 혼잡도
-    trafficChart.data.datasets[0].data = hourlyTraffic.map((data, index) => {
-        return index === Math.floor(currentHour / 2) ? Math.min(100, data + 20) : data; // 현재 시간에 맞춰 혼잡도 증가
-    });
-    trafficChart.update();
-
-    // 요일에 따른 혼잡도 설정
-    const dailyTraffic = [20, 40, 60, 80, 100, 50, 30]; // 기본 혼잡도
-    dailyTrafficChart.data.datasets[0].data = dailyTraffic.map((data, index) => {
-        return index === currentDay ? Math.min(100, data + 20) : data; // 현재 요일에 맞춰 혼잡도 증가
-    });
-    dailyTrafficChart.update();
-}
-
-
-// 슬라이더 이벤트 리스너
-document.getElementById('traffic-range').addEventListener('input', function() {
-    const value = this.value;
-
-    // 슬라이더 값에 따라 혼잡도 조정
-    trafficChart.data.datasets[0].data = trafficChart.data.datasets[0].data.map(data => {
-        return Math.min(100, Math.max(0, data + (value - 50) * 0.5));
-    });
-    trafficChart.update();
-
-    dailyTrafficChart.data.datasets[0].data = dailyTrafficChart.data.datasets[0].data.map(data => {
-        return Math.min(100, Math.max(0, data + (value - 50) * 0.3));
-    });
-    dailyTrafficChart.update();
-});
-*/
-
-// 초기 혼잡도 업데이트
-//dateTraffic();
-
-// 1분마다 혼잡도 업데이트
-//setInterval(updateTraffic, 60000);
 
 	
-	    /*
-	    fetch('/getTrafficData')
-	    .then(response => response.json())
-	    .then(data => {
-	        trafficChart.data.datasets[0].data = data;
-	        trafficChart.update();
-	    });
-	    */
     </script>
 	<script>
     /* 날짜 선택 */
