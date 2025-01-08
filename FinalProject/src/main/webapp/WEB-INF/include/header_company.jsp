@@ -368,22 +368,22 @@
         <div class="header">
             <a href="/Business/Operation/View"><img class="logo" src="/images/icon/logo_company.png" alt="로고" /></a>
             <div class="header-nav">
-                <a href="/Operation">
+                <a href="/Business/Operation/View">
                     <div class="frame-2066">
                         <div class="div1">운영</div>
                     </div>
                 </a>
-                <a href="#">
+                <a href="/Business/Management/Main/List">
                     <div class="frame-2067">
                         <div class="div2">관리</div>
                     </div>
                 </a>
-                <a href="#">
+                <a href="/Business/Registraion/Writefrom">
                     <div class="frame-2068">
                         <div class="div2">등록</div>
                     </div>
                 </a>
-                 <a href="#">
+                 <a href="/Admin/Store/View">
                     <div class="frame-2068">
                         <div class="div2">고객센터</div>
                     </div>

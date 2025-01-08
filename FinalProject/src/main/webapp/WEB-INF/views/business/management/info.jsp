@@ -141,6 +141,7 @@ padding-left: 10px;
  return true; 
  }
  </script>
+  <script src="/js/authcompany.js" defer></script> 
 </html>
 
 

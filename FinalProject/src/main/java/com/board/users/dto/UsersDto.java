@@ -97,6 +97,7 @@ public class UsersDto {
     private String image_path;
     
     private int total_points;
-    
+
+  
     
 }

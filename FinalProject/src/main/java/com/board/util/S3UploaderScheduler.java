@@ -27,7 +27,9 @@ public class S3UploaderScheduler {
     @Autowired
     private VisitorDataRepository visitorDataRepository;
 
-    @Scheduled(fixedRate = 600000) // 1분마다 실행
+
+    @Scheduled(fixedRate = 3600000) // 1분마다 실행
+
     public void uploadVisitorData() {
         String localFilePath = "visitor-data-" + LocalDate.now() + ".json";
         String s3Key = "visitor-data/" + LocalDate.now() + ".json";

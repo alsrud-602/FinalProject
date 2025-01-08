@@ -101,10 +101,9 @@ FROM
 
 <!-- 유저 등급 바꾸기 -->
 <update id="updateUserStatus">
- UPDATE USERS
- SET STATUS = #{status}
- WHERE USER_ID = #{userId}
-
+    UPDATE USERS
+    SET STATUS = #{status}
+    WHERE ID = #{userId}
 </update>
 
 
@@ -337,6 +336,195 @@ WHERE COMPANY_IDX = #{companyIdx}
     WHERE SD.COMPANY_IDX = #{companyIdx}
       AND TO_CHAR(SD.CDATE, 'YYYY-MM-DD') = #{formattedDate}
     </select>
+
+
+<!-- /Admin/Managerlist 시작  -->
+
+<select id="getallcompanyinfo">
+SELECT 
+    COMPANY_IDX,
+    ID,
+    PASSWORD,
+    NAME,
+    CODE,
+    EMAIL,
+    PHONE,
+    COMPULSORY_AGREEMENT,
+    INFO_AGREEMENT,
+    MESSAGE_AGREEMENT,
+    MARKETING_AGREEMENT,
+    ALERT_AGREEMENT,
+    STATUS,
+    TO_CHAR(CDATE, 'YYYY-MM-DD') AS CDATE,
+    ENABLED,
+    ROLE,
+    SOCIAL_ID,
+    SOCIAL_TYPE
+FROM COMPANYS
+</select>
+
+<select id="getAllPopupByCompany"  resultType="map">
+ SELECT
+    C.COMPANY_IDX,
+    C.NAME AS COMPANY_NAME,
+    S.STORE_IDX,
+    S.TITLE AS STORE_TITLE,
+    S.BRAND1,
+    S.BRAND2,
+    S.AGE,
+    TO_CHAR(S.CDATE, 'YYYY-MM-DD') AS STORE_CREATION_DATE,
+    S.STATUS AS STORE_STATUS,
+    S.BAN AS STORE_BAN_STATUS
+FROM
+    COMPANYS C
+LEFT JOIN
+    STORES S ON C.COMPANY_IDX = S.COMPANY_IDX
+ORDER BY
+    C.COMPANY_IDX, S.STORE_IDX	
+</select>
+
+<select id="getPopupCountsByCompany"  resultType="map">
+SELECT
+    C.COMPANY_IDX,
+    C.NAME AS COMPANY_NAME,
+    COUNT(S.STORE_IDX) AS STORE_COUNT
+FROM
+    COMPANYS C
+LEFT JOIN
+    STORES S ON C.COMPANY_IDX = S.COMPANY_IDX
+GROUP BY
+    C.COMPANY_IDX, C.NAME
+ORDER BY
+    C.COMPANY_IDX
+</select>
+
+<!-- 컴퍼니 등급 바꾸기 -->
+<update id="UpdateCompnanyStatus">
+    UPDATE COMPANYS
+    SET STATUS = #{status}
+    WHERE ID = #{userId}
+</update>
+
+
+<!-- 모든 스토어 리스트 -->
+<select id="getTotalStore">
+SELECT
+    co.company_idx, co.id, co.password, co.name, co.code,co.email, co.phone,
+    TO_CHAR(co.cdate,'YYYY-MM-DD') AS cdate, co.enabled, co.role,co.social_id,co.social_type,
+    st.store_idx, st.company_idx,st.title,st. age,
+    st.brand1, st.brand2, st.cdate, st.status, st.ban,
+    re.request_idx, re.store_idx,re.field,
+    re.content,re.response,re.cdate, re.status AS restatus
+FROM
+    companys co join stores st on co.company_idx = st.company_idx
+                left join requests re on st.store_idx = re.store_idx
+ORDER BY co.id DESC
+OFFSET #{start} ROWS FETCH NEXT #{size} ROWS ONLY
+</select>
+
+<!-- 검색한 스토어 리스트 -->
+<select id="getSearchStoreList">
+SELECT
+    co.company_idx, co.id, co.password, co.name, co.code, co.email, co.phone,
+    TO_CHAR(co.cdate,'YYYY-MM-DD') AS cdate, co.enabled, co.role, co.social_id, co.social_type,
+    st.store_idx, st.company_idx, st.title, st.age,
+    st.brand1, st.brand2, st.cdate, st.status, st.ban
+FROM
+    companys co JOIN stores st ON co.company_idx = st.company_idx
+WHERE 1=1
+    <if test="search != null and search != ''">
+        AND st.brand1 LIKE '%' || #{search} || '%'
+    </if>
+    <if test="filter != null and filter != ''">
+        AND st.status = #{filter}
+    </if>
+</select>
+
+
+<!-- 팝업 디테일 불러오기 -->
+<select id="getCompanyPopupDetail">
+WITH RankedStores AS (
+    SELECT
+        st.store_idx AS store_idx, st.company_idx AS store_company_idx, st.title,st.age,
+        st.brand1,st.brand2,st.cdate AS store_cdate,st.status AS store_status,st.ban,
+        std.detail_idx,std.address,std.start_date,std.end_date,std.homepage,std.sns,
+        std.introduction,std.content,std.parking,std.fare,std.age_limit,std.shooting,
+        std."LIKE",std.goods,std.igdate,
+        co.company_idx AS company_company_idx,co.id AS company_id, co.password AS company_password,
+        co.name AS company_name,co.code AS company_code,co.email AS company_email,co.phone AS company_phone,
+        co.compulsory_agreement,co.info_agreement,co.message_agreement,co.marketing_agreement,
+        co.alert_agreement,co.status AS company_status,co.cdate AS company_cdate,co.enabled,
+        co.role,co.social_id,co.social_type,
+        img.is_idx,img.imagename,img.imageext,img.image_path,
+        ROW_NUMBER() OVER (PARTITION BY st.store_idx ORDER BY img.is_idx ASC) AS rn
+    FROM
+        stores_detail std
+        JOIN stores st ON std.store_idx = st.store_idx
+        JOIN companys co ON st.company_idx = co.company_idx
+        LEFT JOIN image_store img ON st.store_idx = img.store_idx
+    WHERE
+        co.company_idx = #{company_idx}
+)
+SELECT
+    *
+FROM
+    RankedStores
+WHERE
+    rn = 1
+ORDER BY
+    store_idx ASC
+</select>
+
+<!-- company 정보 불러오기 -->
+<select id="getCompanyDetail">
+SELECT
+    company_idx,id,password,name,code,email,phone,
+    compulsory_agreement,info_agreement,message_agreement,marketing_agreement,alert_agreement,
+    status,cdate, enabled,role,social_id,social_type
+FROM
+    companys
+WHERE company_idx=#{company_idx}
+</select>
+
+<!-- 카테고리 불러오기 -->
+<select id="getCategoryList">
+WITH RankedStores AS (
+    SELECT
+        c.category_idx,c.category_name,sc.category_id,
+        st.store_idx,st.company_idx,st.title,st.age,st.brand1,st.brand2,st.cdate,st.status,st.ban,
+        std.detail_idx,std.store_idx AS store_detail_idx,std.address,std.start_date,std.end_date,std.homepage,std.sns,
+        std.introduction,std.content,std.parking,std.fare,std.age_limit,std.shooting, std."LIKE",std.goods,std.igdate,
+        co.company_idx AS company_idx_co,co.id,co.password,co.name,co.code,co.email,co.phone,co.compulsory_agreement,
+        co.info_agreement,co.message_agreement,co.marketing_agreement,co.alert_agreement,co.status AS company_status,
+        co.cdate AS company_cdate,co.enabled,co.role,co.social_id,co.social_type,
+        ROW_NUMBER() OVER (PARTITION BY sc.store_idx ORDER BY st.store_idx) AS rn
+    FROM
+        stores_category sc
+    JOIN
+        category c ON sc.category_id = c.category_id
+    JOIN
+        stores st ON sc.store_idx = st.store_idx
+    JOIN
+        stores_detail std ON st.store_idx = std.store_idx
+    JOIN
+        companys co ON st.company_idx = co.company_idx
+    WHERE
+        sc.store_idx = #{storeIdx} AND co.company_idx = #{company_idx}
+)
+SELECT *
+FROM RankedStores
+WHERE rn = 1
+ORDER BY store_idx ASC
+</select>
+
+<!-- 페이징용 토탈 스토어 수 -->
+<select id="gettotalPosts">
+SELECT
+    count(*)
+FROM
+    companys co join stores st on co.company_idx = st.company_idx
+                left join requests re on st.store_idx = re.store_idx
+</select>
 
 
 </mapper>

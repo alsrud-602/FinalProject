@@ -1,8 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     
-         
- <div class="pagination">
+        
+ <div class="main-pagination">
    <c:if test="${totalPages > 0}">
     <c:if test="${currentPage > 1}">
         <a href="?page=${currentPage - 1}">이전</a>

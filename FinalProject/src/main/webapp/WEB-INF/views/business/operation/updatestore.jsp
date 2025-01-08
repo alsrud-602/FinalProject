@@ -642,6 +642,6 @@ function validateInputs(inputs) {
      
 
     </script>
-    
+  <script src="/js/authcompany.js" defer></script>     
 </body>
 </html>

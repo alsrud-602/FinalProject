@@ -158,6 +158,7 @@
  // 조건에 따라 container의 높이를 설정
  container.style.height = `\${Math.max(mainHeight, viewportHeight)}px`;
  </script>
+ <script src="/js/authcompany.js" defer></script>
 </html>
 
 
