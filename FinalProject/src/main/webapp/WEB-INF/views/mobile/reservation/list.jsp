@@ -234,9 +234,7 @@
   }
   
   
-  
-  
-  
+ 
   
   //////////////////////////
   const waitingEl = document.querySelector(".waiting");

@@ -3,15 +3,16 @@ package com.board.business.dto;
 import lombok.Data;
 
 @Data
-public class ReservationDateListDto {
+public class ReservationTimeSlotDto {
 
 	
 	private String  reservation_date; 
-	private String  rd_idx; 
+	private int  rd_idx; 
 	private String plan; 
-	private String rp_idx;
+	private int rp_idx;
 	private String time_range; 
-	private String max_number; 
+	private int max_number; 
 	private String time_slot;
+	private int store_idx;
 	
 }
