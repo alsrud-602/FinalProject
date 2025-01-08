@@ -443,40 +443,13 @@ public class BusinessController {
                model.addAttribute("error", "JWT 토큰이 없습니다.");
            }         
 
-   return mv;   
-      
-   }
-   
-   
-   @RequestMapping("/moblie")
-   public ModelAndView mobile() {      
-    int store_idx =  90;   
-    
-   ModelAndView mv = new ModelAndView();
-   StoreAddNoteDto anDTO = waitingService.getStoreAddressNote(store_idx);
-   System.out.println("!!!!!!!값 anDto"+ anDTO);
-   mv.addObject("anDTO",anDTO);
-   mv.setViewName("mobile/info");
-   return mv;   
-      
-   }   
+	return mv;	
+		
+	}
+	
+	
 
-   @RequestMapping("/moblie/reservation")
-   public ModelAndView mypage() {
-   int user_idx =    100;
-   WaitingDto wDTO =waitingService.getUserWaiting(user_idx);
-   List<WaitingDto> wList = waitingService.getUserWaitingList(user_idx);
-   
-   
-   ModelAndView mv = new ModelAndView();
-   mv.addObject("wList",wList);
-   mv.addObject("wDTO",wDTO);
-   mv.setViewName("mobile/reservation");
-   
-   return mv;   
-      
-   }
-   
+	
 
 
    

@@ -9,6 +9,9 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.internal.crt.S3CrtAsyncClient;
 
+
+
+
 @Configuration
 public class S3Config {
 
