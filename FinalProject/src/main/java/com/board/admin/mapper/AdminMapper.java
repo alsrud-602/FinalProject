@@ -1,5 +1,6 @@
 package com.board.admin.mapper;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -75,6 +76,14 @@ public interface AdminMapper {
 
 
 	int getStorePerformanceRank(@Param("companyIdx") int companyIdx, @Param("startDate") String startDate, @Param("endDate") String endDate);
+
+
+	List<HashMap<String, Object>> getPopupManagerDetail();
+
+	List<AdminVo> getPopupManagerDetailList();
+
+	int updateBanStatus(int store_idx);
+
 
 
 

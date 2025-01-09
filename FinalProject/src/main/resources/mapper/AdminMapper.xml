@@ -337,8 +337,137 @@ WHERE COMPANY_IDX = #{companyIdx}
     WHERE SD.COMPANY_IDX = #{companyIdx}
       AND TO_CHAR(SD.CDATE, 'YYYY-MM-DD') = #{formattedDate}
     </select>
+    
+   <select id="getallcompanyinfo">
+SELECT 
+    COMPANY_IDX,
+    ID,
+    PASSWORD,
+    NAME,
+    CODE,
+    EMAIL,
+    PHONE,
+    COMPULSORY_AGREEMENT,
+    INFO_AGREEMENT,
+    MESSAGE_AGREEMENT,
+    MARKETING_AGREEMENT,
+    ALERT_AGREEMENT,
+    STATUS,
+    TO_CHAR(CDATE, 'YYYY-MM-DD') AS CDATE,
+    ENABLED,
+    ROLE,
+    SOCIAL_ID,
+    SOCIAL_TYPE
+FROM COMPANYS
+</select>
+<select id="getPopupCountsByCompany"  resultType="map">
+SELECT
+    C.COMPANY_IDX,
+    C.NAME AS COMPANY_NAME,
+    COUNT(S.STORE_IDX) AS STORE_COUNT
+FROM
+    COMPANYS C
+LEFT JOIN
+    STORES S ON C.COMPANY_IDX = S.COMPANY_IDX
+GROUP BY
+    C.COMPANY_IDX, C.NAME
+ORDER BY
+    C.COMPANY_IDX
+</select>
 
 
+    <select id="getPopupManagerDetail" resultType="java.util.HashMap">
+WITH FirstImages AS (
+    SELECT 
+        STORE_IDX,
+        IMAGE_PATH,
+        ROW_NUMBER() OVER (PARTITION BY STORE_IDX ORDER BY IS_IDX ASC) AS rn
+    FROM 
+        IMAGE_STORE
+)
+SELECT 
+    S.STORE_IDX,
+    C.COMPANY_IDX,
+    C.NAME,
+    S.CDATE,
+    S.TITLE,
+    S.AGE,
+    S.BRAND1,
+    S.BRAND2,
+    S.CDATE,
+    S.STATUS,
+    S.BAN,
+    FI.IMAGE_PATH
+FROM 
+    COMPANYS C 
+LEFT JOIN 
+    STORES S ON C.COMPANY_IDX = S.COMPANY_IDX
+LEFT JOIN 
+    FirstImages FI ON S.STORE_IDX = FI.STORE_IDX AND FI.rn = 1
+LEFT JOIN 
+    STORES_DETAIL SD ON S.STORE_IDX = SD.STORE_IDX
+WHERE 
+    SYSDATE BETWEEN SD.START_DATE AND SD.END_DATE
+    AND S.BAN = 'C'
+    </select>
+    <select id="getPopupManagerDetailList">
+    WITH FirstImages AS (
+    SELECT 
+        STORE_IDX,
+        IMAGE_PATH,
+        ROW_NUMBER() OVER (PARTITION BY STORE_IDX ORDER BY IS_IDX ASC) AS rn
+    FROM 
+        IMAGE_STORE
+),
+StoreCounts AS (
+    SELECT 
+        C.COMPANY_IDX,
+        COUNT(S.STORE_IDX) AS STORE_COUNT
+    FROM 
+        COMPANYS C 
+    LEFT JOIN 
+        STORES S ON C.COMPANY_IDX = S.COMPANY_IDX
+    LEFT JOIN 
+        STORES_DETAIL SD ON S.STORE_IDX = SD.STORE_IDX
+    WHERE 
+        SYSDATE BETWEEN SD.START_DATE AND SD.END_DATE
+    GROUP BY 
+        C.COMPANY_IDX
+)
+SELECT 
+    S.STORE_IDX,
+    C.COMPANY_IDX,
+    C.NAME,
+    S.CDATE,
+    S.TITLE,
+    S.AGE,
+    S.BRAND1,
+    S.BRAND2,
+    S.CDATE,
+    S.STATUS AS STORE_STATUS,
+    C.STATUS,
+    S.BAN,
+    FI.IMAGE_PATH,
+    SC.STORE_COUNT
+FROM 
+    COMPANYS C 
+LEFT JOIN 
+    STORES S ON C.COMPANY_IDX = S.COMPANY_IDX
+LEFT JOIN 
+    FirstImages FI ON S.STORE_IDX = FI.STORE_IDX AND FI.rn = 1
+LEFT JOIN 
+    STORES_DETAIL SD ON S.STORE_IDX = SD.STORE_IDX
+LEFT JOIN 
+    StoreCounts SC ON C.COMPANY_IDX = SC.COMPANY_IDX
+WHERE 
+    SYSDATE BETWEEN SD.START_DATE AND SD.END_DATE
+    </select>
+    
+    <update id="updateBanStatus">
+    UPDATE STORES
+    SET BAN = 'C'
+    WHERE STORE_IDX = #{store_idx}
+</update>
 </mapper>
 
 

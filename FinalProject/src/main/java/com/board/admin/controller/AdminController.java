@@ -1,5 +1,6 @@
 package com.board.admin.controller;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,7 +22,6 @@ import com.board.admin.dto.AdminVo;
 import com.board.admin.mapper.AdminMapper;
 import com.board.admin.mapper.StoreMapper;
 import com.board.users.dto.User;
-import com.board.users.dto.UsersDto;
 import com.board.users.mapper.UsersMapper;
 import com.board.users.service.UserService;
 import com.board.util.JwtUtil;
@@ -369,10 +370,28 @@ public class AdminController {
         Optional<User> user=null;
         user = getJwtTokenFromCookies(request, model);
         model.addAttribute("user", user.orElse(null));
-
+        
+        List<HashMap<String, Object>> popupManagerDetail = adminMapper.getPopupManagerDetail();
+        List<AdminVo> allcompanys = adminMapper.getPopupManagerDetailList();
+        
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("/admin/manager/advertise");
+        mv.addObject("popupManagerDetail", popupManagerDetail);
+        mv.addObject("allcompanys", allcompanys);
+
+        mv.setViewName("/admin/dashboard/advertise");
         return mv;
+    }
+    @GetMapping("/updateBanStatus")
+    public String updateBanStatus(@RequestParam("store_idx") int store_idx) {
+        System.out.println("store_idx: " + store_idx); // store_idx 값 확인
+        int updatedRows = adminMapper.updateBanStatus(store_idx);
+        if (updatedRows > 0) {
+            System.out.println("업데이트 성공: " + updatedRows + "행이 변경되었습니다.");
+        } else {
+            System.out.println("업데이트 실패: 행이 변경되지 않았습니다.");
+        }
+        System.out.println("Updated Rows: " + updatedRows); // 업데이트된 행 수 확인
+        return "redirect:/Admin/Advertise"; // 업데이트 후 리다이렉트할 페이지
     }
 
     @RequestMapping("/Dashboard")

@@ -24,7 +24,7 @@ public class AdminStoreVo {
 	private String ban;
 	
 	private int user_idx;
-	private String nikname;
+	private String nickname;
 	private String id;
 	private String password;
 	private String email;

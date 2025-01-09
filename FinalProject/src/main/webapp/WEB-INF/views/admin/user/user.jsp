@@ -247,7 +247,7 @@ input[type="number"]{
           <td><input type="checkbox" id="usertable" name="usertable" class="headercheckbox" onclick='selectAll(this)'/></td>
           <td>
 	          닉네임
-	          <select id="sortSelectNikname" onchange="sortTable('nikname')">
+	          <select id="sortSelectNikname" onchange="sortTable('nickname')">
 	          <option value="return">정렬</option>
 	          <option value="asc">닉네임(↑)</option>
 	          <option value="desc">닉네임(↓)</option>
@@ -271,7 +271,7 @@ input[type="number"]{
         <c:forEach var="user" items="${allusers}">
             <tr>
              <td><input type="checkbox" id="usertable" name="usertable"  value="${user.id}" class="headercheckbox" onclick='select(this)'/></td>
-                <td>${user.nikname}</td>
+                <td>${user.nickname}</td>
                 <td>${user.id}</td>
                 <td>${user.cdate}</td>
                 <td>
@@ -482,7 +482,7 @@ function sortTable(column) {
     var rows = table.find("tbody tr").get();
 
     // 만약 'return'을 선택했다면, 정렬을 초기화하고 원래 상태로 되돌리기
-    var sortOrder = (column === "nikname") ? $("#sortSelectNikname").val() : $("#sortSelectId").val();
+    var sortOrder = (column === "nickname") ? $("#sortSelectNikname").val() : $("#sortSelectId").val();
 
     if (sortOrder === "return") {
         // 테이블의 행을 원본 순서로 되돌리기
@@ -500,7 +500,7 @@ function sortTable(column) {
     }
 
     // 선택된 컬럼에 따른 인덱스 값
-    var columnIndex = (column === "nikname") ? 1 : 2; // nikname 컬럼은 인덱스 1, id 컬럼은 인덱스 2
+    var columnIndex = (column === "nickname") ? 1 : 2; // nickname 컬럼은 인덱스 1, id 컬럼은 인덱스 2
 
     // 정렬
     rows.sort(function(a, b) {
