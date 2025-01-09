@@ -56,11 +56,13 @@
         font-size: 16px; /* 글자 크기 조정 */
         border: 2px solid #111111; /* 테두리 색상 */
         border-radius:55px;
+        padding-left: 20px; /* 왼쪽 패딩 추가 */
+        
     }
     
 	.search-input::placeholder {
     color: #B3B3B3; /* 플레이스홀더 색상 */
-    padding-left : 20px;
+
     }
 	
 
@@ -85,14 +87,16 @@
     <header>
         <div class="header">
         
-            <a href="/Users/Main"><img class="logo" src="/images/header/logo.png" alt="로고" /></a>
+            <a href="/Admin/Dashboard"><img class="logo" src="/images/header/logo.png" alt="로고" /></a>
             
             <div class="header-nav">
               <div class="search-container">
+              <form id="searchForm" action="/Admin/Search" method="GET">
                 <input type="text" class="search-input" placeholder="찾고싶은 기능을 검색하세요!">
 		            <button class="search-button" type="submit">
 		              <img class="imgsearch" src="/images/main/search.png" alt="검색">
 		        </button>
+		        </form>
 		      </div>
             </div>
 			

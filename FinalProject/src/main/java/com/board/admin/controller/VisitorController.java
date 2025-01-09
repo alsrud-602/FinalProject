@@ -28,6 +28,8 @@ import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.S3Object;
 
+
+
 @RestController
 @RequestMapping("/Stats")
 public class VisitorController {
@@ -100,17 +102,14 @@ public class VisitorController {
             dailyVisitors.put(formattedDate, visitorCount);
         }
 
-        // S3 데이터 읽기
-        String bucketName = "website-123"; // 버킷 이름
+        String bucketName = "website-123";
         String prefix = "visitor-data/"; // 폴더 프리픽스
 
-        // 객체 목록 요청
         ListObjectsV2Request listRequest = ListObjectsV2Request.builder()
                 .bucket(bucketName)
                 .prefix(prefix)
                 .build();
 
-        // 비동기 요청
         return s3AsyncClient.listObjectsV2(listRequest)
                 .thenCompose(listResponse -> {
                     // JSON 파일 필터링

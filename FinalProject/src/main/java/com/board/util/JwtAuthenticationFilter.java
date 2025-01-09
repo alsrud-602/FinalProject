@@ -128,7 +128,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				|| path.startsWith("/Users/Signup") || path.startsWith("/Users/CheckDuplication")
 				|| path.startsWith("/CompanyAuth/Signup") || path.startsWith("/CompanyAuth/SignupForm")
 				 || path.startsWith("/CompanyAuth/CheckDuplication") || path.startsWith("/Users/2fa") || path.startsWith("/WEB-INF/views/")
-				 || path.startsWith("/Users/Admin/otp") || path.startsWith("/image");
+				 || path.startsWith("/Users/Admin/otp") || path.startsWith("/image") || path.startsWith("/js") 
+				 || path.startsWith("/Mobile/Users/LoginForm") || path.startsWith("/Mobile/Users/SignupForm");
 		// System.out.println("필터 제외 여부: " + shouldExclude + ", 경로: " + path);
 		logger.debug("필터 제외 여부: {}, 경로: {}", shouldExclude, path);
 		return shouldExclude;
@@ -177,7 +178,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private void processJwtAuthentication(HttpServletRequest request, String jwt) {
 	    try {
 	        String username = jwtUtil.extractUsername(jwt);
-	        logger.debug("존맛탱: {}", username);
 	        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 	            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 	            logger.debug("연결된 사용자: {}", userDetails);
@@ -185,7 +185,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
 	                        userDetails, null, userDetails.getAuthorities());
 	                SecurityContextHolder.getContext().setAuthentication(authToken);
-	                logger.info("인증된거니: {}", username);
 	                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 	            } else {
 	                throw new SignatureException("Invalid JWT");

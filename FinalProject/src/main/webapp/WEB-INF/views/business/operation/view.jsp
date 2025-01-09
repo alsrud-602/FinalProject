@@ -753,19 +753,19 @@ margin: 30px 42px;
 			<div class="frame-496">
 				<div class="frame-490">
 					<div class="review">현재 리뷰 수</div>
-					<div class="_4">4</div>
+					<div class="_4">0</div>
 				</div>
 				<div class="frame-492">
 					<div class="total-score">평균 평점</div>
-					<div class="_4-5">4.5</div>
+					<div class="_4-5">0</div>
 				</div>
 				<div class="frame-497">
 					<div class="heart">좋아요</div>
-					<div class="_200">200</div>
+					<div class="_200">0</div>
 				</div>
 				<div class="frame-498">
 					<div class="view">조회수</div>
-					<div class="_30">30</div>
+					<div class="_30">0</div>
 				</div>
 			</div>
 		</div>
@@ -884,10 +884,8 @@ margin: 30px 42px;
 		<section class="reservation-status">
 			<div class="reservation-header">
 				<h3>현장예약대기</h3>
-				<div class="btn-flex">
 				<button class="use-btn" onclick="onSiteUse(this)" data-use="able">사용하기</button>
 				<button class="use-btn" onclick="onSiteUse(this)"  data-use="disable">사용중지</button>
-				</div>
 			</div>
          
 			<div class="warning-message">
@@ -898,11 +896,8 @@ margin: 30px 42px;
 			<div class="reservation-list">
 				<select id="status-filter" onchange="filterReservations()">
 					<option value="all">전체</option>
-					<option value="current">현재 순번</option>
-					<option value="completed">현장방문</option>
-					<option value="no-show">노쇼</option>
-					<option value="customer-request">고객 요청</option>
-					<option value="etc">기타</option>
+					<option value="현재순번">현재순번</option>
+					<option value="대기">대기</option>
 				</select>
 				<p id="waiting-count">대기 2팀</p>
 			</div>
@@ -969,9 +964,9 @@ margin: 30px 42px;
 		</section>
 
 		<div class="buttons-footer">
-			<a href="/Business/moblie">예약 일정 수정하기</a> 
+			<a href="/Mobile/Reservation/Advance">예약 일정 수정하기</a> 
 			<a id="infoUpdate" href="/Business/Operation/UpdateFormStore?store_idx=91">기본정보 수정하기</a>
-		    <a href="/Admin/Store/View">팝업 페이지 이동하기</a>
+		    <a href="/Mobile/Reservation/User/List">팝업 페이지 이동하기</a>
 			<c:if test="">
 				<button>예약 기능 사용하기</button>
 				<button>기본정보 수정하기</button>
@@ -982,11 +977,12 @@ margin: 30px 42px;
 	<%@include file="/WEB-INF/include/footer_company.jsp"%>
 
 	<script>
- 
+
 
 	
    function onSiteList() {
 		let store_idx  = document.querySelector('#reservation_storeIdx').value	
+	
 		console.log(store_idx);
 		loadUserWaitingList(store_idx)	
 		let msg = '대기기능사용'
@@ -1030,7 +1026,7 @@ margin: 30px 42px;
         data.forEach((item, index) => {
         
             tableBody.innerHTML += `
-                <tr>
+                <tr data-status="\${item.status}">
 					<td>\${item.wating_order}</td>
 					<td>\${item.name}</td>
 					<td>\${item.id}</td>
@@ -1085,8 +1081,6 @@ margin: 30px 42px;
                     <td colspan="7" style="text-align:center;"> 대기인원이 없습니다.</td>
                 </tr>
             `;   
-            
-            $('#waiting-count').html('대기 0팀'); 
         }
 
         isWaitingConfigCalled = false;
@@ -1119,27 +1113,24 @@ margin: 30px 42px;
     
     
     
-    //웹소켓 초기 설정
-      let currentCompanyIdx = null;
-      let stompClient = null;
+    
+    
+    let stompClient = null;
 	  const socket = new SockJS('/ws');  // 웹소켓 연결
 	  stompClient = Stomp.over(socket);	 		
 	  stompClient.connect({}, function(frame) {
 	      console.log('Connected: ' + frame);
 
-	      if (currentCompanyIdx) {
-	          updateCompanySubscription(currentCompanyIdx);
-	      }  
-	      
-	      stompClient.subscribe(`/topic/Waiting/\${initIdx}`, function(message) {
-	          const waitingList = JSON.parse(message.body);
+	      // 대기 리스트 실시간 업데이트
+	 stompClient.subscribe("/topic/Waiting/90", function(message) {
+	          
+		   const waitingList = JSON.parse(message.body);
 	          updateWaitingList(waitingList);
 	      });
-	      currentCompanyIdx = initIdx;
 
 	  });
 	  
-	  // 삭제 보내기 웹소켓
+	  
 	    function deleteSend(button,select,idx){
 	        const selectElement = $(button).prev('select')
 	        const hiddenInput = $(button).next('input[type="hidden"]');
@@ -1161,7 +1152,7 @@ margin: 30px 42px;
 	        $('.overlay').hide(); // overlay 숨기기	
 	    	
 	    }  
-	  //방문완료 알람보내기 웹소켓
+	  
 	    function updateSend(button){
 	        const hiddenInput = $(button).next('input[type="hidden"]');
 	        const selectedValue = '현재순번';
@@ -1184,7 +1175,6 @@ margin: 30px 42px;
 	    	
     }   
 
-	  //현장대기예약 시작 중단 웹소켓
    function onSiteUse(element){
 	let store_idx =  document.querySelector('#reservation_storeIdx').value
 	  let ableStatus = element.getAttribute('data-use'); 
@@ -1192,8 +1182,7 @@ margin: 30px 42px;
    	    		store_idx : store_idx,   
    	    		onsite_use: ableStatus  };
      if (stompClient) {
-        stompClient.send("/app/Waiting/StoreStatus", {}, JSON.stringify(storeStatus));      
-        loadUserWaitingList(store_idx)
+        stompClient.send("/app/Waiting/StoreStatus", {}, JSON.stringify(storeStatus));
      } else {
         console.error("WebSocket is not connected.");
      }  
@@ -1201,33 +1190,7 @@ margin: 30px 42px;
    	
    }
 	    	    
-	//가게별 웹소켓 경로 설정하기 웹소켓
-   function updateCompanySubscription(newCompanyIdx) {
-	   
-	   if (!stompClient || !stompClient.connected) {
-	        console.error('WebSocket이 연결되지 않았습니다.');
-	        return;
-	    }
-	  	   
-	    // 기존 구독 취소
-	    if (currentCompanyIdx) {
-	        stompClient.unsubscribe(`/topic/Waiting/\${currentCompanyIdx}`);
-	    }
-        console.log('오류시점newCompanyIdx '+newCompanyIdx)
-	    // 새로운 companyIdx에 대한 구독 설정
-	    stompClient.subscribe(`/topic/Waiting/\${newCompanyIdx}`, function(message) {
-	        const waitingList = JSON.parse(message.body);
-	        updateWaitingList(waitingList);
-	    });
-   
-	    // currentCompanyIdx 값 업데이트
-	    currentCompanyIdx = newCompanyIdx;   
 	    
-   }
-   
-   
-   
-   let initIdx = null;
 	    
 	////////////////////////////////////////////////////////
 	
@@ -1269,14 +1232,13 @@ margin: 30px 42px;
     	  const viewCount = currentSlide.getAttribute('data-hit'); 
     	  const viewLike = currentSlide.getAttribute('data-like');
     	  const rsIdx = currentSlide.getAttribute('data-rsIdx');
-    	  const rstaus = currentSlide.getAttribute('data-rstaus');
+    	  const  rstaus= currentSlide.getAttribute('data-rstaus');
     	  const link = currentSlide.getAttribute('data-link');
     	  const storeIdx = currentSlide.getAttribute('data-storeIdx'); 
     	  const wc = currentSlide.getAttribute('data-waitingCount'); 
     	  
-    	  console.log('storeIdx의값' + storeIdx)
-    	  initIdx = storeIdx;
-    	  updateCompanySubscription(storeIdx)
+    	  
+    	  
     	  document.querySelector('._4').textContent = reviewCount; 
     	  document.querySelector('._30').textContent = viewCount; 
     	  document.querySelector('._200').textContent = viewLike; 
@@ -1320,7 +1282,19 @@ margin: 30px 42px;
     
     function reservationDisplay(link, rstaus) {
         
-    	if (link === null || link === undefined || link === "") { // null과 비교할 때는 === 사용
+    console.log('rstaus'+ rstaus);
+    
+       if(rstaus ==='현장대기예약'){
+    	   document.querySelector('.real-time-updates').style.display = "block";
+    	   document.querySelector('.reservation-status').style.display = "block";
+    	   
+       }else {
+    	   document.querySelector('.real-time-updates').style.display = "none";	 	      	   
+    	   document.querySelector('.reservation-status').style.display = "none";
+       }    
+    
+    
+    	if (rstaus ==='사전예약') { // null과 비교할 때는 === 사용
             document.querySelector('#advanceReservation').style.display = "block";
         
         }else{
@@ -1413,58 +1387,8 @@ const dailyTrafficChart = new Chart(dailyCtx, {
     }
 });
 
-// 현재 시간과 요일을 기반으로 혼잡도 업데이트
-function updateTraffic() {
-    const now = new Date();
-    const currentHour = now.getHours();
-    const currentDay = now.getDay(); // 0: 일요일, 1: 월요일, ..., 6: 토요일
-
-    // 시간에 따른 혼잡도 설정
-    const hourlyTraffic = [30, 50, 70, 100, 80]; // 기본 혼잡도
-    trafficChart.data.datasets[0].data = hourlyTraffic.map((data, index) => {
-        return index === Math.floor(currentHour / 2) ? Math.min(100, data + 20) : data; // 현재 시간에 맞춰 혼잡도 증가
-    });
-    trafficChart.update();
-
-    // 요일에 따른 혼잡도 설정
-    const dailyTraffic = [20, 40, 60, 80, 100, 50, 30]; // 기본 혼잡도
-    dailyTrafficChart.data.datasets[0].data = dailyTraffic.map((data, index) => {
-        return index === currentDay ? Math.min(100, data + 20) : data; // 현재 요일에 맞춰 혼잡도 증가
-    });
-    dailyTrafficChart.update();
-}
-
-// 슬라이더 이벤트 리스너
-document.getElementById('traffic-range').addEventListener('input', function() {
-    const value = this.value;
-
-    // 슬라이더 값에 따라 혼잡도 조정
-    trafficChart.data.datasets[0].data = trafficChart.data.datasets[0].data.map(data => {
-        return Math.min(100, Math.max(0, data + (value - 50) * 0.5));
-    });
-    trafficChart.update();
-
-    dailyTrafficChart.data.datasets[0].data = dailyTrafficChart.data.datasets[0].data.map(data => {
-        return Math.min(100, Math.max(0, data + (value - 50) * 0.3));
-    });
-    dailyTrafficChart.update();
-});
-
-// 초기 혼잡도 업데이트
-updateTraffic();
-
-// 1분마다 혼잡도 업데이트
-setInterval(updateTraffic, 60000);
 
 	
-	    /*
-	    fetch('/getTrafficData')
-	    .then(response => response.json())
-	    .then(data => {
-	        trafficChart.data.datasets[0].data = data;
-	        trafficChart.update();
-	    });
-	    */
     </script>
 	<script>
     /* 날짜 선택 */

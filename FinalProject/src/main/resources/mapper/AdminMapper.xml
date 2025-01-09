@@ -101,9 +101,10 @@ FROM
 
 <!-- 유저 등급 바꾸기 -->
 <update id="updateUserStatus">
-    UPDATE USERS
-    SET STATUS = #{status}
-    WHERE ID = #{userId}
+ UPDATE USERS
+ SET STATUS = #{status}
+ WHERE USER_ID = #{userId}
+
 </update>
 
 
@@ -262,10 +263,82 @@ WHERE
 
 <!--         /Admin/Userdetail    끝      -->
 
+    <!-- 총 가입자 수 -->
+    <select id="getTotalUsers">
+        SELECT COUNT(*) FROM COMPANYS
+    </select>
 
-<!-- /Admin/Managerlist 시작  -->
+    <select id="getTotalStores">
+        SELECT COUNT(*) FROM STORES
+    </select>
 
-<select id="getallcompanyinfo">
+    <!-- 이번 달과 저번 달 가입자 수 비교 -->
+    <select id="getMonthlyStats">
+        SELECT
+            SUM(CASE WHEN TO_CHAR(CDATE, 'YYYY-MM') = TO_CHAR(SYSDATE, 'YYYY-MM') THEN 1 ELSE 0 END) AS current_month_count,
+            SUM(CASE WHEN TO_CHAR(CDATE, 'YYYY-MM') = TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYY-MM') THEN 1 ELSE 0 END) AS previous_month_count
+        FROM COMPANYS
+    </select>
+
+    
+    <!-- 진행중 팝업 수 -->
+      <select id="getPopuplistCount">
+	SELECT
+		COUNT(*)
+	FROM
+	    stores st JOIN stores_detail std ON st.store_idx = std.store_idx
+	    
+	WHERE st.ban='N' AND st.status='승인' 
+	      AND TRUNC(std.start_date) &lt;= TRUNC(SYSDATE) 
+	      AND TRUNC(std.end_date) &gt;= TRUNC(SYSDATE)
+	ORDER BY
+	    st.store_idx ASC
+  </select>
+  
+  <!-- 한달간 스토어 증가세 -->
+      <select id="getMonthlyStatsByStores">
+        SELECT
+            SUM(CASE WHEN TO_CHAR(CDATE, 'YYYY-MM') = TO_CHAR(SYSDATE, 'YYYY-MM') THEN 1 ELSE 0 END) AS current_month_count,
+            SUM(CASE WHEN TO_CHAR(CDATE, 'YYYY-MM') = TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYY-MM') THEN 1 ELSE 0 END) AS previous_month_count
+        FROM STORES
+    </select>
+    
+    <!-- 스토어상세추세 -->
+     <select id="getStorePerformanceRank">
+SELECT rank
+FROM (
+    SELECT
+        RANK() OVER (ORDER BY (COUNT(SD.STORE_IDX) * 100 + NVL(SUM(SDD."LIKE"), 0)) DESC) AS rank,
+        C.COMPANY_IDX
+    FROM COMPANYS C
+    LEFT JOIN STORES SD
+        ON C.COMPANY_IDX = SD.COMPANY_IDX
+    LEFT JOIN STORES_DETAIL SDD
+        ON SD.STORE_IDX = SDD.STORE_IDX
+    WHERE SD.CDATE BETWEEN TO_DATE(#{startDate}, 'YYYY-MM-DD') AND TO_DATE(#{endDate}, 'YYYY-MM-DD')
+    GROUP BY C.COMPANY_IDX
+) ranked_data
+WHERE COMPANY_IDX = #{companyIdx}
+    </select>
+    
+        <!-- 특정 날짜의 스토어 등록 수 가져오기 -->
+    <select id="getStoreCountForDate">
+        SELECT COUNT(*) 
+        FROM STORES SD
+        WHERE SD.COMPANY_IDX = #{companyIdx}
+          AND TO_CHAR(SD.CDATE, 'YYYY-MM-DD') = #{formattedDate}
+    </select>
+
+    <!-- 특정 날짜의 좋아요 수 가져오기 -->
+    <select id="getLikeCountForDate">
+    SELECT NVL(SUM(SDD."LIKE"), 0) AS likeCount
+    FROM STORES_DETAIL SDD
+    LEFT JOIN STORES SD ON SD.STORE_IDX = SDD.STORE_IDX
+    WHERE SD.COMPANY_IDX = #{companyIdx}
+      AND TO_CHAR(SD.CDATE, 'YYYY-MM-DD') = #{formattedDate}
+    </select>
+    
+   <select id="getallcompanyinfo">
 SELECT 
     COMPANY_IDX,
     ID,
@@ -287,27 +360,6 @@ SELECT
     SOCIAL_TYPE
 FROM COMPANYS
 </select>
-
-<select id="getAllPopupByCompany"  resultType="map">
- SELECT
-    C.COMPANY_IDX,
-    C.NAME AS COMPANY_NAME,
-    S.STORE_IDX,
-    S.TITLE AS STORE_TITLE,
-    S.BRAND1,
-    S.BRAND2,
-    S.AGE,
-    TO_CHAR(S.CDATE, 'YYYY-MM-DD') AS STORE_CREATION_DATE,
-    S.STATUS AS STORE_STATUS,
-    S.BAN AS STORE_BAN_STATUS
-FROM
-    COMPANYS C
-LEFT JOIN
-    STORES S ON C.COMPANY_IDX = S.COMPANY_IDX
-ORDER BY
-    C.COMPANY_IDX, S.STORE_IDX	
-</select>
-
 <select id="getPopupCountsByCompany"  resultType="map">
 SELECT
     C.COMPANY_IDX,
@@ -323,11 +375,98 @@ ORDER BY
     C.COMPANY_IDX
 </select>
 
-<!-- 컴퍼니 등급 바꾸기 -->
-<update id="UpdateCompnanyStatus">
-    UPDATE COMPANYS
-    SET STATUS = #{status}
-    WHERE ID = #{userId}
+
+    <select id="getPopupManagerDetail" resultType="java.util.HashMap">
+WITH FirstImages AS (
+    SELECT 
+        STORE_IDX,
+        IMAGE_PATH,
+        ROW_NUMBER() OVER (PARTITION BY STORE_IDX ORDER BY IS_IDX ASC) AS rn
+    FROM 
+        IMAGE_STORE
+)
+SELECT 
+    S.STORE_IDX,
+    C.COMPANY_IDX,
+    C.NAME,
+    S.CDATE,
+    S.TITLE,
+    S.AGE,
+    S.BRAND1,
+    S.BRAND2,
+    S.CDATE,
+    S.STATUS,
+    S.BAN,
+    FI.IMAGE_PATH
+FROM 
+    COMPANYS C 
+LEFT JOIN 
+    STORES S ON C.COMPANY_IDX = S.COMPANY_IDX
+LEFT JOIN 
+    FirstImages FI ON S.STORE_IDX = FI.STORE_IDX AND FI.rn = 1
+LEFT JOIN 
+    STORES_DETAIL SD ON S.STORE_IDX = SD.STORE_IDX
+WHERE 
+    SYSDATE BETWEEN SD.START_DATE AND SD.END_DATE
+    AND S.BAN = 'C'
+    </select>
+    <select id="getPopupManagerDetailList">
+    WITH FirstImages AS (
+    SELECT 
+        STORE_IDX,
+        IMAGE_PATH,
+        ROW_NUMBER() OVER (PARTITION BY STORE_IDX ORDER BY IS_IDX ASC) AS rn
+    FROM 
+        IMAGE_STORE
+),
+StoreCounts AS (
+    SELECT 
+        C.COMPANY_IDX,
+        COUNT(S.STORE_IDX) AS STORE_COUNT
+    FROM 
+        COMPANYS C 
+    LEFT JOIN 
+        STORES S ON C.COMPANY_IDX = S.COMPANY_IDX
+    LEFT JOIN 
+        STORES_DETAIL SD ON S.STORE_IDX = SD.STORE_IDX
+    WHERE 
+        SYSDATE BETWEEN SD.START_DATE AND SD.END_DATE
+    GROUP BY 
+        C.COMPANY_IDX
+)
+SELECT 
+    S.STORE_IDX,
+    C.COMPANY_IDX,
+    C.NAME,
+    S.CDATE,
+    S.TITLE,
+    S.AGE,
+    S.BRAND1,
+    S.BRAND2,
+    S.CDATE,
+    S.STATUS AS STORE_STATUS,
+    C.STATUS,
+    S.BAN,
+    FI.IMAGE_PATH,
+    SC.STORE_COUNT
+FROM 
+    COMPANYS C 
+LEFT JOIN 
+    STORES S ON C.COMPANY_IDX = S.COMPANY_IDX
+LEFT JOIN 
+    FirstImages FI ON S.STORE_IDX = FI.STORE_IDX AND FI.rn = 1
+LEFT JOIN 
+    STORES_DETAIL SD ON S.STORE_IDX = SD.STORE_IDX
+LEFT JOIN 
+    StoreCounts SC ON C.COMPANY_IDX = SC.COMPANY_IDX
+WHERE 
+    SYSDATE BETWEEN SD.START_DATE AND SD.END_DATE
+    </select>
+    
+    <update id="updateBanStatus">
+    UPDATE STORES
+    SET BAN = 'C'
+    WHERE STORE_IDX = #{store_idx}
 </update>
 
 

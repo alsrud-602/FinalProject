@@ -47,7 +47,7 @@ body {
     width : 1600px;
     height : 100px;
     font-size: 20px;
-    font-family: 'Pretendard';
+    font-family: 'Poppins';
     font-weight: 500;
     padding : 10px;
     background: white;
@@ -115,8 +115,7 @@ body {
 /*모달 버튼*/
 .modalbutton1{
     white:50px;
-    width:100px;
-    height: 50px;
+    height: 80px;
     font-size: 14px;
     font-family: 'Pretendard';
     margin-bottom: 10px;
@@ -126,12 +125,11 @@ body {
     padding-left: 10px;
     padding-right: 10px;
     font-weight: bold;
-     margin-left: 1150px; 
+    margin-left: 1300px;
 }
 .modalbutton2{
     white:50px;
-    width:100px;
-    height: 50px;
+    height: 80px;
     font-size: 14px;
     font-family: 'Pretendard';
     margin-bottom: 10px;
@@ -201,37 +199,17 @@ input[type="number"]{
 
 /*----------------------------------------------*/
     .search-box {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start; 
         margin-bottom: 20px;
-        font-family:'Pretendard';
     }
-
     .search-box input {
         width: 250px;
-        padding: 8px;
-        font-size: 16px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
+        display: inline-block;
     }
-
     .search-box button {
+        display: inline-block;
         margin-left: 10px;
-        padding: 8px 15px;
-        font-size: 16px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
     }
-
-  .button-search-container {
-    display: flex; 
-    align-items: center;
-    justify-content: flex-start; 
-}
+    
  /*----------------------------------------------*/   
 </style>
 </head>
@@ -252,27 +230,24 @@ input[type="number"]{
     
     <div class="button-search-container">
     <!-- 모달 버튼 -->
-    
-    <div class="search-box">
-        <input type="text" id="searchInput" placeholder="검색어 입력(닉네임,아이디,가입일)">
-    </div>
-    
     <button type="button" class="modalbutton1" data-bs-toggle="modal" data-bs-target="#exampleModal1">
         선택한 회원 <br> 팝콘 지급하기
     </button>
     <button type="button" class="modalbutton2" data-bs-toggle="modal" data-bs-target="#exampleModal2">
         선택한 회원 <br> 팝콘 <span>차감하기</span>
     </button>
-    
-   </div>
-
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="검색어 입력">
+        <button id="searchBtn" class="btn btn-primary">검색</button>
+    </div>
+</div>
       <table>
       <thead>
         <tr>
           <td><input type="checkbox" id="usertable" name="usertable" class="headercheckbox" onclick='selectAll(this)'/></td>
           <td>
 	          닉네임
-	          <select id="sortSelectNikname" onchange="sortTable('nikname')">
+	          <select id="sortSelectNikname" onchange="sortTable('nickname')">
 	          <option value="return">정렬</option>
 	          <option value="asc">닉네임(↑)</option>
 	          <option value="desc">닉네임(↓)</option>
@@ -287,16 +262,8 @@ input[type="number"]{
         </select>
           </td>
           <td>가입일</td>
-          <td>
-              상태
-              <select id="statusFilter" onchange="filterByStatus()"> 
-              <option value="all">전체</option> 
-              <option value="우수회원">우수회원</option> 
-              <option value="일반회원">일반회원</option> 
-              <option value="차단됨">차단됨</option> 
-    	      </select>
-           </td>
-             <td>상세보기</td>
+          <td>상태</td>
+          <td>상세보기</td>
         </tr>
       </thead>    
     <tbody id="userTableBody">
@@ -304,16 +271,17 @@ input[type="number"]{
         <c:forEach var="user" items="${allusers}">
             <tr>
              <td><input type="checkbox" id="usertable" name="usertable"  value="${user.id}" class="headercheckbox" onclick='select(this)'/></td>
-                <td>${user.nikname}</td>
+                <td>${user.nickname}</td>
                 <td>${user.id}</td>
                 <td>${user.cdate}</td>
                 <td>
                     <div>
-                        <select class="userSelect"  onchange="updateUserStatus(this)">
-                            <option value="우수회원" ${user.status == '우수회원' ? 'selected' : ''}>우수회원</option>
-                            <option value="일반회원" ${user.status == '일반회원' ? 'selected' : ''}>일반회원</option>
-                            <option value="차단됨" ${user.status == '차단됨' ? 'selected' : ''}>차단됨</option>
+                        <select class="userSelect">
+                            <option value="good" ${user.status == 'BEST' ? 'selected' : ''}>우수회원</option>
+                            <option value="nomal" ${user.status == 'ACTIVE' ? 'selected' : ''}>일반회원</option>
+                            <option value="bad" ${user.status == 'BLOCKED' ? 'selected' : ''}>차단됨</option>
                         </select>
+                        <button style="background: transparent; border: none;">버튼이 필요할까</button>
                     </div>
                 </td>
                 <td><a href="/Admin/Userdetail?id=${user.id}">상세보기</a></td>
@@ -343,7 +311,7 @@ input[type="number"]{
    			 	 <input type="hidden" id="content" name="content" />
    				 <input type="hidden" id="points"  name="points" />
    				 <input type="hidden" id="userIds" name="userIds" />    
-		        <button type="button" id="submitPlusPopcorn" class="insertbutton1" data-bs-dismiss="modal">지급</button>
+		        <button type="button" id="submitPlusPopcorn" class="insertbutton1" data-bs-dismiss="modal">등록</button>
 		        </form>
 		      </div>
 		    </div>
@@ -378,20 +346,7 @@ input[type="number"]{
 </div>
 </body>
 <%@include file="/WEB-INF/include/admin-footer.jsp" %>
-
 <script>
-//새로고침 (새로운 주 갱신 후 새로고침 주기)
-window.onload = function() {
-    // 세션 스토리지에서 'refreshed' 값 확인
-    if (!sessionStorage.getItem('refreshed')) {
-        // 세션 스토리지에 'refreshed' 값 저장
-        sessionStorage.setItem('refreshed', 'true');
-        window.location.reload();
-    } else {
-        // 새로고침 후 'refreshed' 값이 저장된 상태에서는 값 삭제
-        sessionStorage.removeItem('refreshed');
-    }
-};
 
 function selectAll(selectAll)  {
   const checkboxes 
@@ -401,8 +356,12 @@ function selectAll(selectAll)  {
     checkbox.checked = selectAll.checked;
   })
 }
-</script>
 
+
+
+
+
+</script>
 <script>
 $(function() {
     // 회원별 색깔
@@ -418,13 +377,13 @@ $(function() {
     });
     
     function updateBackgroundColor(selectElement, value) {
-        if (value == '우수회원') {
+        if (value == 'good') {
             selectElement.css('background-color', '#F7FF00'); // 우수회원: 노란색
             selectElement.css('color', 'black');
-        } else if (value == '일반회원') {
+        } else if (value == 'nomal') {
             selectElement.css('background-color', '#00522B'); // 일반회원: 녹색
             selectElement.css('color', 'white');
-        } else if (value == '차단됨') {
+        } else if (value == 'bad') {
             selectElement.css('background-color', '#DC3545'); // 차단됨: 빨간색
             selectElement.css('color', 'white'); // 차단됨: 빨간색
         } else {
@@ -433,150 +392,134 @@ $(function() {
     }
     
     function updateFontColor(selectElement, value) {
-        if (value == '우수회원') {
+        if (value == 'good') {
             selectElement.css('color', 'black');
-        } else if (value == '일반회원') {
+        } else if (value == 'nomal') {
             selectElement.css('color', 'white');
-        } else if (value == '차단됨') {
+        } else if (value == 'bad') {
             selectElement.css('color', 'white'); // 차단됨: 빨간색
         } else {
         }
     }
 });
+
+
+
+
 </script>
-
 <script>
-//유저 등급 업데이트 스크립트
-function updateUserStatus(selectElement) {
-    const userId = $(selectElement).closest('tr').find('input[name="usertable"]').val();
-    const status = $(selectElement).val();
-
-    fetch('/Admin/UpdateUserStatus', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userId: userId, status: status })  // userId와 status를 명시적으로 보내도록 수정
-    })
-    .then(response => response.json())
-    .then(data => {
-        alert("회원 상태가 성공적으로 업데이트되었습니다.");
-    })
-    .catch(error => {
-        console.error("회원 상태 업데이트 오류:", error);
-        alert("회원 상태 업데이트에 실패했습니다. 다시 시도해주세요.");
-    });
-}
-</script>
-
-
-<script>
-//팝콘 지급 스크립트
 $(document).ready(function() {
     // 팝콘 지급 버튼 클릭 시
     $("#submitPlusPopcorn").click(function() {
         var content = $("#contentInfo").val();  // 지급내용
         var points = $("#pointsAmount").val();  // 지급 포인트
 
-        // 선택된 사용자 배열 
+        // 선택된 사용자 IDs 배열 만들기
         var selectedUsers = [];
         $("input[name='usertable']:checked").each(function() {
-            selectedUsers.push($(this).val());  // 체크 사용자 배열에 추가
+            selectedUsers.push($(this).val());  // 체크된 사용자의 ID를 배열에 추가
         });
 
         // hidden 필드에 값 채우기
         $("#content").val(content);   // content 필드에 값 설정
         $("#points").val(points);     // points 필드에 값 설정
-        $("#userIds").val(selectedUsers.join(','));  // 선택된 사용자  콤마 구분
+        $("#userIds").val(selectedUsers.join(','));  // 선택된 사용자 IDs를 콤마로 구분하여 설정
 
         // action을 "PlusPopcorns"로 설정
         $("#popcornForm").attr('action', '/Admin/PlusPopcorns');  // action URL 설정
-        $("#popcornForm").submit();  
+
+        // 폼 제출
+        $("#popcornForm").submit();  // 폼 제출
     });
 
 });
 </script>
-
 <script>
-//팝콘 차감 스크립트
 $(document).ready(function() {
+    // 팝콘 차감 버튼 클릭 시
     $("#submitMinusPopcorn").click(function() {
-        var content = $("#contentInfo2").val();  
-        var points = $("#pointsAmount2").val(); 
+        var content = $("#contentInfo2").val();  // 차감내용
+        var points = $("#pointsAmount2").val();  // 차감 포인트
+
+        // 선택된 사용자 IDs 배열 만들기
         var selectedUsers = [];
         $("input[name='usertable']:checked").each(function() {
-            selectedUsers.push($(this).val()); 
+            selectedUsers.push($(this).val());  // 체크된 사용자의 ID를 배열에 추가
         });
-        $("#content2").val(content);   
-        $("#points2").val(points);     
-        $("#userIds2").val(selectedUsers.join(','));  
-        $("#popcornForm2").attr('action', '/Admin/MinusPopcorns');  
-        $("#popcornForm2").submit();  
+
+        // hidden 필드에 값 채우기
+        $("#content2").val(content);   // content2 필드에 값 설정
+        $("#points2").val(points);     // points2 필드에 값 설정
+        $("#userIds2").val(selectedUsers.join(','));  // 선택된 사용자 IDs를 콤마로 구분하여 설정
+
+        // action을 "MinusPopcorns"로 설정
+        $("#popcornForm2").attr('action', '/Admin/MinusPopcorns');  // action URL 설정
+
+        // 폼 제출
+        $("#popcornForm2").submit();  // 폼 제출
     });
 });
+
 </script>
 
 <script type="text/javascript">
-// 지급 성공 메세지 스크립트
     $(document).ready(function() {
-        var message = '${message}';  
+        // 서버에서 전달된 메시지를 확인
+        var message = '${message}';  // ${message}는 모델에서 전달된 메시지
+
+        // 메시지가 있을 경우 alert을 띄움
         if (message && message.trim() !== "") {
-            alert(message);  
+            alert(message);  // 메시지를 alert로 표시
         }
     });
 </script>
 
 <script>
-//정렬 스크립트
 var originalRows = [];
 
 function sortTable(column) {
     var table = $("table");
     var rows = table.find("tbody tr").get();
 
-    // 정렬 선택을 확인하고, 다른 드롭다운을 초기화
-    var sortOrder = (column === "nikname") ? $("#sortSelectNikname").val() : $("#sortSelectId").val();
-    if (column === "nikname") {
-        $("#sortSelectId").val("return"); // 아이디 정렬 초기화
-    } else if (column === "id") {
-        $("#sortSelectNikname").val("return"); // 닉네임 정렬 초기화
-    }
+    // 만약 'return'을 선택했다면, 정렬을 초기화하고 원래 상태로 되돌리기
+    var sortOrder = (column === "nickname") ? $("#sortSelectNikname").val() : $("#sortSelectId").val();
 
     if (sortOrder === "return") {
-        // 원래 상태로 되돌리기
+        // 테이블의 행을 원본 순서로 되돌리기
         if (originalRows.length > 0) {
-            $.each(originalRows, function (index, row) {
+            $.each(originalRows, function(index, row) {
                 table.children("tbody").append(row);
             });
         }
         return; // 정렬을 변경하지 않고 함수를 종료
     }
 
-    // 첫 호출 시 원본 행을 저장
+    // 첫 번째로 호출할 때 행을 원본 순서로 저장
     if (originalRows.length === 0) {
         originalRows = rows.slice(); // 원본 행을 복사
     }
 
     // 선택된 컬럼에 따른 인덱스 값
-    var columnIndex = (column === "nikname") ? 1 : 2; // 닉네임 컬럼은 인덱스 1, 아이디 컬럼은 인덱스 2
+    var columnIndex = (column === "nickname") ? 1 : 2; // nickname 컬럼은 인덱스 1, id 컬럼은 인덱스 2
 
     // 정렬
-    rows.sort(function (a, b) {
+    rows.sort(function(a, b) {
         var cellA = $(a).children("td").eq(columnIndex).text().toLowerCase();
         var cellB = $(b).children("td").eq(columnIndex).text().toLowerCase();
 
-        // 숫자 비교
+        // 숫자 부분만 추출하여 비교
         var numericA = parseInt(cellA.replace(/\D/g, ''), 10);
         var numericB = parseInt(cellB.replace(/\D/g, ''), 10);
 
         if (!isNaN(numericA) && !isNaN(numericB)) {
+            // 숫자 비교
             if (sortOrder === "asc") {
                 return numericA - numericB;
             } else if (sortOrder === "desc") {
                 return numericB - numericA;
             }
         } else {
-            // 문자열 비교
+            // 문자열 비교 (숫자가 아닌 경우)
             if (sortOrder === "asc") {
                 return cellA.localeCompare(cellB);
             } else if (sortOrder === "desc") {
@@ -587,32 +530,23 @@ function sortTable(column) {
     });
 
     // 정렬된 행을 다시 테이블에 추가
-    $.each(rows, function (index, row) {
+    $.each(rows, function(index, row) {
         table.children("tbody").append(row);
     });
 }
+
 </script>
 
-
-
 <script>
-// 검색창 스크립트
 $(document).ready(function() {
     $('#searchInput').on('input', function() {
         var searchTerm = $(this).val().toLowerCase();  // 입력된 검색어 소문자로 변환
         var rowCount = 0;  // 검색된 행 수를 카운트
         
         $('table tbody tr').each(function() {
-           
-            var rowText = $(this).clone()  
-                .find('select, option,a')  
-                .remove()  
-                .end()  
-                .text()  
-                .toLowerCase();  
-
+            var rowText = $(this).text().toLowerCase();  // 각 행의 텍스트를 소문자로 변환
             if (rowText.indexOf(searchTerm) !== -1) {
-                $(this).show();  
+                $(this).show();  // 텍스트에 검색어가 포함되면 해당 행을 표시
                 rowCount++;  // 검색된 행 수 증가
             } else {
                 $(this).hide();  // 포함되지 않으면 해당 행을 숨김
@@ -628,34 +562,6 @@ $(document).ready(function() {
         }
     });
 });
-
-</script>
-
-<script>
-//회원 상태 필터링 
-function filterByStatus() {
-    var statusFilter = $("#statusFilter").val().toLowerCase();  
-    var rowCount = 0;  // 필터링된 행 수를 카운트
-
-    // 기존 "검색 결과가 없습니다." 메시지 제거
-    $('table tbody tr:contains("검색 결과가 없습니다.")').remove();
-
-    $('table tbody tr').each(function() {
-        var userStatus = $(this).find('.userSelect').val().toLowerCase();  
-
-        if (statusFilter === "all" || userStatus.indexOf(statusFilter) !== -1) {
-            $(this).show(); 
-            rowCount++;  // 필터링된 행 수 증가
-        } else {
-            $(this).hide();  
-        }
-    });
-
-    // 필터링 결과가 없을 때 메시지 표시
-    if (rowCount === 0) {
-        $('table tbody').append('<tr><td colspan="6" style="text-align:center; font-weight:bold; ">검색 결과가 없습니다.</td></tr>');
-    }
-}
 </script>
 
 

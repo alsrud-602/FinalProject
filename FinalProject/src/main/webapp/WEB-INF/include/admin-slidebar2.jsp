@@ -35,7 +35,7 @@
 .admin {
     background: #00522B;
     padding: 20px;
-    border-radius: 15px;
+      border-radius: 70px 20px 70px 20px;
     width:180px;
     height:120px;
     text-align: center;

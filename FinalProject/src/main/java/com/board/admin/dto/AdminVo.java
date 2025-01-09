@@ -13,7 +13,7 @@ public class AdminVo {
 	
 	
 	private long user_idx;               // 사용자 고유 id 
-    private String nikname;             // 사용자 닉네임 
+    private String nickname;             // 사용자 닉네임 
     private String id;                  // 사용자 id 
     private String password;            // 사용자 비밀번호 
     private String email;               // 사용자 이메일 
@@ -34,14 +34,15 @@ public class AdminVo {
 	
 	
     // 팝콘  	
-	private int log_id; 
-	private String user_id; 
-	private String content; 
-	private int earned_points; 
-	private int spent_points; 
-	private int total_points; 
-	private String content_info; 
-	private String add_date; 
+	
+	private int log_id; // SQL에서는 LOG_ID
+	private String user_id; // SQL에서는 USER_ID
+	private String content; // SQL에서는 CONTENT
+	private int earned_points; // SQL에서는 EARNED_POINTS
+	private int spent_points; // SQL에서는 SPENT_POINTS
+	private int total_points; // SQL에서는 TOTAL_POINTS
+	private String content_info; // SQL에서는 CONTENT_INFO
+	private String add_date; // SQL에서는 ADD_DATE
 	
 	 // 출석 관련 필드
     private String attendance_status;  // 출석 상태 ('on', 'off')
@@ -62,9 +63,19 @@ public class AdminVo {
     private int LIKE;
     private int HIT;
     
+    
     //컴퍼니
     private int company_idx;
     private String code;
+    
+    private String title;
+    private String image_path;
+    private String ban;
+    private int store_count;
+    
+    
+    
+    
     
     // Getters and Setters
     public List<String> getUserIds() {
@@ -90,9 +101,10 @@ public class AdminVo {
     public void setPoints(int points) {
         this.points = points;
     }
+
+
+
     
-    public Integer getStorecount() {
-        return this.store_idx;
-    }
+    
 }
 

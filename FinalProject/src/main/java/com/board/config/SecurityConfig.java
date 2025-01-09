@@ -52,6 +52,7 @@ public class SecurityConfig {
                         .requestMatchers( "/CompanyAuth/**").permitAll()
                         .requestMatchers("/css/**", "/images/**", "/img/**", "/static/**").permitAll()
                         .requestMatchers("/oauth2/**","/error", "/Users/KakaoCallBack").permitAll()
+                        .requestMatchers("/Mobile/**").permitAll()
                         .requestMatchers("/Business").hasRole("COMPANY")
                         .requestMatchers("/Admin/**").hasRole("ADMIN")
                         .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
