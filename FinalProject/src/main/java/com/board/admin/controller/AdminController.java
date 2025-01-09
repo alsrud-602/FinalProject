@@ -1,12 +1,13 @@
 package com.board.admin.controller;
 
-import java.math.BigDecimal;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.board.admin.dto.AdminStoreDto;
 import com.board.admin.dto.AdminVo;
 import com.board.admin.mapper.AdminMapper;
 import com.board.admin.mapper.StoreMapper;
@@ -125,7 +127,6 @@ public class AdminController {
 		return mv;
 	}
 	
-	//유저관리 상세
     // 유저관리 상세
     @RequestMapping("/Userdetail")
     public String userdetail(HttpServletResponse response, Model model, @RequestParam("id") String userId) throws Exception {
@@ -326,22 +327,6 @@ public class AdminController {
 	        return "redirect:/Admin/User";  // 유저 관리 페이지로 리다이렉트
 	    }
 
-	    
-    @RequestMapping("/M1")
-    public ModelAndView M1(HttpServletResponse response, Model model) throws Exception {
-        // MFA 인증 확인
-        if (!isMfaAuthenticated(request)) {
-            response.sendRedirect("/Users/2fa"); 
-            return null; 
-        }
-        Optional<User> user=null;
-        user = getJwtTokenFromCookies(request, model);
-        model.addAttribute("user", user.orElse(null));
-
-        ModelAndView mv = new ModelAndView();
-        mv.setViewName("/admin/manager/detail");
-        return mv;
-    }
 
     // 스토어관리 - 담당자관리
     @RequestMapping("/Managerlist")
@@ -412,67 +397,114 @@ public class AdminController {
     
     
     
-    @RequestMapping("/List")
+    @RequestMapping("/Store/List")
     public ModelAndView list(
-    		@RequestParam(defaultValue = "1") int page,
-			@RequestParam(defaultValue = "10") int size,
-			@RequestParam(required = false, value = "search") String search,
-    		@RequestParam(required = false, value = "filter") String filter){
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false, value = "search") String search,
+             @RequestParam(required = false, value = "filter") String filter,
+             HttpServletResponse response, Model model) throws Exception{
+          
     	
-    	System.out.println("리스트 필터링 : "+search);
-    	System.out.println("리스트 필터링 : "+filter);
     	// MFA 인증 확인
-        //if (!isMfaAuthenticated(request)) {
-         //   response.sendRedirect("/Users/2fa");
-          //  return null; 
-       //}
-    	
+    	if (!isMfaAuthenticated(request)) {
+    		response.sendRedirect("/Users/2fa");
+    		return null; 
+    	}
     	
     	Optional<User> user=null;
     	user = getJwtTokenFromCookies(request, model);
     	model.addAttribute("user", user.orElse(null));
-
-    	//모든 스토어 입점 요청 내역
-    	List<AdminStoreDto> TotalStore = adminMapper.getTotalStore(start,size);
-    	System.out.println("모든 스토어 리스트 TotalStore : "+TotalStore);
     	
-    	ModelAndView mv= new ModelAndView();
-    	mv.addObject("totalPages", totalPages);
-    	mv.addObject("currentPage", page);
-    	mv.addObject("TotalStore", TotalStore);
-    	mv.setViewName("/admin/store/list");
-    	return mv;
-    }
+        int totalUsers = adminMapper.getTotalUsers();
+        Map<String, Integer> stats = adminMapper.getMonthlyStats();
+
+        int currentMonth = stats.getOrDefault("current_month_count", 0);
+        int previousMonth = stats.getOrDefault("previous_month_count", 0);
+        double growthRate = previousMonth == 0 ? 0 : ((double) (currentMonth - previousMonth) / previousMonth) * 100;
+
+        model.addAttribute("totalUsers", totalUsers);
+        model.addAttribute("currentMonth", currentMonth);
+        model.addAttribute("growthRate", growthRate);
+
+        int totalStores = adminMapper.getTotalStores();
+        Map<String, Integer> statsStores = adminMapper.getMonthlyStatsByStores();
+        int currentStoreMonth = stats.getOrDefault("current_month_count", 0);
+        int previousStoreMonth = stats.getOrDefault("previous_month_count", 0);
+        double growthStoreRate = previousStoreMonth == 0 ? 0 : ((double) (currentStoreMonth - previousStoreMonth) / previousStoreMonth) * 100;
+        model.addAttribute("totalStores", totalStores);
+        model.addAttribute("growthStoreRate", growthStoreRate);
+        
+        int popupListCount = adminMapper.getPopuplistCount();
+        
+        model.addAttribute("popupListCount", popupListCount);
+    	
+    	
+          System.out.println("리스트 필터링 : "+search);
+          System.out.println("리스트 필터링 : "+filter);
+          
+          
+          // 페이징용
+          int start = (page - 1) * size; 
+          int totalStorePosts = adminMapper.gettotalPosts();
+          int totalPages = (int) Math.ceil((double)totalStorePosts / size);
+          System.out.println("전체 스토어 수 totalPagePosts : " + totalStorePosts);
+          System.out.println("전체 페이지 수 totalPages : " + totalPages);
+          
+          //모든 스토어 입점 요청 내역
+          List<AdminStoreDto> TotalStore = adminMapper.getTotalStore(start,size);
+          System.out.println("모든 스토어 리스트 TotalStore : "+TotalStore);
+          
+          ModelAndView mv= new ModelAndView();
+          mv.addObject("totalPages", totalPages);
+          mv.addObject("currentPage", page);
+          mv.addObject("TotalStore", TotalStore);
+          mv.setViewName("/admin/store/list");
+          return mv;
+       }
+
+
     
     @RequestMapping("/Listpagination")
     public ModelAndView listpagination(AdminStoreDto adminStoredto,
-    		@RequestParam(defaultValue = "1") int page,
-			@RequestParam(defaultValue = "5") int size) {
-    	System.out.println("페이징값 넘어옴? : "+ adminStoredto);
+          @RequestParam(defaultValue = "1") int page,
+         @RequestParam(defaultValue = "5") int size,HttpServletResponse response, Model model) throws Exception {
     	
-    	String search = adminStoredto.getSearch();
-    	String filter = adminStoredto.getFilter();
-    	
-    	// 페이징용
-    	int start = (page - 1) * size;
-    	int totalStoreSearchPosts = adminMapper.gettotalStoreSearchPosts(search,filter);
-    	int totalStoreSearchPages = (int) Math.ceil((double)totalStoreSearchPosts / size);
-    	System.out.println("검색한 팝업 개수totalStoreSearchPosts : " + totalStoreSearchPosts);
-    	System.out.println("총 페이지 개수totalStoreSearchPages : " + totalStoreSearchPages);
-    	
-    	//검색한 스토어 리스트
-    	List<AdminStoreDto> SearchStoreList = adminMapper.getSearchStoreList(search,filter,start,size);
-    	System.out.println("검색한 리스트 : " + SearchStoreList);
-    	
-    	ModelAndView mv = new ModelAndView();
-    	mv.addObject("SearchStoreList",SearchStoreList );
-    	mv.addObject("currentPage", page);
-    	mv.addObject("totalPages", totalStoreSearchPages);
-    	mv.addObject("search", search);
-    	mv.addObject("filter", filter);
-    	mv.setViewName("/admin/store/listpagination");
-    	return mv;
+        if (!isMfaAuthenticated(request)) {
+            response.sendRedirect("/Users/2fa"); 
+            return null; 
+        }
+        
+        Optional<User> user=null;
+        user = getJwtTokenFromCookies(request, model);
+        model.addAttribute("user", user.orElse(null));
+
+       System.out.println("페이징값 넘어옴? : "+ adminStoredto);
+       
+       String search = adminStoredto.getSearch();
+       String filter = adminStoredto.getFilter();
+       
+       // 페이징용
+       int start = (page - 1) * size;
+       int totalStoreSearchPosts = adminMapper.gettotalStoreSearchPosts(search,filter);
+       int totalStoreSearchPages = (int) Math.ceil((double)totalStoreSearchPosts / size);
+       System.out.println("검색한 팝업 개수totalStoreSearchPosts : " + totalStoreSearchPosts);
+       System.out.println("총 페이지 개수totalStoreSearchPages : " + totalStoreSearchPages);
+       
+       //검색한 스토어 리스트
+       List<AdminStoreDto> SearchStoreList = adminMapper.getSearchStoreList(search,filter,start,size);
+       System.out.println("검색한 리스트 : " + SearchStoreList);
+       
+       ModelAndView mv = new ModelAndView();
+       mv.addObject("SearchStoreList",SearchStoreList );
+       mv.addObject("currentPage", page);
+       mv.addObject("totalPages", totalStoreSearchPages);
+       mv.addObject("search", search);
+       mv.addObject("filter", filter);
+       mv.setViewName("/admin/store/listpagination");
+       return mv;
     }
+
     /*============================================================*/
     
 
@@ -511,14 +543,18 @@ public class AdminController {
     @RequestMapping("/Detail")
     public ModelAndView detail(AdminStoreDto adminstoredto,
     		@RequestParam(defaultValue = "1") int page,
-			@RequestParam(defaultValue = "6") int size) {
+			@RequestParam(defaultValue = "6") int size, HttpServletResponse response, Model model) throws Exception{
     	System.out.println("adminstoredto 정보 : " + adminstoredto);
     	
-    	// MFA 인증 확인
-        //if (!isMfaAuthenticated(request)) {
-        //    response.sendRedirect("/Users/2fa");
-        //    return null; 
-       //}
+    	//MFA 인증 확인
+        if (!isMfaAuthenticated(request)) {
+            response.sendRedirect("/Users/2fa");
+            return null; 
+       }
+        Optional<User> user=null;
+        user = getJwtTokenFromCookies(request, model);
+        model.addAttribute("user", user.orElse(null));
+
         
         // 회사 정보 가져오기
         AdminStoreDto CompanyDetail = adminMapper.getCompanyDetail(adminstoredto);
@@ -527,11 +563,11 @@ public class AdminController {
    
         
         // 페이징용
-    	int start = (page - 1) * size;
-    	int StoreDetailPosts = adminMapper.getStoreDetailPosts(adminstoredto);
-    	int StoreDetailPages = (int) Math.ceil((double)StoreDetailPosts / size);
-    	System.out.println("검색한 팝업 개수StoreDetailPosts : " + StoreDetailPosts);
-    	System.out.println("총 페이지 개수StoreDetailPages : " + StoreDetailPages);
+       int start = (page - 1) * size;
+       int StoreDetailPosts = adminMapper.getStoreDetailPosts(adminstoredto);
+       int StoreDetailPages = (int) Math.ceil((double)StoreDetailPosts / size);
+       System.out.println("검색한 팝업 개수StoreDetailPosts : " + StoreDetailPosts);
+       System.out.println("총 페이지 개수StoreDetailPages : " + StoreDetailPages);
         
         
         // 팝업 정보 가져오기
@@ -539,10 +575,10 @@ public class AdminController {
         System.out.println("이미지 패스 가져오나? : " + CompanyPopupDetail);
         
         for (AdminStoreDto dto : CompanyPopupDetail) {
-		     String imagePath = dto.getImage_path().replace("\\", "/"); // 경로 수정
-		     dto.setImage_path(imagePath); // 수정된 경로 다시 설정
-		     System.out.println("수정된 이미지 패스 : " + imagePath);
-		 }
+           String imagePath = dto.getImage_path().replace("\\", "/"); // 경로 수정
+           dto.setImage_path(imagePath); // 수정된 경로 다시 설정
+           System.out.println("수정된 이미지 패스 : " + imagePath);
+       }
         
         
         // store_idx 값만 추출
@@ -580,6 +616,7 @@ public class AdminController {
         mv.setViewName("/admin/manager/detail");
         
         return mv;
+
     }
     
     

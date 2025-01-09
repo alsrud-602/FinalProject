@@ -151,7 +151,7 @@ $(function(){
 
 $(function(){
 	$('.resetbutton').on('click',function(){
-		window.location.href = "/Admin/List";
+		window.location.href = "/Admin/Store/List";
 	})
 })
 
