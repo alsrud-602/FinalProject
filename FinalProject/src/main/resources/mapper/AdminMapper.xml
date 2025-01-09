@@ -468,6 +468,226 @@ WHERE
     SET BAN = 'C'
     WHERE STORE_IDX = #{store_idx}
 </update>
+
+
+<!-- 모든 스토어 리스트 -->
+<select id="getTotalStore">
+SELECT
+    co.company_idx, co.id, co.password, co.name, co.code,co.email, co.phone,
+    TO_CHAR(co.cdate,'YYYY-MM-DD') AS cdate, co.enabled, co.role,co.social_id,co.social_type,
+    st.store_idx, st.company_idx,st.title,st. age,
+    st.brand1, st.brand2, st.cdate, st.status, st.ban,
+    re.request_idx, re.store_idx,re.field,
+    re.content,re.response,re.cdate, re.status AS restatus
+FROM
+    companys co join stores st on co.company_idx = st.company_idx
+                left join requests re on st.store_idx = re.store_idx
+ORDER BY co.id DESC
+OFFSET #{start} ROWS FETCH NEXT #{size} ROWS ONLY
+</select>
+
+<!-- 검색한 스토어 리스트 -->
+<select id="getSearchStoreList">
+SELECT
+    co.company_idx, co.id, co.password, co.name, co.code,co.email, co.phone,
+    TO_CHAR(co.cdate,'YYYY-MM-DD') AS cdate, co.enabled, co.role,co.social_id,co.social_type,
+    st.store_idx, st.company_idx,st.title,st. age,
+    st.brand1, st.brand2, st.cdate, st.status, st.ban,
+    re.request_idx, re.store_idx,re.field,
+    re.content,re.response,re.cdate, re.status AS restatus
+FROM
+    companys co join stores st on co.company_idx = st.company_idx
+                left join requests re on st.store_idx = re.store_idx
+WHERE 1=1
+    <if test="search != null and search != ''">
+        AND st.brand1 LIKE '%' || #{search} || '%'
+    </if>
+    <if test="filter != null and filter != ''">
+        AND st.status = #{filter}
+    </if>
+    <if test="filter != null and filter != ''">
+        OR re.status = #{filter}
+    </if>
+OFFSET #{start} ROWS FETCH NEXT #{size} ROWS ONLY
+</select>
+
+
+<!-- 팝업 디테일 불러오기 -->
+<select id="getCompanyPopupDetail">
+WITH RankedStores AS (
+    SELECT
+        st.store_idx AS store_idx, st.company_idx AS store_company_idx, st.title,st.age,
+        st.brand1,st.brand2,st.cdate AS store_cdate,st.status AS store_status,st.ban,
+        std.detail_idx,std.address,std.start_date,std.end_date,std.homepage,std.sns,
+        std.introduction,std.content,std.parking,std.fare,std.age_limit,std.shooting,
+        std."LIKE",std.goods,std.igdate,
+        co.company_idx AS company_company_idx,co.id AS company_id, co.password AS company_password,
+        co.name AS company_name,co.code AS company_code,co.email AS company_email,co.phone AS company_phone,
+        co.compulsory_agreement,co.info_agreement,co.message_agreement,co.marketing_agreement,
+        co.alert_agreement,co.status AS company_status,co.cdate AS company_cdate,co.enabled,
+        co.role,co.social_id,co.social_type,
+        img.is_idx,img.imagename,img.imageext,img.image_path,
+        ROW_NUMBER() OVER (PARTITION BY st.store_idx ORDER BY img.is_idx ASC) AS rn
+    FROM
+        stores_detail std
+        JOIN stores st ON std.store_idx = st.store_idx
+        JOIN companys co ON st.company_idx = co.company_idx
+        LEFT JOIN image_store img ON st.store_idx = img.store_idx
+    WHERE 
+        co.company_idx = #{company_idx}
+)
+SELECT
+    *
+FROM
+    RankedStores
+WHERE
+    rn = 1
+ORDER BY
+    store_idx ASC
+OFFSET #{start} ROWS FETCH NEXT #{size} ROWS ONLY
+
+</select>
+
+<!-- company 정보 불러오기 -->
+<select id="getCompanyDetail">
+SELECT
+    company_idx,id,password,name,code,email,phone,
+    compulsory_agreement,info_agreement,message_agreement,marketing_agreement,alert_agreement,
+    status,cdate, enabled,role,social_id,social_type
+FROM
+    companys
+WHERE company_idx=#{company_idx}
+</select>
+
+<!-- 카테고리 불러오기 -->
+<select id="getCategoryList">
+WITH RankedStores AS (
+    SELECT
+        c.category_idx,c.category_name,sc.category_id,
+        st.store_idx,st.company_idx,st.title,st.age,st.brand1,st.brand2,st.cdate,st.status,st.ban,
+        std.detail_idx,std.store_idx AS store_detail_idx,std.address,std.start_date,std.end_date,std.homepage,std.sns,
+        std.introduction,std.content,std.parking,std.fare,std.age_limit,std.shooting, std."LIKE",std.goods,std.igdate,
+        co.company_idx AS company_idx_co,co.id,co.password,co.name,co.code,co.email,co.phone,co.compulsory_agreement,
+        co.info_agreement,co.message_agreement,co.marketing_agreement,co.alert_agreement,co.status AS company_status,
+        co.cdate AS company_cdate,co.enabled,co.role,co.social_id,co.social_type,
+        ROW_NUMBER() OVER (PARTITION BY sc.store_idx ORDER BY st.store_idx) AS rn
+    FROM
+        stores_category sc
+    JOIN
+        category c ON sc.category_id = c.category_id
+    JOIN
+        stores st ON sc.store_idx = st.store_idx
+    JOIN
+        stores_detail std ON st.store_idx = std.store_idx
+    JOIN
+        companys co ON st.company_idx = co.company_idx
+    WHERE
+        sc.store_idx = #{storeIdx} AND co.company_idx = #{company_idx}
+)
+SELECT *
+FROM RankedStores
+ORDER BY store_idx ASC
+</select>
+
+<!-- 페이징용 토탈 스토어 수 -->
+<select id="gettotalPosts">
+SELECT
+    count(*)
+FROM
+    companys co join stores st on co.company_idx = st.company_idx
+                left join requests re on st.store_idx = re.store_idx
+</select>
+
+<!-- 검색한 토탈 페이지 -->
+<select id="gettotalStoreSearchPosts">
+SELECT
+    count(*)
+FROM
+    companys co join stores st on co.company_idx = st.company_idx
+                left join requests re on st.store_idx = re.store_idx
+WHERE 1=1
+    <if test="search != null and search != ''">
+        AND st.brand1 LIKE '%' || #{search} || '%'
+    </if>
+    <if test="filter != null and filter != ''">
+        AND st.status = #{filter}
+    </if>
+    <if test="filter != null and filter != ''">
+        OR re.status = #{filter}
+    </if>
+ORDER BY co.id DESC
+</select>
+
+<!-- 스토어 페이지 토탈 카운트 -->
+<select id="getStoreDetailPosts">
+WITH RankedStores AS (
+    SELECT
+        st.store_idx AS store_idx, st.company_idx AS store_company_idx, st.title, st.age,
+        st.brand1, st.brand2, st.cdate AS store_cdate, st.status AS store_status, st.ban,
+        std.detail_idx, std.address, std.start_date, std.end_date, std.homepage, std.sns,
+        std.introduction, std.content, std.parking, std.fare, std.age_limit, std.shooting,
+        std."LIKE", std.goods, std.igdate,
+        co.company_idx AS company_company_idx, co.id AS company_id, co.password AS company_password,
+        co.name AS company_name, co.code AS company_code, co.email AS company_email, co.phone AS company_phone,
+        co.compulsory_agreement, co.info_agreement, co.message_agreement, co.marketing_agreement,
+        co.alert_agreement, co.status AS company_status, co.cdate AS company_cdate, co.enabled,
+        co.role, co.social_id, co.social_type,
+        img.is_idx, img.imagename, img.imageext, img.image_path,
+        ROW_NUMBER() OVER (PARTITION BY st.store_idx ORDER BY img.is_idx ASC) AS rn
+    FROM
+        stores_detail std
+        JOIN stores st ON std.store_idx = st.store_idx
+        JOIN companys co ON st.company_idx = co.company_idx
+        LEFT JOIN image_store img ON st.store_idx = img.store_idx
+    WHERE
+        co.company_idx = #{company_idx}
+)
+SELECT
+    COUNT(*) AS store_count
+FROM
+    RankedStores
+WHERE
+    rn = 1
+</select>
+
+<!-- 서치후 팝업 정보 가져오기 -->
+<select id="getCompanyPopupSearchDetail">
+WITH RankedStores AS (
+    SELECT
+        st.store_idx AS store_idx, st.company_idx AS store_company_idx, st.title,st.age,
+        st.brand1,st.brand2,st.cdate AS store_cdate,st.status AS store_status,st.ban,
+        std.detail_idx,std.address,std.start_date,std.end_date,std.homepage,std.sns,
+        std.introduction,std.content,std.parking,std.fare,std.age_limit,std.shooting,
+        std."LIKE",std.goods,std.igdate,
+        co.company_idx AS company_company_idx,co.id AS company_id, co.password AS company_password,
+        co.name AS company_name,co.code AS company_code,co.email AS company_email,co.phone AS company_phone,
+        co.compulsory_agreement,co.info_agreement,co.message_agreement,co.marketing_agreement,
+        co.alert_agreement,co.status AS company_status,co.cdate AS company_cdate,co.enabled,
+        co.role,co.social_id,co.social_type,
+        img.is_idx,img.imagename,img.imageext,img.image_path,
+        ROW_NUMBER() OVER (PARTITION BY st.store_idx ORDER BY img.is_idx ASC) AS rn
+    FROM
+        stores_detail std
+        JOIN stores st ON std.store_idx = st.store_idx
+        JOIN companys co ON st.company_idx = co.company_idx
+        LEFT JOIN image_store img ON st.store_idx = img.store_idx
+    WHERE 1=1
+        AND co.company_idx = #{company_idx}
+        <if test="search != null and search != ''">
+        AND st.brand1 LIKE '%' || #{search} || '%'
+   		 </if>
+)
+SELECT
+    *
+FROM
+    RankedStores
+WHERE
+    rn = 1
+ORDER BY
+    store_idx ASC
+</select>
+
+
 </mapper>
 
 

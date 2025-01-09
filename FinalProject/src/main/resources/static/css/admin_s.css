@@ -103,6 +103,16 @@ border:none;
 font-size: 16px;
 padding-left: 10px;
 }
+#filter{
+width:130px;
+height: 68px;
+background: #F9FBFF;
+border-radius: 5px;
+border:none;
+font-size: 16px;
+padding-left: 10px;
+	
+}
 #box_sort{
 width:206px;
 height: 68px;

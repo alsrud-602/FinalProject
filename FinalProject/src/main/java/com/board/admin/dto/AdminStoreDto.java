@@ -71,5 +71,8 @@ public class AdminStoreDto {
     private String imagename;
     private String imageext;
     private String image_path;
+    
+    private String search;
+    private String filter;
 }
 

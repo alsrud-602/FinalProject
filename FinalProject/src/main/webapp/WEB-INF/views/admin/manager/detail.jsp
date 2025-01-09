@@ -8,6 +8,7 @@
 <link rel="icon" type="image/png" href="/img/favicon.png" />
 <link rel="stylesheet" href="/css/admin-common.css" />
 <link rel="stylesheet" href="/css/admin_s.css" />
+<link rel="stylesheet" href="/css/admin-store-detail-pagination.css" />
  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -98,7 +99,43 @@
     border-radius: 5px;
     cursor: pointer;
   }
-        
+
+  
+.upmenu_div{
+    background: white;
+    padding : 60px 40px 40px 70px;
+    font-family: 'ABeeZee';
+    border-radius: 10px;
+    
+
+}
+ 
+.upmenu input{
+    border: 3px solid black;
+    width:300px;
+    height: 40px;
+    border-radius: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 20px;
+    font-family: 'Pretendard';
+    padding-left: 10px;
+    margin-bottom: 15px; 
+}      
+.category-name {
+    display: inline; /* 인라인 요소로 설정하여 수평으로 나열 */
+    margin-right: 5px; /* 각 카테고리 간 간격 */
+} 
+.categories {
+    display: flex; /* 카테고리 이름을 수평으로 나열 */
+    flex-wrap: wrap; /* 필요 시 줄 바꿈 */
+    margin-left: 10px; /* 다른 내용과 간격 조정 */
+}
+.resetbutton{
+  padding:20px;
+  background: white;
+}
+
 </style>
 </head>
 <body>
@@ -151,66 +188,42 @@
 <div class="popupsearch" style="padding:50px; margin-top:10px; background: #40c963;">
     <h2 style="color:white;">등록한 팝업스토어</h2>
     <div class="searchform" style="display: flex; gap: 10px; flex-wrap: wrap;">
-        <input type="text" style="flex: 1; padding: 10px;">
-        <select style="padding: 10px; width: 150px;">
-            <option>category</option>
-        </select>
-        <select style="padding: 10px; width: 150px;">
-            <option>등록여부</option>
-        </select>
-        <select style="padding: 10px; width: 150px;">
-            <option>지역</option>
-        </select>
+
+        <input type="text" class="inputsearch" style="flex: 1; padding: 10px;" placeholder="팝업명을 입력하세요">
+        <input type="button" class="buttonsearch"style="flex: 0.1; padding: 10px; background:white;" value="조회">
+        <button type="reset"  class="resetbutton">※초기화</button>
     </div>
 </div>
 		
-<div class="list-container">
-  <div class="list-item">
-    <img src="/images/example/exampleimg5.png" alt="example">
-    <div class="content">
-      <span>잔망루피 대모험</span>
-      <span>Deall Jobs</span>
-      <span>좋아요 수: 500 스포츠잡화 online</span>
-    <div class="remote">Remote</div>
-    </div>
-    <div class="action">광고 등록</div>
-  </div>
+	<div class="list-container">
+	  <c:forEach var="popup" items="${CompanyPopupDetail}">
+	    <div class="list-item" data-store-idx="${popup.store_idx} " data-company-idx="${popup.company_idx}">
+	      <img src="/image/read?path=${popup.image_path}" alt="Store Image" >
+		      <div class="content">
+			    <span>${popup.brand1}</span> <!-- 브랜드 이름 -->
+			    <span>${popup.title}</span> <!-- 팝업 제목 -->
+			    
+			    <!-- 카테고리 리스트 출력 -->
+			    <div class="categories">
+			        <c:forEach var="category" items="${finalCategoryList}">
+			            <c:if test="${category.store_idx == popup.store_idx}">
+			                <span class="category-name">${category.category_name}</span> <!-- 카테고리 이름 -->
+			            </c:if>
+			        </c:forEach>
+			    </div>
+			    
+			    <div class="remote" data-store-idx="${popup.store_idx}">Remote</div> <!-- 원격 조작 관련 정보 -->
+			</div>
+	      <div class="action">광고 등록</div> <!-- 광고 등록 버튼 -->
+	    </div>
+	  </c:forEach>
+	</div>
 
-  <div class="list-item">
-    <img src="/images/example/exampleimg5.png" alt="example">
-    <div class="content">
-      <span>방방탄한 웃지맘</span>
-      <span>Deall Jobs</span>
-      <span>좋아요 수: 300 스포츠잡화 online</span>
-      <div class="remote">Remote</div>
-    </div>
-    <div class="action">광고 등록</div>
-  </div>
-
-  <div class="list-item">
-    <img src="/images/example/exampleimg5.png" alt="example">
-    <div class="content">
-      <span>잔망루피 대모험</span>
-      <span>Deall Jobs</span>
-      <span>좋아요 수: 500 스포츠잡화 online</span>
-      <div class="remote">Remote</div>
-    </div>
-    <div class="action">광고 등록</div>
-  </div>
-
-  <div class="list-item">
-    <img src="/images/example/exampleimg5.png" alt="example">
-    <div class="content">
-      <span>잔망루피 대모험</span>
-      <span>Deall Jobs</span>
-      <span>좋아요 수: 500 스포츠잡화 online</span>
-      <div class="remote">Remote</div>
-    </div>
-    <div class="action">광고 등록</div>
-  </div>
-</div>
    
    </div>	
+	<div id="pagination">
+    <%@include file="/WEB-INF/include/admin-store-detail-pagination.jsp" %>
+   </div>
 		
 		
 		
@@ -337,6 +350,7 @@ document.addEventListener('DOMContentLoaded', function() {
     fetchPerformanceData(startDate, endDate);  // 기본 데이터 요청
     fetchStorePerformanceRank(companyIdx, startDate, endDate);  // 기본 순위 요청
 });
+
 //기간 선택 이벤트
 document.getElementById('dateRange').addEventListener('change', (e) => {
     const selectedRange = e.target.value; // 선택된 기간 값
@@ -404,6 +418,22 @@ const fetchStorePerformanceRank = (companyIdx, startDate, endDate) => {
         console.error('Error fetching performance rank:', error);
     });
 };
+
+
+$(function(){
+    $('.buttonsearch').on('click', function(){
+        let company_idx = ${CompanyDetail.company_idx}; // JSP 표현식으로 company_idx를 가져옴
+        let search = $('.inputsearch').val();
+        
+        window.location.href = "/Admin/Detailpagination?company_idx=" + company_idx + "&search=" + encodeURIComponent(search);
+    });
+});
+$(function(){
+	$('.resetbutton').on('click',function(){
+		let company_idx = ${CompanyDetail.company_idx}
+		window.location.href = "/Admin/Detail?company_idx="+company_idx;
+	})
+})
 
 </script>
     <%@include file="/WEB-INF/include/admin-footer.jsp" %>
