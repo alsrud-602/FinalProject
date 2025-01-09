@@ -35,7 +35,7 @@
 .admin {
     background: #00522B;
     padding: 20px;
-    border-radius: 15px;
+      border-radius: 70px 20px 70px 20px;
     width:180px;
     height:120px;
     text-align: center;
@@ -63,8 +63,8 @@
 <footer>
 <aside class="slidebar">
     <div class="admin">
-      <p>관리자</p>
-      <p>못난이 감자빵</p>
+      <p>${user.name}</p>
+      <p>${user.nickname}</p>
     </div>
     <div class="admin-slide"><img src="/images/admin/user/admin-slidebar1.png">&nbsp;&nbsp;&nbsp;대시보드</div>
     <div class="admin-slide"><img src="/images/admin/user/admin-slidebar2.png">&nbsp;&nbsp;&nbsp;스토어 관리</div>

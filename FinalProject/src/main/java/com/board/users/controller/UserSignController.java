@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,25 +26,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.board.jwt.JwtUtil;
 import com.board.users.dto.User;
 import com.board.users.mapper.PopcornMapper;
 import com.board.users.service.UserService;
+import com.board.util.JwtUtil;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -121,19 +115,17 @@ public class UserSignController {
 	    session.removeAttribute("jwt");
 	    session.removeAttribute("accessToken");
 
-	    // JWT를 응답 헤더에 추가
 	    response.setHeader("Authorization", "Bearer " + jwt);
 
-	    // 필요한 작업 수행
 	    model.addAttribute("jwt", jwt);
 	    model.addAttribute("accessToken", accessToken);
 
-	    return "callback"; // 반환할 뷰 이름
+	    return "callback";
 	}
 	
     @GetMapping("/2fa")
     public String show2faPage() {
-        return "admin/otp";  // 2FA 입력 페이지 (JSP나 HTML을 구현)
+        return "admin/otp";  // 2FA 입력 페이지
     }
 
     @PostMapping("/Admin/otp")
@@ -152,10 +144,10 @@ public class UserSignController {
     		System.out.println("갱신정보"+ updatedAuth);
             SecurityContextHolder.getContext().setAuthentication(updatedAuth);
 
-            // 세션에서 비밀 키 제거
             session.removeAttribute("adminOtpSecretKey");
+            session.setMaxInactiveInterval(36000); // 단위는 초입니다. 1800초는 30분입니다.
             session.setAttribute("mfaAuthenticated", true);
-            return "redirect:/Admin";
+            return "redirect:/Admin/Dashboard";
         }
         return "error";
     }

@@ -231,9 +231,11 @@ function typeLoading(el) {
 </script>
     <script>
     const token = "${token}";
+    const expirationTime = Date.now() + 24 * 60 * 60 * 1000; // 24시간 후
 
     if (token) {
         localStorage.setItem('kakaoAccessToken', token);
+        localStorage.setItem('kakaoTokenExpiration', expirationTime); // localStorage에 저장
         console.log('JWT가 localStorage에 저장되었습니다:', token);
     }
 

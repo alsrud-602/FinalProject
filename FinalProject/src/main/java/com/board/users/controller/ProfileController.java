@@ -19,9 +19,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+
 import com.board.jwt.JwtUtil;
 import com.board.store.dto.StoreDetailsVo;
 import com.board.store.dto.StoresVo;
+
 import com.board.users.dto.CategoryRequest;
 import com.board.users.dto.ReservationUsersDto;
 import com.board.users.dto.User;
@@ -31,6 +33,7 @@ import com.board.users.mapper.UserCategoryMapper;
 import com.board.users.mapper.UserReservationMapper;
 import com.board.users.mapper.UsersMapper;
 import com.board.users.service.UserService;
+import com.board.util.JwtUtil;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;

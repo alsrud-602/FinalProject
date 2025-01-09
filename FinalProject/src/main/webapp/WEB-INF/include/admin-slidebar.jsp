@@ -98,8 +98,8 @@
 <footer>
 <aside class="slidebar">
     <div class="admin">
-      <p style="font-size: 26px; margin-bottom: 0px;">관리자</p>
-      <p style="font-size: 32px;">못난이 감자빵</p>
+      <p style="font-size: 26px; margin-bottom: 0px;">${user.name}</p>
+      <p style="font-size: 32px;">${user.nickname}</p>
     </div>
     
     <div class="admin-slide"><img src="/images/admin/user/admin-slidebar1.png">&nbsp;&nbsp;&nbsp;대시보드</div>

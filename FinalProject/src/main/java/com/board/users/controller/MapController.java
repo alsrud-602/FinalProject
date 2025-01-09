@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -41,7 +42,7 @@ public class MapController {
     @GetMapping("/Map/popuplist")
     @ResponseBody
     public List<Map<String, Object>> getPopupList() {
-        List<UsersDto> popupList = usersMapper.getPopuplist();
+        List<UsersDto> popupList = usersMapper.getStoresHitAtMap();
         List<Map<String, Object>> coordinatesList = new ArrayList<>();
 
         for (UsersDto popup : popupList) {
@@ -52,15 +53,14 @@ public class MapController {
                 // 데이터를 맵에 담아 리스트에 추가
                 Map<String, Object> data = new HashMap<>();
                 data.put("title", popup.getTitle());
+                data.put("hit", popup.getHit());
                 data.put("start_date", popup.getStart_date());
                 data.put("end_date", popup.getEnd_date());
                 data.put("igdate", popup.getIgdate());
                 data.put("latitude", coords[0]);
                 data.put("longitude", coords[1]);
-
-                // 추가적인 데이터 처리 (필요 시)
-                // data.put("image_path", popup.getImage_path());
-                // data.put("reviewcontent", review.getContent());
+                data.put("image_path", popup.getImage_path());
+                data.put("store_idx", popup.getStore_idx());
 
                 coordinatesList.add(data);
             } catch (IllegalArgumentException e) {
@@ -72,6 +72,14 @@ public class MapController {
         }
 
         return coordinatesList;
+    }
+
+    // 팝업스토어 리뷰 리스트
+    @GetMapping("/Map/reviewlist")
+    @ResponseBody
+    public List<String> getReviews(@RequestParam("storeIdx") int storeIdx) {
+    	System.out.println("꺄울~맞");
+        return usersMapper.getStoresReviewAtMap(storeIdx);
     }
 
 }
