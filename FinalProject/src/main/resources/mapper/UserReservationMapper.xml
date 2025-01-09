@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.board.users.mapper.UserReservationMapper">
+
+    <select id="getUserReservations" resultType="com.board.users.dto.ReservationUsersDto">
+        SELECT * FROM Reservation_Users WHERE user_idx = #{user_idx}
+        ORDER BY cdate DESC
+    </select>
+
+    <select id="getStoresForReservations" resultType="com.board.store.dto.StoresVo">
+        SELECT s.* 
+        FROM Stores s
+        JOIN Reservation_Users ru ON s.store_idx = ru.store_idx
+        WHERE ru.user_idx = #{user_idx}
+        ORDER BY ru.cdate DESC
+    </select>
+
+    <select id="getStoreDetailsForReservations" resultType="com.board.store.dto.StoreDetailsVo">
+        SELECT sd.* 
+        FROM Store_Details sd
+        JOIN Reservation_Users ru ON sd.store_idx = ru.store_idx
+        WHERE ru.user_idx = #{user_idx}
+        ORDER BY ru.cdate DESC
+    </select>
+
+    <select id="getUserByUsername" resultType="com.board.users.dto.UsersDto">
+        SELECT * FROM users WHERE name = #{username}
+    </select>
+
+</mapper>
