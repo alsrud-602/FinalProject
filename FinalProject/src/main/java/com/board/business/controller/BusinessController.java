@@ -451,14 +451,7 @@ public class BusinessController {
 		
 	}	
 
-	@RequestMapping("/mypage")
-	public ModelAndView mypage() {		
-		
-	ModelAndView mv = new ModelAndView();
-	mv.setViewName("mobile/mypage");
-	return mv;	
-		
-	}
+
 	
 
 

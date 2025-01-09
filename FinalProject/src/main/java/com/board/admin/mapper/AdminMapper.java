@@ -70,11 +70,11 @@ public interface AdminMapper {
 	List<AdminStoreDto> getTotalStore(@Param("start") int start,@Param("size") int size);
 
 	//검색한 스토어 리스트
-	List<AdminStoreDto> getSearchStoreList(@Param("search") String search, @Param("filter") String filter);
+	List<AdminStoreDto> getSearchStoreList(@Param("search") String search, @Param("filter") String filter, @Param("start") int start,@Param("size") int size);
 
 	
 	// company_idx로 팝업정보 가져오기
-	List<AdminStoreDto> getCompanyPopupDetail(AdminStoreDto adminstoredto);
+	List<AdminStoreDto> getCompanyPopupDetail(@Param("company_idx") int company_idx,  @Param("start") int start,@Param("size") int size);
 
 	// 회사 정보 가져오기
 	AdminStoreDto getCompanyDetail(AdminStoreDto adminstoredto);
@@ -84,6 +84,18 @@ public interface AdminMapper {
 
 	// 페이징용 토탈 스토어
 	int gettotalPosts();
+
+
+	// 서치용 토탈 스토어
+	int gettotalStoreSearchPosts(@Param("search") String search, @Param("filter") String filter);
+
+	//스토어 디테일 페이징 카운트
+	int getStoreDetailPosts(AdminStoreDto adminstoredto);
+
+	//서치후 팝업 정보 가져오기
+	List<AdminStoreDto> getCompanyPopupSearchDetail(@Param("company_idx") int company_idx, @Param("search") String search);
+
+	
 
 
 

@@ -97,26 +97,31 @@
        <th>상태</th>
      </tr>
      <tbody class="storelist">
-     <c:forEach var="store" items="${TotalStore}">
-	<tr>
-	  <td>${store.brand1}</td>
-	  <td><a href="/Review/Storeview">${store.title}</a></td>
-	  <td>${store.cdate}</td>
-	  <td>${store.email}</td>
-	  <td>
-	    <div class="status_green">${store.status}</div>
-		    <c:if test="${store.restatus != null}">
-		      <div class="status_purple">
-		        <c:choose>
-		          <c:when test="${store.restatus == '미완'}">담당자요청</c:when>
-		          <c:otherwise>${store.restatus}</c:otherwise>
-		        </c:choose>
-		      </div>
-		    </c:if>
-		  </td>
-		</tr>
-	</c:forEach>
-     </tbody>
+    <c:if test="${empty SearchStoreList}">
+        <tr>
+            <td colspan="5" style="text-align: center;">검색 결과가 없습니다.</td>
+        </tr>
+    </c:if>
+    <c:forEach var="store" items="${SearchStoreList}">
+        <tr>
+            <td>${store.brand1}</td>
+            <td><a href="/Review/Storeview">${store.title}</a></td>
+            <td>${store.cdate}</td>
+            <td>${store.email}</td>
+            <td>
+                <div class="status_green">${store.status}</div>
+                <c:if test="${store.restatus != null}">
+                    <div class="status_purple">
+                        <c:choose>
+                            <c:when test="${store.restatus == '미완'}">담당자요청</c:when>
+                            <c:otherwise>${store.restatus}</c:otherwise>
+                        </c:choose>
+                    </div>
+                </c:if>
+            </td>
+        </tr>
+    </c:forEach>
+</tbody>
    </table>
    <div id="pagination">
     <%@include file="/WEB-INF/include/admin-pagination.jsp" %>
@@ -136,12 +141,12 @@ $(function(){
         window.location.href = "/Admin/Listpagination?search=" + encodeURIComponent(search) + "&filter=" + encodeURIComponent(filter);
 	})
 })
-
 $(function(){
 	$('.resetbutton').on('click',function(){
 		window.location.href = "/Admin/List";
 	})
 })
+
 
 </script>
 

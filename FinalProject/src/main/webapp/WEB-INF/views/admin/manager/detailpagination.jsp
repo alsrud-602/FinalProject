@@ -9,7 +9,6 @@
 <link rel="icon" type="image/png" href="/img/favicon.png" />
 <link rel="stylesheet" href="/css/common.css" />
 <link rel="stylesheet" href="/css/admin_s.css" />
-<link rel="stylesheet" href="/css/admin-store-detail-pagination.css" />
  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     
@@ -83,7 +82,6 @@
     border-radius:25px;
     border: 1px solid green;
     cursor: pointer; /* 커서가 손가락 모양으로 변경됨 */
-    cursor: pointer; /* 커서가 손가락 모양으로 변경됨 */
   }
   
  .chart-container {
@@ -123,7 +121,7 @@
     font-family: 'Pretendard';
     padding-left: 10px;
     margin-bottom: 15px; 
-}      
+}  
 .category-name {
     display: inline; /* 인라인 요소로 설정하여 수평으로 나열 */
     margin-right: 5px; /* 각 카테고리 간 간격 */
@@ -174,42 +172,39 @@
 	</div>
 		
 <div class="popupsearch" style="padding:50px; margin-top:10px; background: #40c963;">
-    <h2 style="color:white;">등록한 팝업스토어</h2>
+    <h2 style="color:white;">등록한 팝업스토어list</h2>
     <div class="searchform" style="display: flex; gap: 10px; flex-wrap: wrap;">
         <input type="text" class="inputsearch" style="flex: 1; padding: 10px;" placeholder="팝업명을 입력하세요">
-        <input type="button" class="buttonsearch"style="flex: 0.1; padding: 10px; background:white;" value="조회">
-        <button type="reset"  class="resetbutton">※초기화</button>
+        <input type="button" class="buttonsearch" style="flex: 0.1; padding: 10px; background:white;" value="조회">
+        <button type="reset"  class="resetbutton" >※초기화</button>
     </div>
 </div>
 		
 	<div class="list-container">
 	  <c:forEach var="popup" items="${CompanyPopupDetail}">
-	    <div class="list-item" data-store-idx="${popup.store_idx} " data-company-idx="${popup.company_idx}">
+	    <div class="list-item" data-store-idx="${popup.store_idx}">
 	      <img src="/image/read?path=${popup.image_path}" alt="Store Image" >
-		      <div class="content">
-			    <span>${popup.brand1}</span> <!-- 브랜드 이름 -->
-			    <span>${popup.title}</span> <!-- 팝업 제목 -->
-			    
-			    <!-- 카테고리 리스트 출력 -->
-			    <div class="categories">
-			        <c:forEach var="category" items="${finalCategoryList}">
-			            <c:if test="${category.store_idx == popup.store_idx}">
-			                <span class="category-name">${category.category_name}</span> <!-- 카테고리 이름 -->
-			            </c:if>
-			        </c:forEach>
-			    </div>
-			    
-			    <div class="remote" data-store-idx="${popup.store_idx}">Remote</div> <!-- 원격 조작 관련 정보 -->
-			</div>
+	      <div class="content">
+		    <span>${popup.brand1}</span> <!-- 브랜드 이름 -->
+		    <span>${popup.title}</span> <!-- 팝업 제목 -->
+		    
+		    <!-- 카테고리 리스트 출력 -->
+		    <div class="categories">
+		        <c:forEach var="category" items="${finalCategoryList}">
+		            <c:if test="${category.store_idx == popup.store_idx}">
+		                <span class="category-name">${category.category_name}</span> <!-- 카테고리 이름 -->
+		            </c:if>
+		        </c:forEach>
+		    </div>
+		    
+		    <div class="remote" data-store-idx="${popup.store_idx}">Remote</div> <!-- 원격 조작 관련 정보 -->
+		</div>
 	      <div class="action">광고 등록</div> <!-- 광고 등록 버튼 -->
 	    </div>
 	  </c:forEach>
 	</div>
    
    </div>	
-	<div id="pagination">
-    <%@include file="/WEB-INF/include/admin-store-detail-pagination.jsp" %>
-   </div>
 		
 		
 		
@@ -312,10 +307,13 @@ $(function(){
 });
 $(function(){
     $('.buttonsearch').on('click', function(){
-        let company_idx = ${CompanyDetail.company_idx}; // JSP 표현식으로 company_idx를 가져옴
+        //let store_idx = $(this).data('store-idx'); // data-store-idx에서 값 가져오기
         let search = $('.inputsearch').val();
+        let filter = $('.category option:selected').val();
+        alert(search)
+        alert(filter)
+        window.location.href = "/Admin/detailpagination?search=" + encodeURIComponent(search) + "&filter=" + encodeURIComponent(filter);
         
-        window.location.href = "/Admin/Detailpagination?company_idx=" + company_idx + "&search=" + encodeURIComponent(search);
     });
 });
 $(function(){
