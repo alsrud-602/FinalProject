@@ -123,7 +123,7 @@
                
                 
                 window.open(url, "_blank");
-                window.location.href = "/Users/RouteRecommend";
+                window.location.href = "/Mobile/Users/RouteRecommend";
             } else {
                 console.log("출발지와 도착지가 제대로 설정되지 않았습니다.");
             }

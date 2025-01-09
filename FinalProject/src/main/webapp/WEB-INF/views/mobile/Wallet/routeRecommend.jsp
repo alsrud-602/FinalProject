@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="ko">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -40,9 +40,20 @@
         }
         
 		.content-text{       
-			text-align:left;
+			text-align:center;
+			margin-bottom: 20px;
+		}
+		
+		.contentTitle-text{       
+			text-align:center;
+			margin-bottom: 40px;
+			color: #00FF84;
 		}
 	
+	.button-group{
+	text-align: center;
+	
+	}
 
         /* 필터 버튼 */
         .filter-select {
@@ -108,14 +119,16 @@
         
         /* 기본 네모칸(이해 못할까봐)*/
          .default-store-name {
-            display: block;
-            padding: 10px;
-            margin: 10px 0; 
-            border: 2px dashed #00FF84; /* 기본 테두리 스타일 */
-            border-radius: 5px;
+            display:block;
+            width: 30px;
+            padding: 5px;
+            margin: 10px 45%; 
+            border-radius: 50%;
+            border: 2px solid white;
             background-color: #121212;
             color: white;
             text-align: center; /* 중앙 정렬 */
+            font-size: 16px;
         }
 
     .leftResult {
@@ -192,26 +205,80 @@ fontSize : 16px;
         }
     }
 
+
+    
+      .bottom-nav {
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        background-color: #333;
+        padding: 10px 20px;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        z-index: 999;
+        box-sizing: border-box; 
+    }
+ .bottom-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    text-align: center;
+}
+
+.bottom-nav-item .nav-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
+
+.bottom-nav-item img {
+    display: block;
+    margin-bottom: 5px; /* 이미지와 텍스트 간 간격을 조정 */
+    width: 24px; /* 이미지 크기 조정 */
+    height: auto;
+}
+
+.bottom-nav-item span {
+     font-size: 12px; /* 텍스트 크기 */
+    color: white; /* 텍스트 색상 */
+    margin-top: 4px; /* 텍스트와 이미지 간의 간격 */
+    display: block;
+    white-space: nowrap; /* 텍스트를 한 줄로 처리 */
+    text-align: center; /
+} 
+._6-11 {
+    filter: invert(1) brightness(100%) contrast(100%);
+}
+
+.nav-link.active {
+    border-radius: 50%;
+    background-color: #f0f0f0; /* 동그란 배경색 */
+    padding: 5px;
+}
     </style>
 </head>
 <body>
 
 <div class="container">
+    <h2 class="contentTitle-text">코스정하기</h2>
     <h2 class="content-text">원하는 팝업 매장 선택하기</h2>
-    
 
     <div class="button-group">
     <select class="filter-select" id="region-select">
     		<option value="">지역</option>
-    <c:forEach var="region" items="${allRegionList}">
+        <c:forEach var="region" items="${allRegionList}">
             <option value="${region.region_name}">${region.region_name}</option>
         </c:forEach>
     </select>
-
-  
-
-        <select class="filter-select" id="popup-select" style="width:320px;">
-           <option value="" >팝업</option>
+     
+        <select class="filter-select" id="popup-select" style="width:100px;">
+    <option value="" >팝업</option>
     <c:forEach var="entry" items="${storeInfoMap}">
         <c:forEach var="address" items="${entry.value.addresses}">
             <option  value="${address.address}" data-region="${address.address}" name="${entry.value.storeTitle}" 
@@ -222,10 +289,14 @@ fontSize : 16px;
     </div>
     
    
+    <div class="flex-container">
+        <div class="store-list" ></div>
+        <button type="button" class="search-btn" id="search-btn">경로 검색</button>
+    </div>
 
 
 	<!-- 숨긴상태로 위도경도 가져오는 form -->
-	<form action="/GetCoordinates" method="post" id="address-form">
+	<form action="/M.GetCoordinates" method="post" id="address-form">
     <div id="hidden-fields"></div> <!-- 숨겨진 필드 컨테이너 추가 -->
     <button type="submit" style="display:none;">검색</button>
 	</form>
@@ -234,14 +305,45 @@ fontSize : 16px;
     <div class="store-list" class="store-name" id="store-list"></div>                 <!-- 여기에 선택한거 들어옵니다! 7개까지 가능하게 해야함 -->  
 	<div class="default-store-name" id="default-store">+</div>
 	
-    <div class="flex-container">
-        <div class="store-list" ></div>
-        <button type="button" class="search-btn" id="search-btn">경로 검색</button>
-    </div>
 
 </div>
 
  
+<!-- 하단 네비게이션 바 -->
+<div class="bottom-nav">
+    <div class="bottom-nav-item">
+        <a href="/search-page" class="nav-link">
+            <img class="_6-12" src="/images/admin/store/admin-search.png" />
+            <span>검색</span>
+        </a>
+    </div>
+    <div class="bottom-nav-item">
+        <a href="/popcornfactory-page" class="nav-link">
+            <img class="_6-10" src="/images/header/popcornfactory.png" style="width:18px;"/>
+            <span>팝콘팩토리</span>
+        </a>
+    </div>
+    <div class="bottom-nav-item">
+        <a href="/home-page" class="nav-link">
+            <img class="_6-11" src="/images/icon/homepage.png" />
+            <span>홈</span>
+        </a>
+    </div>
+    <div class="bottom-nav-item">
+        <a href="/reservation-page" class="nav-link">
+            <img class="_6-11" src="/images/icon/insert.png" />
+            <span>예약 내역</span>
+        </a>
+    </div>
+    <div class="bottom-nav-item">
+        <a href="/profile-page" class="nav-link">
+            <i class="fas fa-user"></i>
+             <img class="personal-collection0" src="/images/header/personal-collection0.svg" />
+            <span>프로필</span>
+        </a>
+    </div>
+</div>
+
 
 
 
@@ -485,7 +587,12 @@ document.getElementById("region-select").addEventListener("change", function() {
     }
 });
 
-
+document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', function() {
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+    });
+});
 
 </script>
 
