@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -365,6 +366,10 @@ public class UsersController {
 		//이미지
 		List<UsersDto> PopupImgList = usersMapper.getPopupImgList(usersdto);
 		System.out.println("PopupImgList : " + PopupImgList);
+		
+		// info 메서드 내부에 추가(북마크 기능 구현 중)
+		UsersDto bookmarkStatus = usersMapper.getBookmarkStatus(usersdto.getStore_idx(), useruseridx);
+
 
 		List<String> PopImgPath = new ArrayList<>();
 		
@@ -379,6 +384,7 @@ public class UsersController {
 
 		
 		ModelAndView mv = new ModelAndView();
+		mv.addObject("bookmarkStatus", bookmarkStatus); //(북마크 기능 구현중)
 		mv.addObject("storedetail", storedetail);
 		mv.addObject("storetag", storetag);
 		mv.addObject("StoreReservation", StoreReservation);
@@ -395,6 +401,79 @@ public class UsersController {
 		mv.setViewName("users/popup/info");
 		return mv;
 	}
+	
+	//북마크 기능 구현중 {
+	@PostMapping("/toggleBookmark")
+	@ResponseBody
+	public Map<String, Object> toggleBookmark(@RequestParam("store_idx") int store_idx, HttpServletRequest request) {
+	    Map<String, Object> response = new HashMap<>();
+	    
+	    // 유저 번호 가져오기
+	    Cookie[] cookies = request.getCookies();
+	    String jwtToken = null;
+	    boolean isKakaoUser = false;
+
+	    if (cookies != null) {
+	        for (int i = cookies.length - 1; i >= 0; i--) {
+	            Cookie cookie = cookies[i];
+	            if ("userJwt".equals(cookie.getName()) || "kakaoAccessToken".equals(cookie.getName())) {
+	                jwtToken = cookie.getValue();
+	                if ("kakaoAccessToken".equals(cookie.getName())) {
+	                    isKakaoUser = true;
+	                }
+	                break;
+	            }
+	        }
+	    }
+
+	    String username = null;
+	    Long useruseridx = null;
+
+	    if (jwtToken != null) {
+	        username = jwtUtil.extractUsername(jwtToken);
+
+	        if (isKakaoUser) {
+	            Optional<User> kakaouser = userService.findBySocialId(username);
+	            if (kakaouser.isPresent()) {
+	                useruseridx = kakaouser.get().getUserIdx();
+	            }
+	        } else {
+	            Optional<User> user = userService.getUserByUsername(username);
+	            if (user.isPresent()) {
+	                useruseridx = user.get().getUserIdx();
+	            }
+	        }
+	    }
+
+	    try {
+	        if (useruseridx != null) {
+	            UsersDto bookmarkStatus = usersMapper.getBookmarkStatus(store_idx, useruseridx);
+	            
+	            if (bookmarkStatus == null) {
+	                // 북마크가 없으면 추가
+	                usersMapper.insertBookmark(store_idx, useruseridx);
+	                response.put("status", "added");
+	            } else {
+	                // 북마크가 있으면 삭제
+	                usersMapper.deleteBookmark(store_idx, useruseridx);
+	                response.put("status", "removed");
+	            }
+	            response.put("success", true);
+	        } else {
+	            response.put("success", false);
+	            response.put("message", "User not logged in");
+	        }
+	    } catch (Exception e) {
+	        response.put("success", false);
+	        response.put("message", "An error occurred: " + e.getMessage());
+	        // 로그에 에러 기록
+	        e.printStackTrace();
+	    }
+	    
+	    return response;
+	}
+
+	//여기까지 북마크 기능 구현중 }
 	
 	// 리뷰 상세 페이지 데이터(AJAX)
 	@RequestMapping("/ReviewDetail")

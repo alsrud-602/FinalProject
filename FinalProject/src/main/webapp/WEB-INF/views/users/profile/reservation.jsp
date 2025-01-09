@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,13 +10,12 @@
 <link rel="icon" type="image/png" href="/img/favicon.png" />
 <link rel="stylesheet" href="/css/common.css" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<style>
 
+<style>
 main {
   background-color:#121212;
-  padding-bottom:400px;
+  padding-bottom:600px;
 }
-
 
 .inner {
   margin:0 auto;
@@ -50,7 +51,6 @@ main {
 .sidebar a {
   display:block;
 }
-
 
 .pagetitle {
   color:white;
@@ -125,99 +125,67 @@ main {
   text-align:left;
   gap:12px;
 }
-
 </style>
 </head>
 <body>
-	<%@include file="/WEB-INF/include/header.jsp" %>
-  <main>
-  <div class="inner">
-   <div class="container">
-	<h2 class="pagetitle">예약 내역</h2>
-	<table class="reserve-table">
-	 <thead>
-	  <tr>
-	   <th>예약일자</th>
-	   <th>팝업정보</th>
-	   <th>예약정보</th>
-	   <th>상태</th>
-	  </tr>
-	 </thead>
-	 <tbody>
-	  <tr>
-	   <td>2024.12.12</td>
-	   <td><img src="/images/profile/post.png">
-	    <div class="span-flex">
-	     <span>2024 춘배 팝업스토어</span>
-	     <span>2024.12.12 ~ 2024.12.24</span>
-	     <span>연세대학교 대강당</span>
-	    </div>
-	   </td>
-	   <td>
-	    <div class="span-flex2">
-	     <span>방문일&nbsp;&nbsp;2024.12.18</span>
-	     <span>매수&nbsp;&nbsp;1매</span>
-	     <span>취소가능&nbsp;&nbsp;2024.12.17까지</span>
-	    </div>
-	   </td>
-	   <td><span>예약완료</span></td>
-	  </tr>
-	  <tr>
-	   <td>2024.12.12</td>
-	   <td><img src="/images/profile/post.png">
-	    <div class="span-flex">
-	     <span>2024 춘배 팝업스토어</span>
-	     <span>2024.12.12 ~ 2024.12.24</span>
-	     <span>연세대학교 대강당</span>
-	    </div>
-	   </td>
-	   <td>
-	    <div class="span-flex2">
-	     <span>방문일&nbsp;&nbsp;2024.12.18</span>
-	     <span>매수&nbsp;&nbsp;1매</span>
-	     <span>취소가능&nbsp;&nbsp;2024.12.17까지</span>
-	    </div>
-	   </td>
-	   <td><span>예약완료</span></td>
-	  </tr>
-	  <tr>
-	   <td>2024.12.12</td>
-	   <td><img src="/images/profile/post.png">
-	    <div class="span-flex">
-	     <span>2024 춘배 팝업스토어</span>
-	     <span>2024.12.12 ~ 2024.12.24</span>
-	     <span>연세대학교 대강당</span>
-	    </div>
-	   </td>
-	   <td>
-	    <div class="span-flex2">
-	     <span>방문일&nbsp;&nbsp;2024.12.18</span>
-	     <span>매수&nbsp;&nbsp;1매</span>
-	     <span>취소가능&nbsp;&nbsp;2024.12.17까지</span>
-	    </div>
-	   </td>
-	   <td><span>예약완료</span></td>
-	  </tr>
-	 </tbody>
-	</table>
-   </div>
-   <aside>
-	 <div class="sidebar">
-	  <table>
-	   <tbody>
-	    <tr><td><a href="/Users/Profile/Home">내 정보</a></td></tr>
-	    <tr><td><a href="/Users/Profile/Reservation">예약내역</a></td></tr>
-	    <tr><td><a href="/Users/Profile/Bookmark">관심팝업</a></td></tr>
-	    <tr><td><a href="">지갑</a></td></tr>
-	    <tr><td><a href="/Users/Profile/Suggestion">추천스토어</a></td></tr>
-	    <tr><td><a href="/Users/Profile/Myreview">내가 쓴 리뷰</a></td></tr>
-	   </tbody>
-	  </table>
-	 </div>
-   </aside>
-  </div>
-  </main>	
- <%@include file="/WEB-INF/include/footer.jsp" %>
- <script src="/js/authuser.js" defer></script> 
+    <%@include file="/WEB-INF/include/header.jsp" %>
+    <main>
+        <div class="inner">
+            <div class="container">
+                <h2 class="pagetitle">예약 내역</h2>
+                <table class="reserve-table">
+                    <thead>
+                        <tr>
+                            <th>예약일자</th>
+                            <th>팝업정보</th>
+                            <th>예약정보</th>
+                            <th>상태</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach var="reservation" items="${reservations}" varStatus="status">
+                            <tr>
+                                <td><fmt:formatDate value="${reservation.cdate}" pattern="yyyy.MM.dd"/></td>
+                                <td>
+                                    <img src="${storeDetails[status.index].image_path}" alt="팝업 이미지" onerror="this.src='/images/profile/default.png';">
+                                    <div class="span-flex">
+                                        <span>${stores[status.index].title}</span>
+                                        <span><fmt:formatDate value="${storeDetails[status.index].start_date}" pattern="yyyy.MM.dd"/> ~ <fmt:formatDate value="${storeDetails[status.index].end_date}" pattern="yyyy.MM.dd"/></span>
+                                        <span>${storeDetails[status.index].address}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="span-flex2">
+                                        <span>방문일&nbsp;&nbsp;<fmt:formatDate value="${reservation.cdate}" pattern="yyyy.MM.dd"/></span>
+                                        <span>매수&nbsp;&nbsp;${reservation.reservation_number}</span>
+                                        <span>취소가능&nbsp;&nbsp;<fmt:formatDate value="${reservation.cdate}" pattern="yyyy.MM.dd" var="cancelDate"/>
+                                        <c:set var="cancelDate" value="${cancelDate.time - 86400000}"/>
+                                        <fmt:formatDate value="${cancelDate}" pattern="yyyy.MM.dd"/>까지</span>
+                                    </div>
+                                </td>
+                                <td><span>${reservation.status}</span></td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+            </div>
+            <aside>
+                <div class="sidebar">
+                    <table>
+                        <tbody>
+                            <tr><td><a href="/Users/Profile/Home">내 정보</a></td></tr>
+                            <tr><td><a href="/Users/Profile/Reservation">예약내역</a></td></tr>
+                            <tr><td><a href="/Users/Profile/Bookmark">관심팝업</a></td></tr>
+                            <tr><td><a href="">지갑</a></td></tr>
+                            <tr><td><a href="/Users/Profile/Suggestion">추천스토어</a></td></tr>
+                            <tr><td><a href="/Users/Profile/Myreview">내가 쓴 리뷰</a></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </aside>
+        </div>
+    </main>    
+    <%@include file="/WEB-INF/include/footer.jsp" %>
+    <script src="/js/authuser.js" defer></script> 
 </body>
 </html>

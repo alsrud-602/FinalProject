@@ -1,5 +1,6 @@
 package com.board.users.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,11 +8,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.board.users.dto.User;
+import com.board.users.mapper.UserCategoryMapper;
 import com.board.users.repo.UserRepository;
 
 @Service
 public class UserService {
-
+	
+	@Autowired
+    private UserCategoryMapper userCategoryMapper;
+	
     @Autowired
     private UserRepository userRepository;
 
@@ -64,4 +69,8 @@ public class UserService {
 	public Optional<User> getUserByUsername(String username) {
         return userRepository.findById(username);
 	}
+	
+	public List<String> getCategoryNamesByUserId(Long userIdx) {
+        return userCategoryMapper.getCategoryNamesByUserId(userIdx);
+    }
 }

@@ -600,6 +600,43 @@ JOIN (
 	    AND user_idx   = #{useridx}
 	    AND store_idx  = #{storeidx}
  </delete>
+ 
+ 
+ <!-- 여기부터 북마크 기능 구현 중 -->
+<!-- 북마크 상태 확인 -->
+<select id="getBookmarkStatus" resultType="com.board.users.dto.UsersDto">
+    SELECT * FROM (
+        SELECT * FROM BOOKMARKS 
+        WHERE STORE_IDX = #{store_idx} AND USER_IDX = #{user_idx}
+        ORDER BY STORE_IDX 
+    )
+    WHERE ROWNUM = 1
+</select>
+
+
+<!-- 북마크 추가 -->
+<insert id="insertBookmark" parameterType="map">
+    INSERT INTO BOOKMARKS (USER_IDX, STORE_IDX) 
+    VALUES (#{user_idx}, #{store_idx})
+</insert>
+
+<!-- 북마크 삭제 -->
+<delete id="deleteBookmark" parameterType="map">
+    DELETE FROM BOOKMARKS 
+    WHERE STORE_IDX = #{store_idx} AND USER_IDX = #{user_idx}
+</delete>
+
+<!-- 사용자 북마크 조회 -->
+<select id="getUserBookmarks" resultType="com.board.users.dto.UsersDto">
+SELECT b.*, s.title, sd.start_date AS startDate, sd.end_date AS endDate 
+FROM BOOKMARKS b 
+JOIN STORES s ON b.STORE_IDX = s.store_idx 
+JOIN STORES_DETAIL sd ON s.store_idx = sd.store_idx 
+WHERE b.USER_IDX = #{user_idx}
+</select>
+
+ <!-- 여기까지 북마크 기능 구현 중 -->
+ 
 
 
 </mapper>

@@ -1,5 +1,6 @@
 package com.board.users.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,11 +20,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.board.jwt.JwtUtil;
+import com.board.store.dto.StoreDetailsVo;
+import com.board.store.dto.StoresVo;
 import com.board.users.dto.CategoryRequest;
+import com.board.users.dto.ReservationUsersDto;
 import com.board.users.dto.User;
 import com.board.users.dto.UserCategory;
 import com.board.users.dto.UsersDto;
 import com.board.users.mapper.UserCategoryMapper;
+import com.board.users.mapper.UserReservationMapper;
 import com.board.users.mapper.UsersMapper;
 import com.board.users.service.UserService;
 
@@ -47,6 +52,9 @@ public class ProfileController {
 	
 	@Autowired
 	private UserCategoryMapper userCategoryMapper;
+	
+	@Autowired
+    private UserReservationMapper userReservationMapper;
 
 	
 	// http://localhost:9090
@@ -224,7 +232,7 @@ public class ProfileController {
         return mv;
     }
     
-
+/* 북마크 기존 로직
     @RequestMapping("Bookmark")
     public ModelAndView bookmark(HttpServletRequest request, Model model) {
         Cookie[] cookies = request.getCookies();
@@ -268,6 +276,56 @@ public class ProfileController {
         mv.setViewName("users/profile/bookmark");
         return mv;
     }
+    여기까지 북마크 기존 로직*/
+    
+    @RequestMapping("Bookmark")
+    public ModelAndView bookmark(HttpServletRequest request, Model model) {
+        Cookie[] cookies = request.getCookies();
+        String jwtToken = null;
+        boolean isKakaoUser = false;
+
+        if (cookies != null) {
+            for (int i = cookies.length - 1; i >= 0; i--) {
+                Cookie cookie = cookies[i];
+                if ("userJwt".equals(cookie.getName()) || "kakaoAccessToken".equals(cookie.getName())) {
+                    jwtToken = cookie.getValue();
+                    if ("kakaoAccessToken".equals(cookie.getName())) {
+                        isKakaoUser = true;
+                    }
+                    break; 
+                }
+            }
+        }
+
+        List<UsersDto> bookmarks = new ArrayList<>(); // 북마크 리스트 초기화
+
+        if (jwtToken != null) {
+            String username = jwtUtil.extractUsername(jwtToken);
+            
+            Long useruseridx = null;
+            if (isKakaoUser) {
+                Optional<User> kakaouser = userService.findBySocialId(username);
+                useruseridx = kakaouser.map(User::getUserIdx).orElse(null);
+            } else {
+                Optional<User> user = userService.getUserByUsername(username);
+                useruseridx = user.map(User::getUserIdx).orElse(null);
+            }
+
+            // 사용자 북마크 조회
+            if (useruseridx != null) {
+                bookmarks = usersMapper.getUserBookmarks(useruseridx); // 사용자 북마크 가져오기
+            }
+            
+            model.addAttribute("bookmarks", bookmarks); // 모델에 북마크 추가
+        } else {
+            model.addAttribute("error", "JWT 토큰이 없습니다.");
+        }
+
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("users/profile/bookmark");
+        return mv;
+    }
+
   
     @RequestMapping("Myreview")
     public ModelAndView myreview(HttpServletRequest request, Model model) {
@@ -313,7 +371,7 @@ public class ProfileController {
         mv.setViewName("users/profile/myreview");
         return mv;
     }
-
+/*
     @RequestMapping("Reservation")
     public ModelAndView reservation(HttpServletRequest request, Model model) {
         Cookie[] cookies = request.getCookies();
@@ -357,7 +415,54 @@ public class ProfileController {
         mv.setViewName("users/profile/reservation");
         return mv;
     }
+*/
+    
+    @RequestMapping("Reservation")
+    public ModelAndView reservation(HttpServletRequest request, Model model) {
+        Cookie[] cookies = request.getCookies();
+        String jwtToken = null;
 
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("userJwt".equals(cookie.getName()) || "kakaoAccessToken".equals(cookie.getName())) {
+                    jwtToken = cookie.getValue();
+                    System.out.println("토큰: " + jwtToken);
+                    break;
+                }
+            }
+        }
+
+        if (jwtToken != null) {
+            String username = jwtUtil.extractUsername(jwtToken);
+            System.out.println("사용자 정보: " + username);
+
+            UsersDto user = userReservationMapper.getUserByUsername(username);
+            
+            if (user != null) {
+                int user_idx = user.getUser_idx();
+                List<ReservationUsersDto> reservations = userReservationMapper.getUserReservations(user_idx);
+                List<StoresVo> stores = userReservationMapper.getStoresForReservations(user_idx);
+                List<StoreDetailsVo> storeDetails = userReservationMapper.getStoreDetailsForReservations(user_idx);
+                
+                model.addAttribute("reservations", reservations);
+                model.addAttribute("stores", stores);
+                model.addAttribute("storeDetails", storeDetails);
+                model.addAttribute("user", user);
+            } else {
+                model.addAttribute("error", "사용자를 찾을 수 없습니다.");
+            }
+        } else {
+            model.addAttribute("error", "JWT 토큰이 없습니다.");
+        }
+
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("users/profile/reservation");
+        return mv;
+    }
+
+
+    
+/* 추천스토어 기존 로직 
     @RequestMapping("Suggestion")
     public ModelAndView suggestion(HttpServletRequest request, Model model) {
         Cookie[] cookies = request.getCookies();
@@ -401,7 +506,68 @@ public class ProfileController {
         mv.setViewName("users/profile/suggestion");
         return mv;
     }
+    */
     
+    @RequestMapping("Suggestion")
+    public ModelAndView suggestion(HttpServletRequest request, Model model) {
+        Cookie[] cookies = request.getCookies();
+        String jwtToken = null;
+        boolean isKakaoUser = false;  // 카카오 사용자 여부를 판단하는 변수
+
+        if (cookies != null) {
+            for (int i = cookies.length - 1; i >= 0; i--) {
+                Cookie cookie = cookies[i];
+                if ("userJwt".equals(cookie.getName()) || "kakaoAccessToken".equals(cookie.getName())) {
+                    jwtToken = cookie.getValue();
+                    if ("kakaoAccessToken".equals(cookie.getName())) {
+                        isKakaoUser = true;  // kakaoAccessToken 쿠키가 있으면 카카오 로그인 사용자로 판단
+                    }
+                    System.out.println("토큰: " + jwtToken);
+                    break; 
+                }
+            }
+        }
+
+        if (jwtToken != null) {
+            String username = jwtUtil.extractUsername(jwtToken);
+            System.out.println("사용자 정보1: " + username);
+
+            Optional<User> userOptional;
+
+            if (isKakaoUser) {
+                // 카카오 로그인 사용자라면 소셜 ID로 사용자 조회
+                userOptional = userService.findBySocialId(username);
+                System.out.println("카카오 사용자 정보: " + userOptional);
+            } else {
+                // 일반 사용자라면 기존 방식으로 사용자 조회
+                userOptional = userService.getUserByUsername(username);
+                System.out.println("사용자 정보: " + userOptional);
+            }
+
+            User user = userOptional.orElse(null);  // 사용자가 없을 경우 null 반환
+            model.addAttribute("user", user);
+
+            if (user != null) {
+                Long userIdx = user.getUserIdx();  // userIdx를 Long 타입으로 가져옴
+                model.addAttribute("userIdx", userIdx);  // 모델에 userIdx 추가
+
+                // 사용자 카테고리 이름 가져오기
+                List<String> categoryNames = userService.getCategoryNamesByUserId(userIdx);
+                model.addAttribute("categoryNames", categoryNames); // 모델에 카테고리 이름 추가
+            } else {
+                model.addAttribute("error", "사용자를 찾을 수 없습니다.");
+            }
+        } else {
+            model.addAttribute("error", "JWT 토큰이 없습니다.");
+        }
+
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("users/profile/suggestion");
+        return mv;
+    }
+
+
+
     @GetMapping("/GetCategories")
     @ResponseBody
     public List<Integer> getCategories(@RequestParam int userIdx) {

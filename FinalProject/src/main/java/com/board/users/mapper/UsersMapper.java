@@ -133,8 +133,16 @@ public interface UsersMapper {
 
 	//리뷰 삭제
 	int deleteReview(@Param("storeidx") int storeidx,@Param("useridx") int useridx,@Param("review_idx") int review_idx);
+	
+	//북마크 기능 구현 중
+	UsersDto getBookmarkStatus(@Param("store_idx") int store_idx, @Param("user_idx") Long user_idx);
+	void insertBookmark(@Param("store_idx") int store_idx, @Param("user_idx") Long user_idx);
+	void deleteBookmark(@Param("store_idx") int store_idx, @Param("user_idx") Long user_idx);
+	List<UsersDto> getUserBookmarks(@Param("user_idx") Long user_idx);
 
 
+
+	
 	
 
 }

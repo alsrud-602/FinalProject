@@ -80,7 +80,11 @@
         </c:forEach>
       </div>
       <div class="title_click" >
-       <div class="bookmark"><img src="/images/icon/star.png"><p>찜하기</p></div>&nbsp;
+      <!--  <div class="bookmark"><img src="/images/icon/star.png"><p>찜하기</p></div>&nbsp; 북마크 기능 구현 중, 원래 로직이 이것.-->
+      <div class="bookmark" id="bookmarkBtn" data-store-idx="${storedetail.store_idx}">
+    	<img src="/images/icon/${bookmarkStatus == null ? 'star.png' : 'star_filled.png'}" alt="북마크">
+  	  	<p>찜하기</p>
+	  </div>
        <div class="share" onclick="clipboard()" ><img src="/images/icon/share1.png"><p>공유하기</p></div>&nbsp;
       </div>
       </div>
@@ -649,6 +653,34 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     console.log("Days Remaining:", daysRemaining); // 디버깅 정보
 });
+
+//북마크 기능 구현 중 여기부터
+$(document).ready(function() {
+    $('#bookmarkBtn').click(function() {
+        var storeIdx = $(this).data('store-idx');
+        $.ajax({
+            url: '/Users/toggleBookmark',
+            type: 'POST',
+            data: { store_idx: storeIdx },
+            success: function(response) {
+                if (response.success) {
+                    if (response.status === 'added') {
+                        $('#bookmarkBtn img').attr('src', '/images/icon/star_filled.png');
+                    } else {
+                        $('#bookmarkBtn img').attr('src', '/images/icon/star.png');
+                    }
+                } else {
+                    alert('로그인이 필요합니다.');
+                }
+            },
+            error: function() {
+                alert('오류가 발생했습니다. 다시 시도해주세요.');
+            }
+        });
+    });
+});
+//북마크 기능 구현 중 여기까지
+
 </script>
 <!-- <script src="/js/authuser.js" defer></script> -->
 </body>
