@@ -133,14 +133,6 @@ public class HomeController {
    }
 
    
-   
-   @RequestMapping("/admin")
-   public  String   admin() {
-      return "admin/store/list";
-      
-
-      //return "/WEB-INF/views/home.jsp";
-   }
 
    
 }
