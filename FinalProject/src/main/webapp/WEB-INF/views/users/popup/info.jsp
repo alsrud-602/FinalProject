@@ -29,7 +29,7 @@
 <body>
 <%@include file="/WEB-INF/include/header.jsp" %>
 <div class="container">
-  <img id="icon_back" src="/images/icon/back.png" alt="뒤로가기">
+  <img id="icon_back" onclick="backPage()" src="/images/icon/back.png" alt="뒤로가기">
   <main>
   
   <div class="swiper-container">
@@ -237,7 +237,18 @@
   <aside>
   <div class="side-layout">
   <p>${user.name} 님</p>
-  <div class="side_box">${TotalPopcorn.total_points}</div>
+  <div class="side_box">
+ <c:choose>
+ <c:when test="${not empty TotalPopcorn.total_points}">
+   ${TotalPopcorn.total_points}
+ </c:when>
+ <c:otherwise>
+  코인 없음
+ </c:otherwise>
+ </c:choose>
+
+  </div>
+  
   <div class="side_box">내가 쓴 리뷰 수 ${MyTotalReview.review_idx}개</div>
   <hr>
   <div class="atag_div"><a class="btn2" href="/Users/Writeform?store_idx=${storedetail.store_idx}">후기 작성하기</a></div>
@@ -265,7 +276,7 @@
     <!-- 시간대와 인원수 선택이 동적으로 추가됩니다 -->
       </div>
       <div class="modal_layout_confirm" >
-      <button id="btnConfirm">예약하기</button>
+      <button id="btnConfirm" onclick="btnConfirm()">예약하기</button>
        </div>
     </div>
 </div>
@@ -278,7 +289,9 @@
 
 
 <script>
-
+function backPage() {
+	  window.history.back();    
+}
 
 const infoPage = `<div class="content">
     <div class="content_title"><img  src="/images/icon/speaker.png" ><p>팝업스토어 소개</p></div>
@@ -655,10 +668,63 @@ function moveMap() {
     	  initMap();
           	 	 
 }
+const Reservationstatus = '${StoreReservation.status}';
+const store_idx = '${storedetail.store_idx}';
+const user_idx = '${user_idx}';
+
+if (Reservationstatus === '현장문의') {
+    document.getElementById('reserveBtn').textContent = '현장문의';
+    document.getElementById('reserveBtn').disabled = true; 
+} else if (Reservationstatus === '현장대기예약') {
+    document.getElementById('reserveBtn').textContent = '현장대기예약';
+    document.getElementById('reserveBtn').disabled = true; 
+}else {
+	
+	//날짜 비동기 받아오기
+	  fetch(`/api/waiting/reservationdate?store_idx=\${encodeURIComponent(store_idx)}`)
+	  .then(response => {
+		    if (!response.ok) {
+		        throw new Error(`HTTP error! status: \${response.status}`);
+		      }
+		      return response.json();
+		    })
+	  .then(data => {
+		  
+     if(data){
+    	 const enableDates = data.map(item => item.reservation_date);  	 
+    	  console.log(enableDates);
+    	    // 날짜 선택을 위한 Flatpickr 초기화
+    	    flatpickr("#calendar-container", {
+    	        dateFormat: "Y-m-d",     // 날짜 형식
+    	        enable:enableDates,
+    	        inline: true,
+    	        onChange: function(selectedDates, dateStr, instance) {
+    	            // 날짜가 변경될 때마다 시간대와 인원수를 동적으로 업데이트
+    	            getTimeOptions(dateStr);
+    	        }
+    	    });  
+		  
+     }  
+	  }).catch(error => {
+	      console.error('예약내역이 없습니다', error);
+	  }); 
+	
+	
+	
+}
 
 //예약하기 버튼 클릭 시 모달 열기
-document.getElementById('reserveBtn').addEventListener('click', function() {
+document.getElementById('reserveBtn').addEventListener('click', function() {	
+	
+	console.log('status : ' + Reservationstatus)
+	if(Reservationstatus == '사전예약'){
     document.getElementById('modalBg').style.display = 'block';
+    
+	}else {
+	 alert('예약기능을 사용할 수 없는 팝업니다.')	
+		
+	}
+    
 });
 
 // 모달 닫기 버튼
@@ -668,47 +734,117 @@ document.getElementById('btnClose').addEventListener('click', function() {
 
 
 // 예약 확인 버튼 클릭 시
-document.getElementById('btnConfirm').addEventListener('click', function() {
-	  const selectedDate = $("#calendar").val();
-    const selectedTime = document.getElementById('time').value;
-    const selectedPeople = document.getElementById('people').value;
+function btnConfirm() {
+	  const selectedDate = $("#calendar-container").val();
+    const selectedRp = document.getElementById('timeSelect').value;
+    const selectedPeople = document.getElementById('peopleSelect').value;
+   
+        console.log('selectedPeople:'+selectedPeople);
+        console.log('selectedTime:'+selectedRp);
+        console.log('selectedDate:'+selectedDate);
 
-    if (!selectedDate || !selectedTime || !selectedPeople) {
+    if (!selectedDate || !selectedRp || !selectedPeople) {
         alert('모든 항목을 선택해주세요.');
     } else {
-        alert(`예약이 완료되었습니다! 날짜: ${selectedDate}, 시간: ${selectedTime}, 인원수: ${selectedPeople}`);
+    
+        //맥스 인원수 검증 로직
+        fetch(`/api/waiting/countconfig`, {
+       	        method: 'POST', // POST 방식으로 요청
+       	        headers: {
+       	            'Content-Type': 'application/json' // JSON 형식으로 데이터 전송
+       	        },
+       	        body: JSON.stringify({
+       	        	reservation_date: selectedDate,
+       	        	rp_idx: selectedRp ,
+       	        	store_idx:store_idx
+       	        })
+       	    })
+       	    .then(response => {
+       	        if (!response.ok) {
+       	            throw new Error(`HTTP error! status: ${response.status}`);
+       	           
+       	        }
+       	       return  response.json().catch(() => null); 
+       	    })
+       	    .then(data => {
+       	    
+       	    //예약이 처음이라면
+       	        if (!data || typeof data.total_count === 'undefined' || typeof data.max_number === 'undefined') {
+          
+               reservationComplete(selectedRp, selectedDate, selectedPeople);
+                 return; // 이후 로직을 중단
+                 }   	    
+       	       	    
+       	    // 예약 인원수가 존재한다면	
+       	    let  totalCount = data.total_count;
+       	    let  maxNumber = data.max_number;
+       	    let  rest = maxNumber - totalCount;
+       	    
+       	    if(rest >= selectedPeople){   	    
+       	    	reservationComplete(selectedRp,selectedDate,selectedPeople)
+       	    }else {   	   
+      	    	alert('남은 인원수 : '+ rest +' 예약인원수가 초과되었습니다')
+       	    }
+       	    })
+       	    .catch(error => {
+       	        console.error('예약내역이 없습니다', error);
+       	    });
+   	
+   }	   	
+    	   
         document.getElementById('modalBg').style.display = 'none';  // 모달 닫기
-    }
-});
+    
+};
 
-document.addEventListener("DOMContentLoaded", function() {
-    // 날짜 선택을 위한 Flatpickr 초기화
-    flatpickr("#calendar-container", {
-        dateFormat: "Y-m-d",     // 날짜 형식
-        minDate: "2023-12-12",   // 최소 날짜
-        maxDate: "2023-12-24",   // 최대 날짜
-        inline: true,
-        onChange: function(selectedDates, dateStr, instance) {
-            // 날짜가 변경될 때마다 시간대와 인원수를 동적으로 업데이트
-            updateTimeAndPeople(dateStr);
-        }
-    });     
+
+
+function reservationComplete(selectedDataRp,formattedDate,person){
+  	//예약 인서트
+	 fetch(`/api/waiting/reservationwrite`, {
+	        method: 'POST', // POST 방식으로 요청
+	        headers: {
+	            'Content-Type': 'application/json' // JSON 형식으로 데이터 전송
+	        },
+	        body: JSON.stringify({
+	        	reservation_date: formattedDate,
+	        	reservation_number: person,
+	        	rp_idx: selectedDataRp ,
+	        	user_idx:user_idx,
+	        	store_idx:store_idx
+	        })
+	    })
+	    .then(response => {
+	        if (!response.ok) {
+	            throw new Error(`HTTP error! status: ${response.status}`);
+	           
+	        }
+	        alert('예약완료')
+	        return response
+	    })
+	    .catch(error => {
+	        console.error('예약내역이 없습니다', error);
+	    });	
+	
+	
+}
+		   
 
     // 날짜에 따른 시간대와 인원수 선택을 업데이트하는 함수
-    function updateTimeAndPeople(date) {
+    function updateTimeAndPeople(dataList,date) {
         // 시간대 선택 (예: 11시부터 8시까지 한 시간 간격)
-        const timeOptions = getTimeOptions(date); // 날짜에 따른 시간대 옵션
+        const timeOptions = dataList; // 날짜에 따른 시간대 옵션
+        console.log('timeOptions'+ timeOptions);
         const peopleOptions = getPeopleOptions(); // 인원수 선택
 
         let timeSelectHtml = `<div class="modal_layout_select"><label for="timeSelect">시간 선택</label><select id="timeSelect">`;
         timeOptions.forEach(time => {
-            timeSelectHtml += `<option value="${time}">\${time}</option>`;
+            timeSelectHtml += `<option value="\${time.rp_idx}">\${time.time_range}</option>`;
         });
         timeSelectHtml += `</select></div>`;
 
         let peopleSelectHtml = `<div class="modal_layout_select"><label for="peopleSelect">인원수</label><select id="peopleSelect">`;
         peopleOptions.forEach(num => {
-            peopleSelectHtml += `<option value="${num}">\${num}</option>`;
+            peopleSelectHtml += `<option value="\${num}">\${num}</option>`;
         });
         peopleSelectHtml += `</select></div>`;
 
@@ -718,25 +854,45 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // 날짜에 따른 시간대 옵션 반환
     function getTimeOptions(date) {
-        // 날짜에 따른 예약 가능한 시간대를 다르게 설정할 수 있음
-        if (date === "2023-12-12") {
-            return ["11:00", "12:00", "13:00", "14:00"];
-        } else if (date === "2023-12-13") {
-            return ["14:00", "15:00", "16:00", "17:00"];
-        } else {
-            return ["11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"];
-        }
+        
+       console.log('date:'+date);
+  	  fetch(`/api/waiting/timeslot?store_idx=\${encodeURIComponent(store_idx)}`)
+	  .then(response => {
+		    if (!response.ok) {
+		        throw new Error(`HTTP error! status: \${response.status}`);
+		      }
+		      return response.json();
+		    })
+	  .then(data => {
+		  
+       console.log('data:'+data);
+       if(data){
+    	   
+      const filteredSlots = data.filter(item => {
+          const reservationDate = item.reservation_date.split(' ')[0]; // 'YYYY-MM-DD' 형식으로 변환
+          return reservationDate === date; // date와 비교
+      });    	   	        	   	    
+      
+      // const dataList = filteredSlots.map(item => item.time_range); 
+      // console.log('dataList:'+dataList);
+       
+       updateTimeAndPeople(filteredSlots,date)
+       }  
+	  }).catch(error => {
+	      console.error('예약내역이 없습니다', error);
+	  }); 	
+  	  
     }
 
     // 인원수 선택 옵션 (1 ~ 10명)
     function getPeopleOptions() {
         let options = [];
-        for (let i = 1; i <= 10; i++) {
+        for (let i = 1; i <= 6; i++) {
             options.push(i);
         }
         return options;
     }
-});
+
 
 </script>
 

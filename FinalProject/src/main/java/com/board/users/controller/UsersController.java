@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.board.business.dto.ReservationTimeSlotDto;
+import com.board.business.service.WaitingService;
 import com.board.users.dto.User;
 import com.board.users.dto.UsersDto;
 import com.board.users.mapper.UsersMapper;
@@ -34,6 +36,9 @@ public class UsersController {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private WaitingService waitingService;
 	
 	@Autowired
 	   private JwtUtil jwtUtil;
@@ -470,6 +475,7 @@ public class UsersController {
 		System.out.println("TotalPopcorn : " + TotalPopcorn);
 		
 
+
 		//이미지
 		List<UsersDto> PopupImgList = usersMapper.getPopupImgList(usersdto);
 		System.out.println("PopupImgList : " + PopupImgList);
@@ -485,7 +491,9 @@ public class UsersController {
 
 		
 		
+
 		mv.addObject("storedetail", storedetail);
+		mv.addObject("user_idx", useruseridx);
 		mv.addObject("storetag", storetag);
 		mv.addObject("StoreReservation", StoreReservation);
 		mv.addObject("StoreOperation", StoreOperation);

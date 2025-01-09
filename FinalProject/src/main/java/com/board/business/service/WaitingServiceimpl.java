@@ -14,10 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.board.business.dto.CountConfigDto;
 import com.board.business.dto.ReservationTimeSlotDto;
 import com.board.business.dto.ReservationUserDto;
 import com.board.business.dto.StoreAddNoteDto;
+import com.board.business.dto.StoreListDto;
 import com.board.business.dto.StoreStatusDto;
+import com.board.business.dto.WaitingDelayDto;
 import com.board.business.dto.WaitingDto;
 import com.board.business.mapper.WatingMapper;
 
@@ -48,6 +51,15 @@ public class WaitingServiceimpl  implements WaitingService {
 		
     	//해당 건 취소 업데이트
 		watingMapper.updateWatingList(waitingDto);
+
+		
+		//status- 노쇼시 팝콘 차감
+        if (waitingDto.getStatus().trim().equals("노쇼")) {
+        	System.out.println("확인 상태 보기2 :" + waitingDto.getStatus());
+        	
+        	watingMapper.updatePopconNoShow(waitingDto.getWaiting_idx());	
+        	watingMapper.updatePopCornWNo(waitingDto.getWaiting_idx());	      	
+        };	
 		
 		//store 구하기
 		int store_idx =watingMapper.getStore_idxWaiting(waitingDto.getWaiting_idx());
@@ -55,7 +67,6 @@ public class WaitingServiceimpl  implements WaitingService {
 	     
         // 순번 업데이트
         List<WaitingDto> updatedListConfig = watingMapper.getWatingList(store_idx);   
-        System.out.println("확인요방");
         System.out.println(updatedListConfig);
         int newOrder = 1;
         for (WaitingDto waiting : updatedListConfig) {
@@ -195,6 +206,75 @@ public class WaitingServiceimpl  implements WaitingService {
 		 List<ReservationTimeSlotDto> advanceDateList =watingMapper.getadvanceDateList(store_idx);
 		return advanceDateList;
 	}
+
+	@Override
+	public void getReservationWrite(HashMap<String, Object> map) {
+
+		watingMapper.getReservationWrite(map);
+		
+	}
+
+	@Override
+	public StoreListDto getStoreShort(int store_idx) {
+		StoreListDto sDTO = watingMapper.getStoreShort(store_idx);
+		return sDTO;
+	}
+
+	@Override
+	public List<StoreListDto> getStoreCategory(int store_idx) {
+
+		List<StoreListDto> scDTOList = watingMapper.getStoreCategory(store_idx);
+		return scDTOList;
+	}
+
+	@Override
+	public CountConfigDto getCountConfig(HashMap<String, Object> map) {
+		System.out.println("map예약 등록 확인: "+map);
+		CountConfigDto ccDto = watingMapper.getCountConfig(map);
+		return ccDto;
+	}
+
+	@Override
+	public ReservationUserDto getadvanceUser(int reservation_idx) {
+		ReservationUserDto ruDto = watingMapper.getadvanceUser(reservation_idx);
+		return ruDto;
+	}
+
+	@Override
+	public void deleteReservation(int reservation_idx) {
+		watingMapper.deleteReservation(reservation_idx);
+		
+	}
+
+	@Override
+	public WaitingDto getWaitingStatus(int waiting_idx) {
+		WaitingDto wDto = watingMapper.getWaitingStatus(waiting_idx);
+		return wDto;
+	}
+
+	@Override
+	public void getDelay(WaitingDelayDto waitingDelayDto ){
+        
+        System.out.println("newMyOrder 안에서"+ waitingDelayDto.getNewMyOrder());
+        System.out.println("myOrder 안에서"+ waitingDelayDto.getMyOrder());
+        int myOrder =  waitingDelayDto.getMyOrder();
+        int newMyOrder =  waitingDelayDto.getNewMyOrder();
+        for (int i = myOrder + 1; i <= newMyOrder; i++) {
+            // 변화가 필요한 인원: 4, 5, 6, 7, 8
+            // 이 인원들의 순번을 1씩 줄여줌
+        	watingMapper.updateWaitingOrderInt(waitingDelayDto.getStore_idx(), i, i - 1);
+        }
+        
+        // 현재 인원(3번)의 순번을 8번으로 업데이트
+        watingMapper.updateWaitingOrderUser(waitingDelayDto.getWaiting_idx(), myOrder, newMyOrder);
+        
+        //팝콘 차감
+        watingMapper.updatePopcornDelay(waitingDelayDto.getWaiting_idx());
+     	watingMapper.updatePopCornWDelay(waitingDelayDto.getWaiting_idx());	
+		
+	}
+
+
 
 
 
