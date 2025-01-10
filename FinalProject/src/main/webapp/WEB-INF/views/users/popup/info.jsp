@@ -24,6 +24,33 @@
 }
 .review_time{
 }
+#likebtn{
+
+border-radius:5px;
+padding:5px;
+margin-right:5px;
+
+&:hover{
+background-color: #343434;
+color:#fff;
+}
+}
+#review_like_btn{
+display: flex;
+justify-content: flex-start;
+align-items: center;
+border-radius:5px;
+padding:5px;
+
+&:hover{
+background-color: #343434;
+color:#fff;
+}
+}
+.bookmark-on {
+background-color: #006534;
+
+}
 </style>
 </head>
 <body>
@@ -64,7 +91,9 @@
        </div>
 
         <div class="title_icon">
-          <img src="/images/icon/heart.png"><p>${StoreLike.storelike}</p>&nbsp;
+        <div id="likebtn" onclick="LikeConfig(this)"style="display: flex; align-items: center; justify-content: center;" >
+          <img src="/images/icon/heart.png"><p id="like-count">${StoreLike.storelike}</p>&nbsp;
+        </div>  
           <img src="/images/icon/eye1.png"><p>${StoreHit.hit}</p>&nbsp;
           <img src="/images/icon/degree.png"><p>90%</p>
         </div>
@@ -90,7 +119,7 @@
         </c:forEach>
       </div>
       <div class="title_click" >
-       <div class="bookmark"><img src="/images/icon/star.png"><p>찜하기</p></div>&nbsp;
+       <div class="bookmark" onclick="bookConfig()"><img src="/images/icon/star.png"><p>찜하기</p></div>&nbsp;
        <div class="share" onclick="clipboard()" ><img src="/images/icon/share1.png"><p>공유하기</p></div>&nbsp;
       </div>
       </div>
@@ -120,7 +149,7 @@
       <p id="remainingDays"></p>
     </div>
     <div class="dateo"><p>팝업기간</p><p>${storedetail.start_date}  ~ ${storedetail.end_date}</p></div>
-    <button id="reserveBtn" class="btn_booking">예약하기</button>    
+    <button id="reserveBtn" class="btn_booking" style="display: flex; flex-direction: column; align-items: center; justify-content: center;" > 예약하기</button>    
     </div>
     
     <div class="menu_main">
@@ -421,7 +450,7 @@ const infoPage = `<div class="content">
 	     <img class= "review_img" src="/image/read?path=${review.image_path}" alt="Store Image" >     
 	     <div class="review_like">
 	     <img src="/images/icon/heart.png">
-	     <p>${review.like}</p>
+	     <p>${review.like_count}</p>
 	     </div>
 	     </div>
 	     <div class="review_info">
@@ -544,7 +573,8 @@ const mapPage = `
     })
     .done(function(response){
     	const reviewData = response.ReviewDetail; // 서버에서 받아온 데이터
-    	console.log(reviewData);
+    	const rLikeCount = response.rLikeCount; 
+    	console.log(rLikeCount);
     	$('#contents').html('');
     	const reviewDetail = "<div class='review_header'>" +
         "<div class='review_title'>" +
@@ -554,7 +584,7 @@ const mapPage = `
     "<div class='swiper-container2'>" +
         "<div class='swiper-wrapper'>" +
             "<c:forEach var='img' items='${PopImgPath}'>"+
-            "<div class='swiper-slide'><img src='/image/read?path=${img}' alt='User Image' class='profileSize'></div>"+
+            "<div class='swiper-slide ss'><img src='/image/read?path=${img}' alt='User Image' class='profileSize'></div>"+
           "</c:forEach>"+
         "</div>" +
         "<div class='swiper-button-next'></div>" +
@@ -568,7 +598,7 @@ const mapPage = `
         "<div class='review_nld'>" +
             "<img src='/images/icon/calender.png'>&nbsp;&nbsp;&nbsp; <p>" + reviewData.review_date + "</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
             "<img src='/images/icon/eye1.png'> &nbsp;&nbsp;&nbsp;<p>" + reviewData.hit + "</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
-            "<img src='/images/icon/heart.png'>&nbsp;&nbsp;&nbsp; <p>" + reviewData.like + "</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
+            "<div id='review_like_btn' onclick='LikeReviewConfig(this)' data-lr="+reviewData.review_idx +"><img src='/images/icon/heart.png'>&nbsp;&nbsp;&nbsp; <p id='like-review-count'>" + rLikeCount + "</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>" +
         "</div>" +
     "</div>" +
     "<div class='content'>" +
@@ -680,6 +710,28 @@ if (Reservationstatus === '현장문의') {
     document.getElementById('reserveBtn').disabled = true; 
 }else {
 	
+	const openDateOrgin = '${StoreReservation.open_date}';
+    const openDate  = openDateOrgin.split(' ')[0];
+	
+    const currentDate = new Date();
+    const openDateObj = new Date(openDateOrgin.replace(' ', 'T'));
+    currentDate.setHours(0, 0, 0, 0); 
+    openDateObj.setHours(0, 0, 0, 0); 
+    // openDate가 현재 날짜보다 큰지 비교합니다.
+    if(openDateObj.getTime() > currentDate.getTime()) {
+        document.getElementById('reserveBtn').innerHTML = `
+            <span style="font-size: 20px;">사전예약 오픈예정</span>
+            <span style="font-size: 16px;">(오픈날짜 : \${openDate})</span>
+        `;
+        document.getElementById('reserveBtn').disabled = true; 
+    }else {
+        console.log('openDate가 지났습니다');
+       
+    
+	
+	
+	
+	
 	//날짜 비동기 받아오기
 	  fetch(`/api/waiting/reservationdate?store_idx=\${encodeURIComponent(store_idx)}`)
 	  .then(response => {
@@ -709,7 +761,7 @@ if (Reservationstatus === '현장문의') {
 	      console.error('예약내역이 없습니다', error);
 	  }); 
 	
-	
+    }
 	
 }
 
@@ -871,10 +923,7 @@ function reservationComplete(selectedDataRp,formattedDate,person){
       const filteredSlots = data.filter(item => {
           const reservationDate = item.reservation_date.split(' ')[0]; // 'YYYY-MM-DD' 형식으로 변환
           return reservationDate === date; // date와 비교
-      });    	   	        	   	    
-      
-      // const dataList = filteredSlots.map(item => item.time_range); 
-      // console.log('dataList:'+dataList);
+      });    	   	        	   	         
        
        updateTimeAndPeople(filteredSlots,date)
        }  
@@ -893,7 +942,380 @@ function reservationComplete(selectedDataRp,formattedDate,person){
         return options;
     }
 
+    
+//좋아요 로직  
+//1. 좋아요를 이미 했는지 여부 
+function LikeConfig(element){
+	
+	const content = {
+		    user_idx: user_idx, 
+		    store_idx: store_idx 
+		};
+		fetch(`/Popup/Like/Config`, {
+		    method: 'POST', // POST 요청
+		    headers: {
+		        'Content-Type': 'application/json', // JSON 데이터임을 명시
+		    },
+		    body: JSON.stringify(content), // 객체를 JSON 문자열로 변환하여 전송
+		})
+		.then(response => {
+		    if (!response.ok) {
+		        alert('확인확인')
+		    }
+		    return response.json();
+		})
+		.then(data => {
+		    console.log('datais_idx:', data);
+		    if (data) {
+		      LikeDown(data);
+		    }else{		    	
+		   LikeUp(); 	
+		    }
+		})
+		.catch(error => {
+			 LikeUp(); 
+		});				
+	
+	
+	
+	
+}
 
+//2. 좋아요가 없다면  
+function LikeUp(element) {	
+	const content = {
+		    user_idx: user_idx, 
+		    store_idx: store_idx 
+		};
+	
+		fetch(`/Popup/Like/Write`, {
+		    method: 'POST', // POST 요청
+		    headers: {
+		        'Content-Type': 'application/json', // JSON 데이터임을 명시
+		    },
+		    body: JSON.stringify(content), // 객체를 JSON 문자열로 변환하여 전송
+		})
+		.then(response => {
+		    if (!response.ok) {
+		        throw new Error(`HTTP error! status: ${response.status}`);
+		    }
+		    return response.json();
+		})
+		.then(data => {
+		    console.log('data:', data);
+		    if (data) {
+		        // 서버에서 반환한 데이터 처리
+		        console.log('처리 결과:', data);
+		        const LikeCount = data
+		        document.getElementById('like-count').innerHTML = LikeCount;
+		        
+		    }
+		})
+		.catch(error => {
+		    console.error('좋아요 내역이 없습니다', error);
+		});				
+}
+//3.좋아요를 했다면
+function LikeDown(ls_idx) {	
+	const content = {
+			ls_idx: ls_idx,
+		    store_idx: store_idx 
+		};
+	
+		fetch(`/Popup/Like/Delete`, {
+		    method: 'DELETE', 
+		    headers: {
+		        'Content-Type': 'application/json', // JSON 데이터임을 명시
+		    },
+		    body: JSON.stringify(content), // 객체를 JSON 문자열로 변환하여 전송
+		})
+		.then(response => {
+		    if (!response.ok) {
+		        throw new Error(`HTTP error! status: ${response.status}`);
+		    }
+		    return response.json();
+		})
+		.then(data => {
+		    console.log('data:', data);
+		    
+		        // 서버에서 반환한 데이터 처리
+		        console.log('처리 결과:', data);
+		        const LikeCount = data
+		        document.getElementById('like-count').innerHTML = LikeCount;		        
+		   
+		})
+		.catch(error => {
+		    console.error('좋아요 내역이 없습니다', error);
+		});				
+}    
+  
+function LikeReviewConfig(element) {
+
+	const review_idx = element.getAttribute('data-lr');
+	const content = {
+		    user_idx: user_idx, 
+		    review_idx: review_idx 
+		};
+		fetch(`/Popup/Like/Review/Config`, {
+		    method: 'POST', // POST 요청
+		    headers: {
+		        'Content-Type': 'application/json', // JSON 데이터임을 명시
+		    },
+		    body: JSON.stringify(content), // 객체를 JSON 문자열로 변환하여 전송
+		})
+		.then(response => {
+		    if (!response.ok) {
+		       
+		    }
+		    return response.json();
+		})
+		.then(data => {
+		    console.log('datalr_idx:', data);
+		    
+		    if (data) {
+		      LikeReviewDown(review_idx,data);
+		    }else{		    	
+		   LikeReviewUp(review_idx); 	
+		    }
+		})
+		.catch(error => {
+			LikeReviewUp(review_idx); 
+		});		
+}
+function LikeReviewUp(element){
+		    console.log('리뷰 저장: review_idx' + element);	
+	const content = {
+		    user_idx: user_idx, 
+		    review_idx: element 
+		};
+	
+		fetch(`/Popup/Like/Review/Write`, {
+		    method: 'POST', // POST 요청
+		    headers: {
+		        'Content-Type': 'application/json', // JSON 데이터임을 명시
+		    },
+		    body: JSON.stringify(content), // 객체를 JSON 문자열로 변환하여 전송
+		})
+		.then(response => {
+		    if (!response.ok) {
+		        throw new Error(`HTTP error! status: ${response.status}`);
+		    }
+		    return response.json();
+		})
+		.then(data => {
+		    console.log('data:', data);
+		    if (data) {
+		        // 서버에서 반환한 데이터 처리
+		        console.log('처리 결과:', data);
+		        const LikeCount = data
+		        document.getElementById('like-review-count').innerHTML = LikeCount ;
+		        
+		    }
+		})
+		.catch(error => {
+		    console.error('리뷰좋아요 내역이 없습니다', error);
+		});
+	
+	
+}
+function LikeReviewDown(review_idx,data) {
+    console.log('리뷰 삭제: review_idx', review_idx);
+    console.log('리뷰 삭제: lr_idx', data);
+	const content = {
+		lr_idx: data,
+		review_idx: review_idx 
+	};
+
+	fetch(`/Popup/Like/Reivew/Delete`, {
+	    method: 'DELETE', 
+	    headers: {
+	        'Content-Type': 'application/json', // JSON 데이터임을 명시
+	    },
+	    body: JSON.stringify(content), // 객체를 JSON 문자열로 변환하여 전송
+	})
+	.then(response => {
+	    if (!response.ok) {
+	        throw new Error(`HTTP error! status: ${response.status}`);
+	    }
+	    return response.json();
+	})
+	.then(data => {
+	    console.log('data:', data);
+	    console.log('처리 결과data 타입:'+typeof data);  
+	   document.getElementById('like-review-count').innerHTML = data;
+	   
+	
+	})
+	.catch(error => {
+	    console.error('리뷰좋아요 내역이 없습니다', error);
+	});				
+
+}
+
+
+
+function LikeReviewUp(element){
+    console.log('리뷰 저장: review_idx' + element);	
+const content = {
+    user_idx: user_idx, 
+    review_idx: element 
+};
+
+fetch(`/Popup/Like/Review/Write`, {
+    method: 'POST', // POST 요청
+    headers: {
+        'Content-Type': 'application/json', // JSON 데이터임을 명시
+    },
+    body: JSON.stringify(content), // 객체를 JSON 문자열로 변환하여 전송
+})
+.then(response => {
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+})
+.then(data => {
+    console.log('data:', data);
+    if (data) {
+        // 서버에서 반환한 데이터 처리
+        console.log('처리 결과:', data);
+        const LikeCount = data
+        document.getElementById('like-review-count').innerHTML = LikeCount ;
+        
+    }
+})
+.catch(error => {
+    console.error('리뷰좋아요 내역이 없습니다', error);
+});
+
+
+}
+
+
+function bookConfig(){	
+	const content = {
+		    user_idx: user_idx, 
+		    store_idx: store_idx 
+		};
+		fetch(`/Popup/Bookmark/Config`, {
+		    method: 'POST', // POST 요청
+		    headers: {
+		        'Content-Type': 'application/json', // JSON 데이터임을 명시
+		    },
+		    body: JSON.stringify(content), // 객체를 JSON 문자열로 변환하여 전송
+		})
+		.then(response => {
+		    if (!response.ok) {
+		        alert('확인확인')
+		    }
+		    return response.json();
+		})
+		.then(data => {
+		    console.log('BOOKMARK_IDX:', data);
+		    if (data) {
+		      BookmarkDown(data);
+		    }else{		    	
+		   BookmarkUp(); 	
+		    }
+		})
+		.catch(error => {
+			BookmarkUp(); 
+		});						
+}
+
+const bookmarkElement = document.querySelector('.bookmark');
+function BookmarkUp(){
+    	
+const content = {
+    user_idx: user_idx, 
+    store_idx: store_idx 
+};
+
+fetch(`/Popup/Bookmark/Write`, {
+    method: 'POST', 
+    headers: {
+        'Content-Type': 'application/json', 
+    },
+    body: JSON.stringify(content),
+})
+.then(response => {
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response;
+})
+.then(data => {
+    console.log('data:', data);
+    if (data) {
+        // 서버에서 반환한 데이터 처리
+        console.log('추가 처리 결과:', data);
+        const result = data
+        bookmarkElement.classList.add('bookmark-on');        
+    }
+})
+.catch(error => {
+    console.error('북마크 내역이 없습니다', error);
+});
+
+}
+
+function BookmarkDown(data) {
+    console.log('리뷰 삭제: BOOKMARK_IDX', data);
+	const content = {
+		bookmark_idx: data 
+	};
+	
+	fetch(`/Popup/Bookmark/Delete`, {
+	    method: 'DELETE', 
+	    headers: {
+	        'Content-Type': 'application/json',
+	    },
+	    body: JSON.stringify(content),
+	})
+	.then(response => {
+	    if (!response.ok) {
+	        throw new Error(`HTTP error! status: ${response.status}`);
+	    }
+	    return response
+	})
+	.then(data => {
+	    console.log('삭제 상태 data:', data);
+	    bookmarkElement.classList.remove('bookmark-on');	   
+	})
+	.catch(error => {
+	    console.error('리뷰좋아요 내역이 없습니다', error);
+	});				
+}
+function bookmarkconfigg(){	
+	const content = {
+		    user_idx: user_idx, 
+		    store_idx: store_idx 
+		};
+		fetch(`/Popup/Bookmark/Config`, {
+		    method: 'POST', // POST 요청
+		    headers: {
+		        'Content-Type': 'application/json', // JSON 데이터임을 명시
+		    },
+		    body: JSON.stringify(content), // 객체를 JSON 문자열로 변환하여 전송
+		})
+		.then(response => {
+		    if (!response.ok) {
+		        alert('확인확인')
+		    }
+		    return response.json();
+		})
+		.then(data => {
+		    console.log('BOOKMARK_IDX:', data);
+		    if (data) {
+		    	 bookmarkElement.classList.add('bookmark-on');    
+		    }
+		})
+		.catch(error => {
+			
+		});						
+}
+
+bookmarkconfigg();
 </script>
 
 <script>

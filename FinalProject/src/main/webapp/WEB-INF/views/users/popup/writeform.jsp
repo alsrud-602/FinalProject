@@ -62,14 +62,16 @@ justify-content: flex-end;
 margin: 20px 10px 10px 10px;
 }
 /*사진첨부 -btn*/
-.btn4 {
-width: 90px;
-height: 40px;
-font-size: 16px;
-color: #121212;
-font-weight: 600;
-
-
+.btn4{
+box-sizing: border-box; 
+font-size: 20px;
+background: #00FF84;
+    border: 1px solid #9A9A9A; 
+    padding:10px;
+    border-radius:5px;
+&:hover{
+background: #DFDFDF;
+} 
 }
 /*submit -btn*/
 .btn5{
@@ -90,6 +92,28 @@ display:flex;
 justify-content: center;
 margin-bottom: 30px;
 }
+.sub_flex2{
+display:flex;
+justify-content: flex-end;
+margin: 20px;
+}
+.delete-button{
+margin: 0px 10px;
+cursor: pointer;
+
+}
+.file-item{
+padding:6px;
+border: 1px solid #9A9A9A;
+background: #DFDFDF;
+margin: 5px;
+display: inline-block;
+font-size:16px;
+font-weight: 500px; 
+border-radius: 5px;
+color: #121212;
+} 
+
 
 </style>
 </head>
@@ -156,14 +180,17 @@ margin-bottom: 30px;
   <div class="content_title_white"><p>내용</p></div>
   <textarea class="review_textarea" name="content">방문하신 팝업스토어는 어떠셨나요? 솔직한 후기를 남겨주세요!</textarea>
     </div>
-    <div class="btn_layout">
-  <button class="btn4">사진첨부</button>
-  </div>
 
-	  <div class="content">
-  <div class="content_title_white"><p>사진</p>
-  <div>344223.pdf</div>
-  </div>
+	 
+		 <div class="sub_flex2">
+		    <label for="file-input" class="btn4">
+		        파일 선택
+		    </label>
+           <input id="file-input" name="upfile" type="file" accept=".jpg, .jpeg, .png" style="display: none;" multiple  />
+         </div>
+     <div class="content">
+    <div id="file-name-container">
+    </div>
   
     </div>	  
 	<div class="sizebox"></div>
@@ -177,6 +204,60 @@ margin-bottom: 30px;
 function goBack() {
     window.history.back();  // 이전 페이지로 돌아가기
 }
+//파일 저장 로직
+const fileInput = document.getElementById('file-input');
+const fileNameContainer = document.getElementById('file-name-container');
+// 파일 목록을 저장할 배열
+let fileList = [];
+
+fileInput.addEventListener('change', function() {
+	console.log('버튼 파일 ')
+	console.log(this.files)
+	
+	// 새로 선택된 파일들
+    const newFiles = Array.from(this.files); 
+
+    fileList = fileList.concat(newFiles); 
+   // 화면에 파일 보이는 메소드
+    displayFileNames(); 
+    // 업로드 파일 리스트에 업로드 하기
+    updateFileInput();
+});
+
+function displayFileNames() {
+    fileNameContainer.innerHTML = '';
+    fileList.forEach((file, index) => {
+        const fileItem = document.createElement('div');
+        fileItem.className = 'file-item';
+
+        const fileNameSpan = document.createElement('span');
+        fileNameSpan.textContent = file.name;
+
+        const deleteButton = document.createElement('span');
+        deleteButton.textContent = 'x';
+        deleteButton.className = 'delete-button';
+
+        // 삭제 기능 추가
+        deleteButton.addEventListener('click', function() {
+            fileList.splice(index, 1); // 배열에서 파일 삭제
+            displayFileNames(); // 화면 업데이트
+            updateFileInput(); // 파일 입력 업데이트
+        });
+
+        fileItem.appendChild(fileNameSpan);
+        fileItem.appendChild(deleteButton);
+        fileNameContainer.appendChild(fileItem); // 파일 이름 추가
+    });
+}
+
+function updateFileInput() {
+    const dataTransfer = new DataTransfer();
+    fileList.forEach(file => dataTransfer.items.add(file));
+   // 파일 입력 업데이트
+    fileInput.files = dataTransfer.files;     
+	console.log(fileInput.files)
+}
+
 </script>
 
 </body>

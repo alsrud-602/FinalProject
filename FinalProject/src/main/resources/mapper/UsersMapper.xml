@@ -734,6 +734,7 @@ FROM (
         ir.imagename,
         ir.imageext,
         ir.image_path,
+        COUNT(lr.lr_idx) AS like_count,  -- LIKE_REVIEWS의 LR_IDX 개수 추가
         ROW_NUMBER() OVER (PARTITION BY re.review_idx ORDER BY re.cdate ASC) AS rn
     FROM
         reviews re
@@ -751,9 +752,24 @@ FROM (
             user_idx, review_idx, store_idx
     ) rh ON re.user_idx = rh.user_idx AND re.review_idx = rh.review_idx AND re.store_idx = rh.store_idx
     LEFT JOIN image_review ir ON re.review_idx = ir.review_idx
+    LEFT JOIN LIKE_REVIEWS lr ON re.review_idx = lr.review_idx  -- LIKE_REVIEWS 테이블 조인
     WHERE 
         re.store_idx = #{store_idx}
-) subquery
+    GROUP BY
+        us.name,
+        us.user_idx,
+        re.review_idx,
+        re.user_idx,
+        re.store_idx,
+        re.score,
+        re.content,
+        re.cdate,
+        rh.hit,
+        ir.is_idx,
+        ir.imagename,
+        ir.imageext,
+        ir.image_path
+) 
 WHERE rn = 1
     
   </select>

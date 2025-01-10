@@ -9,17 +9,17 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.board.business.dto.ReservationTimeSlotDto;
+import com.board.business.service.PdsService;
 import com.board.business.service.WaitingService;
 import com.board.users.dto.User;
 import com.board.users.dto.UsersDto;
+import com.board.users.mapper.LikeBookMapper;
 import com.board.users.mapper.UsersMapper;
 import com.board.users.service.UserService;
 import com.board.util.JwtUtil;
@@ -42,7 +42,10 @@ public class UsersController {
 	
 	@Autowired
 	   private JwtUtil jwtUtil;
-	
+	@Autowired
+	private LikeBookMapper likeBookMapper;
+	@Autowired
+	private PdsService pdsService;
 	// http://localhost:9090
 	@RequestMapping("/Wallet")
 	public  String  wallet() {
@@ -549,9 +552,11 @@ public class UsersController {
         	
         }
 		
+		String LikeCount = likeBookMapper.getLikeReviewCountR(review_idx);
 		
 		HashMap<String, Object> response = new HashMap<>();
 		response.put("ReviewDetail", ReviewDetail);
+		response.put("rLikeCount", LikeCount);
 		return response;
 	}
 	
@@ -641,11 +646,16 @@ public class UsersController {
 	// 리뷰 작성 보내기
 	@RequestMapping("/Write")
 	public ModelAndView write(UsersDto usersdto,
-			Model model,HttpServletRequest request){
-		System.out.println("작성 받은 usersdto" + usersdto);
+			Model model,HttpServletRequest request,
+		     @RequestParam(value="upfile",required = false) MultipartFile[] uploadfiles		
+			){
+   System.out.println("작성 받은 usersdto" + usersdto);
 		
 		//리뷰 작성
 		int insertReview = usersMapper.insertReview(usersdto);
+		HashMap<String, Object> map = new HashMap<>();
+		
+		pdsService.setReviewWrite(map,uploadfiles);
 		
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("insertReview", insertReview);
