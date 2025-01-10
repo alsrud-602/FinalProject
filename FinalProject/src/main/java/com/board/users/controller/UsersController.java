@@ -524,54 +524,55 @@ public class UsersController {
 	
 	
 	
-	
-	// 리뷰 상세 페이지 데이터(AJAX)
-	@RequestMapping("/ReviewDetail")
-	@ResponseBody
-	public Map<String,Object> reviewdetail(
-			@RequestParam(required = false,value = "storeidx") int storeidx,
-			@RequestParam(required = false,value = "useridx") int useridx,
-			@RequestParam(required = false,value = "review_idx") int review_idx,
-			@RequestParam(required = false,value = "loginidx") int loginidx,
-			Model model,HttpServletRequest request){
-		System.out.println("storeidx : " + storeidx);
-		System.out.println("useridx : " + useridx);
-		System.out.println("review_idx : " + review_idx);
-		System.out.println("loginidx : " + loginidx);
-		
-		//리뷰 상세 페이지
-		UsersDto ReviewDetail = usersMapper.getReviewDetail(storeidx, useridx, review_idx);
-		
-		// 이미지
-		List<UsersDto> ReviewImgList = usersMapper.getReviewImgList(storeidx, useridx, review_idx);
-		System.out.println("PopupImgList : " + ReviewImgList);
 
-		List<String> PopImgPath = new ArrayList<>();
-		
-		for(UsersDto dto : ReviewImgList) {
-			String imagePath = dto.getImage_path().replace("\\", "/");
-			System.out.println("이미지 패스 imagePath : " + imagePath);
-			PopImgPath.add(imagePath);
-		}
-		
-		System.out.println("리뷰 디테일 ReviewDetail" + ReviewDetail);
-		// 리뷰 조회수 조회
-		UsersDto selectReviewHit = usersMapper.getselectReviewHit(storeidx,useridx,review_idx,loginidx);
-		if (selectReviewHit == null) {
-          int insertReviewHit = usersMapper.insertReviewHit(storeidx, useridx,review_idx,loginidx);
-          System.out.println("insertStoreHit" + insertReviewHit);
-      }else {
-      	
+   // 리뷰 상세 페이지 데이터(AJAX)
+   @RequestMapping("/ReviewDetail")
+   @ResponseBody
+   public Map<String,Object> 
+     
+     
+     
+         @RequestParam(required = false,value = "storeidx") int storeidx,
+         @RequestParam(required = false,value = "useridx") int useridx,
+         @RequestParam(required = false,value = "review_idx") int review_idx,
+         @RequestParam(required = false,value = "loginidx") int loginidx,
+         Model model,HttpServletRequest request){
+      System.out.println("storeidx : " + storeidx);
+      System.out.println("useridx : " + useridx);
+      System.out.println("review_idx : " + review_idx);
+      System.out.println("loginidx : " + loginidx);
+      
+      //리뷰 상세 페이지
+      UsersDto ReviewDetail = usersMapper.getReviewDetail(storeidx, useridx, review_idx);
+      
+      // 이미지
+      List<UsersDto> ReviewImgList = usersMapper.getReviewImgList(storeidx, useridx, review_idx);
+      System.out.println("PopupImgList : " + ReviewImgList);
+
+      List<String> PopImgPath = new ArrayList<>();
+      
+      for(UsersDto dto : ReviewImgList) {
+         String imagePath = dto.getImage_path().replace("\\", "/");
+         System.out.println("이미지 패스 imagePath : " + imagePath);
+         PopImgPath.add(imagePath);
       }
-		
-		String LikeCount = likeBookMapper.getLikeReviewCountR(review_idx);
-		
-		HashMap<String, Object> response = new HashMap<>();
-		response.put("ReviewDetail", ReviewDetail);
-		response.put("rLikeCount", LikeCount);
-		return response;
-	}
-  
+      
+      System.out.println("리뷰 디테일 ReviewDetail" + ReviewDetail);
+      // 리뷰 조회수 조회
+      UsersDto selectReviewHit = usersMapper.getselectReviewHit(storeidx,useridx,review_idx,loginidx);
+      if (selectReviewHit == null) {
+            int insertReviewHit = usersMapper.insertReviewHit(storeidx, useridx,review_idx,loginidx);
+            System.out.println("insertStoreHit" + insertReviewHit);
+        }else {
+           
+        }
+      
+      
+      HashMap<String, Object> response = new HashMap<>();
+      response.put("ReviewDetail", ReviewDetail);
+      return response;
+   }
+
    
    // 리뷰 작성 폼 페이지
    @RequestMapping("/Writeform")
