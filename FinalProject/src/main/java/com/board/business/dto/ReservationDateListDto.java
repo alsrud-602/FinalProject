@@ -13,4 +13,5 @@ public class ReservationDateListDto {
 	private String time_range; 
 	private String max_number; 
 	private String time_slot;
+	
 }

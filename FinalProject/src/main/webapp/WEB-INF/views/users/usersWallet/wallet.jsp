@@ -567,7 +567,9 @@ window.onload = function() {
         sessionStorage.setItem('refreshed', 'true');
 
         // 1초 후 페이지 새로고침
-        window.location.reload();
+        setTimeout(() => {
+            location.reload(); // 페이지 새로고침
+        }, 1000); // 1초 대기 후 새로고침
     } else {
         // 새로고침 후 'refreshed' 값이 저장된 상태에서는 값 삭제
         sessionStorage.removeItem('refreshed');

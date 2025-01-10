@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -58,8 +59,8 @@ public class MapController {
                 data.put("igdate", popup.getIgdate());
                 data.put("latitude", coords[0]);
                 data.put("longitude", coords[1]);
-                // data.put("image_path", popup.getImage_path());
-                // data.put("reviewcontent", review.getContent());
+                data.put("image_path", popup.getImage_path());
+                data.put("store_idx", popup.getStore_idx());
 
                 coordinatesList.add(data);
             } catch (IllegalArgumentException e) {
@@ -71,6 +72,14 @@ public class MapController {
         }
 
         return coordinatesList;
+    }
+
+    // 팝업스토어 리뷰 리스트
+    @GetMapping("/Map/reviewlist")
+    @ResponseBody
+    public List<String> getReviews(@RequestParam("storeIdx") int storeIdx) {
+    	System.out.println("꺄울~맞");
+        return usersMapper.getStoresReviewAtMap(storeIdx);
     }
 
 }

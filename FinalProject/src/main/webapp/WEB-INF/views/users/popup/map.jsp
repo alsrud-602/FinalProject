@@ -35,11 +35,15 @@ margin-bottom: 100px;
 }
 
 #gpsButton {
-	position: absolute; /* 절대 위치 지정 */
-	top: 87%; /* 수직 중앙 */
-	left: 96%; /* 수평 중앙 */
-	z-index: 1000;
-	cursor: pointer;
+    position: absolute; /* 절대 위치 지정 */
+    z-index: 1000;
+    cursor: pointer;
+}
+
+/* 기본 위치 */
+#gpsButton {
+    top: 87%; /* 기본 위치 */
+    left: 94%; /* 기본 위치 */
 }
 
 .gps {
@@ -63,6 +67,10 @@ margin-bottom: 100px;
         width: 80%; /* 모바일 화면에서 너비를 더 넓게 */
         transform: translate(-50%, -110%); /* 마커 위 여백 추가 */
     }
+        #gpsButton {
+        top: 80%; /* 모바일 화면에서 위치 조정 */
+        left: 83%; /* 모바일 화면에서 위치 조정 */
+    }
 }
 
 @media (max-width: 480px) {
@@ -70,6 +78,10 @@ margin-bottom: 100px;
         width: 90%; /* 작은 모바일 화면에서 너비 확장 */
         font-size: 14px; /* 글자 크기 조정 */
         transform: translate(-50%, -120%); /* 팝업 위치 조정 */
+    }
+        #gpsButton {
+        top: 75%; /* 작은 모바일 화면에서 위치 조정 */
+        left: 78%; /* 작은 모바일 화면에서 위치 조정 */
     }
 }
 
@@ -145,7 +157,7 @@ margin-bottom: 100px;
 					</div>
 							<div class="popup-period"></div>
 					<img class="calendar" src="/images/map/Calendar.svg" /> 
-					<%-- <img class="image-9" src="/image/read?path=${popup.image_path}" alt="상세정보사진" /> --%>
+					<img class="image-9" id="popup-image" src="" alt="상세정보사진" />
 					<div class="ootd-of"></div>
 				</div>
 				<div class="frame-490">
@@ -165,12 +177,9 @@ margin-bottom: 100px;
 					</a>
                     <div class="rectangle-331">
 						<div class="carousel2">
-							<c:forEach items="${content}" var="reviewContent">
-							    <div class="carousel-item">${reviewContent}</div>
-							    <div class="carousel-item">${reviewContent}</div>
-							    <div class="carousel-item">${reviewContent}</div>
-							    <div class="carousel-item">${reviewContent}</div>
-							</c:forEach>
+    <div class="carousel-item">Item 1</div>
+    <div class="carousel-item">Item 2</div>
+    <div class="carousel-item">Item 3</div>
 						</div>
                         <div class="line-5"></div>
                     </div>
@@ -184,29 +193,7 @@ margin-bottom: 100px;
 <!-- Slick JS -->
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
 
-	
-    <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const items = document.querySelectorAll('.carousel-item');
-        let currentIndex = 0;
 
-        function showNextItem() {
-            items[currentIndex].classList.remove('active'); // 현재 아이템 숨김
-            items[currentIndex].classList.add('out'); // 현재 아이템 아래로 사라지게 설정
-
-            currentIndex = (currentIndex + 1) % items.length; // 다음 아이템 인덱스 계산
-            
-            items[currentIndex].classList.remove('out'); // 다음 아이템에서 'out' 클래스 제거
-            items[currentIndex].classList.add('active'); // 다음 아이템 보임
-            
-            
-        }
-
-        // 첫 번째 아이템 활성화
-        items[currentIndex].classList.add('active');
-        setInterval(showNextItem, 3000); // 3초마다 다음 아이템으로 전환
-    });
-	</script>
 	<script>
 	document.addEventListener("DOMContentLoaded", function() {
 	    // 기본 위치
@@ -223,30 +210,30 @@ margin-bottom: 100px;
 	    var markers=[];
 	    
 	    var htmlMarker1 = {
-	            content: '<div style="cursor:pointer;width:50px;height:50px;line-height:52px;font-size:15px;color:white;text-align:center;font-weight:bold;background:url(\'https://raw.githubusercontent.com/navermaps/marker-tools.js/refs/heads/master/marker-clustering/images/cluster-marker-1.png\');background-size:contain;"></div>',
-	            size: N.Size(40, 40),
-	            anchor: N.Point(20, 20)
-	        },
-	        htmlMarker2 = {
-	            content: '<div style="cursor:pointer;width:50px;height:50px;line-height:52px;font-size:15px;color:white;text-align:center;font-weight:bold;background:url(\'https://raw.githubusercontent.com/navermaps/marker-tools.js/refs/heads/master/marker-clustering/images/cluster-marker-2.png\');background-size:contain;"></div>',
-	            size: N.Size(40, 40),
-	            anchor: N.Point(20, 20)
-	        },
-	        htmlMarker3 = {
-	            content: '<div style="cursor:pointer;width:50px;height:50px;line-height:52px;font-size:15px;color:white;text-align:center;font-weight:bold;background:url(\'https://raw.githubusercontent.com/navermaps/marker-tools.js/refs/heads/master/marker-clustering/images/cluster-marker-3.png\');background-size:contain;"></div>',
-	            size: N.Size(40, 40),
-	            anchor: N.Point(20, 20)
-	        },
-	        htmlMarker4 = {
-	            content: '<div style="cursor:pointer;width:50px;height:50px;line-height:52px;font-size:15px;color:white;text-align:center;font-weight:bold;background:url(\'https://raw.githubusercontent.com/navermaps/marker-tools.js/refs/heads/master/marker-clustering/images/cluster-marker-4.png\');background-size:contain;"></div>',
-	            size: N.Size(40, 40),
-	            anchor: N.Point(20, 20)
-	        },
-	        htmlMarker5 = {
-	            content: '<div style="cursor:pointer;width:50px;height:50px;line-height:52px;font-size:15px;color:white;text-align:center;font-weight:bold;background:url(\'https://raw.githubusercontent.com/navermaps/marker-tools.js/refs/heads/master/marker-clustering/images/cluster-marker-5.png\');background-size:contain;"></div>',
-	            size: N.Size(40, 40),
-	            anchor: N.Point(20, 20)
-	        };
+	    	    content: '<div style="cursor:pointer;width:100px;height:100px;line-height:102px;font-size:24px;color:white;text-align:center;font-weight:bold;background:url(\'https://raw.githubusercontent.com/navermaps/marker-tools.js/refs/heads/master/marker-clustering/images/cluster-marker-1.png\');background-size:contain;"></div>',
+	    	    size: N.Size(100, 100),
+	    	    anchor: N.Point(50, 50)  // 앵커 포인트 중앙으로 조정
+	    	},
+	    	htmlMarker2 = {
+	    	    content: '<div style="cursor:pointer;width:120px;height:120px;line-height:122px;font-size:26px;color:white;text-align:center;font-weight:bold;background:url(\'https://raw.githubusercontent.com/navermaps/marker-tools.js/refs/heads/master/marker-clustering/images/cluster-marker-2.png\');background-size:contain;"></div>',
+	    	    size: N.Size(120, 120),
+	    	    anchor: N.Point(60, 60)
+	    	},
+	    	htmlMarker3 = {
+	    	    content: '<div style="cursor:pointer;width:140px;height:140px;line-height:142px;font-size:28px;color:white;text-align:center;font-weight:bold;background:url(\'https://raw.githubusercontent.com/navermaps/marker-tools.js/refs/heads/master/marker-clustering/images/cluster-marker-3.png\');background-size:contain;"></div>',
+	    	    size: N.Size(140, 140),
+	    	    anchor: N.Point(70, 70)
+	    	},
+	    	htmlMarker4 = {
+	    	    content: '<div style="cursor:pointer;width:160px;height:160px;line-height:162px;font-size:30px;color:white;text-align:center;font-weight:bold;background:url(\'https://raw.githubusercontent.com/navermaps/marker-tools.js/refs/heads/master/marker-clustering/images/cluster-marker-4.png\');background-size:contain;"></div>',
+	    	    size: N.Size(160, 160),
+	    	    anchor: N.Point(80, 80)
+	    	},
+	    	htmlMarker5 = {
+	    	    content: '<div style="cursor:pointer;width:180px;height:180px;line-height:182px;font-size:32px;color:white;text-align:center;font-weight:bold;background:url(\'https://raw.githubusercontent.com/navermaps/marker-tools.js/refs/heads/master/marker-clustering/images/cluster-marker-5.png\');background-size:contain;"></div>',
+	    	    size: N.Size(180, 180),
+	    	    anchor: N.Point(90, 90)
+	    	};
 
 	    // 전역 변수로 userMarker 선언
 	    var userMarker = null;
@@ -267,7 +254,7 @@ margin-bottom: 100px;
 	                map: map,
 	                icon: {
 	                    url: '/images/map/Map-07-512.webp',
-	                    scaledSize: new naver.maps.Size(50, 50)
+	                    scaledSize: new naver.maps.Size(65, 65)
 	                },
 	                title: '내 위치'
 	            });
@@ -279,9 +266,7 @@ margin-bottom: 100px;
 	                .then(response => response.json())
 	                .then(data => {
 	                    data.forEach(location => {
-	                        const { title, latitude, longitude, hit, start_date, end_date, igdate} = location;
-	                        /*const { title, latitude, longitude, hit, start_date, end_date, igdate, image_path, reivewcontent} = location;*/
-	                        console.log(`Title: \${title}, Lat: \${latitude}, Lng: \${longitude}, 기간:\${start_date}, 종료기간:\${end_date}, 기간2:\${igdate}, 조회수:\${hit}`);
+	                        const { title, latitude, longitude, hit, start_date, end_date, igdate, image_path, store_idx} = location;
 
 	                        var coords = new naver.maps.LatLng(latitude, longitude);
 
@@ -291,18 +276,20 @@ margin-bottom: 100px;
 	                                map: map,
 	                                icon: {
 	                                    url: '/images/map/location_on.svg',
-	                                    scaledSize: new naver.maps.Size(35, 35)
+	                                    scaledSize: new naver.maps.Size(60, 60)
 	                                },
 	                                title: title
 	                            });
 
 	                         // 마커 객체에 관련 데이터를 추가
 	                            marker.set("popupData", {
+	                            	store_idx: store_idx,
 	                                title: title,
 	                                hit: hit,
 	                                start_date: start_date,
 	                                end_date: end_date,
-	                                igdate: igdate
+	                                igdate: igdate,
+	                                image_path: image_path
 	                            });
 	                         
 	                            markers.push(marker);
@@ -338,7 +325,29 @@ margin-bottom: 100px;
 	                                document.querySelector("#popup-container .ootd-of").innerText = popupData.title;
 	                                document.querySelector("#popup-container .popup-period").innerText = igdateDisplay;
 	                                document.querySelector("#popup-container ._100-span").innerText = `\${popupData.hit}명`;
+	                                
+	                                // 이미지 표시
+	                                const popupImage = document.getElementById("popup-image");
+	                                popupData.image_path = popupData.image_path.replace(/\\/g, '/');
+	                                console.log(popupData.image_path);
+	                                popupImage.src = `/image/read?path=\${popupData.image_path}`; // 이미지 경로 설정
 
+	                             // 리뷰 가져오기
+	                                fetch(`/Users/Map/reviewlist?store_idx=\${popupData.store_idx}`)
+	                                  .then(response => {
+	                                    if (!response.ok) {
+	                                      throw new Error("Network response was not ok");
+	                                    }
+	                                    return response.json();
+	                                  })
+	                                  .then(reviews => {
+	                                    console.log("리뷰가 뭐야:", reviews);  // 템플릿 리터럴로 제대로 출력
+	                                  })
+	                                  .catch(error => {
+	                                    console.error("Fetch 오류:", error);  // 에러 발생 시 출력
+	                                  });
+
+	                                setInterval(showNextItem, 3000); // 3초마다 다음 아이템으로 전환
 	                             // 현재 날짜를 가져오는 부분
 	                                const currentDate = new Date();
 	                                const formattedCurrentDate = currentDate.toISOString().split('T')[0]; // yyyy-mm-dd 형식으로 변환
@@ -370,26 +379,29 @@ margin-bottom: 100px;
 	                                document.getElementById('popup-container').style.display = 'none';
 	                            };
 
+	                            var titlecoords = new naver.maps.LatLng(latitude+0.001, longitude);
 	                            // 제목을 항상 표시할 위치 설정
 	                            var titleMarker = new naver.maps.Marker({
-	                                position: coords,
-	                                map: map,
-	                                icon: {
-	                                    content: [
-	                                        '<div style="background-color: rgba(143, 255, 68, 0.8); color: #000000; padding: 5px; border-radius: 8px; font-size: 14px; display: flex; align-items: center;">',
-	                                        title + '</div>'
-	                                    ].join(''),
-	                                    size: new naver.maps.Size(38, 58)
-	                                }
-	                            });
+								    position: titlecoords,
+								    map: map,
+								    icon: {
+								        content: [
+								            '<div style="background-color: rgba(143, 255, 68, 0.8); color: #000000; padding: 10px; border-radius: 10px; font-size: 16px; display: flex; align-items: center; white-space: nowrap; overflow: hidden;">', // 가로 정렬 및 잘림 방지
+								            title + '</div>'
+								        ].join(''),
+								        size: new naver.maps.Size(60, 80) // 크기 증가
+								    }
+								});
 	                            
 	                            //마커 객체에 관련 데이터를 추가
 	                            titleMarker.set("popupData", {
+	                            	store_idx: store_idx,
 	                                title: title,
 	                                hit: hit,
 	                                start_date: start_date,
 	                                end_date: end_date,
-	                                igdate: igdate
+	                                igdate: igdate,
+	                                image_path: image_path
 	                            });
 	                            
 	                            markers.push(titleMarker);
@@ -418,7 +430,7 @@ margin-bottom: 100px;
 	                            naver.maps.Event.addListener(titleMarker, 'click', function() {
 
 	                                // 클릭한 마커의 데이터 가져오기
-	                                var popupData = marker.get("popupData");
+	                                var popupData = titleMarker.get("popupData");
 	                                
 	                                var popupContainer = document.getElementById("popup-container");
 	                                
@@ -428,7 +440,7 @@ margin-bottom: 100px;
 	                                var igdateDisplay = null;
 
 	                                // igdate가 있는 경우
-	                                if (popupData.start_date === null || popupData.end_date === null) {
+	                                if (popupData.start_date === null && popupData.end_date === null) {
 	                                    if (popupData.igdate.includes('~')) {
 	                                        [startDate, endDate] = popupData.igdate.split(' ~ ');
 	                                        igdateDisplay = `\${startDate} - \${endDate}`;
@@ -445,7 +457,36 @@ margin-bottom: 100px;
 	                                document.querySelector("#popup-container .ootd-of").innerText = popupData.title;
 	                                document.querySelector("#popup-container .popup-period").innerText = igdateDisplay;
 	                                document.querySelector("#popup-container ._100-span").innerText = `\${popupData.hit}명`;
+	                                
+	                                // 이미지 표시
+	                                const popupImage = document.getElementById("popup-image");
+	                                popupData.image_path = popupData.image_path.replace(/\\/g, '/');
+	                                console.log(popupData.image_path);
+	                                popupImage.src = `/image/read?path=\${popupData.image_path}`; // 이미지 경로 설정
 
+	                                // 리뷰 가져오기
+	                                fetch(`/Users/Map/reviewlist?store_idx=\${popupData.store_idx}`)
+	                                .then(response => {
+	                                    if (!response.ok) {
+	                                      throw new Error("Network response was not ok");
+	                                    }
+	                                    return response.json();
+	                                  })
+	                                    .then(reviews => {
+	                                        const carouselContainer = document.querySelector("#popup-container .carousel2");
+	                                        carouselContainer.innerHTML = ""; // 기존 리뷰 제거
+	                                        
+	                                        // 리뷰 추가
+	                                        reviews.forEach(review => {
+												console.log("리뷰있나요~"+review)
+	                                            const reviewElement = document.createElement("div");
+	                                            reviewElement.classList.add("carousel-item");
+	                                            reviewElement.textContent = review;
+	                                            carouselContainer.appendChild(reviewElement);
+	                                        });
+
+	                                    });
+	                                setInterval(showNextItem, 3000); // 3초마다 다음 아이템으로 전환
 	                             // 현재 날짜를 가져오는 부분
 	                                const currentDate = new Date();
 	                                const formattedCurrentDate = currentDate.toISOString().split('T')[0]; // yyyy-mm-dd 형식으로 변환
@@ -468,7 +509,7 @@ margin-bottom: 100px;
 	                                }
 
 	                                document.querySelector("#popup-container ._22-span2").innerText = remainingDays;
-
+	                                
 	                                document.getElementById('popup-container').style.display = 'block';
 	                            });
 
@@ -508,7 +549,7 @@ margin-bottom: 100px;
 	                    map: map,
 	                    icon: {
 	                        url: '/images/map/Map-07-512.webp',
-	                        scaledSize: new naver.maps.Size(50, 50)
+	                        scaledSize: new naver.maps.Size(65, 65)
 	                    },
 	                    title: '내 위치',
 	                    animation: naver.maps.Animation.BOUNCE
@@ -525,7 +566,26 @@ margin-bottom: 100px;
 	        }
 	    };
 	});
+        const items = document.querySelectorAll('.carousel-item');
+        let currentIndex = 0;
+
+        function showNextItem() {
+            items[currentIndex].classList.remove('active'); // 현재 아이템 숨김
+            items[currentIndex].classList.add('out'); // 현재 아이템 아래로 사라지게 설정
+
+            currentIndex = (currentIndex + 1) % items.length; // 다음 아이템 인덱스 계산
+            
+            items[currentIndex].classList.remove('out'); // 다음 아이템에서 'out' 클래스 제거
+            items[currentIndex].classList.add('active'); // 다음 아이템 보임
+            
+            
+        }
+
+        // 첫 번째 아이템 활성화
+        
+        items[currentIndex].classList.add('active');
+        setInterval(showNextItem, 3000); // 3초마다 다음 아이템으로 전환
 	</script>
-	<%@include file="/WEB-INF/include/header.jsp"%>
+	<%@include file="/WEB-INF/include/footer.jsp"%>
 </body>
 </html>
