@@ -329,6 +329,7 @@ public class UsersController {
    public ModelAndView info(UsersDto usersdto,
          Model model,HttpServletRequest request
          ){
+	   
       ModelAndView mv = new ModelAndView();
       
       // 유저 번호 가지고 오기
@@ -451,6 +452,10 @@ public class UsersController {
 		
 		//핫 리뷰 (조회수 기반 3개)
 		List<UsersDto> HotReviews = usersMapper.getHotReviews(usersdto);
+		for (UsersDto dto : HotReviews) {
+			 String imagePath = dto.getImage_path().replace("\\", "/");
+			 dto.setImage_path(imagePath); 
+		}
 		System.out.println("HotReviews : " + HotReviews);
 		
 		// 전체 리뷰 & 조회수
@@ -486,7 +491,6 @@ public class UsersController {
 		System.out.println("수정된 이미지 패스 : " + PopImgPath);
 
 		
-		ModelAndView mv = new ModelAndView();
 		mv.addObject("bookmarkStatus", bookmarkStatus); //(북마크 기능 구현중)
 		mv.addObject("storedetail", storedetail);
 		mv.addObject("storetag", storetag);

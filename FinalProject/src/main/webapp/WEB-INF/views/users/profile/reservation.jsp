@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -128,6 +129,7 @@ main {
 </style>
 </head>
 <body>
+
     <%@include file="/WEB-INF/include/header.jsp" %>
     <main>
         <div class="inner">
@@ -143,28 +145,37 @@ main {
                         </tr>
                     </thead>
                     <tbody>
-                        <c:forEach var="reservation" items="${reservations}" varStatus="status">
-                            <tr>
-                                <td><fmt:formatDate value="${reservation.cdate}" pattern="yyyy.MM.dd"/></td>
-                                <td>
-                                    <img src="${storeDetails[status.index].image_path}" alt="팝업 이미지" onerror="this.src='/images/profile/default.png';">
-                                    <div class="span-flex">
-                                        <span>${stores[status.index].title}</span>
-                                        <span><fmt:formatDate value="${storeDetails[status.index].start_date}" pattern="yyyy.MM.dd"/> ~ <fmt:formatDate value="${storeDetails[status.index].end_date}" pattern="yyyy.MM.dd"/></span>
-                                        <span>${storeDetails[status.index].address}</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="span-flex2">
-                                        <span>방문일&nbsp;&nbsp;<fmt:formatDate value="${reservation.cdate}" pattern="yyyy.MM.dd"/></span>
-                                        <span>매수&nbsp;&nbsp;${reservation.reservation_number}</span>
-                                        <span>취소가능&nbsp;&nbsp;<fmt:formatDate value="${reservation.cdate}" pattern="yyyy.MM.dd" var="cancelDate"/>
-                                        <c:set var="cancelDate" value="${cancelDate.time - 86400000}"/>
-                                        <fmt:formatDate value="${cancelDate}" pattern="yyyy.MM.dd"/>까지</span>
-                                    </div>
-                                </td>
-                                <td><span>${reservation.status}</span></td>
-                            </tr>
+                        <c:forEach var="reservation" items="${TestList}">
+              <tr>
+    <td>
+        <c:set var="dateString" value="${reservation.reservation_cdate}" />
+        <fmt:parseDate value="${dateString}" pattern="${fn:contains(dateString, '/') ? 'dd/MM/yy' : 'yyyy-MM-dd HH:mm:ss'}" var="parsedDate" />
+        <fmt:formatDate value="${parsedDate}" pattern="yyyy.MM.dd"/>
+    </td>
+    <td>
+        <img src="/image/read?path=${reservation.image_path}" alt="팝업 이미지">
+        <span>${reservation.title}</span>
+        <span>
+            <c:set var="startDateString" value="${reservation.start_date}" />
+            <c:set var="endDateString" value="${reservation.end_date}" />
+            <fmt:parseDate value="${startDateString}" pattern="${fn:contains(startDateString, '/') ? 'dd/MM/yy' : 'yyyy-MM-dd HH:mm:ss'}" var="parsedStartDate" />
+            <fmt:parseDate value="${endDateString}" pattern="${fn:contains(endDateString, '/') ? 'dd/MM/yy' : 'yyyy-MM-dd HH:mm:ss'}" var="parsedEndDate" />
+            <fmt:formatDate value="${parsedStartDate}" pattern="yyyy.MM.dd"/> ~ <fmt:formatDate value="${parsedEndDate}" pattern="yyyy.MM.dd"/>
+        </span>
+        <span>${reservation.address}</span>
+    </td>
+    <td>
+        <div class="span-flex2">
+            <span>방문일&nbsp;&nbsp;
+                <c:set var="reservationDateString" value="${reservation.reservation_date}" />
+                <fmt:parseDate value="${reservationDateString}" pattern="${fn:contains(reservationDateString, '/') ? 'yy/MM/dd' : 'yyyy-MM-dd HH:mm:ss'}" var="parsedReservationDate" />
+                <fmt:formatDate value="${parsedReservationDate}" pattern="yyyy.MM.dd"/>
+            </span>
+            <span>매수&nbsp;&nbsp;${reservation.reservation_number}</span>
+        </div>
+    </td>
+    <td><span>${reservation.reservation_status}</span></td>
+</tr>
                         </c:forEach>
                     </tbody>
                 </table>
@@ -186,6 +197,9 @@ main {
         </div>
     </main>    
     <%@include file="/WEB-INF/include/footer.jsp" %>
-    <script src="/js/authuser.js" defer></script> 
+    <!-- <script src="/js/authuser.js" defer></script> --> 
 </body>
+<script >
+
+</script>
 </html>
