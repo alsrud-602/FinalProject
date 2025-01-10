@@ -594,10 +594,8 @@ WHERE
     subquery.RP_IDX = #{rp_idx}
 ORDER BY
     subquery.RESERVATION_DATE
-
-
-
 </select>
+
 
 <update id="ApprovalUpdate">
 UPDATE STORES
@@ -642,6 +640,7 @@ SELECT REVIEW_IDX, USER_IDX, STORE_IDX
 FROM REVIEWS
 WHERE REVIEW_IDX = (SELECT MAX(REVIEW_IDX) FROM REVIEWS);
 </select>
+
 
 
 </mapper>

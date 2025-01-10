@@ -7,7 +7,6 @@
 <title>Insert title here</title>
 <link rel="icon" type="image/png" href="/img/favicon.png" />
 <link rel="stylesheet"  href="/css/common.css" />
-<link rel="stylesheet"  href="/css/mainsearch-pagination.css" />
 </head>
 <style>
 body{
@@ -15,6 +14,38 @@ body{
   color:white;
   font-family:'Pretendard';
 }
+/*----------------------------*/
+  /*페이징*/
+.pagination {
+    display: flex;
+    justify-content: center;
+    padding-top: 30px;
+    width: 200px;
+    height: 70px;
+}
+
+.pagination a {
+    margin: 0 5px;
+    padding: 8px 12px;
+    text-decoration: none;
+    color: #333;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.pagination a:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+
+/* Active page number styling (if possible to apply) */
+.pagination a.active {
+    background-color: #007bff;
+    color: #fff;
+    font-weight: bold;
+}
+
 
 /*---------------------------------------*/
 /*검색창*/
@@ -63,16 +94,55 @@ body{
     margin-top: 10px; /* 위쪽 여백을 줄임 */
 }
 /*----------------------------------------------*/
-
-.no-data{
-   font-size: 40px;
-   padding : 30px;
-   width : 500px;
-   margin-left: 280px;
-}
-.no-data p{
- text-align: center;
-}
+/*필터링*/
+.mainfilter {    
+    cursor: pointer;
+    padding: 10px;
+    background: #121212;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family:'Pretendard';
+    font-size:20px;
+    border: 2px solid #00ff84;
+    margin-left:21%; 
+    padding-left:20px;
+    padding-right:20px;   
+    }
+    
+  .regionfilter{
+    cursor: pointer;
+    padding: 10px;
+    background: #121212;
+    color: white;
+    border: none;
+    border-radius:10px;
+    font-family:'Pretendard';
+    font-size:20px;
+    border: 2px solid #00ff84;
+    display: inline-block;
+    padding : 13px;
+    }
+    .agefilter{
+    cursor: pointer;
+    padding: 10px;
+    background: #121212;
+    color: white;
+    border: none;
+    border-radius:10px;
+    font-family:'Pretendard';
+    font-size:20px;
+    border: 2px solid #00ff84;
+    display: inline-block;
+    padding : 13px;
+    position: relative;
+    }
+    .nodata{
+      font-size: 40px;
+      padding : 30px;
+      width: 600px;
+      margin-left: 500px;
+    }
 /*-------------------------------------------------*/
 /* */
 table tr:first-child td {
@@ -108,7 +178,6 @@ table tr:last-child td{
     gap: 30px; /* 간격 조정 */
     padding: 30px;
     justify-items: center; /* 카드 가운데 정렬 */
-    max-width: 1100px;
   }
 
   .card {
@@ -118,14 +187,12 @@ table tr:last-child td{
     text-align: center; /* 텍스트 중앙 정렬 */
     color: white;
     width: 100%; /* 카드 폭을 컨테이너에 맞춤 */
-    max-width: 400px; /* 최대 너비 설정 */
-    max-height: 450px; /* 최대 너비 설정 */
+    max-width: 535px; /* 최대 너비 설정 */
   }
 
   .card img {
     width: 100%; /* 카드 크기에 맞춤 */
-    max-width: 300px; /* 최대 너비를 400px로 설정 */
-    max-height: 300px; /* 최대 너비 설정 */
+    max-width: 500px; /* 최대 너비를 400px로 설정 */
     height: auto; /* 비율 유지 */
     border-radius: 10px; /* 이미지 모서리 둥글게 */
 }
@@ -249,73 +316,120 @@ table tr:last-child td{
 	        </button>
 	    </div>
 	    
-	    
+	    <div class="ongoingfilter">
+		    <input type="date"class="mainfilter" id="datepickerButton" >
+		    <select class="regionfilter">
+		      <option value="">지역</option>
+		      <option value="서울">서울</option>
+		      <option value="부산">부산</option>
+		      <option value="대구">대구</option>
+		      <option value="대전">대전</option>
+		      <option value="울산">울산</option>
+		      <option value="광주">광주</option>
+		      <option value="인천">인천</option>
+		      <option value="제주도">제주도</option>
+		    </select>
+		    <select class="agefilter">
+		      <option value="">연령대</option>
+		      <option value="10대">10대</option>
+		      <option value="20대">20대</option>
+		      <option value="30대">30대</option>
+		      <option value="40대">40대</option>
+		      <option value="50대">50대</option>
+		    </select>
+		  </div>
 		  
 	 <div style="display:flex; flex-direction: column; justify-content: center; align-items: center;  margin-top:100px; "class="table-container";">
 	 
-<div class="searchcontainer">
 	    <div class="carousel1">
-		    <div class="maintext">
-		        <h2 class="maintitle">진행중</h2>
-		    </div>
-		    <div class="container">
+	    <div class ="maintext">
+	        <h2 class="maintitle">진행중</h2>
+	    </div>
+	    <div class="slide-wrapper">
+		    <ul class="slides">
+		        <c:if test="${not empty ongoingsearchlist}">
+		            <c:forEach var="ongoing" items="${ongoingsearchlist}">
+		                <li>
+		                    <div class="slides-href">
+		                        <a href="/Users/Info?store_idx=${ongoing.store_idx}">
+		                            <img src="/images/main/popup1.png" alt="/images/main/popup1.png">
+		                            <div class="slides-title">${ongoing.title}</div>
+		                            <div class="slides-info">주소:${ongoing.address}<br>기간: ${ongoing.start_date} ~ ${ongoing.end_date}</div>
+		                        </a>
+		                    </div>
+		                </li>
+		            </c:forEach>
+		        </c:if>
+		        <div>
+		        </div>
 		        <c:if test="${empty ongoingsearchlist}">
-		            <div class="no-data"><p>진행중인 팝업이 없습니다.</p></div>
-		        </c:if>
-		        <c:forEach var="ongoing" items="${ongoingsearchlist}">
-		            <a href="/Users/Info?store_idx=${ongoing.store_idx}">
-		                <div class="card">
-		                    <img src="/image/read?path=${ongoing.image_path}" alt="Store Image">
-		                    <div class="title">${ongoing.title}</div>
-		                    <div class="info">주소:${ongoing.address}<br>기간: ${ongoing.start_date} ~ ${ongoing.end_date}</div>
+		            <li>
+		                <div class="slides-href">
+		                    <div class="nodata">데이터가 없습니다.</div>
 		                </div>
-		            </a>
-		        </c:forEach>
-		    </div>
+		            </li>
+		        </c:if>
+		    </ul>
+</div>
+
+	    
+	</div>
+	
+	
+	  
+	    <div class="carousel1">
+			<div class ="maintext">
+			<h2 class="maintitle">오픈예정</h2>
+			</div>
+			
+			    <div class="container">
+			        <c:forEach var="opend" items="${opendsearchlist}">
+					   <a href="/Users/Info?store_idx=${opend.store_idx}">	   
+						    <div class="card">
+							      <img src="/images/main/popup1.png" alt="/images/main/popup1.png">
+							      <div class="title">${opend.title}</div>
+							      <div class="info">주소:${opend.address}<br>기간: ${opend.start_date} ~ ${popup.end_date}</div>
+						    </div>
+					    </a>
+				    </c:forEach>
+		            <%@include file="/WEB-INF/include/pagination.jsp" %>
+			    </div>
+		    
 		</div>
 		
 		<div class="carousel1">
-		    <div class="maintext">
-		        <h2 class="maintitle">오픈예정</h2>
-		    </div>
-		    <div class="container">
-		        <c:if test="${empty opendsearchlist}">
-		            <div class="no-data"><p>오픈예정인 없습니다.</p></div>
-		        </c:if>
-		        <c:forEach var="opend" items="${opendsearchlist}">
-		            <a href="/Users/Info?store_idx=${opend.store_idx}">
-		                <div class="card">
-		                    <img src="/image/read?path=${opend.image_path}" alt="Store Image">
-		                    <div class="title">${opend.title}</div>
-		                    <div class="info">주소:${opend.address}<br>기간: ${opend.start_date} ~ ${opend.end_date}</div>
-		                </div>
-		            </a>
-		        </c:forEach>
-		    </div>
+			<div class ="maintext">
+			<h2 class="maintitle">종료</h2>
+			</div>
+			    <div class="slide-wrapper">
+			        <ul class="slides">
+			        <c:if test="${not empty closesearchlist}">
+				          <c:forEach var="close" items="${closesearchlist}">
+				            <li>
+				              <div class="slides-href">
+				              <a href="/Users/Info?store_idx=${close.store_idx}">
+				                <img src="/images/main/popup1.png" alt="/images/main/popup1.png">
+						        <div class="slides-title">${close.title}</div>
+						        <div class="slides-info">주소:${close.address}<br>기간: ${close.start_date} ~ ${close.end_date}</div>
+						      </a>
+						      </div>
+				           </li>
+				          </c:forEach>
+			          </c:if>
+			          <c:if test="${empty closesearchlist}">
+		                <li>
+		                    <div class="slides-href">
+		                        <div class="nodata">데이터가 없습니다.</div>
+		                    </div>
+		                </li>
+		              </c:if>
+			          
+			        </ul>
+			    </div>
+		    
 		</div>
 		
-		<div class="carousel1">
-		    <div class="maintext">
-		        <h2 class="maintitle">종료</h2>
-		    </div>
-		    <div class="container">
-		        <c:if test="${empty closesearchlist}">
-		            <div class="no-data"><p>데이터가 없습니다.</p></div>
-		        </c:if>
-		        <c:forEach var="close" items="${closesearchlist}">
-		            <a href="/Users/Info?store_idx=${close.store_idx}">
-		                <div class="card">
-		                    <img src="/image/read?path=${close.image_path}" alt="Store Image">
-		                    <div class="title">${close.title}</div>
-		                    <div class="info">주소:${close.address}<br>기간: ${close.start_date} ~ ${close.end_date}</div>
-		                </div>
-		            </a>
-		        </c:forEach>
-		    </div>
-		</div>
-</div>	
-		
-		<%@include file="/WEB-INF/include/mainsearch-pagination.jsp" %>
+	 </div>
 	 </div>
   </main>
 <%@include file="/WEB-INF/include/footer.jsp" %>
@@ -363,47 +477,6 @@ $(function() {
             alert('오류 : ' + err.responseText);
         });
     });
-});
-</script>
-<script>
-//검색창 클릭했을때 
-$(function (){
-    // 클릭 이벤트
-    $('.imgsearch').on('click', function(e) {
-        e.preventDefault(); // 기본 동작 방지 (버튼 클릭 시 페이지 이동 방지)
-        performSearch();
-    });
-
-    // 엔터 키 입력 이벤트
-    $('.search-input').on('keydown', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault(); // 기본 동작 방지 (엔터 키에 의한 폼 제출 방지)
-            performSearch();
-        }
-    });
-
-    // 검색 수행 함수
-    function performSearch() {
-        let search = $('.search-input').val().trim(); // 입력값의 앞뒤 공백 제거
-
-        // 입력값이 비어있지 않을 경우에만 AJAX 요청 수행
-        if (search) {
-            $.ajax({
-                url: '/Users/Mainsearch',
-                type: 'GET',
-                data: { search: search }
-            })
-            .done(function(data) {
-                // AJAX 요청 후 페이지 이동
-                window.location.href = '/Users/Mainsearch?page=1&search=' + encodeURIComponent(search);
-            })
-            .fail(function(err) {
-                alert('오류 : ' + err.responseText);
-            });
-        } else {
-            alert("검색어를 입력해주세요."); // 빈 입력값에 대한 안내 메시지
-        }
-    }
 });
 </script>
 

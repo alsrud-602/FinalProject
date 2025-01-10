@@ -22,6 +22,7 @@
     color: #00ff84; /* 텍스트 색상 */
     font-weight: bold; /* 글씨 두껍게 */
 }
+
 .review_time{
 }
 #likebtn{
@@ -51,6 +52,7 @@ color:#fff;
 background-color: #006534;
 
 }
+
 </style>
 </head>
 <body>
@@ -59,7 +61,7 @@ background-color: #006534;
   <img id="icon_back" onclick="backPage()" src="/images/icon/back.png" alt="뒤로가기">
   <main>
   
-  <div class="swiper-container">
+    <div class="swiper-container">
   <div class="swiper-wrapper">
   <!-- 이미지 들어갈곳 -->
   
@@ -79,6 +81,8 @@ background-color: #006534;
   <!-- Navigation buttons -->
   <div class="swiper-button-next"></div>
   <div class="swiper-button-prev"></div>
+
+
 </div>
     
     <div class='title'>
@@ -119,6 +123,7 @@ background-color: #006534;
         </c:forEach>
       </div>
       <div class="title_click" >
+
        <div class="bookmark" onclick="bookConfig()"><img src="/images/icon/star.png"><p>찜하기</p></div>&nbsp;
        <div class="share" onclick="clipboard()" ><img src="/images/icon/share1.png"><p>공유하기</p></div>&nbsp;
       </div>
@@ -406,7 +411,7 @@ const infoPage = `<div class="content">
 		     data-login-idx = "${user.userIdx}"
 		     data-review-idx = "${HotReviews.review_idx}">
 	     <div class ="review_preview">
-	     <img class= "review_img" src="/image/read?path=${HotReviews.image_path}" alt="Review Image" > 
+	     <img class= "review_img"src="/images/example/exampleimg6.png">     
 	     <div class="review_like">
 	     <img src="/images/icon/heart.png">
 	     <p>${HotReviews.like}</p>
@@ -414,10 +419,10 @@ const infoPage = `<div class="content">
 	     </div>
 	     <div class="review_info">
 	       <p>${HotReviews.name} 님</p>
-	       <div><img src="/images/icon/eye2.png">&nbsp;${HotReviews.hit}&nbsp;</div>
+	       <div><img src="/images/icon/eye2.png">&nbsp;${HotReviews.score}&nbsp;</div>
 	     </div>
 	     <div class="review_score">평점 ${HotReviews.score}</div>
-	     <div class="review_time"><div></div></div>
+	     <div class="review_time"><div>3시간 전</div></div>
 	     <div class="review_cdate">${HotReviews.review_date}</div>
 	     </div>
 	     </c:forEach> 
@@ -447,7 +452,7 @@ const infoPage = `<div class="content">
 			     data-login-idx = "${user.userIdx}"
 			     data-review-idx = "${review.review_idx}">
 	     <div class ="review_preview">
-	     <img class= "review_img" src="/image/read?path=${review.image_path}" alt="Store Image" >     
+	     <img class= "review_img"src="/images/example/exampleimg6.png">     
 	     <div class="review_like">
 	     <img src="/images/icon/heart.png">
 	     <p>${review.like_count}</p>
@@ -493,7 +498,7 @@ const infoPage = `<div class="content">
 	       <div><img src="/images/icon/eye2.png">&nbsp;${HotReviews.score}&nbsp;</div>
 	     </div>
 	     <div class="review_score">평점 ${HotReviews.score}</div>
-	     <div class="review_time"><div><a></a></div></div>
+	     <div class="review_time"><div>3시간 전</div></div>
 	     <div class="review_cdate">${HotReviews.review_date}</div>
 	     </div>
 	     </c:forEach> 
@@ -562,14 +567,13 @@ const mapPage = `
     const userIdx = element.getAttribute('data-user-idx');
     const loginIdx = element.getAttribute('data-login-idx');
     const reviewIdx = element.getAttribute('data-review-idx');
-    console.log("storeIdx"+storeIdx);
-    console.log("userIdx"+userIdx);
-    console.log("loginIdx"+loginIdx);
-    console.log("reviewIdx"+reviewIdx);
+    console.log(storeIdx);
+    console.log(userIdx);
+    console.log(loginIdx);
     $.ajax({
     	url : '/Users/ReviewDetail',
     	type : 'GET',
-    	data : { storeidx:storeIdx, useridx:userIdx,review_idx:reviewIdx,loginidx:loginIdx}
+    	data : { storeidx:storeIdx, useridx:userIdx,review_idx:reviewIdx}
     })
     .done(function(response){
     	const reviewData = response.ReviewDetail; // 서버에서 받아온 데이터
@@ -1341,6 +1345,34 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     console.log("Days Remaining:", daysRemaining); // 디버깅 정보
 });
+
+//북마크 기능 구현 중 여기부터
+$(document).ready(function() {
+    $('#bookmarkBtn').click(function() {
+        var storeIdx = $(this).data('store-idx');
+        $.ajax({
+            url: '/Users/toggleBookmark',
+            type: 'POST',
+            data: { store_idx: storeIdx },
+            success: function(response) {
+                if (response.success) {
+                    if (response.status === 'added') {
+                        $('#bookmarkBtn img').attr('src', '/images/icon/star_filled.png');
+                    } else {
+                        $('#bookmarkBtn img').attr('src', '/images/icon/star.png');
+                    }
+                } else {
+                    alert('로그인이 필요합니다.');
+                }
+            },
+            error: function() {
+                alert('오류가 발생했습니다. 다시 시도해주세요.');
+            }
+        });
+    });
+});
+//북마크 기능 구현 중 여기까지
+
 </script>
 <!-- <script src="/js/authuser.js" defer></script> -->
 </body>

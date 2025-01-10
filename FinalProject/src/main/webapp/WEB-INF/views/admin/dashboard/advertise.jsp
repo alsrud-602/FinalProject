@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+    <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -204,9 +206,7 @@ a {
   border-radius:5px;
   font-weight: bold;
   font-size: 20px;
-  color: white;
-  -webkit-text-stroke: 1px #000;
-  text-stroke: 1px #000;
+  color: black;
 }
 
 input[type=checkbox] {
@@ -238,7 +238,7 @@ input[type=checkbox] {
 
 .adv-manage2 th:nth-child(1) {
   padding-left:10px;
-  width:330px;
+  width:100px;
 }
 
 .adv-manage2 th:nth-child(2) {
@@ -272,9 +272,7 @@ input[type=checkbox] {
   border-radius:5px;
   font-weight: bold;
   font-size: 20px;
-  color: white;
-  -webkit-text-stroke: 1px #000;
-  text-stroke: 1px #000;
+  color: black;
 }
 
 
@@ -298,12 +296,51 @@ input[type=checkbox] {
   color: black;
 }
 
-.member-status.BLOCKED {
+.member-status.차단됨 {
   background-color: red;
   color: white;
 }
+.thumbnail{
+width: 64px;
+height: auto;
+}
+.header-container {
+    display: flex; /* Flexbox 사용 */
+    justify-content: space-between; /* 공간을 균등하게 배분 */
+    align-items: center; /* 수직 중앙 정렬 */
+    
+}
 
+.adminsearch-container {
+    display: flex;
+    align-items: center;
+    background-color: #F8F9FA; /* 연한 배경색 */
+    border-radius: 25px; /* 둥근 모서리 */
+    padding: 5px 10px; /* 패딩 */
+    width: 300px; /* 원하는 너비 */
+    height:60px;
+    margin-top: 60px;
+    margin-right: 40px;
+}
 
+.adminsearch-input {
+   background-color: white;
+    border: none; /* 테두리 없음 */
+    outline: none; /* 포커스 시 테두리 없음 */
+    font-size: 16px; /* 글자 크기 */
+    border-radius: 25px; /* 둥근 모서리 */
+}
+
+.adminsearch-button {
+    background: none; /* 배경 없음 */
+    border: none; /* 테두리 없음 */
+    cursor: pointer; /* 커서 변화 */
+}
+
+.adminsearch-icon {
+    width: 20px; /* 아이콘 너비 */
+    height: 20px; /* 아이콘 높이 */
+}
 
 </style>
 </head>
@@ -347,7 +384,7 @@ input[type=checkbox] {
 	 <table class="adv-manage">
 	  <thead>
 	   <tr>
-	    <th><input type="checkbox"></th>
+	    <th><input type="checkbox" onclick="toggleCheckboxes(this)"></th>
 	    <th>썸네일</th>
 	    <th>스토어 명</th>
 	    <th>담당자 명</th>
@@ -356,114 +393,106 @@ input[type=checkbox] {
 	   </tr>
 	  </thead>
 	  <tbody>
-	   <tr>
-	    <td><input type="checkbox"></td>
-	    <td><img src="/images/admin/adv/luffy.png"></td>
-	    <td>잔망 루피의 대모험</td>
-	    <td>대원 스토어</td>
-	    <td>24.12.12</td>
-	    <td><a href="">광고 해제</a></td>
-	   </tr>
-	   <tr>
-	    <td><input type="checkbox"></td>
-	    <td><img src="/images/admin/adv/luffy.png"></td>
-	    <td>잔망 루피의 대모험</td>
-	    <td>대원 스토어</td>
-	    <td>24.12.12</td>
-	    <td><a href="">광고 해제</a></td>
-	   </tr>
-	   <tr>
-	    <td><input type="checkbox"></td>
-	    <td><img src="/images/admin/adv/luffy.png"></td>
-	    <td>잔망 루피의 대모험</td>
-	    <td>대원 스토어</td>
-	    <td>24.12.12</td>
-	    <td><a href="">광고 해제</a></td>
-	   </tr>
-	   <tr>
-	    <td><input type="checkbox"></td>
-	    <td><img src="/images/admin/adv/luffy.png"></td>
-	    <td>잔망 루피의 대모험</td>
-	    <td>대원 스토어</td>
-	    <td>24.12.12</td>
-	    <td><a href="">광고 해제</a></td>
-	   </tr>
+<c:if test="${not empty popupManagerDetail}">
+    <c:forEach var="list" items="${popupManagerDetail}">
+        <tr>
+            <td><input type="checkbox" class="item-checkbox"></td>
+            <td><img src="/image/read?path=${fn:replace(list['IMAGE_PATH'], '\\', '/')} " alt="없음" class="thumbnail"></td>
+            <td>${list.TITLE}</td>
+            <td>${list['NAME']}</td>
+            <td>${list['CDATE']}</td>
+            <td><a href="/popup/release?id=${list['STORE_IDX']}">광고 해제</a></td>
+        </tr>
+    </c:forEach>
+</c:if>
 	  </tbody>
 	 </table>
 	</div>
-	<div class="breakdown">
-	 <div class="blank">담당자 내역</div>
-	 <div class="liner"></div>
-	 <table class="adv-manage2">
-	  <thead>
-	   <tr>
-	    <th class="sortable" data-column="name">이름 <span class="sort-icon"></span></th>
-	    <th>가입일</th>
-	    <th class="sortable" data-column="stores">등록한 스토어 수<span class="sort-icon"></span></th>
-	    <th>상태</th>
-	    <th>광고 관리</th>
-	   </tr>
-	  </thead>
-	  <tbody>
-	   <tr>
-	    <td>대원 스토어</td>
-	    <td>2024.12.12</td>
-	    <td>1</td>
-	    <td>
-	     <select class="member-status">
-          <option value="우수회원">우수회원</option>
-          <option value="일반회원">일반회원</option>
-          <option value="BLOCKED">BLOCKED</option>
-         </select>
-	    </td>
-	    <td><a href="">광고 등록</a></td>
-	   </tr>
-	   <tr>
-	    <td>키스톤 마케팅</td>
-	    <td>2024.12.12</td>
-	    <td>3</td>
-	    <td>
-	     <select class="member-status">
-          <option value="우수회원">우수회원</option>
-          <option value="일반회원">일반회원</option>
-          <option value="BLOCKED">BLOCKED</option>
-         </select>
-	    </td>
-	    <td><a href="">광고 등록</a></td>
-	   </tr>
-	   <tr>
-	    <td>키스톤 마케팅</td>
-	    <td>2024.12.12</td>
-	    <td>8</td>
-	    <td>
-	     <select class="member-status">
-          <option value="우수회원">우수회원</option>
-          <option value="일반회원">일반회원</option>
-          <option value="BLOCKED">BLOCKED</option>
-         </select>
-	    </td>
-	    <td><a href="">광고 등록</a></td>
-	   </tr>
-	   <tr>
-	    <td>키스톤 마케팅</td>
-	    <td>2024.12.12</td>
-	    <td>7</td>
-	    <td>
-	     <select class="member-status">
-          <option value="우수회원">우수회원</option>
-          <option value="일반회원">일반회원</option>
-          <option value="BLOCKED">BLOCKED</option>
-         </select>
-	    </td>
-	    <td><a href="">광고 등록</a></td>
-	   </tr>
-	  </tbody>
-	 </table>
-	</div>
+<div class="breakdown">
+    <div class="header-container">
+        <div class="blank">담당자 내역</div>
+        <div class="adminsearch-container">
+            <input type="text" id="searchInput" placeholder="담당자 이름을 검색하세요" class="adminsearch-input" onkeyup="filterTable()">
+            <button class="adminsearch-button" onclick="filterTable()">
+                <img src="/images/admin/store/admin-search.png" alt="검색" class="adminsearch-icon">
+            </button>
+        </div>
+    </div>
+    <div class="liner"></div>
+    <table class="adv-manage2">
+        <thead>
+            <tr>
+                <th>썸네일</th>
+                <th>스토어 명</th>
+                <th class="sortable" data-column="name">이름 <span class="sort-icon"></span></th>
+                <th>가입일</th>
+                <th class="sortable" data-column="stores">등록한 스토어 수<span class="sort-icon"></span></th>
+                <th>상태</th>
+                <th>광고 관리</th>
+            </tr>
+        </thead>
+        <tbody id="userTableBody">
+            <c:forEach var="company" items="${allcompanys}">
+                <tr>
+                    <td><img src="/image/read?path=${fn:replace(company.image_path, '\\', '/')}" alt="없음" class="thumbnail"></td>
+                    <td>${company.title}</td>
+                    <td>${company.name}</td>
+                    <td class="Cdatetd">${company.cdate}</td>
+                    <td class="storeCount">${company.store_count}</td>
+                    <td>
+                        <div>
+                            <select class="member-status" disabled>
+                                <option value="우수회원" <c:if test="${company.status == '우수회원'}">selected</c:if>>우수회원</option>
+                                <option value="일반회원" <c:if test="${company.status == '일반회원' || company.status == null}">selected</c:if>>일반회원</option>
+                                <option value="차단됨" <c:if test="${company.status == '차단됨'}">selected</c:if>>차단됨</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="adinsert">
+                            <a href="/Admin/updateBanStatus?store_idx=${company.store_idx}" onclick="return confirm('정말로 광고 등록 하시겠습니까?');">광고등록</a>
+                        </div>
+                    </td>
+                </tr>
+            </c:forEach>
+        </tbody>
+    </table>
+</div>
   </div>
 </div>
 </main>
 <%@include file="/WEB-INF/include/admin-footer.jsp" %>
+<script>
+function toggleCheckboxes(selectAllCheckbox) {
+    const checkboxes = document.querySelectorAll('.item-checkbox');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = selectAllCheckbox.checked;
+    });
+}
+</script>
+<script>
+function filterTable() {
+    // 검색어 가져오기
+    let input = document.getElementById('searchInput');
+    let filter = input.value.toLowerCase();
+    let table = document.getElementById('userTableBody');
+    let rows = table.getElementsByTagName('tr');
+
+    // 테이블의 모든 행을 반복
+    for (let i = 0; i < rows.length; i++) {
+        let cells = rows[i].getElementsByTagName('td');
+        let storeName = cells[1].textContent.toLowerCase(); // 스토어 명
+        let adminName = cells[2].textContent.toLowerCase(); // 이름
+
+        // 검색어가 스토어명이나 이름에 포함되어 있는지 확인
+        if (storeName.includes(filter) || adminName.includes(filter)) {
+            rows[i].style.display = ''; // 행 표시
+        } else {
+            rows[i].style.display = 'none'; // 행 숨김
+        }
+    }
+}
+</script>
 <script>
     const carousels = document.querySelectorAll('.carousel1');
 

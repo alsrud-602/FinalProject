@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,6 +8,7 @@
 <link rel="icon" type="image/png" href="/img/favicon.png" />
 <link rel="stylesheet" href="/css/admin-common.css" />
 <link rel="stylesheet" href="/css/admin_s.css" />
+<link rel="stylesheet" href="/css/admin-store-detail-pagination.css" />
  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -81,8 +81,6 @@
     text-align:center;
     border-radius:25px;
     border: 1px solid green;
-    cursor: pointer; /* 커서가 손가락 모양으로 변경됨 */
-    cursor: pointer; /* 커서가 손가락 모양으로 변경됨 */
   }
   
  .chart-container {
@@ -101,6 +99,7 @@
     border-radius: 5px;
     cursor: pointer;
   }
+
   
 .upmenu_div{
     background: white;
@@ -122,7 +121,22 @@
     font-family: 'Pretendard';
     padding-left: 10px;
     margin-bottom: 15px; 
-}       
+}      
+.category-name {
+    display: inline; /* 인라인 요소로 설정하여 수평으로 나열 */
+    margin-right: 5px; /* 각 카테고리 간 간격 */
+} 
+.categories {
+    display: flex; /* 카테고리 이름을 수평으로 나열 */
+    flex-wrap: wrap; /* 필요 시 줄 바꿈 */
+    margin-left: 10px; /* 다른 내용과 간격 조정 */
+}
+.resetbutton{
+  padding:20px;
+  background: white;
+}
+
+
 </style>
 </head>
 <body>
@@ -132,22 +146,24 @@
   <main>
 
    <div class="content_box2">
-    <p id ="box_title">${CompanyDetail.name}</p>    
+    <p id ="box_title">키스톤 마케팅</p>    
     <img src="/images/icon/location.png" style="width:20px; margin-bottom:5px; "  />
     <div style="text-align: center"><p style="width:200px; border: 1px solid gray;">부산광역시 부산진구</p></div>
     
     <hr>
     
  	<div class="upmenu" style="display: flex; ">
-		    <div   class="upmenu_div" style="border: 1px solid black; margin-right: 10px;  height: 500px; width: 500px;"> <!-- 너비 조정 -->
+		    <div style="border: 1px solid black;  margin-right: 10px;  height: 500px; width: 500px;"> <!-- 너비 조정 -->
               <p>아이디</p>
-              <input type="text" style="width: 80%;" placeholder="${CompanyDetail.id}"> 
+              <input type="text" style="width: 80%;"> 
+               <p>비밀번호</p>
+               <input type="text" style="width: 80%;">
                <p>사업자코드</p>
-               <input type="text" style="width: 80%;" placeholder="${CompanyDetail.code}">
+               <input type="text" style="width: 80%;">
                 <p>이메일</p>
-                <input type="text" style="width: 80%;" placeholder="${CompanyDetail.email}">
+                <input type="text" style="width: 80%;">
                 <p>전화번호</p>
-                <input type="text" style="width: 80%;" placeholder="${CompanyDetail.phone}">
+                <input type="text" style="width: 80%;">
         </div>
 <div style="border: 1px solid black;">   
     <div class="chart-container">
@@ -173,36 +189,43 @@
 <div class="popupsearch" style="padding:50px; margin-top:10px; background: #40c963;">
     <h2 style="color:white;">등록한 팝업스토어</h2>
     <div class="searchform" style="display: flex; gap: 10px; flex-wrap: wrap;">
-        <input type="text" style="flex: 1; padding: 10px;" placeholder="팝업명을 입력하세요">
-        <select style="padding: 10px; width: 150px;">
-            <option>category</option>
-        </select>
-        <input type="button" style="flex: 0.1; padding: 10px; background:white;" background:white value="조회">
+
+        <input type="text" class="inputsearch" style="flex: 1; padding: 10px;" placeholder="팝업명을 입력하세요">
+        <input type="button" class="buttonsearch"style="flex: 0.1; padding: 10px; background:white;" value="조회">
+        <button type="reset"  class="resetbutton">※초기화</button>
     </div>
 </div>
 		
+
 	<div class="list-container">
 	  <c:forEach var="popup" items="${CompanyPopupDetail}">
-	    <div class="list-item" data-store-idx="${popup.store_idx}">
+	    <div class="list-item" data-store-idx="${popup.store_idx} " data-company-idx="${popup.company_idx}">
 	      <img src="/image/read?path=${popup.image_path}" alt="Store Image" >
-	      <div class="content">
-	        <span>${popup.brand1}</span> <!-- 브랜드 이름 -->
-	        <span>${popup.title}</span> <!-- 팝업 제목 -->
-	        <!-- 카테고리 리스트 출력 -->
-	        <c:forEach var="category" items="${finalCategoryList}">
-	          <c:if test="${category.store_idx == popup.store_idx}">
-	            <span>${category.category_name}</span>
-	          </c:if>
-	        </c:forEach>
-	        
-	        <div class="remote" data-store-idx="${popup.store_idx}">Remote</div> <!-- 원격 조작 관련 정보 -->
-	      </div>
+		      <div class="content">
+			    <span>${popup.brand1}</span> <!-- 브랜드 이름 -->
+			    <span>${popup.title}</span> <!-- 팝업 제목 -->
+			    
+			    <!-- 카테고리 리스트 출력 -->
+			    <div class="categories">
+			        <c:forEach var="category" items="${finalCategoryList}">
+			            <c:if test="${category.store_idx == popup.store_idx}">
+			                <span class="category-name">${category.category_name}</span> <!-- 카테고리 이름 -->
+			            </c:if>
+			        </c:forEach>
+			    </div>
+			    
+			    <div class="remote" data-store-idx="${popup.store_idx}">Remote</div> <!-- 원격 조작 관련 정보 -->
+			</div>
 	      <div class="action">광고 등록</div> <!-- 광고 등록 버튼 -->
 	    </div>
 	  </c:forEach>
 	</div>
+
    
    </div>	
+	<div id="pagination">
+    <%@include file="/WEB-INF/include/admin-store-detail-pagination.jsp" %>
+   </div>
 		
 		
 		
@@ -329,6 +352,7 @@ document.addEventListener('DOMContentLoaded', function() {
     fetchPerformanceData(startDate, endDate);  // 기본 데이터 요청
     fetchStorePerformanceRank(companyIdx, startDate, endDate);  // 기본 순위 요청
 });
+
 //기간 선택 이벤트
 document.getElementById('dateRange').addEventListener('change', (e) => {
     const selectedRange = e.target.value; // 선택된 기간 값
@@ -381,7 +405,17 @@ const fetchPerformanceData = (startDate, endDate) => {
     })
     .catch(error => {
         console.error('Error fetching performance data:', error);
+
     });
+
+});
+$(function(){
+	$('.resetbutton').on('click',function(){
+		let company_idx = ${CompanyDetail.company_idx}
+		window.location.href = "/Admin/Detail?company_idx="+company_idx;
+	})
+})
+
 };
 const fetchStorePerformanceRank = (companyIdx, startDate, endDate) => {
     axios.get(`/Admin/Store/PerformanceRank/\${companyIdx}`, {
@@ -397,23 +431,27 @@ const fetchStorePerformanceRank = (companyIdx, startDate, endDate) => {
     });
 };
 
+
+
+$(function(){
+    $('.buttonsearch').on('click', function(){
+        let company_idx = ${CompanyDetail.company_idx}; // JSP 표현식으로 company_idx를 가져옴
+        let search = $('.inputsearch').val();
+        
+        window.location.href = "/Admin/Detailpagination?company_idx=" + company_idx + "&search=" + encodeURIComponent(search);
+    });
+});
+$(function(){
+	$('.resetbutton').on('click',function(){
+		let company_idx = ${CompanyDetail.company_idx}
+		window.location.href = "/Admin/Detail?company_idx="+company_idx;
+	})
+})
+
+
 </script>
     <%@include file="/WEB-INF/include/admin-footer.jsp" %>
 </body>
-<script>
-$(function(){
-    $('.remote').on('click', function(){
-        let store_idx = $(this).data('store-idx'); // data-store-idx에서 값 가져오기
-         window.location.href = "/Users/Info?store_idx=" + store_idx; // URL로 이동
-    });
-});
-$(function(){
-    $('.action').on('click', function(){
-        let store_idx = $(this).data('store-idx'); // data-store-idx에서 값 가져오기
-         window.location.href = "/Users/Info?store_idx=" + store_idx; // URL로 이동
-    });
-});
-</script>
 </html>
   
 

@@ -1,6 +1,6 @@
 package com.board.companys.dto;
 
-import java.util.Date;
+import java.util.Date;	
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -67,7 +67,7 @@ public class Company {
     @Temporal(TemporalType.DATE)
     private Date cdate; // 가입일
 
-    @Column(name = "STATUS", length = 20)
+    @Column(name = "STATUS", length = 20, columnDefinition = "DEFAULT 회원")
     private String status; // 블락 상태 또는 우수 회원 또는 null(일반)
     
     @Column

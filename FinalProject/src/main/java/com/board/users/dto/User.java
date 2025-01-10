@@ -31,7 +31,7 @@ public class User {
     @Column(name = "USER_IDX", length = 10)
     private Long userIdx; // 유저 ID
 
-    @Column(name = "NIKNAME", length = 30)
+    @Column(name = "NICKNAME", length = 30)
     private String nickname; // 닉네임
 
     @Column(name = "NAME", length=30)

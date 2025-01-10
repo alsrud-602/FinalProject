@@ -7,10 +7,12 @@
 <title>관리자 인증</title>
 <link rel="stylesheet" href="/css/admin-common.css" />
 <style type="text/css">
-body { align-content: center;} 
+main { 
+text-align: center;} 
 </style>
 </head>
 <body>
+<main>
     <h1>Authentication</h1>
     
         <!-- QR 코드 이미지 -->
@@ -28,5 +30,6 @@ body { align-content: center;}
     <c:if test="${param.error}">
         <div style="color: red;">유효하지 않은 OTP입니다. 다시 시도하세요.</div>
     </c:if>
+    </main>
 </body>
 </html>

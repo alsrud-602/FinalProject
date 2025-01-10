@@ -64,16 +64,9 @@ public class WebSocketController {
         List<WaitingDto> updatedList =  waitingService.sendWatingList(waitingDto);
         int store_idx =watingMapper.getStore_idxWaiting(waitingDto.getWaiting_idx());
         
-        // 해당 유저 번호에게 전달
-        WaitingDto myWating = watingMapper.getUser_idxWating(waitingDto.getWaiting_idx());
-        
         // 특정 구독 경로로 메시지 전송
         String topic = "/topic/Waiting/" + store_idx;
         messagingTemplate.convertAndSend(topic, updatedList);
-        String response = "/topic/UserIndex/" + myWating.getUser_idx();
-        System.out.println("response"+response);
-        System.out.println("myWating"+myWating);
-        messagingTemplate.convertAndSend(response, myWating);
        
         // 현재 순번 개인에게 문자 보내기 
        // String user = "/topic/Waiting/" + store_idx "/" + user_idx;

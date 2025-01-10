@@ -172,9 +172,6 @@ h3 {
 	position: relative;
 	overflow: hidden;
 	background-color: #fff; /* 배경색 추가 */
-	h3{
-	margin-bottom: 30px; 
-	}
 }
 
 .traffic-update {
@@ -227,7 +224,7 @@ button.use-btn:hover {
 }
 
 canvas {
-	max-width: 100%; /* 그래프의 너비 조정 */
+	max-width: 48%; /* 그래프의 너비 조정 */
 	height: 500px; /* 그래프의 높이 조정 */
 	background-color: rgba(200, 200, 200, 0.1); /* 그래프 배경색 */
 	border-radius: 4px; /* 모서리 둥글게 */
@@ -236,7 +233,7 @@ canvas {
 
 .chart-labels {
 	display: flex;
-	justify-content: center;
+	justify-content: space-between; /* 텍스트 사이의 간격 */
 	margin-top: 10px; /* 그래프와 텍스트 간격 */
 }
 
@@ -774,14 +771,24 @@ margin: 30px 42px;
 		</div>
 
 		<section class="real-time-updates">
-			<h3>평균 예약대기 확인하기</h3>
+			<h3>실시간 혼잡도 업데이트</h3>
+			<div class="traffic-update">
+				<div class="traffic-update-controls">
+					<label for="traffic-range">혼잡도 업데이트</label>
+					<button class="use-btn">사용하기</button>
+				</div>
+				<input type="range" id="traffic-range" min="0" max="100"
+					style="width: 100%;">
+			</div>
 			<hr>
-			<h4 class="graph">평균 대기시간 그래프</h4>
+			<h4 class="graph">혼잡도 그래프</h4>
 			<div class="charts">
 				<canvas id="trafficChart"></canvas>
+				<canvas id="dailyTrafficChart"></canvas>
 			</div>
 			<div class="chart-labels">
-				<p>하루 30분 별 평균대기 시간 표기</p>
+				<p>하루 평균</p>
+				<p>일주일 평균</p>
 			</div>
 		</section>
 		<input type="hidden" id="reservation_rsIdx" value="" /> 
@@ -877,10 +884,8 @@ margin: 30px 42px;
 		<section class="reservation-status">
 			<div class="reservation-header">
 				<h3>현장예약대기</h3>
-				<div class="btn-flex">
 				<button class="use-btn" onclick="onSiteUse(this)" data-use="able">사용하기</button>
 				<button class="use-btn" onclick="onSiteUse(this)"  data-use="disable">사용중지</button>
-				</div>
 			</div>
          
 			<div class="warning-message">
@@ -905,6 +910,24 @@ margin: 30px 42px;
 					<th>알림 보내기</th>
 					<th>상태</th>
 					<th>삭제하기</th>
+				</tr>
+				<tr data-status="current">
+					<td>1</td>
+					<td>김방글</td>
+					<td>bange</td>
+					<td>3명</td>
+					<td><button class="notify-btn">알림보내기</button></td>
+					<td>현재순번</td>
+					<td><button class="delete-btn">삭제하기</button></td>
+				</tr>
+				<tr data-status="waiting">
+					<td>2</td>
+					<td>김싱글</td>
+					<td>singe</td>
+					<td>3명</td>
+					<td><button class="notify-btn">알림보내기</button></td>
+					<td>대기</td>
+					<td><button class="delete-btn">삭제하기</button></td>
 				</tr>
 
 			</table>
@@ -954,11 +977,7 @@ margin: 30px 42px;
 	<%@include file="/WEB-INF/include/footer_company.jsp"%>
 
 	<script>
- 
-	
-	
-	
-	
+
 
 	
    function onSiteList() {
@@ -1062,8 +1081,6 @@ margin: 30px 42px;
                     <td colspan="7" style="text-align:center;"> 대기인원이 없습니다.</td>
                 </tr>
             `;   
-            
-            $('#waiting-count').html('대기 0팀'); 
         }
 
         isWaitingConfigCalled = false;
@@ -1096,27 +1113,24 @@ margin: 30px 42px;
     
     
     
-    //웹소켓 초기 설정
-      let currentCompanyIdx = null;
-      let stompClient = null;
+    
+    
+    let stompClient = null;
 	  const socket = new SockJS('/ws');  // 웹소켓 연결
 	  stompClient = Stomp.over(socket);	 		
 	  stompClient.connect({}, function(frame) {
 	      console.log('Connected: ' + frame);
 
-	      if (currentCompanyIdx) {
-	          updateCompanySubscription(currentCompanyIdx);
-	      }  
-	      
-	      stompClient.subscribe(`/topic/Waiting/\${initIdx}`, function(message) {
-	          const waitingList = JSON.parse(message.body);
+	      // 대기 리스트 실시간 업데이트
+	 stompClient.subscribe("/topic/Waiting/90", function(message) {
+	          
+		   const waitingList = JSON.parse(message.body);
 	          updateWaitingList(waitingList);
 	      });
-	      currentCompanyIdx = initIdx;
 
 	  });
 	  
-	  // 삭제 보내기 웹소켓
+	  
 	    function deleteSend(button,select,idx){
 	        const selectElement = $(button).prev('select')
 	        const hiddenInput = $(button).next('input[type="hidden"]');
@@ -1138,7 +1152,7 @@ margin: 30px 42px;
 	        $('.overlay').hide(); // overlay 숨기기	
 	    	
 	    }  
-	  //방문완료 알람보내기 웹소켓
+	  
 	    function updateSend(button){
 	        const hiddenInput = $(button).next('input[type="hidden"]');
 	        const selectedValue = '현재순번';
@@ -1161,7 +1175,6 @@ margin: 30px 42px;
 	    	
     }   
 
-	  //현장대기예약 시작 중단 웹소켓
    function onSiteUse(element){
 	let store_idx =  document.querySelector('#reservation_storeIdx').value
 	  let ableStatus = element.getAttribute('data-use'); 
@@ -1169,8 +1182,7 @@ margin: 30px 42px;
    	    		store_idx : store_idx,   
    	    		onsite_use: ableStatus  };
      if (stompClient) {
-        stompClient.send("/app/Waiting/StoreStatus", {}, JSON.stringify(storeStatus));      
-        loadUserWaitingList(store_idx)
+        stompClient.send("/app/Waiting/StoreStatus", {}, JSON.stringify(storeStatus));
      } else {
         console.error("WebSocket is not connected.");
      }  
@@ -1178,33 +1190,7 @@ margin: 30px 42px;
    	
    }
 	    	    
-	//가게별 웹소켓 경로 설정하기 웹소켓
-   function updateCompanySubscription(newCompanyIdx) {
-	   
-	   if (!stompClient || !stompClient.connected) {
-	        console.error('WebSocket이 연결되지 않았습니다.');
-	        return;
-	    }
-	  	   
-	    // 기존 구독 취소
-	    if (currentCompanyIdx) {
-	        stompClient.unsubscribe(`/topic/Waiting/\${currentCompanyIdx}`);
-	    }
-        console.log('오류시점newCompanyIdx '+newCompanyIdx)
-	    // 새로운 companyIdx에 대한 구독 설정
-	    stompClient.subscribe(`/topic/Waiting/\${newCompanyIdx}`, function(message) {
-	        const waitingList = JSON.parse(message.body);
-	        updateWaitingList(waitingList);
-	    });
-   
-	    // currentCompanyIdx 값 업데이트
-	    currentCompanyIdx = newCompanyIdx;   
 	    
-   }
-   
-   
-   
-   let initIdx = null;
 	    
 	////////////////////////////////////////////////////////
 	
@@ -1251,9 +1237,8 @@ margin: 30px 42px;
     	  const storeIdx = currentSlide.getAttribute('data-storeIdx'); 
     	  const wc = currentSlide.getAttribute('data-waitingCount'); 
     	  
-    	  console.log('storeIdx의값' + storeIdx)
-    	  initIdx = storeIdx;
-    	  updateCompanySubscription(storeIdx)
+    	  
+    	  
     	  document.querySelector('._4').textContent = reviewCount; 
     	  document.querySelector('._30').textContent = viewCount; 
     	  document.querySelector('._200').textContent = viewLike; 
@@ -1266,8 +1251,7 @@ margin: 30px 42px;
     	  console.log('확인 합니다 ');
     	  console.log(wc);
     	  reservationDisplay(link,rstaus);
-    	  waitingconfig(wc);
-    	  waitingTime(storeIdx)
+    	  waitingconfig(wc) 
     	  
     	}
     
@@ -1323,75 +1307,85 @@ margin: 30px 42px;
     
 /* 혼잡도 그래프 */
 const ctx = document.getElementById('trafficChart').getContext('2d');
+const dailyCtx = document.getElementById('dailyTrafficChart').getContext('2d');
 
-let trafficChart = null; 
-function waitingTime(store_idx){
-	
-	console.log('store_idx웨이팅'+store_idx);
-fetch(`/api/waiting/timegrape?store_idx=\${store_idx}`)
-.then(response => response.json())
-.then(jsonData => {
- 
-	console.log('jsonData값');
-	console.log(jsonData);
-    const labels = jsonData.map(item => {
-        const date = new Date(item.time);
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-        return `\${hours}:\${minutes}`;
-    });
-
-    const data = jsonData.map(item => item.average);
-
-	console.log('data'+data);
-   
-    if (trafficChart) {
-        trafficChart.destroy();
-    }
-     trafficChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: '평균 대기 소요 시간 (분)',
-                data: data,
-                backgroundColor: 'rgba(75, 192, 192, 0.5)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    min: 0,
-                    ticks: {
-                        font: { size: 16 }
-                    }
-                },
-                x: {
-                    ticks: {
-                        font: { size: 16 }
-                    }
+const trafficChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['11:00', '1:00', '3:00', '5:00', '7:00'],
+        datasets: [{
+            label: '혼잡도',
+            data: [30, 50, 70, 100, 80],
+            backgroundColor: 'rgba(75, 192, 192, 0.5)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                min: 0,
+                max: 100,
+                ticks: {
+                    font: { size: 16 }
                 }
             },
-            plugins: {
-                legend: {
-                    labels: {
-                        font: { size: 16 }
-                    }
+            x: {
+                ticks: {
+                    font: { size: 16 }
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                labels: {
+                    font: { size: 16 }
                 }
             }
         }
-    });
-})
-.catch(error => console.error('Error fetching data:', error));
+    }
+});
 
-}
-
-
-
+const dailyTrafficChart = new Chart(dailyCtx, {
+    type: 'bar',
+    data: {
+        labels: ['월', '화', '수', '목', '금', '토', '일'],
+        datasets: [{
+            label: '혼잡도',
+            data: [20, 40, 60, 80, 100, 50, 30],
+            backgroundColor: 'rgba(75, 192, 192, 0.5)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                min: 0,
+                max: 100,
+                ticks: {
+                    font: { size: 16 }
+                }
+            },
+            x: {
+                ticks: {
+                    font: { size: 16 }
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                labels: {
+                    font: { size: 16 }
+                }
+            }
+        }
+    }
+});
 
 
 	

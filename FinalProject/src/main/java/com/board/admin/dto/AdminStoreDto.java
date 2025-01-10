@@ -24,7 +24,7 @@ public class AdminStoreDto {
 	private String ban;
 	
 	private int user_idx;
-	private String nikname;
+	private String nickname;
 	private String id;
 	private String password;
 	private String email;
@@ -71,5 +71,8 @@ public class AdminStoreDto {
     private String imagename;
     private String imageext;
     private String image_path;
+    
+    private String search;
+    private String filter;
 }
 

@@ -344,6 +344,7 @@
   </main>
   
 
+
 </div>	
 <div id="overlay">
  <div id="delay-popup">
@@ -379,6 +380,9 @@
  </div>
 </div>
 
+</div>   
+
+
 </body>
   <script>
   
@@ -387,7 +391,7 @@
 
   if (text.length > 20) {
       // 20자 이상일 경우 줄바꿈 처리
-	  textElement.innerText = text.substring(0, 24) + '...'; 
+     textElement.innerText = text.substring(0, 24) + '...'; 
   }
   
   $('#overlay').hide(); 
@@ -461,7 +465,7 @@
 
       // 예약 취소 클릭 시 웹소켓 메시지 발송
       document.getElementById("reserveButton").addEventListener("click", function() {
-    	  let newStatus = '예약취소';
+         let newStatus = '예약취소';
           const waitingRequest = {
               waiting_idx: waiting_idx,
               status: newStatus
@@ -503,26 +507,26 @@
       
       // 가게 순번 실시간 업데이트
       stompClient.subscribe(`/topic/UserIndex/\${user_idx}`, function(message) {
-    	  const data = JSON.parse(message.body);
-    	    const wating_order = data.wating_order;
-    	
-    	    
-    	    console.log('wating_order의 값' + wating_order);
-    	    console.log('data의 값' + data);
-    	    
-    	    if (wating_order) {
-    	        waitingEl.innerHTML = '';
-    	        // 새로운 <div> 요소 생성
-    	        const messageDiv = document.createElement("div");
-    	        messageDiv.textContent = `현재 순번! 입장하세요!`;
-    	        messageDiv.style.color = 'red';
-    	        //alert('현재순번입니다 15분내로 입장해주세요')
-    	        
-    	        // 생성한 <div>를 waitingEl에 추가
-    	        waitingEl.appendChild(messageDiv);
-    	    } else {
-    	        console.error("Element with id 'indexnum' not found.");
-    	    }
+         const data = JSON.parse(message.body);
+           const wating_order = data.wating_order;
+       
+           
+           console.log('wating_order의 값' + wating_order);
+           console.log('data의 값' + data);
+           
+           if (wating_order) {
+               waitingEl.innerHTML = '';
+               // 새로운 <div> 요소 생성
+               const messageDiv = document.createElement("div");
+               messageDiv.textContent = `현재 순번! 입장하세요!`;
+               messageDiv.style.color = 'red';
+               //alert('현재순번입니다 15분내로 입장해주세요')
+               
+               // 생성한 <div>를 waitingEl에 추가
+               waitingEl.appendChild(messageDiv);
+           } else {
+               console.error("Element with id 'indexnum' not found.");
+           }
 
       });
      
@@ -533,9 +537,9 @@
   fetch(`/api/waiting/list?store_idx=\${encodeURIComponent(store_idx)}`)
   .then(response => response.json())
   .then(data => {
-	  if(data)
-	  updateWaitingList(data)
-	  updateIndex(data);
+     if(data)
+     updateWaitingList(data)
+     updateIndex(data);
   }).catch(error => {
       console.error('처음 로딩 값이 없습니다:', error);
   }); 
@@ -543,17 +547,17 @@
 
   //대기인원 업데이트
   function updateWaitingList(waitingList) {
-	    const waitingCountElement = document.getElementById("waiting-count");
-	    
-	    // 대기 인원 수 계산
-	    const waitingCount = waitingList.length;
+       const waitingCountElement = document.getElementById("waiting-count");
+       
+       // 대기 인원 수 계산
+       const waitingCount = waitingList.length;
 
-	    // 대기 인원 수 업데이트
-	    if(waitingCountElement)
-	    waitingCountElement.textContent = `대기 인원: \${waitingCount}`;
-	}
+       // 대기 인원 수 업데이트
+       if(waitingCountElement)
+       waitingCountElement.textContent = `대기 인원: \${waitingCount}`;
+   }
   function backPage() {
-	  window.history.back();    
+     window.history.back();    
   }
   
   
@@ -571,43 +575,44 @@
          
       console.log(curStatus);
           if(curStatus=='현재순번'){
-        	alert('현재순번입니다! 15분내로 방문해주세요!')         	
+           alert('현재순번입니다! 15분내로 방문해주세요!')            
             waitingEl.innerHTML = '';
-	        // 새로운 <div> 요소 생성
-	        const messageDiv2 = document.createElement("div");
-	        messageDiv2.textContent = `현재 순번! 입장하세요!`;
-	        messageDiv2.style.color = 'red';
-	        //alert('현재순번입니다 15분내로 입장해주세요')
-	        
-	        // 생성한 <div>를 waitingEl에 추가
-	        waitingEl.appendChild(messageDiv2);	    
-        	
+           // 새로운 <div> 요소 생성
+           const messageDiv2 = document.createElement("div");
+           messageDiv2.textContent = `현재 순번! 입장하세요!`;
+           messageDiv2.style.color = 'red';
+           //alert('현재순번입니다 15분내로 입장해주세요')
+           
+           // 생성한 <div>를 waitingEl에 추가
+           waitingEl.appendChild(messageDiv2);       
+           
           }else{
-        	  indexnumEl.innerHTML ='';
-        	  indexnumEl.innerHTML = waiting_order;
-        	  
+             indexnumEl.innerHTML ='';
+             indexnumEl.innerHTML = waiting_order;
+             
           }
             
           
       }else{
-    	  waitingEl.innerHTML = '';
-    	  waitingEl.innerHTML = '대기 상태가 아닙니다';  
+         waitingEl.innerHTML = '';
+         waitingEl.innerHTML = '대기 상태가 아닙니다';  
       }  
   }
   
   function advanceRes(){
 
-	  fetch(`/api/waiting/advance?user_idx=\${encodeURIComponent(user_idx)}`)
-	  .then(response => {
-		    if (!response.ok) {
-		        throw new Error(`HTTP error! status: ${response.status}`);
-		      }
-		      return response.json();
-		    })
-	  .then(data => {
+     fetch(`/api/waiting/advance?user_idx=\${encodeURIComponent(user_idx)}`)
+     .then(response => {
+          if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+          })
+     .then(data => {
        console.log(data);
        if(data){
        rtableEl.innerHTML = '';  
+
 	   data.forEach((item, index) => {
 		  
 		   let rdate = `\${item.reservation_date}`; 
@@ -648,57 +653,58 @@
 	   
 	    })  
 		  
+
        }  
-	  }).catch(error => {
-	      console.error('예약내역이 없습니다', error);
-	  }); 
-	  	
-	  
+     }).catch(error => {
+         console.error('예약내역이 없습니다', error);
+     }); 
+        
+     
   }
   
   function onSiteRes() {
-	 
-	  fetch(`/api/waiting/onsite?user_idx=\${encodeURIComponent(user_idx)}`)
-	  .then(response => {
-		    if (!response.ok) {
-		        throw new Error(`HTTP error! status: \${response.status}`);
-		      }
-		      return response.json();
-		    })
-	  .then(data => {
+    
+     fetch(`/api/waiting/onsite?user_idx=\${encodeURIComponent(user_idx)}`)
+     .then(response => {
+          if (!response.ok) {
+              throw new Error(`HTTP error! status: \${response.status}`);
+            }
+            return response.json();
+          })
+     .then(data => {
        console.log(data);
        if(data){
        rtableEl.innerHTML = '';  
-	   data.forEach((item, index) => {
-		  
-		    
-	   const result = `    
-		      <tr>
-		       <td>
-		       <div class="rtable-header">
-		        <p id="title-warp"><a href="#">\${item.title}</a></p>	        
-		       </div>
-		       <div  class="rtable-footer">
-		       \${item.status}&nbsp;|&nbsp;\${item.reservation_number}명&nbsp;
-		       </div>
-		        </td>
-		     </tr>`		
-		
-			
-		     
-	    rtableEl.innerHTML+=result;
-	   
-	    }) 
-	    
-		  
+      data.forEach((item, index) => {
+        
+          
+      const result = `    
+            <tr>
+             <td>
+             <div class="rtable-header">
+              <p id="title-warp"><a href="#">\${item.title}</a></p>           
+             </div>
+             <div  class="rtable-footer">
+             \${item.status}&nbsp;|&nbsp;\${item.reservation_number}명&nbsp;
+             </div>
+              </td>
+           </tr>`      
+      
+         
+           
+       rtableEl.innerHTML+=result;
+      
+       }) 
+       
+        
        }  
-	  }).catch(error => {
-	      console.error('예약내역이 없습니다', error);
-	  }); 
-	  
-	  
-	  
-	  
+     }).catch(error => {
+         console.error('예약내역이 없습니다', error);
+     }); 
+     
+     
+     
+     
   }
   //처음 초기화
   advanceRes()

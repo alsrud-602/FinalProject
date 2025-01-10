@@ -1,6 +1,6 @@
 @charset "UTF-8";
 
-     /*----------------------------*/
+	  /*----------------------------*/
   /*페이징*/
 .main-pagination {
     display: flex;
@@ -23,15 +23,15 @@
 }
 
 .main-pagination a:hover {
-    background-color: #00FF84;
+    background-color: #57C95E;
     color: black;
     font-weight: bold;
 }
 
 /* Active page number styling (if possible to apply) */
 .main-pagination a.active {
-    background-color: #00FF84;
+    background-color: #57C95E;
     color: black;
     font-weight: bold;
 }
-   
+	
