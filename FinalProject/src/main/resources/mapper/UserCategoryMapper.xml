@@ -15,5 +15,12 @@
          DELETE FROM USERS_CATEGORY
          WHERE USER_IDX = #{userIdx} AND CATEGORY_ID = #{categoryId}
      </delete>
-
+	
+	<select id="getCategoryNamesByUserId" resultType="string">
+    SELECT c.CATEGORY_NAME
+    FROM USERS_CATEGORY uc
+    JOIN CATEGORY c ON uc.CATEGORY_ID = c.CATEGORY_ID
+    WHERE uc.USER_IDX = #{userIdx}
+	</select>
+	
 </mapper>

@@ -42,6 +42,7 @@ public class SecurityConfig {
     private static final String PERMITTED_ROLES[] = {"USER", "ADMIN", "COMPANY"};
     
     private final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
+    
   
 
     @Bean
@@ -63,13 +64,13 @@ public class SecurityConfig {
                 )
                 
                 .oauth2Login(oauth2 -> oauth2
-                       .loginPage("/Users/LoginForm")
-                        .failureUrl("/Users/LoginForm?error=true")
-                        .successHandler((request, response, authentication) -> {
-                            SecurityContextHolder.getContext().setAuthentication(authentication);
-                            response.sendRedirect("/"); // 로그인 성공 후 리다이렉트할 URL
-                        })
-                )
+                        .loginPage("/Users/LoginForm")
+                         .failureUrl("/Users/LoginForm?error=true")
+                         .successHandler((request, response, authentication) -> {
+                             SecurityContextHolder.getContext().setAuthentication(authentication);
+                             response.sendRedirect("/"); // 로그인 성공 후 리다이렉트할 URL
+                         })
+                 )
                 .logout(logout -> logout
                        .logoutUrl("/Users/Logout")
                        .logoutSuccessUrl("/")

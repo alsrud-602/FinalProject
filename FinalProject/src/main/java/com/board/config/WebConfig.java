@@ -18,8 +18,8 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         // 모든 경로에 대해 인터셉터 적용
         registry.addInterceptor(visitorLoggingInterceptor)
-                //.addPathPatterns("/Users/**", "/Business/**", "/CompanyAuth/**", "/", "/app/**")
-                //.excludePathPatterns("Users/Admin/**","/static/**", "/css/**", "/js/**", "/images/**", "/image/**", "/WEB-INF/views/**", "/resources/**"); // 정적 리소스 제외
-        .excludePathPatterns("/**"); // 정적 리소스 제외
+                .addPathPatterns("/Users/**", "/Business/**", "/CompanyAuth/**", "/", "/app/**", "/Mobile/**")
+                .excludePathPatterns("/Users/Admin/**","/static/**", "/css/**", "/js/**", "/images/**", "/image/**", "/WEB-INF/views/**", "/resources/**"); // 정적 리소스 제외
+        //.excludePathPatterns("/**"); // 정적 리소스 제외
     }
 }

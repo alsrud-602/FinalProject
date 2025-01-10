@@ -5,11 +5,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.board.business.dto.CountConfigDto;
 import com.board.business.dto.ReservationTimeSlotDto;
 import com.board.business.dto.StoreStatusDto;
 import com.board.business.dto.WaitingDto;
@@ -36,8 +40,8 @@ public class WatingApiController {
 
     //유저 현장대기 리스트
     @GetMapping("/onsite")
-    public List<WaitingDto> getonSiteList(@RequestParam HashMap<String, Object> Map) {
-        return waitingService.getonStieList(0);
+    public List<WaitingDto> getonSiteList(@RequestParam("user_idx") int user_idx) {
+        return waitingService.getonStieList(user_idx);
     }
  
     //예약 확인 로직
@@ -53,8 +57,31 @@ public class WatingApiController {
     @GetMapping("/timeslot")
     public  List<ReservationTimeSlotDto>  gettimeslot(@RequestParam("store_idx") int store_idx) {
     	return waitingService.getadvanceTimeSlotList(store_idx);
+    	} 
+    
+    @PostMapping("/reservationwrite")
+    public  ResponseEntity<String>  reservationwrite(@RequestBody  HashMap<String, Object> map) {
+    waitingService.getReservationWrite(map);   
+    return ResponseEntity.ok("예약이 완료되었습니다.");
     }  
-
     
+    @PostMapping("/countconfig")
+    public  CountConfigDto  getCountConfig(@RequestBody  HashMap<String, Object> map) {
+    	return waitingService.getCountConfig(map);
+    }  
     
+    @GetMapping("/cancel")
+    public  ResponseEntity<String>  cancel(@RequestParam("reservation_idx") int reservation_idx) {
+    	waitingService.deleteReservation(reservation_idx);   
+    	return ResponseEntity.ok("예약이 완료되었습니다.");
+    }  
+    
+    @GetMapping("/waitingstatus")
+    public  WaitingDto getwaitingstatus(@RequestParam("waiting_idx") int waiting_idx) {
+    	return waitingService.getWaitingStatus(waiting_idx);
+    } 
+    @GetMapping("/reservationdate")
+    public   List<ReservationTimeSlotDto> reservationDate(@RequestParam("store_idx") int store_idx) {
+    	return  waitingService.getadvanceDateList(store_idx);
+    } 
 }

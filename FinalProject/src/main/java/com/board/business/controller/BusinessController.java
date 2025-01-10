@@ -443,14 +443,13 @@ public class BusinessController {
                model.addAttribute("error", "JWT 토큰이 없습니다.");
            }         
 
-	return mv;	
-		
-	}
-	
-	
+   return mv;   
+      
+   }
+   
+   
 
 
-	
 
 
    

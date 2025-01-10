@@ -96,7 +96,7 @@ aside {
 	   <tr><td><a href=""><img src="/images/admin/user/admin-slidebar1.png">&nbsp;&nbsp;&nbsp;대시보드</a></td></tr>
 	   <tr><td><a href=""><img src="/images/admin/user/admin-slidebar2.png">&nbsp;&nbsp;&nbsp;스토어 관리</a></td></tr>
 	   <tr><td><a href=""><img src="/images/admin/user/admin-slidebar3.png">&nbsp;&nbsp;&nbsp;유저관리</a></td></tr>
-	   <tr><td><a href=""><img src="/images/admin/user/admin-slidebar4.png">&nbsp;&nbsp;&nbsp;광고관리</a></td></tr>
+	   <tr><td><a href="/Admin/Advertise"><img src="/images/admin/user/admin-slidebar4.png">&nbsp;&nbsp;&nbsp;광고관리</a></td></tr>
 	   <tr><td><a id="site-link" href="/">사이트 바로가기<img src="/images/admin/user/admin-slidebar5.png"></a></td></tr>
 	  </tbody>
 	 </table> 

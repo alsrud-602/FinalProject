@@ -1,5 +1,7 @@
 package com.board.users.dto;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -36,6 +38,7 @@ public class UsersDto {
    private int hit;
     private String goods;
     private String igdate;
+    private String like_count;
     
 
     private String user_id;
@@ -97,6 +100,8 @@ public class UsersDto {
     private String image_path;
     
     private int total_points;
+    
+
 
   
     

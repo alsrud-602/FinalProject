@@ -41,17 +41,17 @@
     }
     #category {
         font-size: 15px;
-        font-weight: 400;
+        font-weight: 600;
         color: #757575;
     }
     #title-name {
         font-size: 40px;
-        font-weight: 400;
+        font-weight: 600;
         margin: 5px 0;
     }
     #title-address {
         font-size: 15px;
-        font-weight: 400;
+        font-weight: 600;
         color: #757575;
     }   
     .sizebox1 {
@@ -63,7 +63,7 @@
     }  
     .booking-title {
         font-size: 25px;
-        font-weight: 300;
+        font-weight: 500;
         color: #00FF84;
         margin: 10px 0;
     }
@@ -88,12 +88,27 @@ font-weight: 300;
    
    } 
    .caution-opion p:first-child {
-font-size: 30px;   
-font-weight: 300;
+font-size: 25px;   
+font-weight: 700;
+margin: 10px 0;
 }
    .caution-opion p:nth-child(2) {
 font-size: 15px;   
-font-weight: 200;
+font-weight: 400;
+margin: 5px;
+}
+   .caution-opion p:nth-child(3) {
+font-size: 15px;   
+font-weight: 400;
+margin: 5px;
+}
+   .caution-opion p:nth-child(4) {
+font-size: 15px;   
+font-weight: 400;
+margin: 5px;
+}
+hr {
+margin: 60px 0;
 }
 .btn-res{
 font-size: 40px;   
@@ -102,12 +117,21 @@ padding:40px;
 color: #121212;
 font-weight: 400;
 border-radius: 15px;
-width: 300px;
+width: 500px;
+
 
 }
 .booking-detail{
- font-size: 10px;  
+margin-top:10px;
+text-align:right;
+ font-size: 13px;  
+ font-weight: 300;
  
+}
+#btn-center{
+display: flex;
+justify-content: center;
+padding-bottom: 50px;
 }
 </style>
 </head>
@@ -122,9 +146,13 @@ width: 300px;
         
         <div class="title">
             <div class="title-box"> 
-                <div id="category">잡화 | 스포츠 | 연령대</div>
-                <p id="title-name">스텐리x팝업</p>
-                <p id="title-address">서울 성북구 성수동 2543-1호 중앙빌딩</p>
+                <div id="category">
+                <c:forEach var="c" items="${categoryList}">              
+                ${c.category_name}&nbsp;|&nbsp;
+                </c:forEach>              
+                ${store.age}</div>
+                <p id="title-name">${store.title}</p>
+                <p id="title-address">${store.address}</p>
             </div>
         </div>
         
@@ -181,14 +209,15 @@ width: 300px;
                 <p>- 예약내역>사전예약>해당 팝업> ‘예약 취소’ 버튼을 클릭하여 예약을 취소할 수 있습니다</p>     
             </div>
         </div>
-        
+        <div id="btn-center">
         <button class="btn-res" onclick="reservationbtn()">예약하기</button>
-        
+        </div>
     </main>
 </div>	
 
 <script>
-const store_idx = 90;
+const store_idx = ${store_idx};
+const user_idx = ${user_idx};
 
 function reservationbtn() {
 const timeSlotSelect = document.getElementById('time-slot');
@@ -198,52 +227,92 @@ const selectedOption = timeSlotSelect.options[timeSlotSelect.selectedIndex];
 	
 	let date = dateSlotSelect.value;
 	let person = personSelect.value;
+	let parts = date.split(' ')[0].split('-'); 
+	let formattedDate = parts[0].slice(-2) + '/' + parts[1] + '/' + parts[2]; 
+	console.log(formattedDate); 
+	
     const selectedDataRp = selectedOption.getAttribute('data-rp');
-
+     
     if (date === "" || selectedDataRp === null || selectedDataRp === undefined) {
         alert('날짜 및 시간을 선택하세요');
         return false;
-    }else{
-    	
-    	 fetch(`/api/waiting/reservationwrite`, {
+    }
+    
+    //맥스 인원수 검증 로직
+     fetch(`/api/waiting/countconfig`, {
     	        method: 'POST', // POST 방식으로 요청
     	        headers: {
     	            'Content-Type': 'application/json' // JSON 형식으로 데이터 전송
     	        },
     	        body: JSON.stringify({
-    	        	reservation_date: date,
-    	        	max_number: person,
-    	        	rp_idx: selectedDataRp 
+    	        	reservation_date: formattedDate,
+    	        	rp_idx: selectedDataRp ,
+    	        	store_idx:store_idx
     	        })
     	    })
     	    .then(response => {
     	        if (!response.ok) {
     	            throw new Error(`HTTP error! status: ${response.status}`);
+    	           
     	        }
-    	        return response.json();
+    	       return  response.json().catch(() => null); 
     	    })
     	    .then(data => {
-    	        // 성공적으로 데이터를 받았을 때 처리
-    	        console.log('예약 성공:', data);
-    	        alert('예약완료되었습니다!')
+    	    
+    	    //예약이 처음이라면
+    	        if (!data || typeof data.total_count === 'undefined' || typeof data.max_number === 'undefined') {
+       
+            reservationComplete(selectedDataRp, formattedDate, person);
+              return; // 이후 로직을 중단
+              }   	    
+    	       	    
+    	    // 예약 인원수가 존재한다면	
+    	    let  totalCount = data.total_count;
+    	    let  maxNumber = data.max_number;
+    	    let  rest = maxNumber - totalCount;
+    	    
+    	    if(rest >= person){   	    
+    	    	reservationComplete(selectedDataRp,formattedDate,person)
+    	    }else {   	   
+   	    	alert('남은 인원수 : '+ rest +' 예약인원수가 초과되었습니다')
+    	    }
     	    })
     	    .catch(error => {
     	        console.error('예약내역이 없습니다', error);
     	    });
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    }
-	// 결과를 출력합니다.
-	console.log(selectedOption);	
-	console.log(selectedDataRp);	
 	
 }
 
+
+function reservationComplete(selectedDataRp,formattedDate,person){
+  	//예약 인서트
+	 fetch(`/api/waiting/reservationwrite`, {
+	        method: 'POST', // POST 방식으로 요청
+	        headers: {
+	            'Content-Type': 'application/json' // JSON 형식으로 데이터 전송
+	        },
+	        body: JSON.stringify({
+	        	reservation_date: formattedDate,
+	        	reservation_number: person,
+	        	rp_idx: selectedDataRp ,
+	        	user_idx:user_idx,
+	        	store_idx:store_idx
+	        })
+	    })
+	    .then(response => {
+	        if (!response.ok) {
+	            throw new Error(`HTTP error! status: ${response.status}`);
+	           
+	        }
+	        alert('예약완료')
+	        return response
+	    })
+	    .catch(error => {
+	        console.error('예약내역이 없습니다', error);
+	    });	
+	
+	
+}
 
 function dateTimeSlot(element) {
 	

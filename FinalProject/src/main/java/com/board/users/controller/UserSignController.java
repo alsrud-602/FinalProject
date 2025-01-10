@@ -19,6 +19,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
@@ -62,6 +65,9 @@ public class UserSignController {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
     }
+    
+    @Autowired
+    private ClientRegistrationRepository clientRegistrationRepository;
 
 	
 	/* 회원가입 */
@@ -255,7 +261,6 @@ public class UserSignController {
 	    }
 	    return ResponseEntity.ok().build();
 	}
-	
 
 
 }

@@ -61,7 +61,7 @@ public class RestCompanySignController {
             Cookie jwtCookie = new Cookie("companyJwt", jwt);
             jwtCookie.setHttpOnly(true);
             jwtCookie.setSecure(true); // HTTPS에서만 사용
-            jwtCookie.setMaxAge(60 * 120); // 2시간
+            jwtCookie.setMaxAge(60 * 60 * 10); // 10시간
             jwtCookie.setPath("/Business");
             response.addCookie(jwtCookie);
 

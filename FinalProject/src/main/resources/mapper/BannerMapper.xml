@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.board.admin.mapper.BannerMapper">  
+	<update id="updateBanStatus">
+	    UPDATE STORES
+	    SET BAN = 'C'
+	    WHERE STORE_IDX = #{store_idx}
+	</update>
+	
+	<update id="retreiveBanStatus">
+	    UPDATE STORES
+	    SET BAN = 'N'
+	    WHERE STORE_IDX = #{store_idx}
+	</update>
+
+<select id="getImageInfo">
+    SELECT imagename, imageext, image_path
+FROM (
+    SELECT imagename, imageext, image_path,
+           ROW_NUMBER() OVER (PARTITION BY store_idx ORDER BY IS_IDX DESC) AS rn
+    FROM IMAGE_STORE
+    WHERE store_idx = ${store_idx}
+) ranked_images
+WHERE rn &lt;= 2
+</select>
+
+    <insert id="insertBanner">
+    INSERT INTO BANNER (BANNER_IDX, STORE_IDX, IMAGENAME, IMAGEEXT, IMAGE_PATH, RDATE)
+    VALUES (BANNER_SEQ.NEXTVAL, #{store_idx}, #{imagename}, #{imageext}, #{image_path}, SYSDATE)
+</insert>
+
+    <select id="getAllBanners">
+        SELECT 
+            STORE_IDX,
+            IMAGE_PATH,
+            RDATE
+        FROM 
+            BANNER
+        ORDER BY 
+            RDATE ASC
+    </select>
+
+</mapper>

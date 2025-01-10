@@ -16,4 +16,5 @@ public class ReservationUserDto {
     private int store_idx;
     private String title;
     private String time_slot;
+
 }

@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -139,20 +140,11 @@ main {
   padding:0 15px;
 }
 
-.categories:nth-child(1) {
+.categories {
   background-color:#00ff84;
   color:black;
 }
 
-.categories:nth-child(2) {
-  background-color:#00ff84;
-  color:black;
-}
-
-.categories:nth-child(3) {
-  background-color:#00ff84;
-  color:black;
-}
 
 .tag {
   background-color:#00ff84;
@@ -177,9 +169,14 @@ main {
    <div class="container">
 	<h2 class="pagetitle">추천 팝업</h2>
 	<h3 class="subtitle"># 관심 카테고리별 추천 팝업 리스트</h3>
+
 	<div class="category">
-	 <p class="categories">브랜드</p><p class="categories">패션/뷰티</p><p class="categories">식품</p>
-	</div>
+    <c:forEach var="categoryName" items="${categoryNames}">
+        <p class="categories">${categoryName}</p>
+    </c:forEach>
+</div>
+
+	
 	 <div class="liner"></div>
 	<div class="suggestions">
 	 <div class="suggestion">

@@ -78,16 +78,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				}
 
 			} catch (ExpiredJwtException e) {
-				response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token has expired");
-				return;
-			} catch (SignatureException e) {
-				response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
-				return;
-			} catch (Exception e) {
-				// 에러 로그 추가
-				logger.error("JWT 필터 처리 중 오류 발생: {}", e.getMessage());
-				response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authentication Failed");
-			}
+		        logger.warn("JWT 만료됨: {}", e.getMessage());
+		        redirectToLoginPage(request, response, "expired");
+		        return;
+		    } catch (SignatureException e) {
+		        logger.error("JWT 서명 검증 실패: {}", e.getMessage());
+		        redirectToLoginPage(request, response, "invalid");
+		        return;
+		    } catch (Exception e) {
+		        logger.error("JWT 인증 처리 중 오류 발생: {}", e.getMessage());
+		        redirectToLoginPage(request, response, "authFailed");
+		        return;
+		    }
 		}
 
 		// 2. JWT 검증
@@ -123,7 +125,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
 		String path = request.getServletPath();
-		boolean shouldExclude = path.equals("/error") || path.startsWith("/static/")
+		boolean shouldExclude = path.equals("/error") || path.startsWith("/static/") || path.startsWith("/oauth2/authorization")
 				|| path.startsWith("/Users/LoginForm") || path.startsWith("/Users/SignupForm")
 				|| path.startsWith("/Users/Signup") || path.startsWith("/Users/CheckDuplication")
 				|| path.startsWith("/CompanyAuth/Signup") || path.startsWith("/CompanyAuth/SignupForm")
@@ -195,4 +197,38 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	    }
 	}
 
+	private void redirectToLoginPage(HttpServletRequest request, HttpServletResponse response, String error) throws IOException {
+	    String userAgent = request.getHeader("User-Agent");
+	    String redirectUrl;
+
+	    try {
+	        // JWT에서 userType 추출
+	        String jwt = null;
+	        Cookie[] cookies = request.getCookies();
+	        if (cookies != null) {
+	            for (Cookie cookie : cookies) {
+	                if (cookie.getName().equals("token")) {
+	                    jwt = cookie.getValue();
+	                    break;
+	                }
+	            }
+	        }
+
+	        String userType = (jwt != null) ? jwtUtil.extractUserType(jwt) : null;
+
+	        // 사용자 유형에 따라 리다이렉트 경로 설정
+	        if ("COMPANY".equalsIgnoreCase(userType)) {
+	            redirectUrl = "/CompanyAuth/LoginForm?error=" + error;
+	        } else if (userAgent != null && userAgent.toLowerCase().contains("wv")) { // WebView에서 접속한 경우
+	            redirectUrl = "/Mobile/Users/LoginForm?error=" + error;
+	        } else {
+	            redirectUrl = "/Users/LoginForm?error=" + error;
+	        }
+	    } catch (Exception e) {
+	        logger.error("리다이렉트 URL 결정 중 오류 발생: {}", e.getMessage());
+	        redirectUrl = "/Users/LoginForm?error=" + error; // 기본값
+	    }
+
+	    response.sendRedirect(redirectUrl);
+	}
 }

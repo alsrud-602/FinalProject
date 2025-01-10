@@ -157,7 +157,7 @@ WHERE USER_IDX = #{selUserId}
 FROM
     USERS
 WHERE
-	ID = #{userId}
+   ID = #{userId}
 </select>
 
 <!-- 유저 총 팝콘량   -->
@@ -245,7 +245,7 @@ INSERT INTO POPCORN_LOG (
 
 <!--  선택 유저 팝콘 지급 내역 추가 -->
 <update id="PopcornPlusWalletByUserId">
-	UPDATE POPCORN_WALLET
+   UPDATE POPCORN_WALLET
 SET
         TOTAL_POINTS = TOTAL_POINTS + #{arg1}
 WHERE
@@ -254,7 +254,7 @@ WHERE
 
 <!--  선택 유저 팝콘 차감 내역 추가 -->
 <update id="PopcornMinusWalletByUserId">
-	UPDATE POPCORN_WALLET
+   UPDATE POPCORN_WALLET
 SET
         TOTAL_POINTS = TOTAL_POINTS - #{arg1}
 WHERE
@@ -283,16 +283,16 @@ WHERE
     
     <!-- 진행중 팝업 수 -->
       <select id="getPopuplistCount">
-	SELECT
-		COUNT(*)
-	FROM
-	    stores st JOIN stores_detail std ON st.store_idx = std.store_idx
-	    
-	WHERE st.ban='N' AND st.status='승인' 
-	      AND TRUNC(std.start_date) &lt;= TRUNC(SYSDATE) 
-	      AND TRUNC(std.end_date) &gt;= TRUNC(SYSDATE)
-	ORDER BY
-	    st.store_idx ASC
+   SELECT
+      COUNT(*)
+   FROM
+       stores st JOIN stores_detail std ON st.store_idx = std.store_idx
+       
+   WHERE st.ban='N' AND st.status='승인' 
+         AND TRUNC(std.start_date) &lt;= TRUNC(SYSDATE) 
+         AND TRUNC(std.end_date) &gt;= TRUNC(SYSDATE)
+   ORDER BY
+       st.store_idx ASC
   </select>
   
   <!-- 한달간 스토어 증가세 -->
@@ -410,6 +410,7 @@ ORDER BY
 
 
     <select id="getPopupManagerDetail" resultType="java.util.HashMap">
+
 WITH FirstImages AS (
     SELECT 
         STORE_IDX,
@@ -422,15 +423,16 @@ SELECT
     S.STORE_IDX,
     C.COMPANY_IDX,
     C.NAME,
-    S.CDATE,
-    S.TITLE,
-    S.AGE,
-    S.BRAND1,
-    S.BRAND2,
-    S.CDATE,
-    S.STATUS,
-    S.BAN,
-    FI.IMAGE_PATH
+    MAX(S.CDATE) AS CDATE,
+    MAX(S.TITLE) AS TITLE,
+    MAX(S.AGE) AS AGE,
+    MAX(S.BRAND1) AS BRAND1,
+    MAX(S.BRAND2) AS BRAND2,
+    MAX(C.CDATE) AS COMPANY_CDATE,
+    MAX(S.STATUS) AS STATUS, 
+    MAX(S.BAN) AS BAN,  
+    MAX(B.RDATE) AS RDATE, 
+    MAX(FI.IMAGE_PATH) AS IMAGE_PATH
 FROM 
     COMPANYS C 
 LEFT JOIN 
@@ -439,15 +441,21 @@ LEFT JOIN
     FirstImages FI ON S.STORE_IDX = FI.STORE_IDX AND FI.rn = 1
 LEFT JOIN 
     STORES_DETAIL SD ON S.STORE_IDX = SD.STORE_IDX
+LEFT JOIN
+    BANNER B ON S.STORE_IDX = B.STORE_IDX
 WHERE 
     SYSDATE BETWEEN SD.START_DATE AND SD.END_DATE
     AND S.BAN = 'C'
+GROUP BY 
+    S.STORE_IDX, C.COMPANY_IDX, C.NAME
     </select>
     <select id="getPopupManagerDetailList">
     WITH FirstImages AS (
     SELECT 
         STORE_IDX,
         IMAGE_PATH,
+        IMAGEEXT,
+        IMAGENAME,
         ROW_NUMBER() OVER (PARTITION BY STORE_IDX ORDER BY IS_IDX ASC) AS rn
     FROM 
         IMAGE_STORE
@@ -476,11 +484,12 @@ SELECT
     S.AGE,
     S.BRAND1,
     S.BRAND2,
-    S.CDATE,
     S.STATUS AS STORE_STATUS,
     C.STATUS,
     S.BAN,
     FI.IMAGE_PATH,
+    FI.IMAGEEXT,
+    FI.IMAGENAME,
     SC.STORE_COUNT
 FROM 
     COMPANYS C 
@@ -494,13 +503,9 @@ LEFT JOIN
     StoreCounts SC ON C.COMPANY_IDX = SC.COMPANY_IDX
 WHERE 
     SYSDATE BETWEEN SD.START_DATE AND SD.END_DATE
+    AND S.BAN != 'C'
     </select>
     
-    <update id="updateBanStatus">
-    UPDATE STORES
-    SET BAN = 'C'
-    WHERE STORE_IDX = #{store_idx}
-</update>
 
 
 <!-- 모든 스토어 리스트 -->
@@ -708,7 +713,9 @@ WITH RankedStores AS (
         AND co.company_idx = #{company_idx}
         <if test="search != null and search != ''">
         AND st.brand1 LIKE '%' || #{search} || '%'
+
    		 </if>
+
 )
 SELECT
     *

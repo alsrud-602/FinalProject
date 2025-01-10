@@ -70,7 +70,10 @@ public class AdminVo {
     
     private String title;
     private String image_path;
+    private String imageext;
+    private String imagename;
     private String ban;
+    private String rdate;
     private int store_count;
     
     

@@ -9,8 +9,8 @@
 <title>진행 중</title>
 <link rel="icon" type="image/png" href="/img/favicon.png" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 <link rel="stylesheet"  href="/css/common.css" />
 <style>
 
@@ -55,42 +55,17 @@ a {
 
  /*--------------------------------------------------------------*/
  /*부트스트랩 캐러셀(이미지 슬라이드)*/
-   
-.carousel-item img {
-  width: 100%;  /* 너비 100% */
-  height: 100%; /* 높이 100% */
-  object-fit: contain; /* 비율 유지하며 크기 조정 */
-  max-height: 800px; /* 최대 높이 설정 */
+.swiper-slide img {
+    width: 100%;  /* 너비 100% */
+    height: auto; /* 비율 유지하며 높이 자동 조정 */
+    object-fit: contain; /* 비율 유지하며 크기 조정 */
+    max-height: 800px; /* 최대 높이 설정 */
 }
 
-.carousel-inner {
-  position: relative;
+.swiper-container {
+    width: 1000px; /* 원하는 너비 설정 */
+    margin: 0 auto; /* 중앙 정렬 */
 }
-
-.carousel-item {
-  text-align: center; /* 텍스트 중앙 정렬 */
-}
-
-.carousel-caption {
-  position: absolute; /* 캡션 위치 조정 */
-  bottom: 20px; /* 아래 여백 */
-  left: 50%; /* 중앙 정렬 */
-  transform: translateX(-50%); /* 중앙 정렬 보정 */
-}
-
-.carousel-control-prev {
-  left: -7% !important; /* 왼쪽 여백 조정 */
-}
-
-.carousel-control-next {
-  right: -7% !important; /* 오른쪽 여백 조정 */
-}
-
-.carousel {
-  margin:0 auto 0 auto; /* 중앙 정렬 */
-  width: 1000px; /* 너비 설정 */
-}
-
 .ongoingfilter {
   position: relative; /* 요소를 고정 */
   top: 70px; /* 원하는 위치에 맞게 조정 */
@@ -352,32 +327,32 @@ height: auto;
     <%@include file="/WEB-INF/include/admin-slidebartest.jsp" %>
    </aside>
    <div class="content">
-	 <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
-	  <div class="carousel-indicators">
-	    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-	    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
-	    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
-	  </div>
-	  <div class="carousel-inner">
-	    <div class="carousel-item active">
-	      <img src="/images/main/main-banner4.png" class="d-block w-100" alt="/images/main/main-banner4.png">
-	    </div>
-	    <div class="carousel-item">
-	      <img src="/images/main/main-banner3.png" class="d-block w-100" alt="/images/main/main-banner3.png">
-	    </div>
-	    <div class="carousel-item">
-	      <img src="/images/main/main-banner5.png" class="d-block w-100" alt="/images/main/main-banner5.png">
-	    </div>
-	  </div>
-	  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-	    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-	    <span class="visually-hidden">Previous</span>
-	  </button>
-	  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-	    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-	    <span class="visually-hidden">Next</span>
-	  </button>
-	</div>
+<div class="swiper-container">
+    <div class="swiper-wrapper">
+        <c:forEach var="banner" items="${banners}" varStatus="status">
+            <c:if test="${status.index % 2 == 0}">
+                <div class="swiper-slide">
+                    <div class="row">
+                        <div class="col-6">
+                            <img src="/image/read?path=${fn:replace(banner.image_path, '\\', '/')}" class="d-block w-100" alt="${banner.image_path}">
+                        </div>
+                        <c:if test="${status.index + 1 < banners.size()}">
+                            <div class="col-6">
+                                <img src="/image/read?path=${fn:replace(banners[status.index + 1].image_path, '\\', '/')}" class="d-block w-100" alt="${banners[status.index + 1].image_path}">
+                            </div>
+                        </c:if>
+                    </div>
+                </div>
+            </c:if>
+        </c:forEach>
+    </div>
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-button-next"></div>
+    <div class="swiper-pagination"></div>
+</div>
+
+
+
 	<div class="breakdown">
 	 <div class="blank">광고 내역</div>
 	 <div class="liner"></div>
@@ -388,7 +363,7 @@ height: auto;
 	    <th>썸네일</th>
 	    <th>스토어 명</th>
 	    <th>담당자 명</th>
-	    <th>일자</th>
+	    <th>배너 등록일</th>
 	    <th>광고관리</th>
 	   </tr>
 	  </thead>
@@ -400,8 +375,8 @@ height: auto;
             <td><img src="/image/read?path=${fn:replace(list['IMAGE_PATH'], '\\', '/')} " alt="없음" class="thumbnail"></td>
             <td>${list.TITLE}</td>
             <td>${list['NAME']}</td>
-            <td>${list['CDATE']}</td>
-            <td><a href="/popup/release?id=${list['STORE_IDX']}">광고 해제</a></td>
+            <td>${list['RDATE']}</td>
+            <td><a href="/Admin/deleteBanner?store_idx=${list['STORE_IDX']}" onclick="return confirm('정말로 광고를 해제하시겠습니까?');">광고 해제</a></td>
         </tr>
     </c:forEach>
 </c:if>
@@ -425,7 +400,7 @@ height: auto;
                 <th>썸네일</th>
                 <th>스토어 명</th>
                 <th class="sortable" data-column="name">이름 <span class="sort-icon"></span></th>
-                <th>가입일</th>
+                <th>스토어 등록일</th>
                 <th class="sortable" data-column="stores">등록한 스토어 수<span class="sort-icon"></span></th>
                 <th>상태</th>
                 <th>광고 관리</th>
@@ -434,6 +409,8 @@ height: auto;
         <tbody id="userTableBody">
             <c:forEach var="company" items="${allcompanys}">
                 <tr>
+                    <input type="hidden" name="imageext" value="${company.imageext}">
+                    <input type="hidden" name="imagename" value="${company.imagename}">
                     <td><img src="/image/read?path=${fn:replace(company.image_path, '\\', '/')}" alt="없음" class="thumbnail"></td>
                     <td>${company.title}</td>
                     <td>${company.name}</td>
@@ -494,41 +471,19 @@ function filterTable() {
 }
 </script>
 <script>
-    const carousels = document.querySelectorAll('.carousel1');
-
-    carousels.forEach(carousel => {
-        const slides = carousel.querySelector('.slides');
-        const slide = carousel.querySelectorAll('.slides li');
-        let currentIdx = 0;
-        const slideCount = slide.length;
-        const prevBtn = carousel.querySelector('.prev');
-        const nextBtn = carousel.querySelector('.next');
-        const slideWidth = 350;
-        const slideMargin = 5;
-
-        slides.style.width = (slideWidth + slideMargin) * slideCount - slideMargin + 'px';
-
-        function moveSlide(num) {
-            slides.style.left = -num * (slideWidth + slideMargin) + 'px';
-            currentIdx = num;
-        }
-
-        nextBtn.addEventListener('click', function() {
-            if (currentIdx < slideCount - 5) {
-                moveSlide(currentIdx + 1);
-            } else {
-                moveSlide(0);
-            }
-        });
-
-        prevBtn.addEventListener('click', function() {
-            if (currentIdx > 0) {
-                moveSlide(currentIdx - 1);
-            } else {
-                moveSlide(slideCount - 5);
-            }
-        });
-    });
+const swiper = new Swiper('.swiper-container', {
+    slidesPerView: 1, // 한 번에 보여줄 슬라이드 수
+    spaceBetween: 10, // 슬라이드 간격
+    navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+    },
+    pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+    },
+    loop: true, // 슬라이드 반복
+});
     
     document.addEventListener('DOMContentLoaded', function() {
         // 드롭다운 상태 변경

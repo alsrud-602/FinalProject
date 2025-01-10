@@ -87,6 +87,9 @@
     <c:if test="${param.error != null}">
         <p style="color: red;">아이디 또는 비밀번호가 잘못되었습니다.</p>
     </c:if>
+    <c:if test="${param.error == 'expired'}">
+    	<p style="color: aqua;">세션이 만료되었습니다. 다시 로그인해주세요.</p>
+	</c:if>
     <div id="errorMessages" style="color: red;"></div>
     <c:if test="${not empty message}">
     <div class="alert alert-warning" style="color: aqua;">${message}</div>

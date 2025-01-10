@@ -133,6 +133,7 @@
 
 <script>
 $(function(){
+
 	$('.filter').on('click', function(){
 		
 		let search = $('.box_search').val();
@@ -145,9 +146,12 @@ $(function(){
 	$('.resetbutton').on('click',function(){
 		window.location.href = "/Admin/Store/List";
 	})
+
 })
 
 
 </script>
 
+
 </html>
+

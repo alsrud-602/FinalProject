@@ -136,6 +136,7 @@
   background: white;
 }
 
+
 </style>
 </head>
 <body>
@@ -195,6 +196,7 @@
     </div>
 </div>
 		
+
 	<div class="list-container">
 	  <c:forEach var="popup" items="${CompanyPopupDetail}">
 	    <div class="list-item" data-store-idx="${popup.store_idx} " data-company-idx="${popup.company_idx}">
@@ -403,7 +405,17 @@ const fetchPerformanceData = (startDate, endDate) => {
     })
     .catch(error => {
         console.error('Error fetching performance data:', error);
+
     });
+
+});
+$(function(){
+	$('.resetbutton').on('click',function(){
+		let company_idx = ${CompanyDetail.company_idx}
+		window.location.href = "/Admin/Detail?company_idx="+company_idx;
+	})
+})
+
 };
 const fetchStorePerformanceRank = (companyIdx, startDate, endDate) => {
     axios.get(`/Admin/Store/PerformanceRank/\${companyIdx}`, {
@@ -420,6 +432,7 @@ const fetchStorePerformanceRank = (companyIdx, startDate, endDate) => {
 };
 
 
+
 $(function(){
     $('.buttonsearch').on('click', function(){
         let company_idx = ${CompanyDetail.company_idx}; // JSP 표현식으로 company_idx를 가져옴
@@ -434,6 +447,7 @@ $(function(){
 		window.location.href = "/Admin/Detail?company_idx="+company_idx;
 	})
 })
+
 
 </script>
     <%@include file="/WEB-INF/include/admin-footer.jsp" %>

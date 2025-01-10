@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.board.business.dto.ReservationTimeSlotDto;
+import com.board.business.dto.ReservationUserDto;
 import com.board.business.dto.StoreAddNoteDto;
+import com.board.business.dto.StoreListDto;
 import com.board.business.dto.WaitingDto;
 import com.board.business.service.WaitingService;
 import com.board.users.dto.User;
@@ -135,7 +137,7 @@ public class MobileReservationController {
 	           model.addAttribute("error", "JWT 토큰이 없습니다.");
 	       }
 	       
-	     //int user_idx = useruseridx.intValue();				
+	    //int user_idx = useruseridx.intValue();				
 		int user_idx = 100;
         
 	   	WaitingDto wDTO =waitingService.getUserWaiting(user_idx);
@@ -145,6 +147,7 @@ public class MobileReservationController {
 	   	ModelAndView mv = new ModelAndView();
 	   	mv.addObject("wList",wList);
 	   	mv.addObject("wDTO",wDTO);
+	   	mv.addObject("user_idx",user_idx);
 	mv.setViewName("mobile/reservation/list");
 	return mv;	
 		
@@ -153,18 +156,36 @@ public class MobileReservationController {
 	@RequestMapping("/Advance")
 	public ModelAndView Advance() {
 	ModelAndView mv = new ModelAndView();	
+	int user_idx = 100;
 	int store_idx = 90;
 	List<ReservationTimeSlotDto> rDateList = waitingService.getadvanceDateList(store_idx);
-	System.out.println("!!!!!!!값 rDateList"+ rDateList);
+	StoreListDto sDTO =  waitingService.getStoreShort(store_idx);
+	List<StoreListDto> scDTOList =  waitingService.getStoreCategory(store_idx);
 
 	mv.addObject("rDateList",rDateList);
+	mv.addObject("store_idx",store_idx);
+	mv.addObject("user_idx",user_idx);
+	mv.addObject("store",sDTO);
+	mv.addObject("categoryList",scDTOList);
 	mv.setViewName("mobile/advance");	
 	return mv;
 	}
 	
+	@RequestMapping("/User/View")
+	public ModelAndView UserView(int user_idx, int store_idx, int reservation_idx) {
+	ModelAndView mv = new ModelAndView();	
 	
 	
-   
-   
+	StoreAddNoteDto anDTO = waitingService.getStoreAddressNote(store_idx);
+	ReservationUserDto ruDto =  waitingService.getadvanceUser(reservation_idx);
+	System.out.println("!!!!!!!값 anDTO"+ anDTO);
+	System.out.println("!!!!!!!값 reservation_idx"+ reservation_idx);
+	System.out.println("!!!!!!!값 ruDto"+ ruDto);
+	mv.addObject("anDTO",anDTO);
+	mv.addObject("store",ruDto);
+	mv.addObject("user_idx",user_idx);
+	mv.setViewName("mobile/reservation/view");
+	return mv;
+	}
    
 }

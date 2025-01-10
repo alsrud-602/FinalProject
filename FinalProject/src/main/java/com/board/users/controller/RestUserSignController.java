@@ -20,7 +20,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -63,6 +65,8 @@ public class RestUserSignController {
     @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
     private String kakaoRedirectUri;
     
+   
+    
     @Autowired
     private UserRepository userRepository;
     
@@ -100,7 +104,7 @@ public class RestUserSignController {
                Cookie jwtCookie = new Cookie("adminjwt", jwt);
                jwtCookie.setHttpOnly(true);
                jwtCookie.setSecure(true); // HTTPS에서만 사용
-               jwtCookie.setMaxAge(60 * 60 * 10); // 2시간
+               jwtCookie.setMaxAge(60 * 60 * 24); // 24시간
                jwtCookie.setPath("/");
                response.addCookie(jwtCookie);
 
@@ -115,7 +119,7 @@ public class RestUserSignController {
             Cookie jwtCookie = new Cookie("userJwt", jwt);
             jwtCookie.setHttpOnly(true);
             jwtCookie.setSecure(true); // HTTPS에서만 사용
-            jwtCookie.setMaxAge(60 * 120); // 2시간
+            jwtCookie.setMaxAge(60 * 60 * 10); // 10시간
             jwtCookie.setPath("/");
             response.addCookie(jwtCookie);
 
@@ -181,7 +185,7 @@ public class RestUserSignController {
             Cookie jwtCookie = new Cookie("kakaoAccessToken", jwt);
             jwtCookie.setHttpOnly(true);
             jwtCookie.setSecure(true); // HTTPS에서만 사용
-            jwtCookie.setMaxAge(60 * 120); // 2시간
+            jwtCookie.setMaxAge(60 * 60 * 10); // 10시간
             jwtCookie.setPath("/");
             response.addCookie(jwtCookie);
             
@@ -226,6 +230,7 @@ public class RestUserSignController {
         params.add("grant_type", "authorization_code");
         params.add("client_id", kakaoClientId);
         params.add("redirect_uri", kakaoRedirectUri);
+        System.err.println("리다이렉트:"+kakaoRedirectUri);
         params.add("code", code);
 
         HttpHeaders headers = new HttpHeaders();
@@ -259,6 +264,8 @@ public class RestUserSignController {
             oAuth2AccessToken
         );
     }
+    
+
  
 
 
