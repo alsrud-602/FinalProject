@@ -964,7 +964,7 @@ margin: 30px 42px;
 		</section>
 
 		<div class="buttons-footer">
-			<a href="/Mobile/Reservation/Advance">예약 일정 수정하기</a> 
+			<a href="/Mobile/Reservation/OnSite">예약 일정 수정하기</a> 
 			<a id="infoUpdate" href="/Business/Operation/UpdateFormStore?store_idx=91">기본정보 수정하기</a>
 		    <a href="/Mobile/Reservation/User/List">팝업 페이지 이동하기</a>
 			<c:if test="">

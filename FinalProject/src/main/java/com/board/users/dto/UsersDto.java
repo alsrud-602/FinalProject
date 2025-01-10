@@ -36,6 +36,7 @@ public class UsersDto {
    private int hit;
     private String goods;
     private String igdate;
+    private String like_count;
     
 
     private String user_id;

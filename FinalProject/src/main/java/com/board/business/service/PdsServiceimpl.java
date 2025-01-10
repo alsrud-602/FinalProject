@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.board.business.dto.ImageReivewDTO;
 import com.board.business.dto.ImageStoreDTO;
 import com.board.business.mapper.BusinessMapper;
 
@@ -61,6 +62,25 @@ public class PdsServiceimpl implements PdsService {
 	@Override
 	public void deleteImageStore(int is_idx) {
 		businessMapper.deleteImageStore(is_idx);
+		
+	}
+	@Override
+	public void setReviewWrite(HashMap<String, Object> map, MultipartFile[] uploadfiles) {
+		
+
+	    ImageReivewDTO irDto = businessMapper.getReview_idxMax();
+		map.put("review_idx", irDto.getReview_idx());
+		map.put("user_idx", irDto.getUser_idx());
+		map.put("store_idx", irDto.getStore_idx());
+		map.put("uploadPath", uploadPath );
+		//파일저장
+		PdsFile.save(uploadfiles,map);	
+		//db 저장
+		System.out.println(map.get("fileList"));
+		List<ImageReivewDTO> imageList = (List<ImageReivewDTO>)map.get("fileList");	
+		System.out.println(imageList);
+		if(imageList.size()>0)
+	    businessMapper.setFileWriter(map);
 		
 	}
 

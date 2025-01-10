@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.board.business.dto.CategoryDto;
 import com.board.business.dto.CompanyDto;
+import com.board.business.dto.ImageReivewDTO;
 import com.board.business.dto.ImageStoreDTO;
 import com.board.business.dto.RequestDto;
 import com.board.business.dto.ReservationDateDto;
@@ -124,6 +125,12 @@ public interface BusinessMapper {
    List<ResponseDto> getRequestList(int store_idx);
 
    void UpdateResponse(RequestDto requestDto);
+
+	ImageReivewDTO getReview_idxMax();
+
+
+
+
 
 
 

@@ -19,4 +19,6 @@ public interface PdsService {
 
 	void deleteImageStore(int is_idx);
 
+	void setReviewWrite(HashMap<String, Object> map, MultipartFile[] uploadfiles);
+
 }

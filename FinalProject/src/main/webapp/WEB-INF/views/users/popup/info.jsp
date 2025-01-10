@@ -22,12 +22,43 @@
     color: #00ff84; /* 텍스트 색상 */
     font-weight: bold; /* 글씨 두껍게 */
 }
+
+.review_time{
+}
+#likebtn{
+
+border-radius:5px;
+padding:5px;
+margin-right:5px;
+
+&:hover{
+background-color: #343434;
+color:#fff;
+}
+}
+#review_like_btn{
+display: flex;
+justify-content: flex-start;
+align-items: center;
+border-radius:5px;
+padding:5px;
+
+&:hover{
+background-color: #343434;
+color:#fff;
+}
+}
+.bookmark-on {
+background-color: #006534;
+
+}
+
 </style>
 </head>
 <body>
 <%@include file="/WEB-INF/include/header.jsp" %>
 <div class="container">
-  <img id="icon_back" src="/images/icon/back.png" alt="뒤로가기">
+  <img id="icon_back" onclick="backPage()" src="/images/icon/back.png" alt="뒤로가기">
   <main>
   
     <div class="swiper-container">
@@ -64,7 +95,9 @@
        </div>
 
         <div class="title_icon">
-          <img src="/images/icon/heart.png"><p>${StoreLike.storelike}</p>&nbsp;
+        <div id="likebtn" onclick="LikeConfig(this)"style="display: flex; align-items: center; justify-content: center;" >
+          <img src="/images/icon/heart.png"><p id="like-count">${StoreLike.storelike}</p>&nbsp;
+        </div>  
           <img src="/images/icon/eye1.png"><p>${StoreHit.hit}</p>&nbsp;
           <img src="/images/icon/degree.png"><p>90%</p>
         </div>
@@ -90,11 +123,8 @@
         </c:forEach>
       </div>
       <div class="title_click" >
-      <!--  <div class="bookmark"><img src="/images/icon/star.png"><p>찜하기</p></div>&nbsp; 북마크 기능 구현 중, 원래 로직이 이것.-->
-      <div class="bookmark" id="bookmarkBtn" data-store-idx="${storedetail.store_idx}">
-    	<img src="/images/icon/${bookmarkStatus == null ? 'star.png' : 'star_filled.png'}" alt="북마크">
-  	  	<p>찜하기</p>
-	  </div>
+
+       <div class="bookmark" onclick="bookConfig()"><img src="/images/icon/star.png"><p>찜하기</p></div>&nbsp;
        <div class="share" onclick="clipboard()" ><img src="/images/icon/share1.png"><p>공유하기</p></div>&nbsp;
       </div>
       </div>
@@ -124,7 +154,7 @@
       <p id="remainingDays"></p>
     </div>
     <div class="dateo"><p>팝업기간</p><p>${storedetail.start_date}  ~ ${storedetail.end_date}</p></div>
-    <button id="reserveBtn" class="btn_booking">예약하기</button>    
+    <button id="reserveBtn" class="btn_booking" style="display: flex; flex-direction: column; align-items: center; justify-content: center;" > 예약하기</button>    
     </div>
     
     <div class="menu_main">
@@ -241,7 +271,18 @@
   <aside>
   <div class="side-layout">
   <p>${user.name} 님</p>
-  <div class="side_box">${TotalPopcorn.total_points}</div>
+  <div class="side_box">
+ <c:choose>
+ <c:when test="${not empty TotalPopcorn.total_points}">
+   ${TotalPopcorn.total_points}
+ </c:when>
+ <c:otherwise>
+  코인 없음
+ </c:otherwise>
+ </c:choose>
+
+  </div>
+  
   <div class="side_box">내가 쓴 리뷰 수 ${MyTotalReview.review_idx}개</div>
   <hr>
   <div class="atag_div"><a class="btn2" href="/Users/Writeform?store_idx=${storedetail.store_idx}">후기 작성하기</a></div>
@@ -269,7 +310,7 @@
     <!-- 시간대와 인원수 선택이 동적으로 추가됩니다 -->
       </div>
       <div class="modal_layout_confirm" >
-      <button id="btnConfirm">예약하기</button>
+      <button id="btnConfirm" onclick="btnConfirm()">예약하기</button>
        </div>
     </div>
 </div>
@@ -282,7 +323,9 @@
 
 
 <script>
-
+function backPage() {
+	  window.history.back();    
+}
 
 const infoPage = `<div class="content">
     <div class="content_title"><img  src="/images/icon/speaker.png" ><p>팝업스토어 소개</p></div>
@@ -412,7 +455,7 @@ const infoPage = `<div class="content">
 	     <img class= "review_img"src="/images/example/exampleimg6.png">     
 	     <div class="review_like">
 	     <img src="/images/icon/heart.png">
-	     <p>${review.like}</p>
+	     <p>${review.like_count}</p>
 	     </div>
 	     </div>
 	     <div class="review_info">
@@ -534,7 +577,8 @@ const mapPage = `
     })
     .done(function(response){
     	const reviewData = response.ReviewDetail; // 서버에서 받아온 데이터
-    	console.log(reviewData);
+    	const rLikeCount = response.rLikeCount; 
+    	console.log(rLikeCount);
     	$('#contents').html('');
     	const reviewDetail = "<div class='review_header'>" +
         "<div class='review_title'>" +
@@ -543,11 +587,9 @@ const mapPage = `
     "</div>" +
     "<div class='swiper-container2'>" +
         "<div class='swiper-wrapper'>" +
-            "<div class='swiper-slide ss'><img src='/images/example/exampleimg1.png' alt='1'></div>" +
-            "<div class='swiper-slide ss'><img src='/images/example/exampleimg1.png' alt='2'></div>" +
-            "<div class='swiper-slide ss'><img src='/images/example/exampleimg1.png' alt='3'></div>" +
-            "<div class='swiper-slide ss'><img src='/images/example/exampleimg1.png' alt='4'></div>" +
-            "<div class='swiper-slide ss'><img src='/images/example/exampleimg1.png' alt='5'></div>" +
+            "<c:forEach var='img' items='${PopImgPath}'>"+
+            "<div class='swiper-slide ss'><img src='/image/read?path=${img}' alt='User Image' class='profileSize'></div>"+
+          "</c:forEach>"+
         "</div>" +
         "<div class='swiper-button-next'></div>" +
         "<div class='swiper-button-prev'></div>" +
@@ -560,7 +602,7 @@ const mapPage = `
         "<div class='review_nld'>" +
             "<img src='/images/icon/calender.png'>&nbsp;&nbsp;&nbsp; <p>" + reviewData.review_date + "</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
             "<img src='/images/icon/eye1.png'> &nbsp;&nbsp;&nbsp;<p>" + reviewData.hit + "</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
-            "<img src='/images/icon/heart.png'>&nbsp;&nbsp;&nbsp; <p>" + reviewData.like + "</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
+            "<div id='review_like_btn' onclick='LikeReviewConfig(this)' data-lr="+reviewData.review_idx +"><img src='/images/icon/heart.png'>&nbsp;&nbsp;&nbsp; <p id='like-review-count'>" + rLikeCount + "</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>" +
         "</div>" +
     "</div>" +
     "<div class='content'>" +
@@ -660,10 +702,85 @@ function moveMap() {
     	  initMap();
           	 	 
 }
+const Reservationstatus = '${StoreReservation.status}';
+const store_idx = '${storedetail.store_idx}';
+const user_idx = '${user_idx}';
+
+if (Reservationstatus === '현장문의') {
+    document.getElementById('reserveBtn').textContent = '현장문의';
+    document.getElementById('reserveBtn').disabled = true; 
+} else if (Reservationstatus === '현장대기예약') {
+    document.getElementById('reserveBtn').textContent = '현장대기예약';
+    document.getElementById('reserveBtn').disabled = true; 
+}else {
+	
+	const openDateOrgin = '${StoreReservation.open_date}';
+    const openDate  = openDateOrgin.split(' ')[0];
+	
+    const currentDate = new Date();
+    const openDateObj = new Date(openDateOrgin.replace(' ', 'T'));
+    currentDate.setHours(0, 0, 0, 0); 
+    openDateObj.setHours(0, 0, 0, 0); 
+    // openDate가 현재 날짜보다 큰지 비교합니다.
+    if(openDateObj.getTime() > currentDate.getTime()) {
+        document.getElementById('reserveBtn').innerHTML = `
+            <span style="font-size: 20px;">사전예약 오픈예정</span>
+            <span style="font-size: 16px;">(오픈날짜 : \${openDate})</span>
+        `;
+        document.getElementById('reserveBtn').disabled = true; 
+    }else {
+        console.log('openDate가 지났습니다');
+       
+    
+	
+	
+	
+	
+	//날짜 비동기 받아오기
+	  fetch(`/api/waiting/reservationdate?store_idx=\${encodeURIComponent(store_idx)}`)
+	  .then(response => {
+		    if (!response.ok) {
+		        throw new Error(`HTTP error! status: \${response.status}`);
+		      }
+		      return response.json();
+		    })
+	  .then(data => {
+		  
+     if(data){
+    	 const enableDates = data.map(item => item.reservation_date);  	 
+    	  console.log(enableDates);
+    	    // 날짜 선택을 위한 Flatpickr 초기화
+    	    flatpickr("#calendar-container", {
+    	        dateFormat: "Y-m-d",     // 날짜 형식
+    	        enable:enableDates,
+    	        inline: true,
+    	        onChange: function(selectedDates, dateStr, instance) {
+    	            // 날짜가 변경될 때마다 시간대와 인원수를 동적으로 업데이트
+    	            getTimeOptions(dateStr);
+    	        }
+    	    });  
+		  
+     }  
+	  }).catch(error => {
+	      console.error('예약내역이 없습니다', error);
+	  }); 
+	
+    }
+	
+}
 
 //예약하기 버튼 클릭 시 모달 열기
-document.getElementById('reserveBtn').addEventListener('click', function() {
+document.getElementById('reserveBtn').addEventListener('click', function() {	
+	
+	console.log('status : ' + Reservationstatus)
+	if(Reservationstatus == '사전예약'){
     document.getElementById('modalBg').style.display = 'block';
+    
+	}else {
+	 alert('예약기능을 사용할 수 없는 팝업니다.')	
+		
+	}
+    
 });
 
 // 모달 닫기 버튼
@@ -673,47 +790,117 @@ document.getElementById('btnClose').addEventListener('click', function() {
 
 
 // 예약 확인 버튼 클릭 시
-document.getElementById('btnConfirm').addEventListener('click', function() {
-	  const selectedDate = $("#calendar").val();
-    const selectedTime = document.getElementById('time').value;
-    const selectedPeople = document.getElementById('people').value;
+function btnConfirm() {
+	  const selectedDate = $("#calendar-container").val();
+    const selectedRp = document.getElementById('timeSelect').value;
+    const selectedPeople = document.getElementById('peopleSelect').value;
+   
+        console.log('selectedPeople:'+selectedPeople);
+        console.log('selectedTime:'+selectedRp);
+        console.log('selectedDate:'+selectedDate);
 
-    if (!selectedDate || !selectedTime || !selectedPeople) {
+    if (!selectedDate || !selectedRp || !selectedPeople) {
         alert('모든 항목을 선택해주세요.');
     } else {
-        alert(`예약이 완료되었습니다! 날짜: ${selectedDate}, 시간: ${selectedTime}, 인원수: ${selectedPeople}`);
+    
+        //맥스 인원수 검증 로직
+        fetch(`/api/waiting/countconfig`, {
+       	        method: 'POST', // POST 방식으로 요청
+       	        headers: {
+       	            'Content-Type': 'application/json' // JSON 형식으로 데이터 전송
+       	        },
+       	        body: JSON.stringify({
+       	        	reservation_date: selectedDate,
+       	        	rp_idx: selectedRp ,
+       	        	store_idx:store_idx
+       	        })
+       	    })
+       	    .then(response => {
+       	        if (!response.ok) {
+       	            throw new Error(`HTTP error! status: ${response.status}`);
+       	           
+       	        }
+       	       return  response.json().catch(() => null); 
+       	    })
+       	    .then(data => {
+       	    
+       	    //예약이 처음이라면
+       	        if (!data || typeof data.total_count === 'undefined' || typeof data.max_number === 'undefined') {
+          
+               reservationComplete(selectedRp, selectedDate, selectedPeople);
+                 return; // 이후 로직을 중단
+                 }   	    
+       	       	    
+       	    // 예약 인원수가 존재한다면	
+       	    let  totalCount = data.total_count;
+       	    let  maxNumber = data.max_number;
+       	    let  rest = maxNumber - totalCount;
+       	    
+       	    if(rest >= selectedPeople){   	    
+       	    	reservationComplete(selectedRp,selectedDate,selectedPeople)
+       	    }else {   	   
+      	    	alert('남은 인원수 : '+ rest +' 예약인원수가 초과되었습니다')
+       	    }
+       	    })
+       	    .catch(error => {
+       	        console.error('예약내역이 없습니다', error);
+       	    });
+   	
+   }	   	
+    	   
         document.getElementById('modalBg').style.display = 'none';  // 모달 닫기
-    }
-});
+    
+};
 
-document.addEventListener("DOMContentLoaded", function() {
-    // 날짜 선택을 위한 Flatpickr 초기화
-    flatpickr("#calendar-container", {
-        dateFormat: "Y-m-d",     // 날짜 형식
-        minDate: "2023-12-12",   // 최소 날짜
-        maxDate: "2023-12-24",   // 최대 날짜
-        inline: true,
-        onChange: function(selectedDates, dateStr, instance) {
-            // 날짜가 변경될 때마다 시간대와 인원수를 동적으로 업데이트
-            updateTimeAndPeople(dateStr);
-        }
-    });     
+
+
+function reservationComplete(selectedDataRp,formattedDate,person){
+  	//예약 인서트
+	 fetch(`/api/waiting/reservationwrite`, {
+	        method: 'POST', // POST 방식으로 요청
+	        headers: {
+	            'Content-Type': 'application/json' // JSON 형식으로 데이터 전송
+	        },
+	        body: JSON.stringify({
+	        	reservation_date: formattedDate,
+	        	reservation_number: person,
+	        	rp_idx: selectedDataRp ,
+	        	user_idx:user_idx,
+	        	store_idx:store_idx
+	        })
+	    })
+	    .then(response => {
+	        if (!response.ok) {
+	            throw new Error(`HTTP error! status: ${response.status}`);
+	           
+	        }
+	        alert('예약완료')
+	        return response
+	    })
+	    .catch(error => {
+	        console.error('예약내역이 없습니다', error);
+	    });	
+	
+	
+}
+		   
 
     // 날짜에 따른 시간대와 인원수 선택을 업데이트하는 함수
-    function updateTimeAndPeople(date) {
+    function updateTimeAndPeople(dataList,date) {
         // 시간대 선택 (예: 11시부터 8시까지 한 시간 간격)
-        const timeOptions = getTimeOptions(date); // 날짜에 따른 시간대 옵션
+        const timeOptions = dataList; // 날짜에 따른 시간대 옵션
+        console.log('timeOptions'+ timeOptions);
         const peopleOptions = getPeopleOptions(); // 인원수 선택
 
         let timeSelectHtml = `<div class="modal_layout_select"><label for="timeSelect">시간 선택</label><select id="timeSelect">`;
         timeOptions.forEach(time => {
-            timeSelectHtml += `<option value="${time}">\${time}</option>`;
+            timeSelectHtml += `<option value="\${time.rp_idx}">\${time.time_range}</option>`;
         });
         timeSelectHtml += `</select></div>`;
 
         let peopleSelectHtml = `<div class="modal_layout_select"><label for="peopleSelect">인원수</label><select id="peopleSelect">`;
         peopleOptions.forEach(num => {
-            peopleSelectHtml += `<option value="${num}">\${num}</option>`;
+            peopleSelectHtml += `<option value="\${num}">\${num}</option>`;
         });
         peopleSelectHtml += `</select></div>`;
 
@@ -723,26 +910,416 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // 날짜에 따른 시간대 옵션 반환
     function getTimeOptions(date) {
-        // 날짜에 따른 예약 가능한 시간대를 다르게 설정할 수 있음
-        if (date === "2023-12-12") {
-            return ["11:00", "12:00", "13:00", "14:00"];
-        } else if (date === "2023-12-13") {
-            return ["14:00", "15:00", "16:00", "17:00"];
-        } else {
-            return ["11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"];
-        }
+        
+       console.log('date:'+date);
+  	  fetch(`/api/waiting/timeslot?store_idx=\${encodeURIComponent(store_idx)}`)
+	  .then(response => {
+		    if (!response.ok) {
+		        throw new Error(`HTTP error! status: \${response.status}`);
+		      }
+		      return response.json();
+		    })
+	  .then(data => {
+		  
+       console.log('data:'+data);
+       if(data){
+    	   
+      const filteredSlots = data.filter(item => {
+          const reservationDate = item.reservation_date.split(' ')[0]; // 'YYYY-MM-DD' 형식으로 변환
+          return reservationDate === date; // date와 비교
+      });    	   	        	   	         
+       
+       updateTimeAndPeople(filteredSlots,date)
+       }  
+	  }).catch(error => {
+	      console.error('예약내역이 없습니다', error);
+	  }); 	
+  	  
     }
 
     // 인원수 선택 옵션 (1 ~ 10명)
     function getPeopleOptions() {
         let options = [];
-        for (let i = 1; i <= 10; i++) {
+        for (let i = 1; i <= 6; i++) {
             options.push(i);
         }
         return options;
     }
+
+    
+//좋아요 로직  
+//1. 좋아요를 이미 했는지 여부 
+function LikeConfig(element){
+	
+	const content = {
+		    user_idx: user_idx, 
+		    store_idx: store_idx 
+		};
+		fetch(`/Popup/Like/Config`, {
+		    method: 'POST', // POST 요청
+		    headers: {
+		        'Content-Type': 'application/json', // JSON 데이터임을 명시
+		    },
+		    body: JSON.stringify(content), // 객체를 JSON 문자열로 변환하여 전송
+		})
+		.then(response => {
+		    if (!response.ok) {
+		        alert('확인확인')
+		    }
+		    return response.json();
+		})
+		.then(data => {
+		    console.log('datais_idx:', data);
+		    if (data) {
+		      LikeDown(data);
+		    }else{		    	
+		   LikeUp(); 	
+		    }
+		})
+		.catch(error => {
+			 LikeUp(); 
+		});				
+	
+	
+	
+	
+}
+
+//2. 좋아요가 없다면  
+function LikeUp(element) {	
+	const content = {
+		    user_idx: user_idx, 
+		    store_idx: store_idx 
+		};
+	
+		fetch(`/Popup/Like/Write`, {
+		    method: 'POST', // POST 요청
+		    headers: {
+		        'Content-Type': 'application/json', // JSON 데이터임을 명시
+		    },
+		    body: JSON.stringify(content), // 객체를 JSON 문자열로 변환하여 전송
+		})
+		.then(response => {
+		    if (!response.ok) {
+		        throw new Error(`HTTP error! status: ${response.status}`);
+		    }
+		    return response.json();
+		})
+		.then(data => {
+		    console.log('data:', data);
+		    if (data) {
+		        // 서버에서 반환한 데이터 처리
+		        console.log('처리 결과:', data);
+		        const LikeCount = data
+		        document.getElementById('like-count').innerHTML = LikeCount;
+		        
+		    }
+		})
+		.catch(error => {
+		    console.error('좋아요 내역이 없습니다', error);
+		});				
+}
+//3.좋아요를 했다면
+function LikeDown(ls_idx) {	
+	const content = {
+			ls_idx: ls_idx,
+		    store_idx: store_idx 
+		};
+	
+		fetch(`/Popup/Like/Delete`, {
+		    method: 'DELETE', 
+		    headers: {
+		        'Content-Type': 'application/json', // JSON 데이터임을 명시
+		    },
+		    body: JSON.stringify(content), // 객체를 JSON 문자열로 변환하여 전송
+		})
+		.then(response => {
+		    if (!response.ok) {
+		        throw new Error(`HTTP error! status: ${response.status}`);
+		    }
+		    return response.json();
+		})
+		.then(data => {
+		    console.log('data:', data);
+		    
+		        // 서버에서 반환한 데이터 처리
+		        console.log('처리 결과:', data);
+		        const LikeCount = data
+		        document.getElementById('like-count').innerHTML = LikeCount;		        
+		   
+		})
+		.catch(error => {
+		    console.error('좋아요 내역이 없습니다', error);
+		});				
+}    
+  
+function LikeReviewConfig(element) {
+
+	const review_idx = element.getAttribute('data-lr');
+	const content = {
+		    user_idx: user_idx, 
+		    review_idx: review_idx 
+		};
+		fetch(`/Popup/Like/Review/Config`, {
+		    method: 'POST', // POST 요청
+		    headers: {
+		        'Content-Type': 'application/json', // JSON 데이터임을 명시
+		    },
+		    body: JSON.stringify(content), // 객체를 JSON 문자열로 변환하여 전송
+		})
+		.then(response => {
+		    if (!response.ok) {
+		       
+		    }
+		    return response.json();
+		})
+		.then(data => {
+		    console.log('datalr_idx:', data);
+		    
+		    if (data) {
+		      LikeReviewDown(review_idx,data);
+		    }else{		    	
+		   LikeReviewUp(review_idx); 	
+		    }
+		})
+		.catch(error => {
+			LikeReviewUp(review_idx); 
+		});		
+}
+function LikeReviewUp(element){
+		    console.log('리뷰 저장: review_idx' + element);	
+	const content = {
+		    user_idx: user_idx, 
+		    review_idx: element 
+		};
+	
+		fetch(`/Popup/Like/Review/Write`, {
+		    method: 'POST', // POST 요청
+		    headers: {
+		        'Content-Type': 'application/json', // JSON 데이터임을 명시
+		    },
+		    body: JSON.stringify(content), // 객체를 JSON 문자열로 변환하여 전송
+		})
+		.then(response => {
+		    if (!response.ok) {
+		        throw new Error(`HTTP error! status: ${response.status}`);
+		    }
+		    return response.json();
+		})
+		.then(data => {
+		    console.log('data:', data);
+		    if (data) {
+		        // 서버에서 반환한 데이터 처리
+		        console.log('처리 결과:', data);
+		        const LikeCount = data
+		        document.getElementById('like-review-count').innerHTML = LikeCount ;
+		        
+		    }
+		})
+		.catch(error => {
+		    console.error('리뷰좋아요 내역이 없습니다', error);
+		});
+	
+	
+}
+function LikeReviewDown(review_idx,data) {
+    console.log('리뷰 삭제: review_idx', review_idx);
+    console.log('리뷰 삭제: lr_idx', data);
+	const content = {
+		lr_idx: data,
+		review_idx: review_idx 
+	};
+
+	fetch(`/Popup/Like/Reivew/Delete`, {
+	    method: 'DELETE', 
+	    headers: {
+	        'Content-Type': 'application/json', // JSON 데이터임을 명시
+	    },
+	    body: JSON.stringify(content), // 객체를 JSON 문자열로 변환하여 전송
+	})
+	.then(response => {
+	    if (!response.ok) {
+	        throw new Error(`HTTP error! status: ${response.status}`);
+	    }
+	    return response.json();
+	})
+	.then(data => {
+	    console.log('data:', data);
+	    console.log('처리 결과data 타입:'+typeof data);  
+	   document.getElementById('like-review-count').innerHTML = data;
+	   
+	
+	})
+	.catch(error => {
+	    console.error('리뷰좋아요 내역이 없습니다', error);
+	});				
+
+}
+
+
+
+function LikeReviewUp(element){
+    console.log('리뷰 저장: review_idx' + element);	
+const content = {
+    user_idx: user_idx, 
+    review_idx: element 
+};
+
+fetch(`/Popup/Like/Review/Write`, {
+    method: 'POST', // POST 요청
+    headers: {
+        'Content-Type': 'application/json', // JSON 데이터임을 명시
+    },
+    body: JSON.stringify(content), // 객체를 JSON 문자열로 변환하여 전송
+})
+.then(response => {
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+})
+.then(data => {
+    console.log('data:', data);
+    if (data) {
+        // 서버에서 반환한 데이터 처리
+        console.log('처리 결과:', data);
+        const LikeCount = data
+        document.getElementById('like-review-count').innerHTML = LikeCount ;
+        
+    }
+})
+.catch(error => {
+    console.error('리뷰좋아요 내역이 없습니다', error);
 });
 
+
+}
+
+
+function bookConfig(){	
+	const content = {
+		    user_idx: user_idx, 
+		    store_idx: store_idx 
+		};
+		fetch(`/Popup/Bookmark/Config`, {
+		    method: 'POST', // POST 요청
+		    headers: {
+		        'Content-Type': 'application/json', // JSON 데이터임을 명시
+		    },
+		    body: JSON.stringify(content), // 객체를 JSON 문자열로 변환하여 전송
+		})
+		.then(response => {
+		    if (!response.ok) {
+		        alert('확인확인')
+		    }
+		    return response.json();
+		})
+		.then(data => {
+		    console.log('BOOKMARK_IDX:', data);
+		    if (data) {
+		      BookmarkDown(data);
+		    }else{		    	
+		   BookmarkUp(); 	
+		    }
+		})
+		.catch(error => {
+			BookmarkUp(); 
+		});						
+}
+
+const bookmarkElement = document.querySelector('.bookmark');
+function BookmarkUp(){
+    	
+const content = {
+    user_idx: user_idx, 
+    store_idx: store_idx 
+};
+
+fetch(`/Popup/Bookmark/Write`, {
+    method: 'POST', 
+    headers: {
+        'Content-Type': 'application/json', 
+    },
+    body: JSON.stringify(content),
+})
+.then(response => {
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response;
+})
+.then(data => {
+    console.log('data:', data);
+    if (data) {
+        // 서버에서 반환한 데이터 처리
+        console.log('추가 처리 결과:', data);
+        const result = data
+        bookmarkElement.classList.add('bookmark-on');        
+    }
+})
+.catch(error => {
+    console.error('북마크 내역이 없습니다', error);
+});
+
+}
+
+function BookmarkDown(data) {
+    console.log('리뷰 삭제: BOOKMARK_IDX', data);
+	const content = {
+		bookmark_idx: data 
+	};
+	
+	fetch(`/Popup/Bookmark/Delete`, {
+	    method: 'DELETE', 
+	    headers: {
+	        'Content-Type': 'application/json',
+	    },
+	    body: JSON.stringify(content),
+	})
+	.then(response => {
+	    if (!response.ok) {
+	        throw new Error(`HTTP error! status: ${response.status}`);
+	    }
+	    return response
+	})
+	.then(data => {
+	    console.log('삭제 상태 data:', data);
+	    bookmarkElement.classList.remove('bookmark-on');	   
+	})
+	.catch(error => {
+	    console.error('리뷰좋아요 내역이 없습니다', error);
+	});				
+}
+function bookmarkconfigg(){	
+	const content = {
+		    user_idx: user_idx, 
+		    store_idx: store_idx 
+		};
+		fetch(`/Popup/Bookmark/Config`, {
+		    method: 'POST', // POST 요청
+		    headers: {
+		        'Content-Type': 'application/json', // JSON 데이터임을 명시
+		    },
+		    body: JSON.stringify(content), // 객체를 JSON 문자열로 변환하여 전송
+		})
+		.then(response => {
+		    if (!response.ok) {
+		        alert('확인확인')
+		    }
+		    return response.json();
+		})
+		.then(data => {
+		    console.log('BOOKMARK_IDX:', data);
+		    if (data) {
+		    	 bookmarkElement.classList.add('bookmark-on');    
+		    }
+		})
+		.catch(error => {
+			
+		});						
+}
+
+bookmarkconfigg();
 </script>
 
 <script>

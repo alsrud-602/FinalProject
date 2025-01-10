@@ -9,6 +9,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import com.board.business.dto.StoreStatusDto;
+import com.board.business.dto.WaitingDelayDto;
 import com.board.business.dto.WaitingDto;
 import com.board.business.mapper.WatingMapper;
 import com.board.business.service.WaitingService;
@@ -48,6 +49,8 @@ public class WebSocketController {
         List<WaitingDto> updatedList =  waitingService.updateWatingList(waitingDto);
         int store_idx =watingMapper.getStore_idxWaiting(waitingDto.getWaiting_idx());
         // 특정 구독 경로로 메시지 전송
+              
+        
         String topic = "/topic/Waiting/" + store_idx;
         messagingTemplate.convertAndSend(topic, updatedList);
     }    
@@ -82,6 +85,20 @@ public class WebSocketController {
         
         messagingTemplate.convertAndSend(topic, storeStatusDTO);      
                
+    }          
+    @MessageMapping("/Waiting/Delay") // 클라이언트가 보낼 경로
+    public void UserDelay (WaitingDelayDto waitingDelayDto) {
+    	System.out.println("WaitingDelayDto : "+waitingDelayDto);
+ 	
+    	waitingService.getDelay(waitingDelayDto);       
+    	
+    	 List<WaitingDto> updatedList = waitingService.getWatingList(waitingDelayDto.getStore_idx());
+    	// 특정 구독 경로로 메시지 전송
+    	String topic = "/topic/Waiting/" + waitingDelayDto.getStore_idx();  
+    	
+    	System.out.println("topic : "+topic);
+        messagingTemplate.convertAndSend(topic, updatedList);
+    	
     }          
     
     

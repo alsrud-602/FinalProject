@@ -1,13 +1,16 @@
 package com.board.business.mapper;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.board.business.dto.CountConfigDto;
 import com.board.business.dto.ReservationTimeSlotDto;
 import com.board.business.dto.ReservationUserDto;
 import com.board.business.dto.StoreAddNoteDto;
+import com.board.business.dto.StoreListDto;
 import com.board.business.dto.StoreStatusDto;
 import com.board.business.dto.WaitingDto;
 
@@ -47,6 +50,32 @@ public interface WatingMapper {
 	List<ReservationTimeSlotDto> getadvanceTimeSlotList(int store_idx);
 
 	List<ReservationTimeSlotDto> getadvanceDateList(int store_idx);
+
+	void getReservationWrite(HashMap<String, Object> map);
+
+	StoreListDto getStoreShort(int store_idx);
+
+	List<StoreListDto> getStoreCategory(int store_idx);
+
+	CountConfigDto getCountConfig(HashMap<String, Object> map);
+
+	ReservationUserDto getadvanceUser(int reservation_idx);
+
+	void deleteReservation(int reservation_idx);
+
+	WaitingDto getWaitingStatus(int waiting_idx);
+
+	void updateWaitingOrderInt(int store_idx, int i, int j);
+
+	void updateWaitingOrderUser(int waiting_idx, int myOrder, int newMyOrder);
+
+	void updatePopcornDelay(int waiting_idx);
+
+	void updatePopconNoShow(int waiting_idx);
+
+	void updatePopCornWDelay(int waiting_idx);
+
+	void updatePopCornWNo(int waiting_idx);
 
 	
 
