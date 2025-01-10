@@ -81,22 +81,16 @@ public class HomeController {
        int start = (page - 1) * size; 
        int totalPosts = usersMapper.getOngoingcount();
        int totalPages = (int) Math.ceil((double) totalPosts / size);
-       System.out.println("totalPosts : " + totalPosts);
-       System.out.println("totalPages : " + totalPages);
 
       //랭킹 팝업
        List<UsersDto> ranklist = usersMapper.getRanklist();
-       System.out.println("ranklist : " + ranklist);
 
        // 이미지 경로 수정
        for (UsersDto dto : ranklist) {
            String imagePath = dto.getImage_path().replace("\\", "/"); // 경로 수정
-           System.out.println("imagePath : " + imagePath);
            dto.setImage_path(imagePath); // 수정된 경로 다시 설정
-           System.out.println("수정된 이미지 패스 : " + imagePath);
        }
 
-       System.out.println("최종 수정된 ranklist : " + ranklist);
       
       
       // 팝업 오픈예정
@@ -105,7 +99,6 @@ public class HomeController {
       for (UsersDto dto : opendpopuplist) {
            String imagePath = dto.getImage_path().replace("\\", "/"); // 경로 수정
          dto.setImage_path(imagePath); // 수정된 경로 다시 설정
-          System.out.println("수정된 이미지 패스 : " + imagePath);
       }
       
       // 팝업 진행중
@@ -116,7 +109,6 @@ public class HomeController {
            String imagePath = dto.getImage_path().replace("\\", "/"); // 경로 수정
            System.out.println("imagePath"+imagePath);
          dto.setImage_path(imagePath); // 수정된 경로 다시 설정
-          System.out.println("수정된 이미지 패스 : " + imagePath);
       }
       
       ModelAndView mv = new ModelAndView();
@@ -141,14 +133,6 @@ public class HomeController {
    }
 
    
-   
-   @RequestMapping("/admin")
-   public  String   admin() {
-      return "admin/store/list";
-      
-
-      //return "/WEB-INF/views/home.jsp";
-   }
 
    
 }

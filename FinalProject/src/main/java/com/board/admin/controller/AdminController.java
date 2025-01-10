@@ -121,13 +121,14 @@ public class AdminController {
         Optional<User> user=null;
         user = getJwtTokenFromCookies(request, model);
         model.addAttribute("user", user.orElse(null));
-      ModelAndView mv = new ModelAndView();
-      mv.addObject("allusers", allusers);
-      mv.setViewName("/admin/user/user");
-      return mv;
-   }
-   
-   //유저관리 상세
+
+		ModelAndView mv = new ModelAndView();
+		mv.addObject("allusers", allusers);
+		mv.setViewName("/admin/user/user");
+		return mv;
+	}
+	
+
     // 유저관리 상세
     @RequestMapping("/Userdetail")
     public String userdetail(HttpServletResponse response, Model model, @RequestParam("id") String userId) throws Exception {
@@ -228,105 +229,106 @@ public class AdminController {
 
         return "/admin/user/userdetail"; // 수정 가능한 폼으로 연결
     }
-   
-     @PostMapping("/PlusPopcorn")
-       public String  givePopcorn(
-             @RequestParam String userId,
-               @RequestParam String content,
-               @RequestParam int plusPopcorn,
-               RedirectAttributes redirectAttributes) {
-           
-            adminMapper.PopcornPlusLogByUserId(userId,content,plusPopcorn);
-            System.out.println("로그추가");
-            adminMapper.PopcornPlusWalletByUserId(userId,plusPopcorn);
-            System.out.println("지갑에넣음");
-            
-            
-            redirectAttributes.addAttribute("id", userId);
-            
-           return "redirect:/Admin/Userdetail";
-       }
-   
-     @PostMapping("/MinusPopcorn")
-     public String  deductPopcorn(
-           @RequestParam String userId,
-           @RequestParam String content,
-           @RequestParam int minusPopcorn,
-           RedirectAttributes redirectAttributes) {
-        
-        adminMapper.PopcornMinusLogByUserId(userId,content,minusPopcorn);
-        System.out.println("로그추가");
-        adminMapper.PopcornMinusWalletByUserId(userId,minusPopcorn);
-        System.out.println("지갑에넣음");
-        
-        redirectAttributes.addAttribute("id", userId);
-        
-        return "redirect:/Admin/Userdetail";
-     }
-   
-       @PostMapping("/PlusPopcorns")
-       public String givePopcorn(
-               @RequestParam String content, 
-               @RequestParam int points, 
-               @RequestParam String userIds,
-               RedirectAttributes redirectAttributes, Model model) {
-           
-           // userIds는 콤마로 구분된 문자열이므로, 이를 배열로 변환
-           String[] userIdArray = userIds.split(",");
 
-           Map<String, Object> params = new HashMap<>();
-           params.put("content", content);
-           params.put("points", points);
-           params.put("users", userIdArray);
-           
-           String[] users = (String[]) params.get("users");
-           String content1 = (String) params.get("content");
-           int points1 = (int) params.get("points");
+	
+	  @PostMapping("/PlusPopcorn")
+	    public String  givePopcorn(
+	    		@RequestParam String userId,
+	            @RequestParam String content,
+	            @RequestParam int plusPopcorn,
+	            RedirectAttributes redirectAttributes) {
+	        
+		      adminMapper.PopcornPlusLogByUserId(userId,content,plusPopcorn);
+		      System.out.println("로그추가");
+		      adminMapper.PopcornPlusWalletByUserId(userId,plusPopcorn);
+		      System.out.println("지갑에넣음");
+		      
+		      
+		      redirectAttributes.addAttribute("id", userId);
+		      
+	        return "redirect:/Admin/Userdetail";
+	    }
+	
+	  @PostMapping("/MinusPopcorn")
+	  public String  deductPopcorn(
+			  @RequestParam String userId,
+			  @RequestParam String content,
+			  @RequestParam int minusPopcorn,
+			  RedirectAttributes redirectAttributes) {
+		  
+		  adminMapper.PopcornMinusLogByUserId(userId,content,minusPopcorn);
+		  System.out.println("로그추가");
+		  adminMapper.PopcornMinusWalletByUserId(userId,minusPopcorn);
+		  System.out.println("지갑에넣음");
+		  
+		  redirectAttributes.addAttribute("id", userId);
+		  
+		  return "redirect:/Admin/Userdetail";
+	  }
+	
+	    @PostMapping("/PlusPopcorns")
+	    public String givePopcorn(
+	            @RequestParam String content, 
+	            @RequestParam int points, 
+	            @RequestParam String userIds,
+	            RedirectAttributes redirectAttributes, Model model) {
+	        
+	        // userIds는 콤마로 구분된 문자열이므로, 이를 배열로 변환
+	        String[] userIdArray = userIds.split(",");
 
-         try {
-           for (String user : users) {
-               adminMapper.PopcornPlusLogs(content1, points1, user);
-           }
-           adminMapper.PlusPopcorns(params);
-           redirectAttributes.addFlashAttribute("message", "팝콘 지급이 완료되었습니다.");
-         } catch (Exception e) {
-             // 오류 메시지 추가
-             redirectAttributes.addFlashAttribute("message", "팝콘 지급이 실패했습니다.");
-         }
-           return "redirect:/Admin/User";
-       }
-       
-       @PostMapping("/MinusPopcorns")
-       public String subtractPopcorn(
-               @RequestParam String content2,
-               @RequestParam int points2,
-               @RequestParam String userIds2,
-               RedirectAttributes redirectAttributes, Model model) {
+	        Map<String, Object> params = new HashMap<>();
+	        params.put("content", content);
+	        params.put("points", points);
+	        params.put("users", userIdArray);
+	        
+	        String[] users = (String[]) params.get("users");
+	        String content1 = (String) params.get("content");
+	        int points1 = (int) params.get("points");
 
-           // userIds2는 콤마로 구분된 문자열이므로, 이를 배열로 변환
-           String[] userIdArray = userIds2.split(",");
+	      try {
+	        for (String user : users) {
+	            adminMapper.PopcornPlusLogs(content1, points1, user);
+	        }
+	        adminMapper.PlusPopcorns(params);
+	        redirectAttributes.addFlashAttribute("message", "팝콘 지급이 완료되었습니다.");
+	      } catch (Exception e) {
+	          // 오류 메시지 추가
+	          redirectAttributes.addFlashAttribute("message", "팝콘 지급이 실패했습니다.");
+	      }
+	        return "redirect:/Admin/User";
+	    }
+	    
+	    @PostMapping("/MinusPopcorns")
+	    public String subtractPopcorn(
+	            @RequestParam String content2,
+	            @RequestParam int points2,
+	            @RequestParam String userIds2,
+	            RedirectAttributes redirectAttributes, Model model) {
 
-           Map<String, Object> params = new HashMap<>();
-           params.put("content", content2);
-           params.put("points", points2);
-           params.put("users", userIdArray);
+	        // userIds2는 콤마로 구분된 문자열이므로, 이를 배열로 변환
+	        String[] userIdArray = userIds2.split(",");
 
-           String[] users = (String[]) params.get("users");
-           String content1 = (String) params.get("content");
-           int points1 = (int) params.get("points");
+	        Map<String, Object> params = new HashMap<>();
+	        params.put("content", content2);
+	        params.put("points", points2);
+	        params.put("users", userIdArray);
 
-         try {
-           for (String user : users) {
-               adminMapper.PopcornMinusLogs(content1, points1, user);   
-           }
-           adminMapper.MinusPopcorns(params); 
-           redirectAttributes.addFlashAttribute("message", "팝콘 차감이 완료되었습니다.");
-         } catch (Exception e) {
-             // 오류 메시지 추가
-             redirectAttributes.addFlashAttribute("message", "팝콘 차감이 실패했습니다.");
-         }
-           return "redirect:/Admin/User";  // 유저 관리 페이지로 리다이렉트
-       }
+	        String[] users = (String[]) params.get("users");
+	        String content1 = (String) params.get("content");
+	        int points1 = (int) params.get("points");
+
+	      try {
+	        for (String user : users) {
+	            adminMapper.PopcornMinusLogs(content1, points1, user);   
+	        }
+	        adminMapper.MinusPopcorns(params); 
+	        redirectAttributes.addFlashAttribute("message", "팝콘 차감이 완료되었습니다.");
+	      } catch (Exception e) {
+	          // 오류 메시지 추가
+	          redirectAttributes.addFlashAttribute("message", "팝콘 차감이 실패했습니다.");
+	      }
+	        return "redirect:/Admin/User";  // 유저 관리 페이지로 리다이렉트
+	    }
 
 
     // 스토어관리 - 담당자관리
@@ -406,17 +408,18 @@ public class AdminController {
              @RequestParam(required = false, value = "filter") String filter,
              HttpServletResponse response, Model model) throws Exception{
           
-       
-       // MFA 인증 확인
-       if (!isMfaAuthenticated(request)) {
-          response.sendRedirect("/Users/2fa");
-          return null; 
-       }
-       
-       Optional<User> user=null;
-       user = getJwtTokenFromCookies(request, model);
-       model.addAttribute("user", user.orElse(null));
-       
+
+    	
+    	// MFA 인증 확인
+    	if (!isMfaAuthenticated(request)) {
+    		response.sendRedirect("/Users/2fa");
+    		return null; 
+    	}
+    	
+    	Optional<User> user=null;
+    	user = getJwtTokenFromCookies(request, model);
+    	model.addAttribute("user", user.orElse(null));
+
         int totalUsers = adminMapper.getTotalUsers();
         Map<String, Integer> stats = adminMapper.getMonthlyStats();
 
@@ -439,8 +442,10 @@ public class AdminController {
         int popupListCount = adminMapper.getPopuplistCount();
         
         model.addAttribute("popupListCount", popupListCount);
-       
-       
+
+    	
+    	
+
           System.out.println("리스트 필터링 : "+search);
           System.out.println("리스트 필터링 : "+filter);
           
@@ -470,7 +475,7 @@ public class AdminController {
     public ModelAndView listpagination(AdminStoreDto adminStoredto,
           @RequestParam(defaultValue = "1") int page,
          @RequestParam(defaultValue = "5") int size,HttpServletResponse response, Model model) throws Exception {
-       
+
         if (!isMfaAuthenticated(request)) {
             response.sendRedirect("/Users/2fa"); 
             return null; 
@@ -543,11 +548,13 @@ public class AdminController {
     // 담당자 디테일
     @RequestMapping("/Detail")
     public ModelAndView detail(AdminStoreDto adminstoredto,
-          @RequestParam(defaultValue = "1") int page,
-         @RequestParam(defaultValue = "6") int size, HttpServletResponse response, Model model) throws Exception{
-       System.out.println("adminstoredto 정보 : " + adminstoredto);
-       
-       //MFA 인증 확인
+
+    		@RequestParam(defaultValue = "1") int page,
+			@RequestParam(defaultValue = "6") int size, HttpServletResponse response, Model model) throws Exception{
+    	System.out.println("adminstoredto 정보 : " + adminstoredto);
+    	
+    	//MFA 인증 확인
+
         if (!isMfaAuthenticated(request)) {
             response.sendRedirect("/Users/2fa");
             return null; 
@@ -623,20 +630,24 @@ public class AdminController {
     
     @RequestMapping("/Detailpagination")
     public ModelAndView detailpagination(AdminStoreDto adminstoredto,
-          @RequestParam(defaultValue = "1") int page,
-         @RequestParam(defaultValue = "6") int size
-         ) {
-       System.out.println("넘어온 컴퍼니 디테일 : " + adminstoredto);
-       // MFA 인증 확인
+
+    		@RequestParam(defaultValue = "1") int page,
+			@RequestParam(defaultValue = "6") int size
+			) {
+    	System.out.println("넘어온 컴퍼니 디테일 : " + adminstoredto);
+    	// MFA 인증 확인
+
         //if (!isMfaAuthenticated(request)) {
         //    response.sendRedirect("/Users/2fa");
         //    return null; 
        //}
-       
-       // 회사 정보 가져오기
+
+    	
+    	// 회사 정보 가져오기
         AdminStoreDto CompanyDetail = adminMapper.getCompanyDetail(adminstoredto);
         System.out.println("컴퍼니 정보 : " + CompanyDetail);
-       
+    	
+
         int company_idx = adminstoredto.getCompany_idx();
         String search = adminstoredto.getSearch();
         
@@ -647,10 +658,12 @@ public class AdminController {
         System.out.println("이미지 패스 가져오나? : " + CompanyPopupDetail);
         
         for (AdminStoreDto dto : CompanyPopupDetail) {
-           String imagePath = dto.getImage_path().replace("\\", "/"); // 경로 수정
-           dto.setImage_path(imagePath); // 수정된 경로 다시 설정
-           System.out.println("수정된 이미지 패스 : " + imagePath);
-       }
+
+		     String imagePath = dto.getImage_path().replace("\\", "/"); // 경로 수정
+		     dto.setImage_path(imagePath); // 수정된 경로 다시 설정
+		     System.out.println("수정된 이미지 패스 : " + imagePath);
+		 }
+
         
         
         // store_idx 값만 추출
@@ -684,7 +697,9 @@ public class AdminController {
         mv.addObject("storeIdxList", storeIdxList); // store_idx 리스트도 전달
         mv.addObject("finalCategoryList", finalCategoryList); // finalCategoryList도 전달
         mv.setViewName("/admin/manager/detail");
-       return mv;
+
+    	return mv;
+
     }
 
 

@@ -99,7 +99,7 @@
     border-radius: 5px;
     cursor: pointer;
   }
-<<<<<<< HEAD
+
   
 .upmenu_div{
     background: white;
@@ -136,9 +136,7 @@
   background: white;
 }
 
-=======
-        
->>>>>>> refs/heads/feature-Kim
+
 </style>
 </head>
 <body>
@@ -191,26 +189,14 @@
 <div class="popupsearch" style="padding:50px; margin-top:10px; background: #40c963;">
     <h2 style="color:white;">등록한 팝업스토어</h2>
     <div class="searchform" style="display: flex; gap: 10px; flex-wrap: wrap;">
-<<<<<<< HEAD
+
         <input type="text" class="inputsearch" style="flex: 1; padding: 10px;" placeholder="팝업명을 입력하세요">
         <input type="button" class="buttonsearch"style="flex: 0.1; padding: 10px; background:white;" value="조회">
         <button type="reset"  class="resetbutton">※초기화</button>
-=======
-        <input type="text" style="flex: 1; padding: 10px;">
-        <select style="padding: 10px; width: 150px;">
-            <option>category</option>
-        </select>
-        <select style="padding: 10px; width: 150px;">
-            <option>등록여부</option>
-        </select>
-        <select style="padding: 10px; width: 150px;">
-            <option>지역</option>
-        </select>
->>>>>>> refs/heads/feature-Kim
     </div>
 </div>
 		
-<<<<<<< HEAD
+
 	<div class="list-container">
 	  <c:forEach var="popup" items="${CompanyPopupDetail}">
 	    <div class="list-item" data-store-idx="${popup.store_idx} " data-company-idx="${popup.company_idx}">
@@ -234,53 +220,7 @@
 	    </div>
 	  </c:forEach>
 	</div>
-=======
-<div class="list-container">
-  <div class="list-item">
-    <img src="/images/example/exampleimg5.png" alt="example">
-    <div class="content">
-      <span>잔망루피 대모험</span>
-      <span>Deall Jobs</span>
-      <span>좋아요 수: 500 스포츠잡화 online</span>
-    <div class="remote">Remote</div>
-    </div>
-    <div class="action">광고 등록</div>
-  </div>
 
-  <div class="list-item">
-    <img src="/images/example/exampleimg5.png" alt="example">
-    <div class="content">
-      <span>방방탄한 웃지맘</span>
-      <span>Deall Jobs</span>
-      <span>좋아요 수: 300 스포츠잡화 online</span>
-      <div class="remote">Remote</div>
-    </div>
-    <div class="action">광고 등록</div>
-  </div>
-
-  <div class="list-item">
-    <img src="/images/example/exampleimg5.png" alt="example">
-    <div class="content">
-      <span>잔망루피 대모험</span>
-      <span>Deall Jobs</span>
-      <span>좋아요 수: 500 스포츠잡화 online</span>
-      <div class="remote">Remote</div>
-    </div>
-    <div class="action">광고 등록</div>
-  </div>
-
-  <div class="list-item">
-    <img src="/images/example/exampleimg5.png" alt="example">
-    <div class="content">
-      <span>잔망루피 대모험</span>
-      <span>Deall Jobs</span>
-      <span>좋아요 수: 500 스포츠잡화 online</span>
-      <div class="remote">Remote</div>
-    </div>
-    <div class="action">광고 등록</div>
-  </div>
-</div>
->>>>>>> refs/heads/feature-Kim
    
    </div>	
 	<div id="pagination">
@@ -412,14 +352,7 @@ document.addEventListener('DOMContentLoaded', function() {
     fetchPerformanceData(startDate, endDate);  // 기본 데이터 요청
     fetchStorePerformanceRank(companyIdx, startDate, endDate);  // 기본 순위 요청
 });
-<<<<<<< HEAD
-$(function(){
-    $('.buttonsearch').on('click', function(){
-        let company_idx = ${CompanyDetail.company_idx}; // JSP 표현식으로 company_idx를 가져옴
-        let search = $('.inputsearch').val();
-        
-        window.location.href = "/Admin/Detailpagination?company_idx=" + company_idx + "&search=" + encodeURIComponent(search);
-=======
+
 //기간 선택 이벤트
 document.getElementById('dateRange').addEventListener('change', (e) => {
     const selectedRange = e.target.value; // 선택된 기간 값
@@ -472,9 +405,9 @@ const fetchPerformanceData = (startDate, endDate) => {
     })
     .catch(error => {
         console.error('Error fetching performance data:', error);
->>>>>>> refs/heads/feature-Kim
+
     });
-<<<<<<< HEAD
+
 });
 $(function(){
 	$('.resetbutton').on('click',function(){
@@ -482,7 +415,7 @@ $(function(){
 		window.location.href = "/Admin/Detail?company_idx="+company_idx;
 	})
 })
-=======
+
 };
 const fetchStorePerformanceRank = (companyIdx, startDate, endDate) => {
     axios.get(`/Admin/Store/PerformanceRank/\${companyIdx}`, {
@@ -498,7 +431,24 @@ const fetchStorePerformanceRank = (companyIdx, startDate, endDate) => {
     });
 };
 
->>>>>>> refs/heads/feature-Kim
+
+
+$(function(){
+    $('.buttonsearch').on('click', function(){
+        let company_idx = ${CompanyDetail.company_idx}; // JSP 표현식으로 company_idx를 가져옴
+        let search = $('.inputsearch').val();
+        
+        window.location.href = "/Admin/Detailpagination?company_idx=" + company_idx + "&search=" + encodeURIComponent(search);
+    });
+});
+$(function(){
+	$('.resetbutton').on('click',function(){
+		let company_idx = ${CompanyDetail.company_idx}
+		window.location.href = "/Admin/Detail?company_idx="+company_idx;
+	})
+})
+
+
 </script>
     <%@include file="/WEB-INF/include/admin-footer.jsp" %>
 </body>

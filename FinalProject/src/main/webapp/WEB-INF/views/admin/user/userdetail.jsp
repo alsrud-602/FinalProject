@@ -400,7 +400,7 @@ span.center {
 	         <tr>
         <td>
             <h3>닉네임</h3>
-            <div class="tableborder">${userinfo[0].nikname}</div>
+            <div class="tableborder">${userinfo[0].nickname}</div>
         </td>
     </tr>
     <tr>

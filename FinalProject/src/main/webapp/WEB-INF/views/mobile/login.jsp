@@ -23,14 +23,14 @@
         border-radius: 10px;
         padding: 60px; /* 패딩을 늘림 */
         width: 800px; /* 너비를 늘림 */
-        height: 900px; /* 높이를 늘림 */
+        height: auto; /* 높이를 늘림 */
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
         text-align: center;
         border: 4px solid #00FF84;
     }
 
     ._32 {
-        width: 400px; /* 너비를 늘림 */
+        width: 550px; /* 너비를 늘림 */
         height: auto;
         margin: 0 auto; /* 가운데 정렬 */
         margin-bottom: 30px; /* 마진을 늘림 */
@@ -73,49 +73,34 @@
     }
     
     .kakaoLogin {
-        width: 400px; /* 너비를 늘림 */
+        width: 500px; /* 너비를 늘림 */
         height: auto; /* 높이를 늘림 */
+        margin-top: 10px;
     }
 
     /* 모바일 화면 (768px 이하) */
     @media (max-width: 768px) {
-        .user-login {
-            width: 130%; /* 화면 너비에 맞게 조정 */
-            padding: 30px; /* 패딩 조정 */
-            max-width: 500px; /* 최대 너비를 500px로 설정 */
-        }
+
     }
     </style>
 </head>
 
 <body>
     <main>
-<c:if test="${not empty needLoginMessage}">
-    <script type="text/javascript">
-        alert('${needLoginMessage}');
-    </script>
-</c:if>
         <div class="user-login">
-            <a href="/Mobile"><img class="_32" src="/images/mainlogo.png" /></a>
+            <a href="/Mobile/Users/Main"><img class="_32" src="/images/mainlogo.png" /></a>
 <form id="loginForm">
     <input type="text" id="id" name="id" placeholder="아이디" />
     <input type="password" id="password" name="password" placeholder="비밀번호" />
     <button type="submit">로그인</button>
-    <c:if test="${param.error != null}">
-        <p style="color: red;">아이디 또는 비밀번호가 잘못되었습니다.</p>
-    </c:if>
-    <div id="errorMessages" style="color: red;"></div>
+    <div id="errorMessages" style="color: red; font-size: 40px;"></div>
     <c:if test="${not empty message}">
     <div class="alert alert-warning" style="color: aqua;">${message}</div>
 	</c:if>
 </form>
 <a href="/oauth2/authorization/kakao" id="kakaoLogin"><img src="/images/header/kakao_login_large_narrow.png" class="kakaoLogin"></a>
 
-            <div class="sub-login">
-            <a href="#" class="link">아이디 찾기</a> |
-            <a href="#" class="link">비밀번호 찾기</a> |
-            <a href="#" class="link">회원가입</a>
-            </div>
+
         </div>
 
 <script type="text/javascript">
@@ -154,7 +139,6 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
 
         if (!response.ok) {
             console.error('오류 상태 코드:', response.status);
-            alert('로그인 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.');
             return;
         }
 
@@ -201,7 +185,6 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     })
     .catch(function(error) {
         console.error('로그인 요청 중 오류:', error);
-        alert('로그인 중 문제가 발생했습니다.');
     });
 });
 
@@ -214,7 +197,7 @@ window.onload = function() {
 
     if (code) {
         // 액세스 토큰 요청
-        fetch('http://localhost:9090/oauth2/callback/kakao?code=' + code)
+        fetch('http://192.168.100.133:9090/Mobile/oauth2/callback/kakao?code=' + code)
             .then(response => {
                 console.log('응답:', response); // 응답 로그 추가
                 if (response.ok) {

@@ -53,7 +53,7 @@ public class S3UploadService {
          });
 
 
-        // Step 2: 새 데이터 읽기
+        //새 데이터 읽기
         List<VisitorData> newData;
         try {
             // TypeReference를 사용하여 새 데이터를 읽음
@@ -62,7 +62,7 @@ public class S3UploadService {
             throw new RuntimeException("Failed to read new data from file: " + e.getMessage(), e);
         }
 
-        // Step 3: 기존 데이터와 새 데이터를 병합
+        //기존 데이터와 새 데이터를 병합
         return existingDataFuture.thenCompose(existingData -> {
             existingData.addAll(newData); // 기존 데이터와 새 데이터 병합
 
@@ -74,7 +74,7 @@ public class S3UploadService {
                 throw new RuntimeException("Failed to serialize merged data: " + e.getMessage(), e);
             }
 
-            // Step 4: 병합된 데이터를 S3에 업로드
+            //병합된 데이터를 S3에 업로드
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
                     .key(s3Key)

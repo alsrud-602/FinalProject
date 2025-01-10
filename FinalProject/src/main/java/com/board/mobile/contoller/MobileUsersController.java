@@ -149,16 +149,13 @@ public class MobileUsersController {
 
 	      //랭킹 팝업
 	       List<UsersDto> ranklist = usersMapper.getRanklist();
-	       System.out.println("ranklist : " + ranklist);
 
 	       // 이미지 경로 수정
 	       for (UsersDto dto : ranklist) {
 	           String imagePath = dto.getImage_path().replace("\\", "/"); // 경로 수정
 	           dto.setImage_path(imagePath); // 수정된 경로 다시 설정
-	           System.out.println("수정된 이미지 패스 : " + imagePath);
 	       }
 
-	       System.out.println("최종 수정된 ranklist : " + ranklist);
 	      
 	      
 	      // 팝업 오픈예정
@@ -167,7 +164,6 @@ public class MobileUsersController {
 	      for (UsersDto dto : opendpopuplist) {
 	           String imagePath = dto.getImage_path().replace("\\", "/"); // 경로 수정
 	         dto.setImage_path(imagePath); // 수정된 경로 다시 설정
-	          System.out.println("수정된 이미지 패스 : " + imagePath);
 	      }
 	      
 	      // 팝업 진행중
@@ -176,7 +172,6 @@ public class MobileUsersController {
 	      for (UsersDto dto : popuplist) {
 	           String imagePath = dto.getImage_path().replace("\\", "/"); // 경로 수정
 	         dto.setImage_path(imagePath); // 수정된 경로 다시 설정
-	          System.out.println("수정된 이미지 패스 : " + imagePath);
 	      }
 	      
 	      ModelAndView mv = new ModelAndView();
@@ -405,7 +400,7 @@ public class MobileUsersController {
 	   
 	       if (useruseridx == null) {
 	           mv.addObject("needLoginMessage", "이 기능을 사용하기 위해선 로그인이 필요합니다.");
-	           mv.setViewName("/login");
+	           mv.setViewName("/mobile/login");
 	           return mv;
 	       }
 	      

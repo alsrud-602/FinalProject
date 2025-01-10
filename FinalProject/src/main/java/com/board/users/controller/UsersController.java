@@ -151,13 +151,11 @@ public class UsersController {
 
       //랭킹 팝업
        List<UsersDto> ranklist = usersMapper.getRanklist();
-       System.out.println("ranklist : " + ranklist);
 
        // 이미지 경로 수정
        for (UsersDto dto : ranklist) {
            String imagePath = dto.getImage_path().replace("\\", "/"); // 경로 수정
            dto.setImage_path(imagePath); // 수정된 경로 다시 설정
-           System.out.println("수정된 이미지 패스 : " + imagePath);
        }
 
        System.out.println("최종 수정된 ranklist : " + ranklist);
@@ -169,7 +167,6 @@ public class UsersController {
       for (UsersDto dto : opendpopuplist) {
            String imagePath = dto.getImage_path().replace("\\", "/"); // 경로 수정
          dto.setImage_path(imagePath); // 수정된 경로 다시 설정
-          System.out.println("수정된 이미지 패스 : " + imagePath);
       }
       
       // 팝업 진행중
@@ -178,7 +175,6 @@ public class UsersController {
       for (UsersDto dto : popuplist) {
            String imagePath = dto.getImage_path().replace("\\", "/"); // 경로 수정
          dto.setImage_path(imagePath); // 수정된 경로 다시 설정
-          System.out.println("수정된 이미지 패스 : " + imagePath);
       }
       
       ModelAndView mv = new ModelAndView();

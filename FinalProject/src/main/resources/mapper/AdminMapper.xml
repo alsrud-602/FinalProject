@@ -708,7 +708,9 @@ WITH RankedStores AS (
         AND co.company_idx = #{company_idx}
         <if test="search != null and search != ''">
         AND st.brand1 LIKE '%' || #{search} || '%'
-          </if>
+
+   		 </if>
+
 )
 SELECT
     *

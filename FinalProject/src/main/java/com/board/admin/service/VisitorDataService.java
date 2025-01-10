@@ -29,7 +29,7 @@ public class VisitorDataService {
 
 
     public void backupAndDeleteOldData() throws IOException {
-        LocalDateTime oneMonthAgo = LocalDateTime.now().minusHours(1);//일주일 전 파일 삭제
+        LocalDateTime oneMonthAgo = LocalDateTime.now().minusDays(1);//하루 전 파일 삭제
         List<VisitorData> oldData = repository.findByVisitorTimeBefore(oneMonthAgo);
         System.out.println("oldData:HOW"+oldData);
 

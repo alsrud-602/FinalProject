@@ -484,11 +484,11 @@ color: white;
 		  <div class="container">
 		   <c:forEach var="popup" items="${popuplist}">
 		   <a href="/Mobile/Users/Info?store_idx=${popup.store_idx}">	   
-			    <div class="card">
-				      <img src="/images/main/popup1.png" alt="/images/main/popup1.png">
-				      <div class="title">${popup.title}</div>
-				      <div class="info">${popup.address}<br>${popup.start_date} ~ ${popup.end_date}</div>
-			    </div>
+             <div class="card">
+                  <img src="/image/read?path=${popup.image_path}" alt="Store Image" >
+                  <div class="title">${popup.title}</div>
+                  <div class="info">주소:${popup.address}<br>기간: ${popup.start_date} ~ ${popup.end_date}</div>
+             </div>
 		    </a>
 		    </c:forEach>
 		  </div>
@@ -525,7 +525,7 @@ $(function (){
       // 입력값이 비어있지 않을 경우에만 AJAX 요청 수행
       if (search) {
           $.ajax({
-              url: '/Users/Mainsearch',
+              url: '/Mobile/Users/Mainsearch',
               type: 'GET',
               data: { search: search }
           })
@@ -551,7 +551,7 @@ $(function() {
         let date = $('.mainfilter').val();
 
         $.ajax({
-            url: '/Users/Regionfilter',
+            url: '/Mobile/Users/Regionfilter',
             type: 'GET',
             data: { region: region, age: age, date: date }
         })

@@ -110,49 +110,52 @@
 
      <tbody class="storelist">
      <c:forEach var="store" items="${TotalStore}">
-   <tr>
-     <td>${store.brand1}</td>
-     <td><a href="/Review/Storeview">${store.title}</a></td>
-     <td>${store.cdate}</td>
-     <td>${store.email}</td>
-     <td>
-       <div class="status_green">${store.status}</div>
-          <c:if test="${store.restatus != null}">
-            <div class="status_purple">
-              <c:choose>
-                <c:when test="${store.restatus == '미완'}">담당자요청</c:when>
-                <c:otherwise>${store.restatus}</c:otherwise>
-              </c:choose>
-            </div>
-          </c:if>
-        </td>
-      </tr>
-   </c:forEach>
+
+	<tr>
+	  <td>${store.brand1}</td>
+	  <td><a href="/Review/Storeview">${store.title}</a></td>
+	  <td>${store.cdate}</td>
+	  <td>${store.email}</td>
+	  <td>
+	    <div class="status_green">${store.status}</div>
+		    <c:if test="${store.restatus != null}">
+		      <div class="status_purple">
+		        <c:choose>
+		          <c:when test="${store.restatus == '미완'}">담당자요청</c:when>
+		          <c:otherwise>${store.restatus}</c:otherwise>
+		        </c:choose>
+		      </div>
+		    </c:if>
+		  </td>
+		</tr>
+	</c:forEach>
      </tbody>
    </table>
    <div id="pagination">
     <%@include file="/WEB-INF/include/admin-pagination.jsp" %>
    </div>
    </div>
-  </main>   
+  </main>	
   </div>
 </body>
 
 <script>
 $(function(){
-   $('.filter').on('click', function(){
-      
-      let search = $('.box_search').val();
+
+	$('.filter').on('click', function(){
+		
+		let search = $('.box_search').val();
         let filter = $('#box_sort option:selected').val();
         
         window.location.href = "/Admin/Listpagination?search=" + encodeURIComponent(search) + "&filter=" + encodeURIComponent(filter);
-   })
+	})
 })
 
 $(function(){
-   $('.resetbutton').on('click',function(){
-      window.location.href = "/Admin/Store/List";
-   })
+	$('.resetbutton').on('click',function(){
+		window.location.href = "/Admin/Store/List";
+	})
+
 })
 
 

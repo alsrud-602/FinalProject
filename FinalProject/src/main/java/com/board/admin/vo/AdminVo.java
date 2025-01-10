@@ -13,7 +13,7 @@ public class AdminVo {
 	
 	
 	private long user_idx;               // 사용자 고유 id 
-    private String nikname;             // 사용자 닉네임 
+    private String nickname;             // 사용자 닉네임 
     private String id;                  // 사용자 id 
     private String password;            // 사용자 비밀번호 
     private String email;               // 사용자 이메일 

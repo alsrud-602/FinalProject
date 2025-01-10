@@ -13,7 +13,7 @@ public class AdminVo {
 	
 	
 	private long user_idx;               // 사용자 고유 id 
-    private String nikname;             // 사용자 닉네임 
+    private String nickname;             // 사용자 닉네임 
     private String id;                  // 사용자 id 
     private String password;            // 사용자 비밀번호 
     private String email;               // 사용자 이메일 
@@ -64,6 +64,16 @@ public class AdminVo {
     private int HIT;
     
     
+    //컴퍼니
+    private int company_idx;
+    private String code;
+    
+    private String title;
+    private String image_path;
+    private String ban;
+    private int store_count;
+    
+    
     
     
     
@@ -91,6 +101,9 @@ public class AdminVo {
     public void setPoints(int points) {
         this.points = points;
     }
+
+
+
     
     
 }
