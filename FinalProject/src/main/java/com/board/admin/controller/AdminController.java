@@ -36,20 +36,20 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 @RequestMapping("/Admin")
 public class AdminController {
-	
+   
 
-	/*모든 메소드에 MFA인증확인 넣으신 분... 매우 센스 있으십니다!짱짱👍👍*/
-	
-	
-	@Autowired
-	private AdminMapper adminMapper;
+   /*모든 메소드에 MFA인증확인 넣으신 분... 매우 센스 있으십니다!짱짱👍👍*/
+   
+   
+   @Autowired
+   private AdminMapper adminMapper;
 
-	@Autowired
-	private StoreMapper storeMapper;
-	
+   @Autowired
+   private StoreMapper storeMapper;
+   
     @Autowired
     private HttpServletRequest request;
-	
+   
     
     @Autowired
     private UserService userService;
@@ -60,8 +60,8 @@ public class AdminController {
     private JwtUtil jwtUtil;
     
     private Optional<User> getJwtTokenFromCookies(HttpServletRequest request, Model model) {
-    	// 유저 번호 가지고 오기
-   	 Cookie[] cookies = request.getCookies();
+       // 유저 번호 가지고 오기
+       Cookie[] cookies = request.getCookies();
           String jwtToken = null;
 
           if (cookies != null) {
@@ -104,33 +104,35 @@ public class AdminController {
     }
 
     
-	// http://localhost:9090
-	// 유저관리
-	@RequestMapping("/User")
-	public  ModelAndView  user(HttpServletResponse response, Model model) throws Exception {
-		
+   // http://localhost:9090
+   // 유저관리
+   @RequestMapping("/User")
+   public  ModelAndView  user(HttpServletResponse response, Model model) throws Exception {
+      
         // MFA 인증 확인
         if (!isMfaAuthenticated(request)) {
             response.sendRedirect("/Users/2fa"); 
             return null;
         }
-		
-		List<AdminVo> allusers = adminMapper.getalluserinfo();
-		
-		System.out.println(allusers);
+      
+      List<AdminVo> allusers = adminMapper.getalluserinfo();
+      
+      System.out.println(allusers);
         Optional<User> user=null;
         user = getJwtTokenFromCookies(request, model);
         model.addAttribute("user", user.orElse(null));
+
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("allusers", allusers);
 		mv.setViewName("/admin/user/user");
 		return mv;
 	}
 	
+
     // 유저관리 상세
     @RequestMapping("/Userdetail")
     public String userdetail(HttpServletResponse response, Model model, @RequestParam("id") String userId) throws Exception {
-    	// 에러 떠서 일단 mav -> String 으로 바꿔놓은 상태.
+       // 에러 떠서 일단 mav -> String 으로 바꿔놓은 상태.
         // MFA 인증 확인
         if (!isMfaAuthenticated(request)) {
             response.sendRedirect("/Users/2fa"); 
@@ -139,94 +141,95 @@ public class AdminController {
         Optional<User> user=null;
         user = getJwtTokenFromCookies(request, model);
         model.addAttribute("user", user.orElse(null));
-		//전체 좋아요 정보(REVUEW 테이블)
-		List<AdminVo> allreview = adminMapper.getallReview();
-		System.out.println("모든 리뷰:"+allreview);
-		
-		//유저IDX 추출
-		String selUserId = adminMapper.getUserIdx(userId);
-		System.out.println("idx:"+ selUserId);
-		
-		//유저 좋아요 정보(REVIEW 테이블)
-		List<AdminVo> userreview = adminMapper.getUserReview(selUserId);
-		System.out.println("userreview:"+ userreview);
-		
-		// 유저가 받은 좋아요 (그래프 에 사용) 
-		int targetLikes = 0;
-		for (AdminVo review : userreview) {
-		    targetLikes += review.getLIKE();  // 유저가 받은 좋아요 수
-		}
+      //전체 좋아요 정보(REVUEW 테이블)
+      List<AdminVo> allreview = adminMapper.getallReview();
+      System.out.println("모든 리뷰:"+allreview);
+      
+      //유저IDX 추출
+      String selUserId = adminMapper.getUserIdx(userId);
+      System.out.println("idx:"+ selUserId);
+      
+      //유저 좋아요 정보(REVIEW 테이블)
+      List<AdminVo> userreview = adminMapper.getUserReview(selUserId);
+      System.out.println("userreview:"+ userreview);
+      
+      // 유저가 받은 좋아요 (그래프 에 사용) 
+      int targetLikes = 0;
+      for (AdminVo review : userreview) {
+          targetLikes += review.getLIKE();  // 유저가 받은 좋아요 수
+      }
 
-		int totalLikes = 0;
-		for (AdminVo review : allreview) {
-		    totalLikes += review.getLIKE();  // 전체 좋아요 수
-		}
-		
-		float percentuser = (float) targetLikes / totalLikes * 100;  // 비율 계산
-		
+      int totalLikes = 0;
+      for (AdminVo review : allreview) {
+          totalLikes += review.getLIKE();  // 전체 좋아요 수
+      }
+      
+      float percentuser = (float) targetLikes / totalLikes * 100;  // 비율 계산
+      
 
-		//모든 리뷰 idx 랑 좋아요수 
-		Map<Integer, Integer> userLikes = new HashMap<>();
-		for (AdminVo review : allreview) {
-		    int alluseridx = (int) review.getUser_idx();  // 유저 ID 추출
-		    int likes = review.getLIKE();        // 해당 유저의 좋아요 수
-		    userLikes.put(alluseridx, userLikes.getOrDefault(alluseridx, 0) + likes); // 좋아요 합산
-		}
-		System.out.println("1:"+userLikes);
-		
-		// 좋아요 내림차순 
-		List<Map.Entry<Integer, Integer>> sortedUserLikes = new ArrayList<>(userLikes.entrySet());
-		sortedUserLikes.sort((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue())); // 내림차순 정렬
-		System.out.println("2: " + sortedUserLikes); 
-		
-		//  순위 매기기
-		Map<Integer, Integer> userRanks = new HashMap<>();
-		int rank = 1;
-		for (Entry<Integer, Integer> entry : sortedUserLikes) {
-		    userRanks.put(entry.getKey(), rank++);
-		}
-		System.out.println("3:"+userRanks);
-		
-		// 해당 유저 순위를 가져오기
-		int userRank = userRanks.getOrDefault(Integer.parseInt(selUserId), 0);
-		System.out.println("4:"+userRank);
-		
-		//유저 정보 (USERS 테이블)
-		List<AdminVo> userinfo = adminMapper.getUserinfo(userId);
-		System.out.println("유저정보:"+ userinfo);
-		
-		//총 팝콘량 조회
-		int totPopCorn = adminMapper.getTotalPopcorn(userId);
-		System.out.println("총 팝콘량:"+ totPopCorn);
-		
-		// 팝콘 지급 량 
-		int earn = adminMapper.getPopcornEarnLogByUserId(userId);
-		System.out.println("팝콘 지급량:"+earn);
-		
-		// 팝콘 사용 량
-		int spented = adminMapper.getPopcornSpentedLogByUserId(userId);
-		System.out.println("팝콘 사용량:"+spented);
-		
+      //모든 리뷰 idx 랑 좋아요수 
+      Map<Integer, Integer> userLikes = new HashMap<>();
+      for (AdminVo review : allreview) {
+          int alluseridx = (int) review.getUser_idx();  // 유저 ID 추출
+          int likes = review.getLIKE();        // 해당 유저의 좋아요 수
+          userLikes.put(alluseridx, userLikes.getOrDefault(alluseridx, 0) + likes); // 좋아요 합산
+      }
+      System.out.println("1:"+userLikes);
+      
+      // 좋아요 내림차순 
+      List<Map.Entry<Integer, Integer>> sortedUserLikes = new ArrayList<>(userLikes.entrySet());
+      sortedUserLikes.sort((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue())); // 내림차순 정렬
+      System.out.println("2: " + sortedUserLikes); 
+      
+      //  순위 매기기
+      Map<Integer, Integer> userRanks = new HashMap<>();
+      int rank = 1;
+      for (Entry<Integer, Integer> entry : sortedUserLikes) {
+          userRanks.put(entry.getKey(), rank++);
+      }
+      System.out.println("3:"+userRanks);
+      
+      // 해당 유저 순위를 가져오기
+      int userRank = userRanks.getOrDefault(Integer.parseInt(selUserId), 0);
+      System.out.println("4:"+userRank);
+      
+      //유저 정보 (USERS 테이블)
+      List<AdminVo> userinfo = adminMapper.getUserinfo(userId);
+      System.out.println("유저정보:"+ userinfo);
+      
+      //총 팝콘량 조회
+      int totPopCorn = adminMapper.getTotalPopcorn(userId);
+      System.out.println("총 팝콘량:"+ totPopCorn);
+      
+      // 팝콘 지급 량 
+      int earn = adminMapper.getPopcornEarnLogByUserId(userId);
+      System.out.println("팝콘 지급량:"+earn);
+      
+      // 팝콘 사용 량
+      int spented = adminMapper.getPopcornSpentedLogByUserId(userId);
+      System.out.println("팝콘 사용량:"+spented);
+      
         // 팝콘 지급/사용 내역 조회 (전체)
-		List<AdminVo> wallet = adminMapper.getPopcornLogByUserId(userId);
-		System.out.println("팝콘 지급/사용 내역:"+wallet);
-		
+      List<AdminVo> wallet = adminMapper.getPopcornLogByUserId(userId);
+      System.out.println("팝콘 지급/사용 내역:"+wallet);
+      
         // 모델에 데이터 추가
-		model.addAttribute("userRank", userRank);
-		model.addAttribute("percentuser", percentuser);
-		model.addAttribute("totalLikes", totalLikes);
-		model.addAttribute("targetLikes", targetLikes);
-		model.addAttribute("allreview", allreview);
-		model.addAttribute("userreview", userreview);
-		model.addAttribute("userinfo", userinfo);
-		model.addAttribute("totPopCorn", totPopCorn);
-		model.addAttribute("earn", earn);
-		model.addAttribute("spented", spented);
+      model.addAttribute("userRank", userRank);
+      model.addAttribute("percentuser", percentuser);
+      model.addAttribute("totalLikes", totalLikes);
+      model.addAttribute("targetLikes", targetLikes);
+      model.addAttribute("allreview", allreview);
+      model.addAttribute("userreview", userreview);
+      model.addAttribute("userinfo", userinfo);
+      model.addAttribute("totPopCorn", totPopCorn);
+      model.addAttribute("earn", earn);
+      model.addAttribute("spented", spented);
         model.addAttribute("userId", userId);
         model.addAttribute("wallet", wallet);
 
         return "/admin/user/userdetail"; // 수정 가능한 폼으로 연결
     }
+
 	
 	  @PostMapping("/PlusPopcorn")
 	    public String  givePopcorn(
@@ -405,6 +408,7 @@ public class AdminController {
              @RequestParam(required = false, value = "filter") String filter,
              HttpServletResponse response, Model model) throws Exception{
           
+
     	
     	// MFA 인증 확인
     	if (!isMfaAuthenticated(request)) {
@@ -415,7 +419,7 @@ public class AdminController {
     	Optional<User> user=null;
     	user = getJwtTokenFromCookies(request, model);
     	model.addAttribute("user", user.orElse(null));
-    	
+
         int totalUsers = adminMapper.getTotalUsers();
         Map<String, Integer> stats = adminMapper.getMonthlyStats();
 
@@ -438,8 +442,10 @@ public class AdminController {
         int popupListCount = adminMapper.getPopuplistCount();
         
         model.addAttribute("popupListCount", popupListCount);
+
     	
     	
+
           System.out.println("리스트 필터링 : "+search);
           System.out.println("리스트 필터링 : "+filter);
           
@@ -469,7 +475,7 @@ public class AdminController {
     public ModelAndView listpagination(AdminStoreDto adminStoredto,
           @RequestParam(defaultValue = "1") int page,
          @RequestParam(defaultValue = "5") int size,HttpServletResponse response, Model model) throws Exception {
-    	
+
         if (!isMfaAuthenticated(request)) {
             response.sendRedirect("/Users/2fa"); 
             return null; 
@@ -542,11 +548,13 @@ public class AdminController {
     // 담당자 디테일
     @RequestMapping("/Detail")
     public ModelAndView detail(AdminStoreDto adminstoredto,
+
     		@RequestParam(defaultValue = "1") int page,
 			@RequestParam(defaultValue = "6") int size, HttpServletResponse response, Model model) throws Exception{
     	System.out.println("adminstoredto 정보 : " + adminstoredto);
     	
     	//MFA 인증 확인
+
         if (!isMfaAuthenticated(request)) {
             response.sendRedirect("/Users/2fa");
             return null; 
@@ -622,20 +630,24 @@ public class AdminController {
     
     @RequestMapping("/Detailpagination")
     public ModelAndView detailpagination(AdminStoreDto adminstoredto,
+
     		@RequestParam(defaultValue = "1") int page,
 			@RequestParam(defaultValue = "6") int size
 			) {
     	System.out.println("넘어온 컴퍼니 디테일 : " + adminstoredto);
     	// MFA 인증 확인
+
         //if (!isMfaAuthenticated(request)) {
         //    response.sendRedirect("/Users/2fa");
         //    return null; 
        //}
+
     	
     	// 회사 정보 가져오기
         AdminStoreDto CompanyDetail = adminMapper.getCompanyDetail(adminstoredto);
         System.out.println("컴퍼니 정보 : " + CompanyDetail);
     	
+
         int company_idx = adminstoredto.getCompany_idx();
         String search = adminstoredto.getSearch();
         
@@ -646,10 +658,12 @@ public class AdminController {
         System.out.println("이미지 패스 가져오나? : " + CompanyPopupDetail);
         
         for (AdminStoreDto dto : CompanyPopupDetail) {
+
 		     String imagePath = dto.getImage_path().replace("\\", "/"); // 경로 수정
 		     dto.setImage_path(imagePath); // 수정된 경로 다시 설정
 		     System.out.println("수정된 이미지 패스 : " + imagePath);
 		 }
+
         
         
         // store_idx 값만 추출
@@ -683,7 +697,9 @@ public class AdminController {
         mv.addObject("storeIdxList", storeIdxList); // store_idx 리스트도 전달
         mv.addObject("finalCategoryList", finalCategoryList); // finalCategoryList도 전달
         mv.setViewName("/admin/manager/detail");
+
     	return mv;
+
     }
 
 

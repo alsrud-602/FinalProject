@@ -110,6 +110,7 @@
 
      <tbody class="storelist">
      <c:forEach var="store" items="${TotalStore}">
+
 	<tr>
 	  <td>${store.brand1}</td>
 	  <td><a href="/Review/Storeview">${store.title}</a></td>
@@ -140,6 +141,7 @@
 
 <script>
 $(function(){
+
 	$('.filter').on('click', function(){
 		
 		let search = $('.box_search').val();
@@ -153,6 +155,7 @@ $(function(){
 	$('.resetbutton').on('click',function(){
 		window.location.href = "/Admin/Store/List";
 	})
+
 })
 
 
