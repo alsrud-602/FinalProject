@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
+
 import org.springframework.web.bind.annotation.RequestBody;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -323,6 +325,7 @@ public class UsersController {
    public ModelAndView info(UsersDto usersdto,
          Model model,HttpServletRequest request
          ){
+	   
       ModelAndView mv = new ModelAndView();
       
       // 유저 번호 가지고 오기
@@ -411,93 +414,171 @@ public class UsersController {
       System.out.println("usersdto  : " + usersdto);
       
         // store_idx로 스토어 디테일 데이터 불러오기
-      UsersDto storedetail = usersMapper.getStoredetail(usersdto);
-      System.out.println("storedetail : " + storedetail);
-      
-      // 스토어 태그
-      List<UsersDto> storetag = usersMapper.getStoretag(usersdto);
-      System.out.println("storetag : " + storetag);
-      
-      //스토어 예약 구분
-      UsersDto StoreReservation = usersMapper.getStoreReservation(usersdto);
-      System.out.println("StoreReservation : " + StoreReservation);
-      
-      //운영시간 
-      UsersDto StoreOperation = usersMapper.getStoreOperation(usersdto);
-      System.out.println("StoreOperation : " + StoreOperation);
-      
-      // 카데고리
-      List<UsersDto> StoreCategory = usersMapper.getStoreCategory(usersdto);
-      System.out.println("StoreCategory : " + StoreCategory);
-      
-      // 조회수
-      UsersDto StoreHit = usersMapper.getStoreHit(usersdto);
-      System.out.println("StoreHit : " + StoreHit);
-      
-      //좋아요
-      UsersDto StoreLike = usersMapper.getStoreLike(usersdto);
-      System.out.println("StoreLike : " + StoreLike);
-      
-      //전체 리뷰
-      List<UsersDto> totalreviews = usersMapper.gettotalreviews(usersdto);
-      for (UsersDto dto : totalreviews) {
-           String imagePath = dto.getImage_path().replace("\\", "/"); // 경로 수정
-         dto.setImage_path(imagePath); // 수정된 경로 다시 설정
-      }
-      
-      //핫 리뷰 (조회수 기반 3개)
-      List<UsersDto> HotReviews = usersMapper.getHotReviews(usersdto);
-      for (UsersDto dto : HotReviews) {
-           String imagePath = dto.getImage_path().replace("\\", "/"); // 경로 수정
-         dto.setImage_path(imagePath); // 수정된 경로 다시 설정
-      }
-      
-      // 전체 리뷰 & 조회수
-      UsersDto totalcount = usersMapper.getotalcount(usersdto);
-      System.out.println("totalcount : " + totalcount);
-      
-      // 내가 쓴 리뷰 개수
-      UsersDto MyTotalReview = usersMapper.getMyTotalReview(usersdto,useruseridx);
-      System.out.println("내가 쓴 리뷰 데이터" + usersdto);
-      System.out.println("MyTotalReview : " + MyTotalReview);
 
-      //  팝콘 보유 수
-      UsersDto TotalPopcorn = usersMapper.getTotalPopcorn(username);
-      System.out.println("TotalPopcorn : " + TotalPopcorn);
-      
+		UsersDto storedetail = usersMapper.getStoredetail(usersdto);
+		System.out.println("storedetail : " + storedetail);
+		
+		// 스토어 태그
+		List<UsersDto> storetag = usersMapper.getStoretag(usersdto);
+		System.out.println("storetag : " + storetag);
+		
+		//스토어 예약 구분
+		UsersDto StoreReservation = usersMapper.getStoreReservation(usersdto);
+		System.out.println("StoreReservation : " + StoreReservation);
+		
+		//운영시간 
+		UsersDto StoreOperation = usersMapper.getStoreOperation(usersdto);
+		System.out.println("StoreOperation : " + StoreOperation);
+		
+		// 카데고리
+		List<UsersDto> StoreCategory = usersMapper.getStoreCategory(usersdto);
+		System.out.println("StoreCategory : " + StoreCategory);
+		
+		// 조회수
+		UsersDto StoreHit = usersMapper.getStoreHit(usersdto);
+		System.out.println("StoreHit : " + StoreHit);
+		
+		//좋아요
+		UsersDto StoreLike = usersMapper.getStoreLike(usersdto);
+		System.out.println("StoreLike : " + StoreLike);
+		
+		//전체 리뷰
+		List<UsersDto> totalreviews = usersMapper.gettotalreviews(usersdto);
+		System.out.println("totalreviews : " + totalreviews);
+		
+		//핫 리뷰 (조회수 기반 3개)
+		List<UsersDto> HotReviews = usersMapper.getHotReviews(usersdto);
+		for (UsersDto dto : HotReviews) {
+			 String imagePath = dto.getImage_path().replace("\\", "/");
+			 dto.setImage_path(imagePath); 
+		}
+		System.out.println("HotReviews : " + HotReviews);
+		
+		// 전체 리뷰 & 조회수
+		UsersDto totalcount = usersMapper.getotalcount(usersdto);
+		System.out.println("totalcount : " + totalcount);
+		
+		// 내가 쓴 리뷰 개수
+		UsersDto MyTotalReview = usersMapper.getMyTotalReview(usersdto,useruseridx);
+		System.out.println("내가 쓴 리뷰 데이터" + usersdto);
+		System.out.println("MyTotalReview : " + MyTotalReview);
 
-      //이미지
-      List<UsersDto> PopupImgList = usersMapper.getPopupImgList(usersdto);
-      System.out.println("PopupImgList : " + PopupImgList);
+		//  팝콘 보유 수
+		UsersDto TotalPopcorn = usersMapper.getTotalPopcorn(username);
+		System.out.println("TotalPopcorn : " + TotalPopcorn);
+		
+		//이미지
+		List<UsersDto> PopupImgList = usersMapper.getPopupImgList(usersdto);
+		System.out.println("PopupImgList : " + PopupImgList);
+		
+		// info 메서드 내부에 추가(북마크 기능 구현 중)
+		UsersDto bookmarkStatus = usersMapper.getBookmarkStatus(usersdto.getStore_idx(), useruseridx);
 
-      List<String> PopImgPath = new ArrayList<>();
-      
-      for(UsersDto dto : PopupImgList) {
-         String imagePath = dto.getImage_path().replace("\\", "/");
-         System.out.println("리뷰 상세 이미지 패스 imagePath : " + imagePath);
-         PopImgPath.add(imagePath);
-      }
-      
 
-      
-      
-      mv.addObject("storedetail", storedetail);
-      mv.addObject("storetag", storetag);
-      mv.addObject("StoreReservation", StoreReservation);
-      mv.addObject("StoreOperation", StoreOperation);
-      mv.addObject("StoreCategory", StoreCategory);
-      mv.addObject("StoreHit", StoreHit);
-      mv.addObject("StoreLike", StoreLike);
-      mv.addObject("totalreviews", totalreviews);
-      mv.addObject("HotReviews", HotReviews);
-      mv.addObject("totalcount", totalcount);
-      mv.addObject("MyTotalReview", MyTotalReview);
-      mv.addObject("TotalPopcorn", TotalPopcorn);
-      mv.addObject("PopImgPath", PopImgPath);
-      mv.setViewName("users/popup/info");
-      return mv;
-   }
-   
+		List<String> PopImgPath = new ArrayList<>();
+		
+		for(UsersDto dto : PopupImgList) {
+			String imagePath = dto.getImage_path().replace("\\", "/");
+			System.out.println("이미지 패스 imagePath : " + imagePath);
+			
+			PopImgPath.add(imagePath);
+		}
+		
+		System.out.println("수정된 이미지 패스 : " + PopImgPath);
+
+		
+		mv.addObject("bookmarkStatus", bookmarkStatus); //(북마크 기능 구현중)
+		mv.addObject("storedetail", storedetail);
+		mv.addObject("storetag", storetag);
+		mv.addObject("StoreReservation", StoreReservation);
+		mv.addObject("StoreOperation", StoreOperation);
+		mv.addObject("StoreCategory", StoreCategory);
+		mv.addObject("StoreHit", StoreHit);
+		mv.addObject("StoreLike", StoreLike);
+		mv.addObject("totalreviews", totalreviews);
+		mv.addObject("HotReviews", HotReviews);
+		mv.addObject("totalcount", totalcount);
+		mv.addObject("MyTotalReview", MyTotalReview);
+		mv.addObject("TotalPopcorn", TotalPopcorn);
+		mv.addObject("PopImgPath", PopImgPath);
+		mv.setViewName("users/popup/info");
+		return mv;
+	}
+	
+	//북마크 기능 구현중 {
+	@PostMapping("/toggleBookmark")
+	@ResponseBody
+	public Map<String, Object> toggleBookmark(@RequestParam("store_idx") int store_idx, HttpServletRequest request) {
+	    Map<String, Object> response = new HashMap<>();
+	    
+	    // 유저 번호 가져오기
+	    Cookie[] cookies = request.getCookies();
+	    String jwtToken = null;
+	    boolean isKakaoUser = false;
+
+	    if (cookies != null) {
+	        for (int i = cookies.length - 1; i >= 0; i--) {
+	            Cookie cookie = cookies[i];
+	            if ("userJwt".equals(cookie.getName()) || "kakaoAccessToken".equals(cookie.getName())) {
+	                jwtToken = cookie.getValue();
+	                if ("kakaoAccessToken".equals(cookie.getName())) {
+	                    isKakaoUser = true;
+	                }
+	                break;
+	            }
+	        }
+	    }
+
+	    String username = null;
+	    Long useruseridx = null;
+
+	    if (jwtToken != null) {
+	        username = jwtUtil.extractUsername(jwtToken);
+
+	        if (isKakaoUser) {
+	            Optional<User> kakaouser = userService.findBySocialId(username);
+	            if (kakaouser.isPresent()) {
+	                useruseridx = kakaouser.get().getUserIdx();
+	            }
+	        } else {
+	            Optional<User> user = userService.getUserByUsername(username);
+	            if (user.isPresent()) {
+	                useruseridx = user.get().getUserIdx();
+	            }
+	        }
+	    }
+
+	    try {
+	        if (useruseridx != null) {
+	            UsersDto bookmarkStatus = usersMapper.getBookmarkStatus(store_idx, useruseridx);
+	            
+	            if (bookmarkStatus == null) {
+	                // 북마크가 없으면 추가
+	                usersMapper.insertBookmark(store_idx, useruseridx);
+	                response.put("status", "added");
+	            } else {
+	                // 북마크가 있으면 삭제
+	                usersMapper.deleteBookmark(store_idx, useruseridx);
+	                response.put("status", "removed");
+	            }
+	            response.put("success", true);
+	        } else {
+	            response.put("success", false);
+	            response.put("message", "User not logged in");
+	        }
+	    } catch (Exception e) {
+	        response.put("success", false);
+	        response.put("message", "An error occurred: " + e.getMessage());
+	        // 로그에 에러 기록
+	        e.printStackTrace();
+	    }
+	    
+	    return response;
+	}
+
+	//여기까지 북마크 기능 구현중 }
+	
+	
    // 리뷰 상세 페이지 데이터(AJAX)
    @RequestMapping("/ReviewDetail")
    @ResponseBody
@@ -714,4 +795,5 @@ public class UsersController {
    
    
    
+
 }

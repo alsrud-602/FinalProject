@@ -121,6 +121,22 @@ main {
 	<h2 class="pagetitle">관심 팝업</h2>
 	 <div class="liner"></div>
 	<h3 class="bookmark-filter"><a href="">전체<img src="/images/profile/caretdown.png"></a></h3>
+	<!-- 여기부터 북마크 기능 구현 중  -->
+	<div class="bookmarks">
+    <c:forEach var="bookmark" items="${bookmarks}">
+        <div class="bookmark">
+            <img src="/images/profile/bookmarkpost.png">
+            <div class="bookmark-content">
+                <div class="bookmark-header">
+                    <span>${bookmark.title}</span>
+                    <div><img src="/images/profile/hearticon.png"></div>
+                </div>
+                <div class="bookmark-date">${bookmark.startDate} ~ ${bookmark.endDate}</div>
+            </div>
+        </div>
+    </c:forEach>
+</div>
+<!-- 여기까지 북마크 기능 구현 중  -->
 	<div class="bookmarks">
 	 <div class="bookmark">
 	  <img src="/images/profile/bookmarkpost.png">

@@ -18,6 +18,8 @@ public interface UserCategoryMapper {
 	     /*void deleteUserCategory(int userIdx, int categoryId);*/
 	     
 	     int deleteUserCategory(@Param("userIdx") int userIdx, @Param("categoryId") int categoryId);
+	     
+	     List<String> getCategoryNamesByUserId(Long userIdx);
 	}
 
 
