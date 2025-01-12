@@ -155,6 +155,13 @@ public interface UsersMapper {
 
 	List<UsersDto> getallRegionlist();
 
+	//리뷰
+	int mobileupdateReview(int user_idx, int store_idx, int score, String content);
+
+	void mobileinsertReview(UsersDto usersDto);
+
+	List<UsersDto> getReview(int store_idx, int user_idx, int reviewidx);
+
 
 	
 

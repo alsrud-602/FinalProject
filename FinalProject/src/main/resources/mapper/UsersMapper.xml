@@ -732,5 +732,34 @@ SELECT
     AND   login_useridx=#{loginidx}
 </select>
 
+<!-- 모바일 리뷰 작성 -->
+<insert id="mobileinsertReview">
+	INSERT INTO reviews (review_idx, user_idx,store_idx, score, content) 
+    VALUES (REVIEW_IDX_SEQ.NEXTVAL, #{user_idx}, #{store_idx}, #{score}, #{content})
+	
+</insert>
+
+<!-- 모바일 리뷰 수정 -->
+<insert id="mobileupdateReview">
+	 UPDATE reviews
+	 SET
+	   content=#{content},
+	   score=#{score}
+	 WHERE
+	    user_idx = #{user_idx}
+	    AND store_idx  = #{store_idx}
+	    AND review_idx = #{review_idx} 
+</insert>
+
+<!-- 모바일 작성 리뷰가져오기 -->
+<select id="getReview">
+	SELECT * FROM REVIEWS 
+	WHERE 
+	  USER_IDX = #{user_idx}
+	AND store_idx  = #{store_idx}
+	AND review_idx = #{review_idx} 
+</select>
+
+
 
 </mapper>

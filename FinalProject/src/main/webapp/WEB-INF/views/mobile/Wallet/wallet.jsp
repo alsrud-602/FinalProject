@@ -41,6 +41,8 @@ body {
     max-width: 600px;
     margin: auto;
     text-align: center;
+     padding-bottom: 100px; /* 네비게이션 바의 높이만큼 여백 추가 */
+    overflow-y: auto; 
 }
 
 /* 텍스트*/
@@ -295,8 +297,8 @@ th {
 /* 모바일 전용 스타일 */
 @media (max-width: 768px) {
     body {
-        padding-top: 100px; /* 모바일에서 적합한 패딩 */
-    }
+        padding-top: 50px; /* 모바일에서 적합한 패딩 */
+     }
 
     .container {
         width: 90%; /* 화면의 90% 너비로 설정 */
@@ -444,43 +446,7 @@ th {
     color: black;
     text-align: center;
   }
-
     
- /*바텀 네비게이션 바*/   
-    
-      .bottom-nav {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background-color: #333;
-        padding: 10px 20px;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        z-index: 999;
-    }
-    .bottom-nav-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-    .nav-link {
-        color: #fff;
-        text-decoration: none;
-        text-align: center;
-    }
-    .nav-link i {
-        font-size: 20px;
-        margin-bottom: 5px;
-    }
-    .nav-link span {
-        font-size: 12px;
-    }
-    .bottom-nav-item:hover {
-        background-color: #444;
-        border-radius: 10px;
-    }
     </style>
     
     
@@ -488,7 +454,7 @@ th {
 </head>
 <body>
 
-    <div class="container">
+    <div class="container" >
      <p class="content-text" style="color:gray; text-decoration:underline;"><a href="javascript:void(0);" id="popup-trigger" >팝콘이란?</a></p>
    
     <div class="firstoverlay">
@@ -565,56 +531,55 @@ th {
 
         <!-- 팝콘 내역 팝업에서 보여줄 내용 -->
         
-        <div class="popcorn-history" style="display: none;">
-        <h1 class="content-text">팝콘 내역</h1>    
-                <p>
-                    <a class="history-btn"  id="allinfobtn" 
-                       href="javascript:void(0);" onclick="filterLogs('')">전체</a>
-                    <a class="history-btn"  id="Earninfobtn" 
-                       href="javascript:void(0);" onclick="filterLogs('지급')">입금</a>
-                    <a class="history-btn" id="Spendinfobtn"  
-                       href="javascript:void(0);" onclick="filterLogs('사용')">지출</a>
-                    <a class="refresh" href="/Wallet/Wallet" 
-                      ><span style="font-size: 18px;">↻</span></a>
-                </p>
-            
-       
-   <c:set var="filterCondition" value="${param.filterCondition}" />
-   <table>
-<c:if test="${not empty Loglist}">
-    <c:forEach var="userLog" items="${Loglist}">
-      <c:if test="${empty param.filterCondition or userLog.content_info eq param.filterCondition}">
-         <tr>
-            <c:if test="${not empty userLog.add_date}">
-                <td class="bodleft">${userLog.add_date}</td>
-            </c:if>
-
-            <c:if test="${not empty userLog.content}">
-                <td class="bodcenter">${userLog.content}</td>
-                <input type="hidden" value="${userLog.content_info}">
-            </c:if>
-
-            <c:if test="${not empty userLog.earned_points && userLog.earned_points > 0}">
-                <td class="bodright">+${userLog.earned_points}</td>
-            </c:if>
-
-            <c:if test="${not empty userLog.spent_points && userLog.spent_points > 0}">
-                <td class="bodright">-${userLog.spent_points}</td>
-            </c:if>
-          </tr>
-        </c:if>
-    </c:forEach>
-</c:if>
-
-<c:if test="${empty Loglist}">
-    <tr>
-        <td colspan="4">사용자 로그가 없습니다.</td>
-    </tr>
-</c:if>
-
-                </tbody>
-            </table>
-        </div>
+<div class="popcorn-history" style="display: none;">
+		<h1 class="content-text">팝콘 내역</h1>    
+		  <p>
+		      <a class="history-btn"  id="allinfobtn" 
+		         href="javascript:void(0);" onclick="filterLogs('')">전체</a>
+		      <a class="history-btn"  id="Earninfobtn" 
+		         href="javascript:void(0);" onclick="filterLogs('지급')">입금</a>
+		      <a class="history-btn" id="Spendinfobtn"  
+		         href="javascript:void(0);" onclick="filterLogs('사용')">지출</a>
+		      <a class="refresh" onclick="filterLogs('')">
+		        <span style="font-size: 18px;">↻</span></a>
+		  </p>
+		
+		
+		<c:set var="filterCondition" value="${param.filterCondition}" />
+		  <table>
+		  <c:if test="${not empty Loglist}">
+		  <c:forEach var="userLog" items="${Loglist}">
+		  <c:if test="${empty param.filterCondition or userLog.content_info eq param.filterCondition}">
+		     <tr>
+		     <c:if test="${not empty userLog.add_date}">
+		     <td class="bodleft">${userLog.add_date}</td>
+		     </c:if>
+		
+		     <c:if test="${not empty userLog.content}">
+		     <td class="bodcenter">${userLog.content}</td>
+		     <input type="hidden" value="${userLog.content_info}">
+		     </c:if>
+		
+		     <c:if test="${not empty userLog.earned_points && userLog.earned_points > 0}">
+		     <td class="bodright">+${userLog.earned_points}</td>
+		     </c:if>
+		
+		     <c:if test="${not empty userLog.spent_points && userLog.spent_points > 0}">
+		     <td class="bodright">-${userLog.spent_points}</td>
+		     </c:if>
+		     </tr>
+		  </c:if>
+		  </c:forEach>
+		  </c:if>
+		
+		   <c:if test="${empty Loglist}">
+		  <tr>
+		    <td colspan="4">사용자 로그가 없습니다.</td>
+		  </tr>
+		  </c:if>
+        </tbody>
+    </table>
+</div>
 
    <!-- 팝콘 내역 팝업에서 보여줄 내용 -->
   
@@ -626,44 +591,9 @@ th {
 	
     </div>
 
-<!-- 하단 네비게이션 바 -->
-<div class="bottom-nav">
-    <div class="bottom-nav-item">
-        <a href="javascript:void(0);" class="nav-link">
-            <i class="fas fa-search"></i>
-            <img class="_6-10" src="/images/admin/store/admin-search.png" />
-            <span>검색</span>
-        </a>
-    </div>
-    <div class="bottom-nav-item">
-        <a href="javascript:void(0);" class="nav-link">
-            <i class="fas fa-cogs"></i>
-            <img class="_6-10" src="/images/header/popcornfactory.png" />
-            <span>팝콘팩토리</span>
-        </a>
-    </div>
-    <div class="bottom-nav-item">
-        <a href="javascript:void(0);" class="nav-link">
-            <i class="fas fa-home"></i>
-            <img class="_6-10" src="/images/icon/homepage.png"  style="width:20px; color:white;"  />
-            <span>홈</span>
-        </a>
-    </div>
-    <div class="bottom-nav-item">
-        <a href="javascript:void(0);" class="nav-link">
-            <i class="fas fa-calendar-alt"></i>
-            <img class="_6-10" src="/images/icon/insert.png" style="width:20px;"/>
-            <span>예약 내역</span>
-        </a>
-    </div>
-    <div class="bottom-nav-item">
-        <a href="javascript:void(0);" class="nav-link">
-            <i class="fas fa-user"></i>
-             <img class="personal-collection0" src="/images/header/personal-collection0.svg" />
-            <span>프로필</span>
-        </a>
-    </div>
-</div>
+<%@include file="/WEB-INF/include/app-navbar.jsp" %>
+
+
 
     <script>
 
@@ -727,54 +657,66 @@ th {
         }
     }
 
-    //내역필터링 
+ // 내역 필터링
     function filterLogs(condition) {
-    	
         // 현재 스크롤 위치 저장
         localStorage.setItem('scrollPosition', window.scrollY);
 
         const url = new URL(window.location.href);
         if (condition) {
             url.searchParams.set('filterCondition', condition); 
+            localStorage.setItem('filterCondition', condition); // 필터 조건 저장
         } else {
             url.searchParams.delete('filterCondition'); 
+            localStorage.removeItem('filterCondition'); // 필터 조건 삭제
         }
         window.location.href = url.toString(); 
     }
-    
-    // 리로드 후 스크롤 위치 복원
+
+    // 리로드 후 스크롤 위치 및 상태 복원
     window.addEventListener('load', () => {
         const scrollPosition = localStorage.getItem('scrollPosition');
         if (scrollPosition) {
             window.scrollTo(0, parseInt(scrollPosition, 10)); // 저장된 위치로 이동
             localStorage.removeItem('scrollPosition'); // 사용 후 제거
         }
+
+        const filterCondition = localStorage.getItem('filterCondition');
+        if (filterCondition) {
+            // URL 파라미터와 상태를 동기화
+            const url = new URL(window.location.href);
+            url.searchParams.set('filterCondition', filterCondition);
+            window.history.replaceState({}, '', url.toString());
+        }
+
+        const isPopcornVisible = localStorage.getItem('popcornVisible') === 'true';
+        const popcornHistory = document.querySelector('.popcorn-history');
+        if (popcornHistory) {
+            popcornHistory.style.display = isPopcornVisible ? 'block' : 'none';
+        }
     });
-    
-    //새로고침 ( 새로고침 주기)
-    window.onload = function() {
-        // 세션 스토리지에서 'refreshed' 값 확인
+
+    // 팝콘 상세 보기 토글
+    document.getElementById('showPopcornDetails').addEventListener('click', function () {
+        const popcornHistory = document.querySelector('.popcorn-history');
+        const isCurrentlyVisible = (popcornHistory.style.display === 'none' || popcornHistory.style.display === '') ? false : true;
+
+        popcornHistory.style.display = isCurrentlyVisible ? 'none' : 'block';
+        localStorage.setItem('popcornVisible', !isCurrentlyVisible); // 상태 저장
+    });
+
+    // 새로고침 로직 수정
+    window.onload = function () {
         if (!sessionStorage.getItem('refreshed')) {
-            // 세션 스토리지에 'refreshed' 값 저장
             sessionStorage.setItem('refreshed', 'true');
             window.location.reload();
         } else {
-            // 새로고침 후 'refreshed' 값이 저장된 상태에서는 값 삭제
             sessionStorage.removeItem('refreshed');
         }
     };
 
-
-
-
-    </script>
-<script>
-
-document.getElementById("showPopcornDetails").addEventListener("click", function() {
-    const popcornHistory = document.querySelector(".popcorn-history");
-    popcornHistory.style.display = (popcornHistory.style.display === "none" || popcornHistory.style.display === "") ? "block" : "none";
-});
 </script>
+
 </body>
 </html>
 

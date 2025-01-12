@@ -5,83 +5,207 @@
 <head>
     <meta charset="UTF-8">
     <title>주소 위치 정보</title>
-    <style>
-        table {
+   
+     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Pretendard", sans-serif;
+        }
+
+        li {
+            list-style: none;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        body {
+            padding-top: 144px;
+            background-color: #121212;
+            color: #fff;
+        }
+
+        .container {
             width: 100%;
-            border-collapse: collapse;
+            max-width: 600px;
+            margin: auto;
+            text-align: left;
         }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
+        
+		.content-text{       
+			text-align:left;
+		}
+	
+
+        /* 필터 버튼 */
+        .filter-select {
+            width: 120px;
+            height: 50px;
+            border: 2px solid #00FF84;
+            border-radius: 5px;
+            color: white;
+            background-color: #121212;
             text-align: center;
+            margin-right: 10px; 
         }
-        th {
-            background-color: #f2f2f2;
+
+        /* 검색하기 버튼 */
+        .search-btn {
+            background-color: #00FF84;
+            border: none;
+            color: #000;
+            width: 200px;
+            height: 50px;
+            font-weight: 700;
+            font-family: 'Pretendard', sans-serif;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
         }
-        .error {
+
+        button:hover {
+            background-color: #33ff33;
+        }
+
+        .store-name {
+            display: flex;
+   			justify-content: flex-start;
+            padding: 10px;
+            margin: 10px 0; 
+            border: 2px solid #00FF84;
+            border-radius: 5px;
+            background-color: #121212;
+            color: white;
+            position: relative; 
+        }
+
+        .remove-btn {
+             position: absolute;
+              right: 10px;
+            cursor: pointer;
             color: red;
+            margin-right:5px;
+            font-size: 16px;
         }
+
+        /* 네모칸과 버튼을 수평으로 정렬하기 위한 스타일 */
+        .flex-container {
+            display: flex;
+            align-items: center;
+            margin-top: 20px; /
+        }
+
+        .store-list {
+            flex-grow: 1; 
+        }
+        
+        /* 기본 네모칸(이해 못할까봐)*/
+         .default-store-name {
+            display: block;
+            padding: 10px;
+            margin: 10px 0; 
+            border: 2px dashed #00FF84; /* 기본 테두리 스타일 */
+            border-radius: 5px;
+            background-color: #121212;
+            color: white;
+            text-align: center; /* 중앙 정렬 */
+        }
+
+    .leftResult {
+    text-align:left;
+    white-space: nowrap; /* 텍스트가 한 줄로 표시되도록 */
+    overflow: hidden;    /* 넘치는 텍스트는 숨기기 */
+    text-overflow: ellipsis; /* 넘치는 텍스트는 "..."으로 표시 */
+}
+
+#recent-searches {
+	width:600px;
+	margin: auto;
+    background-color: #121212;
+    border-radius: 8px;
+}
+
+#recent-searches h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+#search-records-container {
+    margin-top: 10px;
+}
+
+
+.store-address-text {
+    font-size: 13px;      
+    color: gray;      
+    display: block;       
+    margin-top: 5px;      
+    margin-left: 7px;      
+    font-weight: normal;  
+}
+
+.details-btn{
+color : #00FF84;
+cursor : pointer;
+fontWeight : 700;
+fontSize : 16px;
+ margin-right:5px;
+}
+
+
     </style>
 </head>
 <body>
-    <h1>주소 위치 정보</h1>
+<%@include file="/WEB-INF/include/header.jsp" %>
+<div class="container">
+    <h2 class="content-text">원하는 팝업 매장 선택하기</h2>
+    <h2 class="content-text">${address.address}</h2>
 
-    <table>
-        <thead>
-            <tr>
-                <th>주소</th>
-                <th>위도</th>
-                <th>경도</th>
-                <th>오류 메시지</th>
-                <th>길찾기</th>
-            </tr>
-        </thead>
-        <tbody>
-             <c:if test="${not empty locations}">
-                <c:set var="url" value="https://map.naver.com/p/directions/" />
+    <div class="button-group">
+    <select class="filter-select" id="region-select">
+    		<option value="">지역</option>
+        <c:forEach var="region" items="${allRegionList}">
+            <option value="${region.region_name}">${region.region_name}</option>
+        </c:forEach>
+    </select>
+     
+     
+     
 
-                <c:forEach var="location" items="${locations}" varStatus="status">
-                    <tr>
-                        <td>${location.address}</td>
-                        <td>
-                            <c:if test="${location.lat != null}">
-                                ${location.lat}
-                            </c:if>
-                        </td>
-                        <td>
-                            <c:if test="${location.lon != null}">
-                                ${location.lon}
-                            </c:if>
-                        </td>
-                        <td>
-                            <c:if test="${location.error != null}">
-                                <span class="error">${location.error}</span>
-                            </c:if>
-                        </td>
-                        <td>
-                            <c:if test="${location.lat != null && location.lon != null}">
-                                <!-- 동적 링크 생성: 위도와 경도를 사용하여 길찾기 링크 제공 -->
-                                <c:if test="${status.index == 0}">
-                                    <!-- 첫 번째 위치는 출발지로 설정 -->
-                                    <c:set var="url" value="${url}${location.lon},${location.lat}" />
-                                </c:if>
-                                <c:if test="${status.index > 0}">
-                                    <!-- 첫 번째 이후의 위치는 경유지/도착지로 추가 -->
-                                    <c:set var="url" value="${url}/${location.lon},${location.lat}" />
-                                </c:if>
-                                <c:if test="${status.index == locations.size() - 1}">
-                                    <!-- 모든 위치가 추가된 후, 길찾기 링크 생성 -->
-                                    <a href="${url}/walk?c=16.00,0,0,0,dh" target="_blank">길찾기</a>
-                                </c:if>
-                            </c:if>
-                        </td>
-                    </tr>
-                </c:forEach>
-            </c:if>
-        </tbody>
-    </table>
+        <select class="filter-select" id="popup-select" style="width:320px;">
+    <option value="" >팝업</option>
+    <c:forEach var="entry" items="${storeInfoMap}">
+        <c:forEach var="address" items="${entry.value.addresses}">
+            <option  value="${address.address}" data-region="${address.address}" name="${entry.value.storeTitle}" 
+             data-storeIdx="${address.store_idx}"> ${entry.value.storeTitle} </option>
+        </c:forEach>
+    </c:forEach>
+</select>
+    </div>
+    
+   
 
-    <a href="/">돌아가기</a>
+
+	<!-- 숨긴상태로 위도경도 가져오는 form -->
+	<form action="/GetCoordinates" method="post" id="address-form">
+    <div id="hidden-fields"></div> <!-- 숨겨진 필드 컨테이너 추가 -->
+    <button type="submit" style="display:none;">검색</button>
+	</form>
+
+
+    <div class="store-list" class="store-name" id="store-list"></div>                 <!-- 여기에 선택한거 들어옵니다! 7개까지 가능하게 해야함 -->  
+	<div class="default-store-name" id="default-store">+</div>
+	
+    <div class="flex-container">
+        <div class="store-list" ></div>
+        <button type="button" class="search-btn" id="search-btn">경로 검색</button>
+    </div>
+
+</div>
 
 <script>
         window.onload = function() {

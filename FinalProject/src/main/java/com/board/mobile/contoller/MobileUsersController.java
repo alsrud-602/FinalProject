@@ -8,18 +8,20 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.board.users.dto.User;
 import com.board.users.dto.UsersDto;
 import com.board.users.mapper.PopcornMapper;
 import com.board.users.mapper.UsersMapper;
@@ -27,8 +29,6 @@ import com.board.users.service.UserService;
 import com.board.users.vo.PopcornVo;
 import com.board.util.JwtUtil;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -46,6 +46,73 @@ public class MobileUsersController {
 	   
 	   @Autowired
 	      private JwtUtil jwtUtil;
+	   
+	   // 리뷰 삭제 페이지
+	   @RequestMapping("/Write")
+	   public ModelAndView write() {
+	      ModelAndView mv = new ModelAndView();
+	      mv.setViewName("mobile/review/writeform");
+	      return mv;
+	   }
+	   
+	   
+	   @PostMapping("/Writeform")
+	   public String submitReview( UsersDto usersDto,
+	                               @RequestParam("reviewImages") MultipartFile[] reviewImages) {
+		   
+		   
+	       System.out.println("평점: " + usersDto);
+	      /* for (MultipartFile file : reviewImages) {
+	           System.out.println("첨부된 파일: " + file.getOriginalFilename());
+	       }*/       
+	       usersMapper.mobileinsertReview(usersDto);
+	       return "리뷰가 성공적으로 제출되었습니다!";
+	   }
+	   
+	   
+	   
+		// 리뷰 수정 폼 페이지
+	   @RequestMapping("/Update")
+		public ModelAndView updateform(UsersDto usersDto,
+									   @RequestParam(required = false,value = "store_idx") int storeidx,
+				                       @RequestParam(required = false,value = "user_idx") int useridx,
+				                       @RequestParam(required = false,value = "review_idx") int review_idx) {
+			System.out.println("수정 : storeidx : " + storeidx);
+			System.out.println("수정 : useridx : " + useridx);
+			System.out.println("수정 : review_idx : " + review_idx);
+			
+			int store_idx  =  4;
+			int user_idx    = 1;
+			int reviewidx = 19;
+			
+			List<UsersDto> dong = usersMapper.getReview(store_idx,user_idx,reviewidx);
+			
+			ModelAndView mv = new ModelAndView();
+			 mv.addObject(dong);
+			 mv.setViewName("mobile/review/udateform");
+			return mv;
+		}
+	   
+		//리뷰 수정 페이지
+	   @RequestMapping("/Updateform")
+		public ModelAndView update(@RequestParam("user_idx") int user_idx,
+                                   @RequestParam("store_idx") int store_idx,
+                                   @RequestParam("rating") int score,
+                                   @RequestParam("reviewContent") String content,
+                                   @RequestParam("reviewImages") MultipartFile[] reviewImages) {
+			
+			// 리뷰 수정
+			int updateReview = usersMapper.mobileupdateReview(user_idx,store_idx,score,content);
+			
+			ModelAndView mv = new ModelAndView();
+			mv.addObject("updateReview", updateReview);
+			mv.setViewName("users/profile/myreview");
+			return mv;
+		}
+	   
+	   
+	   
+	   
 	   
 	   @RequestMapping("/Wallet")
 		public String wallet(Model model ) {

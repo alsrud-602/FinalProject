@@ -7,17 +7,10 @@
 <head>
     <meta charset="UTF-8">
     <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?govClientId=&submodules=geocoder"></script>
-   
+  
     <title>팝콘</title>
     
      <style>
-     
-         #map {
-            width: 100%;
-            height: 500px;
-        }
-     
-     
         * {
             margin: 0;
             padding: 0;
@@ -45,7 +38,7 @@
             max-width: 600px;
             margin: auto;
             text-align: left;
-             padding-bottom: 100px; /* 네비게이션 바의 높이만큼 여백 추가 */
+            padding-bottom: 100px; /* 네비게이션 바의 높이만큼 여백 추가 */
     		overflow-y: auto; 
         }
         
@@ -73,9 +66,7 @@
             border-radius: 5px;
             color: white;
             background-color: #121212;
-            text-align: center; 
-            font-family:'Pretendard';
-            font-weight: 700;        
+            text-align: center;
             margin-right: 10px; 
         }
 
@@ -97,7 +88,6 @@
             cursor: pointer;
         }
 
-
         button:hover {
             background-color: #33ff33;
         }
@@ -114,8 +104,6 @@
             background-color: #121212;
             color: white;
             position: relative; 
-            font-family: 'Pretendard';
-            font-weight: 700;
         }
 
         .remove-btn {
@@ -225,6 +213,10 @@ fontSize : 16px;
             max-width: 100%;
         }
     }
+
+
+    
+   
     </style>
 </head>
 <body>
@@ -240,9 +232,9 @@ fontSize : 16px;
             <option value="${region.region_name}">${region.region_name}</option>
         </c:forEach>
     </select>
-    
      
-        <select class="filter-select" id="popup-select" >
+     
+        <select class="filter-select" id="popup-select" style="width:100px;">
     <option value="" >팝업</option>
     <c:forEach var="entry" items="${storeInfoMap}">
         <c:forEach var="address" items="${entry.value.addresses}">
@@ -252,6 +244,7 @@ fontSize : 16px;
     </c:forEach>
 </select>
     </div>
+    
    
     <div class="flex-container">
         <div class="store-list" ></div>
