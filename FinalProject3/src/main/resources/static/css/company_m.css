@@ -1,0 +1,145 @@
+@charset "UTF-8";
+body{
+	padding-top : 94px;
+	background: white;
+}
+
+.container {
+
+display:flex;
+justify-content: center;
+position: relative;
+
+}
+main {
+
+width: 1200px;
+position: absolute;
+left: 50%; 
+margin-bottom: 80px;
+transform: translateX(-50%); 
+
+}   
+
+.title{
+border: 2px solid #121212;
+margin-top: 30px;
+padding: 33px 53px 30px 53px;
+background: #121212;
+height: 164px;
+margin-bottom:37px;
+
+p:nth-child(2) {
+font-size: 34px;
+font-weight: 800; 	
+color:#00FF84;
+}
+p:first-child {
+font-size: 15px;
+font-weight: 600; 	
+color:#fff;
+}  
+}  
+.content_body{
+border: 1px solid #000;
+padding: 33px;
+margin-bottom: 30px;
+} 
+.content_title{
+font-size: 30px;
+font-weight: 900; 
+margin-bottom: 22px;
+}
+.content_header{
+display:flex;
+justify-content: space-between;
+align-items:center;
+p{
+color:#767676;
+font-size: 16px;
+font-weight: 500; 
+}
+div{
+padding: 5px;
+border: 1px solid #767676;
+border-radius: 10px;
+font-size: 16px;
+}
+}
+.content_store{
+font-size: 28px;
+font-weight: 700; 
+}
+.content_bottom{
+display:flex;
+justify-content: space-between;
+p{
+font-size: 16px;
+font-weight: 500; 
+}
+a{
+font-size: 16px;
+font-weight: 700; 
+}
+}
+#content_red{
+background: #FF9B9B;
+}
+.content_detail{
+display:flex;
+align-items: center;
+justify-content: space-between;
+
+}
+.detail_ing{
+display:flex;
+justify-content: flex-start;
+margin: 10px 0 0 5px;
+align-items: center;
+}
+.ing_basic{
+border: 1px solid #121212;
+background: #121212;
+color: #fff;
+padding:5px;
+border-radius: 5px;
+font-size: 15px;
+font-weight: 600; 
+}
+.ing_active{
+border: 1px solid #121212;
+background: #00FF84;
+color: #121212;
+padding:5px;
+border-radius: 5px;
+font-size: 15px;
+font-weight: 600; 
+}
+.ing-box{
+width: 68px;
+height: 5px;
+background: #121212;
+}
+.detail_btn{
+display:flex;
+justify-content: flex-end;
+gap:6px;
+}
+.btn1{
+border: 1px solid #121212;
+padding:7px;
+font-size: 15px;
+font-weight: 500; 
+&:hover{
+background:#D0D0D0;
+}
+}
+
+
+hr{
+margin: 25px 0;
+}
+  
+  
+  
+  
