@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.board.business.mapper.WatingMapper">  
+
+	<insert id="insertWatingList">
+    INSERT INTO WAITINGS (WAITING_IDX,STORE_IDX,WATING_ORDER,USER_IDX,RESERVATION_NUMBER,CDATE
+    ) VALUES (
+    (SELECT NVL(MAX(waiting_idx),0) FROM WAITINGS) +1 ,
+     #{store_idx},
+     (SELECT NVL(MAX(wating_order),0) + 1 FROM WAITINGS WHERE STORE_IDX = #{store_idx} AND(STATUS = '대기' OR STATUS = '현재순번') ),
+     #{user_idx},
+     #{reservation_number},
+     TO_CHAR(SYSDATE, 'YYYY-MM-DD HH24:MI:SS') 
+)
+	</insert>
+    
+    <select id="getWatingList">
+    SELECT U.USER_IDX, U.ID,U.SOCIAL_ID,U.NAME,W.WAITING_IDX, W.STORE_IDX, W.WATING_ORDER, W.STATUS, W.RESERVATION_NUMBER, W.EDATE
+    FROM WAITINGS W JOIN USERS U ON W.USER_IDX = U.USER_IDX
+    WHERE STORE_IDX = #{store_idx} AND( W.STATUS IN('대기','현재순번'))
+    ORDER BY  W.WATING_ORDER
+    </select>
+    
+    
+    <update id="updateWatingList">
+    UPDATE WAITINGS
+    SET  STATUS = #{status}, EDATE = TO_CHAR(SYSDATE, 'YYYY-MM-DD HH24:MI:SS')
+    WHERE  WAITING_IDX =#{waiting_idx}    
+    </update>
+    
+    
+        <!-- 순번 업데이트 -->
+    <update id="updateWaitingOrder">
+    UPDATE WAITINGS
+    SET WATING_ORDER = #{arg2}
+    WHERE STORE_IDX = #{arg0}
+    AND WATING_ORDER = #{arg1}
+    </update>
+
+    <update id="updateWaitingOrderInt">
+    UPDATE WAITINGS
+    SET WATING_ORDER = #{arg2}
+    WHERE STORE_IDX = #{arg0}
+    AND WATING_ORDER = #{arg1}
+    </update>
+    
+    <update id="updateWaitingOrderUser">
+    UPDATE WAITINGS
+    SET WATING_ORDER = #{arg2}
+    WHERE WAITING_IDX = #{arg0}
+    AND WATING_ORDER = #{arg1}
+    </update>
+
+
+	
+	<select id="getStore_idxWaiting">
+	SELECT STORE_IDX
+	FROM WAITINGS
+	WHERE  WAITING_IDX = #{waiting_idx}  
+	
+	</select>
+	
+	<update id="updateOnsiteUse">
+	UPDATE RESERVATION_STORES
+	SET ONSITE_USE = #{onsite_use}
+	WHERE  STORE_IDX = #{store_idx}		
+	</update>
+	
+	<select id="getStoreStauts">
+	SELECT ONSITE_USE
+	FROM RESERVATION_STORES
+	WHERE STORE_IDX = #{store_idx}	
+	
+	</select>
+	
+	<select id="getUser_idxWating">
+	SELECT  WAITING_IDX,
+			STORE_IDX,
+			WATING_ORDER,
+			USER_IDX,
+			STATUS,
+			RESERVATION_NUMBER,
+			EDATE
+	FROM WAITINGS
+	WHERE  WAITING_IDX = #{waiting_idx}  
+	
+	</select>
+	
+  <select id="getUserWaiting">
+	SELECT  W.WAITING_IDX,
+			W.STORE_IDX,
+			W.WATING_ORDER,
+			W.USER_IDX,
+			W.STATUS,
+			W.RESERVATION_NUMBER,
+			W.EDATE,
+            S.TITLE,
+            W.CDATE
+	FROM WAITINGS W JOIN  STORES S ON W.STORE_IDX =S.STORE_IDX
+	WHERE  W.USER_IDX = #{user_idx} AND (W.STATUS='대기' OR W.STATUS='현재순번')
+	</select>
+	
+	<select id="getUserWaitingList">
+	SELECT  W.WAITING_IDX,
+			W.STORE_IDX,
+			W.WATING_ORDER,
+			W.USER_IDX,
+			W.STATUS,
+			W.RESERVATION_NUMBER,
+			W.EDATE,
+            S.TITLE,
+            W.CDATE
+	FROM WAITINGS W JOIN  STORES S ON W.STORE_IDX =S.STORE_IDX
+	WHERE  W.USER_IDX = #{user_idx}
+	
+	</select>
+	
+	
+	<select id="getadvanceList">
+SELECT
+    RU.RESERVATION_IDX,
+    RU.USER_IDX,
+    RU.STATUS,
+    RU.RESERVATION_NUMBER,
+    TO_CHAR(RU.CDATE, 'YYYY-MM-DD') AS CDATE,
+    RU.RP_IDX,
+    '20'||TO_CHAR( TO_DATE(RU.reservation_date, 'YYYY-MM-DD'),'YY-MM-DD') AS RESERVATION_DATE,
+    RU.STORE_IDX,
+    S.TITLE,
+    TO_CHAR(RP.start_time, 'HH24:MI') || ' - ' || TO_CHAR(RP.end_time, 'HH24:MI') AS TIME_SLOT
+FROM
+    RESERVATION_USERS RU JOIN STORES S ON RU.STORE_IDX = S.STORE_IDX
+                         JOIN RESERVATION_PLANS RP ON RP.RP_IDX =RU.RP_IDX
+WHERE USER_IDX =#{user_idx}
+</select>
+
+
+<select id="getonStieList">
+SELECT W.WAITING_IDX, W.STORE_IDX, W.WATING_ORDER, W.USER_IDX, W.STATUS, W.RESERVATION_NUMBER, W.EDATE, W.CDATE, S.TITLE
+FROM  WAITINGS W JOIN STORES S ON W.STORE_IDX = S.STORE_IDX
+WHERE W.USER_IDX =#{user_idx} AND ( W.STATUS ='예약취소' OR W.STATUS ='노쇼'  OR W.STATUS ='현장방문' )
+</select>
+
+
+
+<select id="getcheckWaiting">
+SELECT WAITING_IDX
+FROM WAITINGS
+WHERE USER_IDX =#{user_idx} AND (STATUS ='대기' OR STATUS ='현재순번')
+</select>
+
+<select id="getStoreAddressNote">
+SELECT RS.NOTES, SD.ADDRESS
+FROM RESERVATION_STORES RS JOIN STORES_DETAIL SD ON RS.STORE_IDX = SD.STORE_IDX
+WHERE RS.STORE_IDX =#{store_idx}
+</select>
+
+
+<select id="getWatingTime">
+SELECT EDATE, CDATE
+FROM WAITINGS
+WHERE STORE_IDX = #{store_idx} AND STATUS = '현장방문' AND TRUNC(TO_DATE(CDATE, 'YYYY-MM-DD HH24:MI:SS')) = TRUNC(SYSDATE)
+</select>
+
+
+<select id="getadvanceTimeSlotList">
+    SELECT DISTINCT
+        RD.RESERVATION_START_DATE + n.n AS RESERVATION_DATE,
+        RD.RD_IDX,
+        RD.PLAN,
+        RP.RP_IDX,
+        RS.STORE_IDX,
+        TO_CHAR(RP.START_TIME, 'HH24:MI') || ' - ' || TO_CHAR(RP.END_TIME, 'HH24:MI') AS TIME_RANGE,
+        RP.MAX_NUMBER,
+        ROW_NUMBER() OVER (PARTITION BY RD.RESERVATION_START_DATE + n.n ORDER BY TO_CHAR(RP.START_TIME, 'HH24:MI')) || '차' AS TIME_SLOT
+    FROM
+        RESERVATION_DATES RD
+    JOIN (
+        SELECT LEVEL - 1 AS n
+        FROM DUAL
+        CONNECT BY LEVEL &lt;= 32
+    ) n ON RD.RESERVATION_START_DATE + n.n &lt;= RD.RESERVATION_END_DATE
+    JOIN RESERVATION_PLANS RP ON RD.PLAN = RP.PLAN
+    JOIN RESERVATION_STORES RS ON RS.RS_IDX = RD.RS_IDX
+    WHERE
+        RS.STORE_IDX = #{store_idx}
+</select>
+
+<select id="getadvanceDateList">
+    SELECT DISTINCT
+        RD.RESERVATION_START_DATE + n.n AS RESERVATION_DATE,
+        RD.RD_IDX,
+        RD.PLAN,
+        RS.STORE_IDX
+    FROM
+        RESERVATION_DATES RD
+    JOIN (
+        SELECT LEVEL - 1 AS n
+        FROM DUAL
+        CONNECT BY LEVEL &lt;= 32
+    ) n ON RD.RESERVATION_START_DATE + n.n &lt;= RD.RESERVATION_END_DATE
+    JOIN RESERVATION_STORES RS ON RS.RS_IDX = RD.RS_IDX
+    WHERE
+        RS.STORE_IDX = #{store_idx}
+    ORDER BY      RESERVATION_DATE
+
+</select>
+
+<insert id="getReservationWrite">
+INSERT INTO RESERVATION_USERS ( RESERVATION_IDX, USER_IDX, RESERVATION_NUMBER,  RP_IDX, RESERVATION_DATE,STORE_IDX
+) VALUES (RESERVATION_USERS_SEQ.NEXTVAL,#{user_idx},#{reservation_number},#{rp_idx},#{reservation_date},#{store_idx})
+
+</insert>
+
+<select id="getStoreShort">
+SELECT S.TITLE, S.AGE, SD.ADDRESS 
+FROM STORES S JOIN STORES_DETAIL SD ON S.STORE_IDX = SD.STORE_IDX
+WHERE S.STORE_IDX = #{store_idx}
+</select>
+
+<select id="getStoreCategory">
+SELECT CATEGORY_NAME
+FROM STORES_CATEGORY SC JOIN CATEGORY C ON SC.CATEGORY_ID =C.CATEGORY_ID
+WHERE STORE_IDX = #{store_idx}
+</select>
+
+<select id="getCountConfig">
+  SELECT MAX_NUMBER , SUM(RU.RESERVATION_NUMBER) AS TOTAL_COUNT
+  FROM (SELECT DISTINCT
+        RD.RESERVATION_START_DATE + n.n AS RESERVATION_DATE,
+        RD.RD_IDX,
+        RD.PLAN,
+        RP.RP_IDX,
+        RS.STORE_IDX,
+        TO_CHAR(RP.START_TIME, 'HH24:MI') || ' - ' || TO_CHAR(RP.END_TIME, 'HH24:MI') AS TIME_RANGE,
+        RP.MAX_NUMBER,
+        ROW_NUMBER() OVER (PARTITION BY RD.RESERVATION_START_DATE + n.n ORDER BY TO_CHAR(RP.START_TIME, 'HH24:MI')) || '차' AS TIME_SLOT
+    FROM
+        RESERVATION_DATES RD
+    JOIN (
+        SELECT LEVEL - 1 AS n
+        FROM DUAL
+        CONNECT BY LEVEL &lt;= 32
+    ) n ON RD.RESERVATION_START_DATE + n.n &lt;= RD.RESERVATION_END_DATE
+    JOIN RESERVATION_PLANS RP ON RD.PLAN = RP.PLAN
+    JOIN RESERVATION_STORES RS ON RS.RS_IDX = RD.RS_IDX
+    WHERE
+        RS.STORE_IDX = #{store_idx}
+    )X JOIN RESERVATION_USERS RU ON RU.RP_IDX = X.RP_IDX AND RU.RESERVATION_DATE = X.RESERVATION_DATE
+WHERE X.RESERVATION_DATE = TO_DATE(#{reservation_date}, 'YY/MM/DD') AND X.RP_IDX = #{rp_idx} AND RU.STATUS ='예약완료'
+GROUP BY X.RESERVATION_DATE,X.RP_IDX ,X.TIME_RANGE,MAX_NUMBER
+
+</select>
+
+
+<select id="getadvanceUser">
+SELECT
+    RU.RESERVATION_IDX,
+    RU.USER_IDX,
+    RU.STATUS,
+    RU.RESERVATION_NUMBER,
+    TO_CHAR(RU.CDATE, 'YYYY-MM-DD') AS CDATE,
+    RU.RP_IDX,
+    '20'||TO_CHAR( TO_DATE(RU.reservation_date, 'YYYY-MM-DD'),'YY-MM-DD') AS RESERVATION_DATE,
+    RU.STORE_IDX,
+    S.TITLE,
+    TO_CHAR(RP.start_time, 'HH24:MI') || ' - ' || TO_CHAR(RP.end_time, 'HH24:MI') AS TIME_SLOT
+FROM
+    RESERVATION_USERS RU JOIN STORES S ON RU.STORE_IDX = S.STORE_IDX
+                         JOIN RESERVATION_PLANS RP ON RP.RP_IDX =RU.RP_IDX
+WHERE RU.RESERVATION_IDX = #{reservation_idx}
+
+</select>
+
+<update id="deleteReservation">
+UPDATE RESERVATION_USERS
+SET  STATUS = '예약취소'
+WHERE RESERVATION_IDX = #{reservation_idx}
+
+</update>
+
+<select id="getWaitingStatus">
+SELECT WU.STATUS ,WU.WAITING_IDX , WU.WATING_ORDER , WU.STORE_IDX , COUNT(W.WAITING_IDX) AS TOTAL
+FROM(SELECT STATUS ,WAITING_IDX , WATING_ORDER , STORE_IDX
+FROM WAITINGS 
+WHERE WAITING_IDX = #{waiting_idx}) WU JOIN WAITINGS W ON WU.STORE_IDX = W.STORE_IDX
+WHERE W.STATUS ='대기'
+GROUP  BY WU.STATUS , WU.WAITING_IDX , WU.WATING_ORDER , WU.STORE_IDX
+</select>
+
+<insert id="updatePopcornDelay">
+INSERT INTO POPCORN_LOG (
+LOG_ID, USER_ID, CONTENT, CONTENT_INFO, SPENT_POINTS, TOTAL_POINTS
+) VALUES (
+    (SELECT NVL(MAX(LOG_ID),0) FROM POPCORN_LOG) + 1 ,
+   (SELECT U.ID 
+FROM WAITINGS W JOIN USERS U ON W.USER_IDX = U.USER_IDX 
+WHERE WAITING_IDX = #{waiting_idx}),
+    '순번미루기',
+    '사용',
+    200,
+   (SELECT PW.TOTAL_POINTS - 200 AS TOTAL_POINTS
+FROM WAITINGS W JOIN USERS U ON W.USER_IDX = U.USER_IDX 
+                 JOIN POPCORN_WALLET PW ON PW.USER_ID = U.ID
+WHERE WAITING_IDX = #{waiting_idx}) 
+)
+</insert>
+
+<insert id="updatePopconNoShow">
+INSERT INTO POPCORN_LOG (
+LOG_ID, USER_ID, CONTENT, CONTENT_INFO, SPENT_POINTS, TOTAL_POINTS
+) VALUES (
+    (SELECT NVL(MAX(LOG_ID),0) FROM POPCORN_LOG) + 1 ,
+   (SELECT U.ID 
+FROM WAITINGS W JOIN USERS U ON W.USER_IDX = U.USER_IDX 
+WHERE WAITING_IDX = #{waiting_idx}),
+    '스토어예약 노쇼',
+    '차감',
+    500,
+   (SELECT PW.TOTAL_POINTS - 500 AS TOTAL_POINTS
+FROM WAITINGS W JOIN USERS U ON W.USER_IDX = U.USER_IDX 
+                 JOIN POPCORN_WALLET PW ON PW.USER_ID = U.ID
+WHERE WAITING_IDX = #{waiting_idx}) 
+)
+</insert>
+
+<update id="updatePopCornWNo">
+UPDATE POPCORN_WALLET PW
+SET PW.TOTAL_POINTS = PW.TOTAL_POINTS - 500
+WHERE PW.USER_ID IN (
+    SELECT U.ID
+    FROM WAITINGS W
+    JOIN USERS U ON W.USER_IDX = U.USER_IDX
+    WHERE W.WAITING_IDX = #{waiting_idx}
+)
+</update>
+
+<update id="updatePopCornWDelay">
+UPDATE POPCORN_WALLET PW
+SET PW.TOTAL_POINTS = PW.TOTAL_POINTS - 200
+WHERE PW.USER_ID IN (
+    SELECT U.ID
+    FROM WAITINGS W
+    JOIN USERS U ON W.USER_IDX = U.USER_IDX
+    WHERE W.WAITING_IDX = #{waiting_idx}
+)
+</update>
+
+
+<select id="getBookMarkList">
+SELECT B.BOOKMARK_IDX, S.STORE_IDX, S.TITLE, 
+TO_CHAR(SD.START_DATE,'YYYY-MM-DD') AS START_DATE, 
+TO_CHAR(SD.END_DATE,'YYYY-MM-DD') AS END_DATE ,  
+I.IMAGE_PATH
+FROM BOOKMARKS B 
+JOIN STORES S ON S.STORE_IDX = B.STORE_IDX
+JOIN STORES_DETAIL SD ON SD.STORE_IDX = S.STORE_IDX
+JOIN (
+    SELECT STORE_IDX, IMAGE_PATH,IS_IDX
+    FROM IMAGE_STORE
+    WHERE STORE_IDX IN (SELECT STORE_IDX FROM STORES)
+) I ON I.STORE_IDX = S.STORE_IDX
+WHERE B.USER_IDX = #{user_idx}
+AND I.IS_IDX = (
+    SELECT MIN(IS_IDX)
+    FROM IMAGE_STORE
+    WHERE STORE_IDX = S.STORE_IDX
+)
+GROUP BY B.BOOKMARK_IDX, S.STORE_IDX, S.TITLE, SD.START_DATE, SD.END_DATE,I.IMAGE_PATH
+</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
