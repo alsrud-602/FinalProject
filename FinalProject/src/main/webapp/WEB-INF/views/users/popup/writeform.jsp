@@ -147,7 +147,7 @@ color: #121212;
       </div>
       </div>
       
-      <form action="/Users/Write" method="POST" enctype="multipart/form-data">
+      <form id="reviewForm" action="/Users/Write" method="POST" enctype="multipart/form-data">
       <input type="hidden" name="user_idx" value="${user.userIdx}">
       <input type="hidden" name="store_idx" value="${storedetail.store_idx}">
       <div class="date_line">
@@ -257,6 +257,19 @@ function updateFileInput() {
     fileInput.files = dataTransfer.files;     
 	console.log(fileInput.files)
 }
+
+function handleSubmit(event) {
+    // fileList가 비어 있거나 길이가 0인 경우
+    console.log("handleSubmit : " + handleSubmit);
+    if (fileList.length === 0) {
+        event.preventDefault(); // 제출 방지
+        alert("파일을 선택해 주세요."); // 사용자에게 알림
+    }
+}
+
+// 폼 요소를 선택하고 이벤트 리스너 추가
+const form = document.getElementById("reviewForm"); // yourFormId를 실제 폼 ID로 변경
+form.addEventListener("submit", handleSubmit);
 
 </script>
 

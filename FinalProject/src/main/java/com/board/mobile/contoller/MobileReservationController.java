@@ -46,7 +46,7 @@ public class MobileReservationController {
    // 현장대기 예약 화면
    @RequestMapping("/OnSite")
    public ModelAndView OnSite(         
-         Model model,HttpServletRequest request , @RequestParam("store_idx") int store_idx, @RequestParam("store_idx") int user_idx) {
+         Model model,HttpServletRequest request , @RequestParam("store_idx") int store_idx, @RequestParam("user_idx") int user_idx) {
       
        Cookie[] cookies = request.getCookies();
        String jwtToken = null;
@@ -94,6 +94,7 @@ public class MobileReservationController {
     	System.out.println("!!!!!!!값 anDto"+ anDTO);
     	mv.addObject("anDTO",anDTO);
     	mv.addObject("user_idx",user_idx);
+    	mv.addObject("store_idx",store_idx);
 	   	mv.setViewName("mobile/onsite");
         return mv;
    }
@@ -140,24 +141,23 @@ public class MobileReservationController {
 	           model.addAttribute("error", "JWT 토큰이 없습니다.");
 	       }
 	       
-	    //int user_idx = useruseridx.intValue();				
-		int user_idx = 100;
+	    int user_idx = useruseridx.intValue();				
+		//int user_idx = 100;
         
-	   	WaitingDto wDTO =waitingService.getUserWaiting(user_idx);
+	   	WaitingDto wDTO = waitingService.getUserWaiting(user_idx);
 	   	List<WaitingDto> wList = waitingService.getUserWaitingList(user_idx);
-	   	
 	   	
 	   	ModelAndView mv = new ModelAndView();
 	   	mv.addObject("wList",wList);
 	   	mv.addObject("wDTO",wDTO);
 	   	mv.addObject("user_idx",user_idx);
-	mv.setViewName("mobile/reservation/list");
+	    mv.setViewName("mobile/reservation/list");
 	return mv;	
 		
 	}
    
 	@RequestMapping("/Advance")
-	public ModelAndView Advance(@RequestParam("store_idx") int store_idx, @RequestParam("store_idx") int user_idx) {
+	public ModelAndView Advance(@RequestParam("store_idx") int store_idx, @RequestParam("user_idx") int user_idx) {
 	ModelAndView mv = new ModelAndView();	
 	List<ReservationTimeSlotDto> rDateList = waitingService.getadvanceDateList(store_idx);
 	StoreListDto sDTO =  waitingService.getStoreShort(store_idx);
@@ -190,7 +190,7 @@ public class MobileReservationController {
 	}
 	
 	@RequestMapping("/Profile/BookMark")
-	public ModelAndView UserView(int user_idx) {
+	public ModelAndView ProfileBookMark(@RequestParam("user_idx") int user_idx) {
 		ModelAndView mv = new ModelAndView();	
 		List<BookMarkListDto> bmList = watingMapper.getBookMarkList(user_idx);
 		

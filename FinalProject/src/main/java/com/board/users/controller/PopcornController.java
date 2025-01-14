@@ -29,6 +29,7 @@ public class PopcornController {
 	@RequestMapping("/Wallet")
 	public String wallet(Model model ) {
 		
+		
 		String userId = "TEST";
 		
 		System.out.println("====================================");

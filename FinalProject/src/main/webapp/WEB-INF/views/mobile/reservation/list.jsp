@@ -6,6 +6,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Insert title here</title>
 <link rel="icon" type="image/png" href="/img/favicon.png" />
 <link rel="stylesheet"  href="/css/common.css" />
@@ -23,14 +24,14 @@
     .header {
       display: flex;
       align-items: center;
-      padding: 50px 23px;
+      padding: 15px 15px;
       
       background-color: #000;
       font-size: 35px;
       color: #fff;
     }
     .content {
-      padding: 40px;
+      padding: 15px;
     }
     .waiting {
       color: #fff;
@@ -38,31 +39,33 @@
       display: flex;
       justify-content: space-between;
       align-items: baseline;
+      margin: 7px;
     }
     #watinginfo{
      display: flex;
-     gap:20px;
+     gap:5px;
+     padding-top: 20px;
       
      
     }
     
     .info{
     background-color: #000;
-      padding: 40px 50px;
+      padding: 15px 20px;
      border-radius: 15px;
-      font-size: 45px;
+      font-size: 20px;
       border: 2px solid #00FF84;
     }
     
     #title{
     color: #fff;
-    margin: 10px 0;
-  
+    font-weight: 800px;
+    margin-bottom: -8px;
     
     }
     .section {
-      margin-top: 30px;
-      margin-bottom:10px;
+      margin-top: 10px;
+      margin-bottom:58px;
       background-color: #333;
       border-radius: 25px;
       padding-bottom: 30px;
@@ -83,39 +86,39 @@
     }
     
     #reserveButton {
-          font-size: 40px;
+      font-size: 15px;
       font-weight: 600;
-      padding: 25px;
+      padding: 10px;
     
        border-radius: 50px;
-       border: 3px solid #333;
+       border: 2px solid #333;
     
     }
     #waiting-count{
-       font-size: 40px;
+       font-size: 15px;
       font-weight: 400;
     }
     #myindex{
-           font-size: 40px;
+       font-size: 15px;
       font-weight: 400;
     }
     #onsiteinfo{
-    font-size: 40px;
-      font-weight: 600;
-      margin-top: 50px;
-      margin-left: 50px;
+    font-size: 20px;
+      font-weight:500;
+      margin-top: 20px;
+      margin-left: 20px;
     }
     #indexnum{
     color:red;
-    margin: 0 20px;
+    margin: 0 5px;
     }
     #navi{
     display:flex;
     justify-content: space-around;
-    padding: 50px 0;
+    padding: 20px 0;
     }
     .navi_option{
-        font-size: 40px;
+        font-size: 20px;
       font-weight: 600;
     }
     .navi_option:hover{
@@ -126,9 +129,10 @@
     width: 90%; 
     }
     .rtable{
+    margin-top: 8px;
     width:100%;
     td{
-    padding:30px 20px;
+    padding:10px 10px;
  
      }
      td:last-child{
@@ -137,35 +141,35 @@
     }
 
     .rtable-header{
-    margin:6px 0 10px;
+    margin:6px 0 7px;
     display:flex;
     justify-content:space-between;
     align-items:baseline;
     p{
-      font-size: 40px;
+      font-size: 20px;
       font-weight: 300;
     }
     div{
-     font-size: 40px;
+     font-size: 20px;
       font-weight: 600;
-      padding: 10px 15px;
+      padding: 5px 5px;
       background: #fff;
       color: #121212;
       border-radius: 12px;
     }
     }
     .rtable-footer{
-          font-size: 35px;
+          font-size: 17px;
       font-weight: 200;
     }
     
     #delayButton {
-    font-size: 40px;
+    font-size: 20px;
     font-weight: 600;
-    padding: 25px 70px; 
+    padding: 20px 20px; 
     width:90%;   
     border-radius: 10px;
-    border: 3px solid #333;
+    border: 2px solid #333;
     background: #00FF84;
     
     }
@@ -186,22 +190,22 @@
     }
 
     #delay-popup {
-        width: 850px;
-        height: 850px;
+        width: 320px;
+        height: 400px;
         background-color: #fff;
         position: absolute;
         top: 50%; /* 중앙 정렬을 위한 초기 위치 */
         left: 50%;
         transform: translate(-50%, -50%); /* 중앙 정렬 */
         display: none; /* 처음에는 숨김 */
-        padding: 50px;
+        padding: 30px;
         display: flex;
         border-radius: 20px;
 
     }
     #delay-title{
     color:#121212;
-    font-size: 70px;
+    font-size: 30px;
     font-weight: 800;
     margin: 10px 0;
     display: flex;
@@ -210,7 +214,7 @@
     }
     #delay-table{
     width: 100%;
-    margin:50px 0;
+    margin: 13px 0;
     border-collapse: collapse;
  
     tr:first-child {    
@@ -219,18 +223,18 @@
     td:first-child {
 	 border-bottom: 1px solid #86879A;
 	 border-top: 1px solid #86879A;
-	 padding: 40px 60px;
+	 padding: 20px 18px;
     }
     
     }
     .delay-header{
-    font-size: 50px;
+    font-size: 20px;
     font-weight: 700;
     color:#121212;
     
     }
     #delay-num{
-    font-size: 50px;
+    font-size: 20px;
     font-weight: 700;
     color:red;   
     }
@@ -238,30 +242,31 @@
     display: flex;
     justify-content: space-between;
     }
-    #delay-info{
-    font-size: 34px;
+	 #delay-info{
+    font-size: 16px;
     font-weight: 500;    
     color: #00875F;
     display: flex;
     justify-content: center;
     margin: 20px 0 0 0;
+    text-align: center;
     }
     #delay-select{
-    width: 200px;
-    font-size: 50px;
+    width: 100px;
+    font-size: 20px;
     font-weight: 600 ;
-    padding: 5px 20px;
+    padding: 5px 10px;
     }
 	#delay-select option {
 	    font-size: 20px;
 	    font-weight: 500; /* 원하는 굵기로 변경 (예: 700은 굵은 글씨) */
 	}   
-	.btn-basic{
-	width: 350px;
-	height: 150px;
+    .btn-basic{
+	width: 150px;
+	height: 60px;
 	display: flex;
 	justify-content: center;
-	font-size: 50px;
+	font-size: 20px;
 	 font-weight: 700 ;
 	 align-items: center;
 	 border-radius: 15px;
@@ -275,7 +280,7 @@
 	#btn-back{
 	background: #fff;
 	color:#121212;
-	border: 2px solid #121212;
+	border: 1px solid #121212;
 	}
     #btn-ok{
 	background: #00FF84;
@@ -293,17 +298,20 @@
   
  <div class="header">
     
-    <h1 style="margin: 0 auto; font-size: 50px; color:#00FF84 ">예약 내역</h1>
+    <h1 style="margin: 0 auto; font-size: 20px; color:#00FF84 ">예약 내역</h1>
   </div>
   <p id="onsiteinfo">현장대기 현황</p>
-  <div class="content">
+  <div class="content" style="
+    padding-bottom: 10px;">
    <c:choose>
    <c:when test="${not empty wDTO.title}">
    <div class="info">
     <div id="title">${wDTO.title}</div>   
     <div class="waiting">
-    <div id="watinginfo"> <p id ="waiting-count">대기인원 : 로딩중</p>|<p id="myindex">현재순번 : <span id="indexnum">1</span></p></div>
-     <button id="reserveButton">예약취소</button> 
+    <div id="watinginfo"> <p id ="waiting-count">대기인원 : 로딩중</p>
+    <p style="font-size: 14px;">|</p>
+    <p id="myindex">현재순번 : <span id="indexnum">1</span></p></div>
+      <button id="reserveButton">예약취소</button> 
      </div>
      <input type="hidden" id="reserveButton">
     </div>
@@ -379,11 +387,14 @@
  </div>
 </div>
 
+	<%@include file="/WEB-INF/include/app-navbar.jsp" %>
 </body>
   <script>
   
   const textElement = document.getElementById('title-warp');
   const text = textElement.innerText;
+  const configuser = ${user_idx};
+  console.log('configuser' + configuser);
 
   if (text.length > 20) {
       // 20자 이상일 경우 줄바꿈 처리
@@ -706,7 +717,7 @@
  </script>
 </html>
 
-
+    
 
 
 

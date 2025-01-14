@@ -722,7 +722,7 @@ OFFSET #{start} ROWS FETCH NEXT #{size} ROWS ONLY
   
   <!-- 좋아요 조회 -->
   <select id="getStoreLike">
-  SELECT store_idx, COUNT(user_idx) AS storelike
+   SELECT store_idx, COUNT(store_idx) AS storelike
    FROM like_stores
    WHERE store_idx = #{store_idx}
    GROUP BY store_idx

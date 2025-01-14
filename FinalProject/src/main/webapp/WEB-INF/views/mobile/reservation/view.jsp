@@ -5,6 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Insert title here</title>
 <link rel="icon" type="image/png" href="/img/favicon.png" />
 <link rel="stylesheet"  href="/css/common.css" />
@@ -17,17 +18,24 @@
       background-color: #121212;
       color: #fff;
     }
-    .header {
-      display: flex;
-      align-items: center;
-      padding: 50px 23px;
-      
-      background-color: #000;
-      font-size: 35px;
-      color: #fff;
+     .header {
+        display: flex;
+        align-items: center;
+        padding: 15px 15px;
+        background-color: #000;
+        color: #fff;
+        border-bottom: 1px solid #757575;
+    }
+    .header p {
+        font-weight:400;
+        font-size: 20px;
+    }
+    .header span {
+        font-size: 25px;
     }
     .content {
-      padding: 20px 40px 40px 40px;
+      padding: 15px 30px 40px 30px;
+      margin-bottom: 50px;
     }
     .waiting {
       background-color: #121212;
@@ -40,32 +48,31 @@
      display: flex;
      justify-content: flex-end;
      align-items: flex-end;
-     margin-top: -70px;
+     margin-top: -20px;
 
     }
     
     .section {
-      margin-top: 20px;
-      margin-bottom:10px;
-      padding: 30px 50px;
+      margin-top: 13px;
+      margin-bottom:7px;
+      padding: 16px 25px;
       background-color: #333;
       border-radius: 25px;
     }
     .section-title {
-      font-size: 50px;
+      font-size:18px;
       font-weight: bold;
-      margin: 10px 0;
     }
     .section-content {
-      padding: 60px 60px;
-      font-size:28px;
+      padding: 20px 20px;
+      font-size: 16px;
       line-height: 1.5;
       background-color: #fff;
        border-radius: 25px;
        color: #333; font-weight: 700;
     }
     .section-content2 {
-      padding: 60px 60px;
+      padding: 20px 20px;
 
       line-height: 1.5;
       background-color: #fff;
@@ -74,12 +81,12 @@
     }
     
     #reserveButton {
-          font-size: 45px;
+      font-size: 16px;
       font-weight: 600;
-      padding: 30px;
-    
-       border-radius: 50px;
-       border: 3px solid #333;
+      padding: 10px;
+          
+      border-radius: 50px;
+      border: 2px solid #333;
     
     }
     
@@ -89,13 +96,12 @@
        }
     #detail-info{
 
-       font-size: 25px;
+       font-size: 18px;
       font-weight: 600;
     }
     #detail-header{
-       font-size: 55px;
+       font-size: 20px;
       font-weight: bold;
-      margin-top:10px;
     }
     
   </style>
@@ -109,7 +115,7 @@
   
  <div class="header">
     <span onclick="backPage()">←</span> &nbsp;&nbsp;
-    <h1 style="margin: 0; font-size: 50px; ">예약 상세 내역</h1>
+    <p>예약 상세 내역</p>
   </div>
   <div class="content">
        <div class="section">
@@ -154,7 +160,8 @@
   </main>
   
 
-</div>	
+</div>
+	<%@include file="/WEB-INF/include/app-navbar.jsp" %>	
 
 </body>
   <script>

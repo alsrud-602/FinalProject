@@ -896,7 +896,7 @@ margin: 30px 42px;
 					<option value="현재순번">현재순번</option>
 					<option value="대기">대기</option>
 				</select>
-				<p id="waiting-count">대기 2팀</p>
+				<p id="waiting-count">대기 0팀</p>
 			</div>
 			<table id="reservation-table">
 				<tr>

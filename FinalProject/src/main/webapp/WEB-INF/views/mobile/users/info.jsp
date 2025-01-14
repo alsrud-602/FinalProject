@@ -4,6 +4,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <meta charset="UTF-8">
 <title>pop corn</title>
 <link rel="icon" type="image/png" href="/img/favicon.png" />
@@ -666,9 +667,9 @@ document.getElementById('reserveBtn').addEventListener('click', function() {
    console.log('status : ' + Reservationstatus)
    if(Reservationstatus == '사전예약'){
     //document.getElementById('modalBg').style.display = 'block';   
-	 window.location.href = `/Mobile/Reservation/Advance?store_idx=\${store_idx}&user_idx=\${user_idx};`
+	 window.location.href = `/Mobile/Reservation/Advance?store_idx=\${store_idx}&user_idx=\${user_idx}`
    }else if(Reservationstatus === '현장대기예약') {
-	 window.location.href = `/Mobile/Reservation/OnSite?store_idx=\${store_idx}&user_idx=\${user_idx};`
+	 window.location.href = `/Mobile/Reservation/OnSite?store_idx=\${store_idx}&user_idx=\${user_idx}`
    }else {
 	   
     alert('예약기능을 사용할 수 없는 팝업니다.')   
