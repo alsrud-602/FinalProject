@@ -1112,4 +1112,16 @@ FROM REVIEWS
 WHERE REVIEW_IDX = #{review_idx}
 </select>
 
+<!-- 원호님  합본파트-->
+<select id="getID">
+SELECT ID
+FROM USERS
+WHERE USER_IDX =#{user_idx}
+</select>
+<!-- 자역 정보 가져오기-->
+<select id="getallRegionlist">
+   SELECT * FROM REGION
+</select>
+
+
 </mapper>

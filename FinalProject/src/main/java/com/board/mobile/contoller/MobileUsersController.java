@@ -1,7 +1,10 @@
 package com.board.mobile.contoller;
 
-import java.io.IOException;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,95 +13,265 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.board.admin.dto.Banner;
 import com.board.admin.mapper.BannerMapper;
+import com.board.business.dto.ImageReivewDTO;
+import com.board.business.service.PdsService;
 import com.board.users.dto.User;
 import com.board.users.dto.UsersDto;
+import com.board.users.mapper.PopcornMapper;
 import com.board.users.mapper.UsersMapper;
 import com.board.users.service.UserService;
+import com.board.users.vo.PopcornVo;
 import com.board.util.JwtUtil;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/Mobile/Users")
 public class MobileUsersController {
-	   
-	   @Autowired
-	   private UsersMapper usersMapper;
-	   
-	   @Autowired
-	   private UserService userService;
-	   
-	   @Autowired
-	   private JwtUtil jwtUtil;
-	   
-	   @Autowired
-	   private BannerMapper bannerMapper;
-	   
-	   // http://localhost:9090
-	   @RequestMapping("/Wallet")
-	   public  String  wallet() {
-	      return "users/usersWallet/wallet";
-	      //return "/WEB-INF/views/users/Wallet/wallet.jsp";
-	   }
-	   
-	   @RequestMapping("/RouteRecommend")
-	   public String routeRecommend(Model model) {
-	       // 모든 매장 리스트 가져오기
-	       List<UsersDto> allStoreList = usersMapper.getallStorelist();
-	       System.out.println("All Store List: " + allStoreList);  // 전체 매장 리스트 출력
 
-	       Map<Integer, List<UsersDto>> storeAddressMap = new HashMap<>();
-	       
-	       // 모든 주소 리스트 가져오기
-	       List<UsersDto> allAddresses = usersMapper.getAddressesByStoreIdx();
-	       System.out.println("여기:" + allAddresses);
-	       
-	       // 주소를 storeIdx 기준으로 그룹화
-	       for (UsersDto address : allAddresses) {
-	           int storeIdx = address.getStore_idx();  // 주소에 해당하는 storeIdx 가져오기
-	           storeAddressMap.computeIfAbsent(storeIdx, k -> new ArrayList<>()).add(address);
-	       }
-	       
-	       // 매장 정보와 주소를 결합하여 storeInfoMap에 담기
-	       Map<Integer, Map<String, Object>> storeInfoMap = new HashMap<>();
 
-	       for (UsersDto store : allStoreList) {
-	           int storeIdx = store.getStore_idx();  // 매장 idx
-	           String storeTitle = store.getTitle();  // 매장 이름
+    @Autowired
+    private PopcornMapper popcornMapper;
+    @Autowired
+    private UsersMapper usersMapper;
 
-	           // 해당 storeIdx에 맞는 주소들 가져오기
-	           List<UsersDto> addresses = storeAddressMap.get(storeIdx);
+    @Autowired
+    private BannerMapper bannerMapper;
+    
+    @Autowired
+    private UserService userService;
+    
+    @Autowired
+       private JwtUtil jwtUtil;
+    
+    @Autowired
+    private PdsService pdsService;
+    
+    @RequestMapping("/Wallet")
+       public ModelAndView wallet(HttpServletRequest request) {
+        ModelAndView mv = new ModelAndView();
+        
+        // 유저 번호 가지고 오기
+        Cookie[] cookies = request.getCookies();
+        String jwtToken = null;
+        boolean isKakaoUser = false;  // 카카오 사용자 여부를 판단하는 변수
 
-	           // 매장 이름과 주소가 모두 존재할 때만 storeInfoMap에 추가
-	           if (storeTitle != null && !storeTitle.isEmpty() && addresses != null && !addresses.isEmpty()) {
-	               // 매장 정보와 주소를 하나의 Map으로 결합
-	               Map<String, Object> storeDetails = new HashMap<>();
-	               storeDetails.put("storeTitle", storeTitle);  // 매장 이름
-	               storeDetails.put("addresses", addresses);   // 해당 매장의 주소 리스트
+        if (cookies != null) {
+            for (int i = cookies.length - 1; i >= 0; i--) {
+                Cookie cookie = cookies[i];
+                if ("userJwt".equals(cookie.getName()) || "kakaoAccessToken".equals(cookie.getName())) {
+                    jwtToken = cookie.getValue();
+                    System.out.println("토큰1 : " + jwtToken);
+                    if ("kakaoAccessToken".equals(cookie.getName())) {
+                        isKakaoUser = true;  // kakaoAccessToken 쿠키가 있으면 카카오 로그인 사용자로 판단
+                    }
+                    System.out.println("토큰: " + jwtToken);
+                    break;
+                }
+            }
+        }
 
-	               // storeIdx를 기준으로 storeDetails 추가
-	               storeInfoMap.put(storeIdx, storeDetails);
-	           }
-	       }
+        String username = null;
+        Long kakaouseridx = null;
+        Long useruseridx = null;
+        String useruserid = null;
+        
+        if (jwtToken != null) {
+            username = jwtUtil.extractUsername(jwtToken);
+            System.out.println("사용자 정보1: " + username);
 
-	       System.out.println("나야:" + storeInfoMap);  // storeInfoMap 출력
-	       // 모델에 데이터를 추가하여 뷰로 전달
-	       model.addAttribute("storeInfoMap", storeInfoMap);
+            if (isKakaoUser) {
+                // 카카오 로그인 사용자라면 소셜 ID로 사용자 조회
+                Optional<User> kakaouser = userService.findBySocialId(username);
+                System.out.println("카카오 사용자 정보: " + kakaouser);
+                
+                // 카카오 사용자의 정보를 Model에 추가
+                mv.addObject("user", kakaouser.orElse(null));  
+                // 카카오 회원의 ID 사용
+                useruseridx = kakaouser.get().getUserIdx();
+                useruserid = kakaouser.get().getId();
+                System.out.println("useruserid" + useruserid);
+            } else {
+                // 일반 사용자라면 기존 방식으로 사용자 조회
+                Optional<User> user = userService.getUserByUsername(username);
+                System.out.println("사용자 정보: " + user);
+                
+                mv.addObject("user", user.orElse(null));
+                useruseridx = user.get().getUserIdx();
+                useruserid = user.get().getId();
+            }
+            
+            //로그,지갑,출석 불러오기 
+            List<PopcornVo> loglist = popcornMapper.getLogByUserId(useruserid);
+            if (loglist == null || loglist.isEmpty()) {
+               popcornMapper.newuserLog(useruserid);
+                 loglist = popcornMapper.getLogByUserId(useruserid);
+            }
+            PopcornVo Popcorn = popcornMapper.checkWallet(useruserid);
+            if (Popcorn == null ) {
+               popcornMapper.newuserWallet(useruserid);
+                Popcorn = popcornMapper.checkWallet(useruserid);
+            }
+            
+            PopcornVo attendinfo = popcornMapper.getCheckAttend(useruserid);
+            if (attendinfo == null ) {
+               popcornMapper.newuserAttend(useruserid);
+               attendinfo = popcornMapper.getCheckAttend(useruserid);
+            }
+            
+            System.out.println("출석상태:" + attendinfo);
 
-	       return "users/usersWallet/routeRecommend";
-	   }
+            //날짜로 출석 관리
+            LocalDate today = LocalDate.now();
 
-	   
-	   
+            if ("ON".equals(attendinfo.getAttendance_status()) || "OFF".equals(attendinfo.getAttendance_status())) {
+                String lastAttendDateStr = attendinfo.getAttendance_date();
+
+                if (lastAttendDateStr == null || lastAttendDateStr.isEmpty()) {
+                    System.out.println("출석 기록이 없습니다.");
+                } else {
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    LocalDate lastAttendDate = LocalDate.parse(lastAttendDateStr, formatter);
+
+                    // 하루 마다 초기화  (완료)
+                    if (lastAttendDate != null && lastAttendDate.isBefore(today)) {
+                        popcornMapper.updateAttendanceStatus(useruserid);
+                    }
+
+                    LocalDate startOfThisWeek = today.with(DayOfWeek.MONDAY);
+                    // 마지막 출석 날짜가 이번 주 월요일보다 이전인지 확인
+                    if (lastAttendDate.isBefore(startOfThisWeek)) {
+                        // 초기화 로직 추가
+                        popcornMapper.updateNewWeekAttend(useruserid);
+                        System.out.println("새로운 출석주 시작 (월요일이 아니더라도 초기화됨)");
+                    } else {
+                        if (today.getDayOfWeek() == DayOfWeek.MONDAY && !lastAttendDate.equals(today)) {
+                            popcornMapper.updateNewWeekAttend(useruserid);
+                            attendinfo = popcornMapper.getCheckAttend(useruserid);
+                            System.out.println("새로운 출석주 시작 (새로운 주 갱신 출석 확인용)");
+                        } else {
+                            System.out.println("진행중인 출석주 임/ 새로운 주 월요일 출석함");
+                        }
+                    }
+                }
+            }
+
+            System.out.println("담긴거:" + loglist);
+            List<Integer> points = Arrays.asList(20, 30, 40, 50, 60, 70, 100);
+            mv.addObject("useruserid", useruserid);
+            mv.addObject("points", points);
+            mv.addObject("Popcorn", Popcorn);
+            mv.addObject("Loglist", loglist);
+            mv.addObject("attendstat", attendinfo);
+        } else {
+            mv.addObject("error", "JWT 토큰이 없습니다.");
+        }
+
+        if (useruseridx == null) {
+            mv.addObject("needLoginMessage", "이 기능을 사용하기 위해선 로그인이 필요합니다.");
+            mv.setViewName("/mobile/Wallet/wallet");
+        } else {
+            mv.setViewName("/mobile/Wallet/wallet");
+        }
+
+        return mv;
+    }
+
+       
+       
+       @RequestMapping("/RouteRecommend")
+       public String routeRecommend(Model model) {
+           //모든 지역 가져오기
+          List<UsersDto> allRegionList = usersMapper.getallRegionlist();
+          System.out.println("지역이름:"+allRegionList);
+          // 모든 매장 리스트 가져오기
+
+          List<UsersDto> allStoreList = usersMapper.getallStorelist();
+           //System.out.println("All Store List: " + allStoreList);  // 전체 매장 리스트 출력
+
+           Map<Integer, List<UsersDto>> storeAddressMap = new HashMap<>();
+           
+           // 모든 주소 리스트 가져오기
+           List<UsersDto> allAddresses = usersMapper.getAddressesByStoreIdx();
+           //System.out.println("여기:" + allAddresses);
+           
+           // 주소를 storeIdx 기준으로 그룹화
+           for (UsersDto address : allAddresses) {
+               int storeIdx = address.getStore_idx();  // 주소에 해당하는 storeIdx 가져오기
+               storeAddressMap.computeIfAbsent(storeIdx, k -> new ArrayList<>()).add(address);
+           }
+           
+           // 매장 정보와 주소를 결합하여 storeInfoMap에 담기
+           Map<Integer, Map<String, Object>> storeInfoMap = new HashMap<>();
+
+           for (UsersDto store : allStoreList) {
+               int storeIdx = store.getStore_idx();  // 매장 idx
+               String storeTitle = store.getTitle();  // 매장 이름
+
+               // 해당 storeIdx에 맞는 주소들 가져오기
+               List<UsersDto> addresses = storeAddressMap.get(storeIdx);
+
+               // 매장 이름과 주소가 모두 존재할 때만 storeInfoMap에 추가
+               if (storeTitle != null && !storeTitle.isEmpty() && addresses != null && !addresses.isEmpty()) {
+                   // 매장 정보와 주소를 하나의 Map으로 결합
+                   Map<String, Object> storeDetails = new HashMap<>();
+                   storeDetails.put("storeTitle", storeTitle);  // 매장 이름
+                   storeDetails.put("addresses", addresses);   // 해당 매장의 주소 리스트
+
+                   // storeIdx를 기준으로 storeDetails 추가
+                   storeInfoMap.put(storeIdx, storeDetails);
+               }
+           }
+
+           //System.out.println("나야:" + storeInfoMap);  // storeInfoMap 출력
+           // 모델에 데이터를 추가하여 뷰로 전달
+           model.addAttribute("storeInfoMap", storeInfoMap);
+           model.addAttribute("allRegionList", allRegionList);
+           return "mobile/Wallet/routeRecommend";
+       }
+
+
+       // 출첵
+     @PostMapping("/Daily-check")
+     @ResponseBody
+     public String handleDailyCheck(String userId,
+                                  @RequestParam("earnedPoints") int earnedPoints,
+                                  HttpSession session) {
+        PopcornVo attendinfo = popcornMapper.getCheckAttend(userId);
+         String alreadyCheckedIn = attendinfo.getAttendance_status();
+         
+         
+         if ("ON".equals(alreadyCheckedIn)) {
+            System.out.println("중복출석방지확인");
+             return "이미 오늘 출석했습니다."; 
+         } else {
+             boolean successAttend = popcornMapper.AttendToUser(userId);
+             boolean successEarned = popcornMapper.addPointsToUser(userId,earnedPoints);
+             boolean successAddLog = popcornMapper.addPopcornLog(userId,earnedPoints);
+         
+             if (successAttend && successEarned && successAddLog) {
+                 System.out.println("출첵 되고 포인트주고 로그까지:" + earnedPoints);
+                 return "출석 체크가 완료되었습니다!";
+             } else {
+                 System.out.println(" 실패 ");
+                 return "실패임";
+             }
+         }
+     }
+     
+
+   
 	   
 	   // 메인 화면
 	   // http://localhost:9090/Users/Main
@@ -524,220 +697,247 @@ public class MobileUsersController {
 
 	   
 	   
-	   // 리뷰 상세 페이지 데이터(AJAX)
-	   @RequestMapping("/ReviewDetail")
-	   @ResponseBody
-	   public Map<String,Object> reviewdetail(
-	         @RequestParam(required = false,value = "storeidx") int storeidx,
-	         @RequestParam(required = false,value = "useridx") int useridx,
-	         @RequestParam(required = false,value = "review_idx") int review_idx,
-	         @RequestParam(required = false,value = "loginidx") int loginidx,
-	         Model model,HttpServletRequest request){
-	      System.out.println("storeidx : " + storeidx);
-	      System.out.println("useridx : " + useridx);
-	      System.out.println("review_idx : " + review_idx);
-	      System.out.println("loginidx : " + loginidx);
+	   
 	      
-	      //리뷰 상세 페이지
-	      UsersDto ReviewDetail = usersMapper.getReviewDetail(storeidx, useridx, review_idx);
-	      
-	      // 이미지
-	      List<UsersDto> ReviewImgList = usersMapper.getReviewImgList(storeidx, useridx, review_idx);
-	      System.out.println("PopupImgList : " + ReviewImgList);
+	      // 리뷰 상세 페이지 데이터(AJAX)
+	      @RequestMapping("/ReviewDetail")
+	      @ResponseBody
+	      public Map<String,Object> reviewdetail(
+	            @RequestParam(required = false,value = "storeidx") int storeidx,
+	            @RequestParam(required = false,value = "useridx") int useridx,
+	            @RequestParam(required = false,value = "review_idx") int review_idx,
+	            @RequestParam(required = false,value = "loginidx") int loginidx,
+	            Model model,HttpServletRequest request){
+	         System.out.println("storeidx : " + storeidx);
+	         System.out.println("useridx : " + useridx);
+	         System.out.println("review_idx : " + review_idx);
+	         System.out.println("loginidx : " + loginidx);
+	         
+	         //리뷰 상세 페이지
+	         UsersDto ReviewDetail = usersMapper.getReviewDetail(storeidx, useridx, review_idx);
+	         
+	         // 이미지
+	         List<UsersDto> ReviewImgList = usersMapper.getReviewImgList(storeidx, useridx, review_idx);
+	         System.out.println("PopupImgList : " + ReviewImgList);
 
-	      List<String> PopImgPath = new ArrayList<>();
-	      
-	      for(UsersDto dto : ReviewImgList) {
-	         String imagePath = dto.getImage_path().replace("\\", "/");
-	         System.out.println("이미지 패스 imagePath : " + imagePath);
-	         PopImgPath.add(imagePath);
+	         List<String> PopImgPath = new ArrayList<>();
+	         
+	         for(UsersDto dto : ReviewImgList) {
+	            String imagePath = dto.getImage_path().replace("\\", "/");
+	            System.out.println("이미지 패스 imagePath : " + imagePath);
+	            PopImgPath.add(imagePath);
+	         }
+	         
+	         System.out.println("리뷰 디테일 ReviewDetail" + ReviewDetail);
+	         // 리뷰 조회수 조회
+	         UsersDto selectReviewHit = usersMapper.getselectReviewHit(storeidx,useridx,review_idx,loginidx);
+	         if (selectReviewHit == null) {
+	               int insertReviewHit = usersMapper.insertReviewHit(storeidx, useridx,review_idx,loginidx);
+	               System.out.println("insertStoreHit" + insertReviewHit);
+	           }else {
+	              
+	           }
+	         
+	         
+	         HashMap<String, Object> response = new HashMap<>();
+	         response.put("ReviewDetail", ReviewDetail);
+	         return response;
 	      }
 	      
-	      System.out.println("리뷰 디테일 ReviewDetail" + ReviewDetail);
-	      // 리뷰 조회수 조회
-	      UsersDto selectReviewHit = usersMapper.getselectReviewHit(storeidx,useridx,review_idx,loginidx);
-	      if (selectReviewHit == null) {
-	            int insertReviewHit = usersMapper.insertReviewHit(storeidx, useridx,review_idx,loginidx);
-	            System.out.println("insertStoreHit" + insertReviewHit);
-	        }else {
-	           
-	        }
-	      
-	      
-	      HashMap<String, Object> response = new HashMap<>();
-	      response.put("ReviewDetail", ReviewDetail);
-	      return response;
-	   }
-	   
-	   // 리뷰 작성 폼 페이지
-	   @RequestMapping("/Writeform")
-	   public ModelAndView writeform(@RequestParam(required = false,value = "store_idx") int storeidx,
-	         UsersDto usersdto,
-	         Model model,HttpServletRequest request) {
-	      System.out.println("작성 : storeidx : " + storeidx);
-	      System.out.println("작성 : usersdto : " + usersdto);
-	      
-	      // 유저 번호 가지고 오기
-	       Cookie[] cookies = request.getCookies();
-	           String jwtToken = null;
-	           boolean isKakaoUser = false;  // 카카오 사용자 여부를 판단하는 변수
+	      // 리뷰 작성 폼 페이지
+	      @RequestMapping("/Writeform")
+	      public ModelAndView writeform(@RequestParam(required = false,value = "store_idx") int storeidx,
+	            UsersDto usersdto,
+	            Model model,HttpServletRequest request) {
+	         System.out.println("작성 : storeidx : " + storeidx);
+	         System.out.println("작성 : usersdto : " + usersdto);
+	         
+	         // 유저 번호 가지고 오기
+	          Cookie[] cookies = request.getCookies();
+	              String jwtToken = null;
+	              boolean isKakaoUser = false;  // 카카오 사용자 여부를 판단하는 변수
 
-	           if (cookies != null) {
-	               for (int i = cookies.length - 1; i >= 0; i--) {
-	                   Cookie cookie = cookies[i];
-	                   if ("userJwt".equals(cookie.getName()) || "kakaoAccessToken".equals(cookie.getName())) {
-	                       jwtToken = cookie.getValue();
-	                       System.out.println("토큰1 : " +jwtToken );
-	                       if ("kakaoAccessToken".equals(cookie.getName())) {
-	                           isKakaoUser = true;  // kakaoAccessToken 쿠키가 있으면 카카오 로그인 사용자로 판단
-	                       }
-	                       System.out.println("토큰: " + jwtToken);
-	                       break; 
-	                   }
-	               }
-	           }
-	           String username = null;      //일반 유저 name 
-	           Long useruseridx = null;     //일반유저 idx
-	           
-	           if (jwtToken != null) {
-	               username = jwtUtil.extractUsername(jwtToken);
-	               System.out.println("사용자 정보1: " + username);
+	              if (cookies != null) {
+	                  for (int i = cookies.length - 1; i >= 0; i--) {
+	                      Cookie cookie = cookies[i];
+	                      if ("userJwt".equals(cookie.getName()) || "kakaoAccessToken".equals(cookie.getName())) {
+	                          jwtToken = cookie.getValue();
+	                          System.out.println("토큰1 : " +jwtToken );
+	                          if ("kakaoAccessToken".equals(cookie.getName())) {
+	                              isKakaoUser = true;  // kakaoAccessToken 쿠키가 있으면 카카오 로그인 사용자로 판단
+	                          }
+	                          System.out.println("토큰: " + jwtToken);
+	                          break; 
+	                      }
+	                  }
+	              }
+	              String username = null;      //일반 유저 name 
+	              Long useruseridx = null;     //일반유저 idx
+	              
+	              if (jwtToken != null) {
+	                  username = jwtUtil.extractUsername(jwtToken);
+	                  System.out.println("사용자 정보1: " + username);
 
-	               if (isKakaoUser) {
-	                   // 카카오 로그인 사용자라면 소셜 ID로 사용자 조회
-	                   Optional<User> kakaouser = userService.findBySocialId(username);  // 카카오 소셜 ID로 사용자 조회
-	                   System.out.println("카카오 사용자 정보: " + kakaouser);
-	                   model.addAttribute("user", kakaouser.orElse(null));  // 카카오 사용자가 없을 경우 null 반환
-	                   
-	                   
-	                 
-	                 // 카카오 회원의 ID 사용
-	                   username = kakaouser.get().getId();
-	                   System.out.println("useridx" + useruseridx);
-	                   useruseridx = kakaouser.get().getUserIdx();
-	                   
-	               } else {
-	                   // 일반 사용자라면 기존 방식으로 사용자 조회
-	                   Optional<User> user = userService.getUserByUsername(username);
-	                   System.out.println("사용자 정보: " + user);
-	                   model.addAttribute("user", user.orElse(null));  // 사용자가 없을 경우 null 반환
-	                   
-	                   
-	                   useruseridx = user.get().getUserIdx();
-	                   System.out.println("작성폼 useruseridx : " + useruseridx);
-	               }
-	           } else {
-	               model.addAttribute("error", "JWT 토큰이 없습니다.");
-	           }
+	                  if (isKakaoUser) {
+	                      // 카카오 로그인 사용자라면 소셜 ID로 사용자 조회
+	                      Optional<User> kakaouser = userService.findBySocialId(username);  // 카카오 소셜 ID로 사용자 조회
+	                      System.out.println("카카오 사용자 정보: " + kakaouser);
+	                      model.addAttribute("user", kakaouser.orElse(null));  // 카카오 사용자가 없을 경우 null 반환
+	                      
+	                      
+	                    
+	                    // 카카오 회원의 ID 사용
+	                      username = kakaouser.get().getId();
+	                      System.out.println("useridx" + useruseridx);
+	                      useruseridx = kakaouser.get().getUserIdx();
+	                      
+	                  } else {
+	                      // 일반 사용자라면 기존 방식으로 사용자 조회
+	                      Optional<User> user = userService.getUserByUsername(username);
+	                      System.out.println("사용자 정보: " + user);
+	                      model.addAttribute("user", user.orElse(null));  // 사용자가 없을 경우 null 반환
+	                      
+	                      
+	                      useruseridx = user.get().getUserIdx();
+	                      System.out.println("작성폼 useruseridx : " + useruseridx);
+	                  }
+	              } else {
+	                  model.addAttribute("error", "JWT 토큰이 없습니다.");
+	              }
 
-	      
-	      // store_idx로 스토어 디테일 데이터 불러오기
-	      UsersDto storedetail = usersMapper.getStoredReviewtail(storeidx);
-	      System.out.println("storedetail" + storedetail);
+	         
+	         // store_idx로 스토어 디테일 데이터 불러오기
+	         UsersDto storedetail = usersMapper.getStoredReviewtail(storeidx);
+	         System.out.println("storedetail" + storedetail);
 
-	      // 스토어 카테고리
-	      List<UsersDto> storetag = usersMapper.getStoreReviewtag(storeidx);
-	      System.out.println("storetag : " + storetag);
+	         // 스토어 카테고리
+	         List<UsersDto> storetag = usersMapper.getStoreReviewtag(storeidx);
+	         System.out.println("storetag : " + storetag);
+	         
+	         // 전체 리뷰 & 조회수
+	         UsersDto totalcount = usersMapper.getotalWriteCount(storeidx);
+	         System.out.println("totalcount : " + totalcount);
+	         
+	         
+	         ModelAndView mv = new ModelAndView();
+	         mv.addObject("storedetail", storedetail);
+	         mv.addObject("storetag", storetag);
+	         mv.addObject("totalcount", totalcount);
+	         mv.setViewName("mobile/users/writeform");
+	         return mv;
+	      }
 	      
-	      // 전체 리뷰 & 조회수
-	      UsersDto totalcount = usersMapper.getotalWriteCount(storeidx);
-	      System.out.println("totalcount : " + totalcount);
+	      // 리뷰 작성 보내기
+	      @RequestMapping("/Write")
+	      public ModelAndView write(UsersDto usersdto,
+	            Model model,HttpServletRequest request,
+	            @RequestParam(value="upfile",required = false) MultipartFile[] uploadfiles){
+	         System.out.println("작성 받은 usersdto" + usersdto);
+	         
+	         //리뷰 작성
+	         int insertReview = usersMapper.insertReview(usersdto);
+	         HashMap<String, Object> map = new HashMap<>();
+	         
+	         String getID = usersMapper.getID(usersdto);
+	         popcornMapper.giveReviewPopcorn(getID);
+	         popcornMapper.ReviewPopcornLog(getID);
+	         
+	         pdsService.setReviewWrite(map,uploadfiles);
+	         
+	         
+	         
+	         
+	         
+	         System.out.println("file:"+uploadfiles);
+	         ModelAndView mv = new ModelAndView();
+	         mv.addObject("insertReview", insertReview);
+	         mv.setViewName("users/profile/myreview");
+	         return mv;
+	      }
+	      
+	   // 리뷰 수정 폼 페이지
+	      @RequestMapping("/Updateform")
+	      public ModelAndView updateform(@RequestParam(required = false,value = "store_idx") int storeidx,
+	            @RequestParam(required = false,value = "user_idx") int useridx,
+	            @RequestParam(required = false,value = "review_idx") int review_idx) {
+	         System.out.println("수정 : storeidx : " + storeidx);
+	         System.out.println("수정 : useridx : " + useridx);
+	         System.out.println("수정 : review_idx : " + review_idx);
+	         
+	         
+	         // store_idx로 스토어 디테일 데이터 불러오기
+	         UsersDto storedetail = usersMapper.getStoredReviewtail(storeidx);
+	         System.out.println("storedetail" + storedetail);
+	         
+	         // 스토어 카테고리
+	         List<UsersDto> storetag = usersMapper.getStoreReviewtag(storeidx);
+	         System.out.println("storetag : " + storetag);
+	         
+	         // 전체 리뷰 & 조회수
+	         UsersDto totalcount = usersMapper.getotalWriteCount(storeidx);
+	         System.out.println("totalcount : " + totalcount);
+	         
+	         // 리뷰 상세 페이지
+	         UsersDto ReviewDetail = usersMapper.getReviewDetail(storeidx,useridx,review_idx); 
+	         System.out.println("ReviewDetail : " + ReviewDetail);
+	         
+	         // 리뷰 이미지
+	         List <ImageReivewDTO> imageList = usersMapper.getImageReview(review_idx);
+	         
+	         ModelAndView mv = new ModelAndView();
+	         mv.addObject("storedetail", storedetail);
+	         mv.addObject("storetag", storetag);
+	         mv.addObject("totalcount", totalcount);
+	         mv.addObject("ReviewDetail", ReviewDetail);
+	         mv.addObject("review_idx", review_idx);
+	         mv.addObject("useridx", useridx);
+	         mv.addObject("imageList", imageList);
+	         mv.setViewName("mobile/users/updateform");
+	         return mv;
+	      }
+	      
+	      //리뷰 수정 페이지
+	      @RequestMapping("/Update")
+	      public ModelAndView update(UsersDto usersdto, @RequestParam(value="upfile",required = false) MultipartFile[] uploadfiles){
+	         System.out.println("수정 받은 usersdto:" + usersdto);
+	         
+	         HashMap<String, Object> map = new HashMap<>();
+	         map.put("review_idx", usersdto.getReview_idx());
+	         ImageReivewDTO idto = usersMapper.getImageReviewus(usersdto.getReview_idx());
+	         map.put("store_idx", idto.getStore_idx());
+	         map.put("user_idx", idto.getUser_idx());
+	         
+	         pdsService.updateReviewWrite(map,uploadfiles);
+	         // 리뷰 수정
+	         int updateReview = usersMapper.updateReview(usersdto);
+	         
+	         
+	         ModelAndView mv = new ModelAndView();
+	         mv.addObject("updateReview", updateReview);
+	         mv.setViewName("users/profile/myreview");
+	         return mv;
+	      }
 	      
 	      
-	      ModelAndView mv = new ModelAndView();
-	      mv.addObject("storedetail", storedetail);
-	      mv.addObject("storetag", storetag);
-	      mv.addObject("totalcount", totalcount);
-	      mv.setViewName("mobile/users/writeform");
-	      return mv;
-	   }
-	   
-	   // 리뷰 작성 보내기
-	   @RequestMapping("/Write")
-	   public ModelAndView write(UsersDto usersdto,
-	         Model model,HttpServletRequest request){
-	      System.out.println("작성 받은 usersdto" + usersdto);
+	      // 리뷰 삭제 페이지
+	      @RequestMapping("/Delete")
+	      public ModelAndView delete(
+	            @RequestParam(required = false,value = "store_idx") int storeidx,
+	            @RequestParam(required = false,value = "user_idx") int useridx,
+	            @RequestParam(required = false,value = "review_idx") int review_idx
+	            ) {
+	         
+	         System.out.println("삭제 : storeidx : " + storeidx);
+	         System.out.println("삭제 : useridx : " + useridx);
+	         System.out.println("삭제 : review_idx : " + review_idx);
+	         
+	         int deleteReview = usersMapper.deleteReview(storeidx,useridx,review_idx);
+	         
+	         ModelAndView mv = new ModelAndView();
+	         mv.setViewName("users/profile/myreview");
+	         return mv;
+	      }
 	      
-	      //리뷰 작성
-	      int insertReview = usersMapper.insertReview(usersdto);
-	      
-	      ModelAndView mv = new ModelAndView();
-	      mv.addObject("insertReview", insertReview);
-	      mv.setViewName("users/profile/myreview");
-	      return mv;
-	   }
-	   
-	// 리뷰 수정 폼 페이지
-	   @RequestMapping("/Updateform")
-	   public ModelAndView updateform(@RequestParam(required = false,value = "store_idx") int storeidx,
-	         @RequestParam(required = false,value = "user_idx") int useridx,
-	         @RequestParam(required = false,value = "review_idx") int review_idx) {
-	      System.out.println("수정 : storeidx : " + storeidx);
-	      System.out.println("수정 : useridx : " + useridx);
-	      System.out.println("수정 : review_idx : " + review_idx);
-	      
-	      
-	      // store_idx로 스토어 디테일 데이터 불러오기
-	      UsersDto storedetail = usersMapper.getStoredReviewtail(storeidx);
-	      System.out.println("storedetail" + storedetail);
-	      
-	      // 스토어 카테고리
-	      List<UsersDto> storetag = usersMapper.getStoreReviewtag(storeidx);
-	      System.out.println("storetag : " + storetag);
-	      
-	      // 전체 리뷰 & 조회수
-	      UsersDto totalcount = usersMapper.getotalWriteCount(storeidx);
-	      System.out.println("totalcount : " + totalcount);
-	      
-	      // 리뷰 상세 페이지
-	      UsersDto ReviewDetail = usersMapper.getReviewDetail(storeidx,useridx,review_idx); 
-	      System.out.println("ReviewDetail : " + ReviewDetail);
-	      
-	      ModelAndView mv = new ModelAndView();
-	      mv.addObject("storedetail", storedetail);
-	      mv.addObject("storetag", storetag);
-	      mv.addObject("totalcount", totalcount);
-	      mv.addObject("ReviewDetail", ReviewDetail);
-	      mv.addObject("review_idx", review_idx);
-	      mv.addObject("useridx", useridx);
-	      mv.setViewName("mobile/users/updateform");
-	      return mv;
-	   }
-	   
-	   //리뷰 수정 페이지
-	   @RequestMapping("/Update")
-	   public ModelAndView update(UsersDto usersdto){
-	      System.out.println("수정 받은 usersdto:" + usersdto);
-	      
-	      // 리뷰 수정
-	      int updateReview = usersMapper.updateReview(usersdto);
-	      
-	      ModelAndView mv = new ModelAndView();
-	      mv.addObject("updateReview", updateReview);
-	      mv.setViewName("users/profile/myreview");
-	      return mv;
-	   }
-	   
-	   
-	   // 리뷰 삭제 페이지
-	   @RequestMapping("/Delete")
-	   public ModelAndView delete(
-	         @RequestParam(required = false,value = "store_idx") int storeidx,
-	         @RequestParam(required = false,value = "user_idx") int useridx,
-	         @RequestParam(required = false,value = "review_idx") int review_idx
-	         ) {
-	      
-	      System.out.println("삭제 : storeidx : " + storeidx);
-	      System.out.println("삭제 : useridx : " + useridx);
-	      System.out.println("삭제 : review_idx : " + review_idx);
-	      
-	      int deleteReview = usersMapper.deleteReview(storeidx,useridx,review_idx);
-	      
-	      ModelAndView mv = new ModelAndView();
-	      mv.setViewName("users/profile/myreview");
-	      return mv;
-	   }
-	   
 	   
 	   
 }

@@ -37,7 +37,15 @@ public interface PopcornMapper {
 
 	void createPopcornLog(User user);
 
+   void newuserLog(String useruserid);
 
+   void newuserWallet(String useruserid);
+
+   void newuserAttend(String useruserid);
+
+   void giveReviewPopcorn(String getID);
+
+   void ReviewPopcornLog(String getID);
 
 
 

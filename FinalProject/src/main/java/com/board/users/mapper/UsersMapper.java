@@ -172,6 +172,9 @@ public interface UsersMapper {
 
    ImageReivewDTO getImageReviewus(int review_idx);
 
-
+   //Wallet 코스추천
+   List<UsersDto> getallRegionlist();
+   //user idx 로 ID 가져오기
+   String getID(UsersDto usersdto);
 
 }

@@ -19,12 +19,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
-public class GeocodingController {
+public class MobileGeocodingController {
 
     private  String clientId = "";  // 네이버 클라이언트ID
     private  String clientSecret = "";  // 네이버 클라이언트Secret 
 
-    @RequestMapping("/GetCoordinates")
+    @RequestMapping("/M.GetCoordinates")
     public String getCoordinates(@RequestParam("address") List<String> addresses, 
                                   @RequestParam("name") List<String> names, Model model) {
         
@@ -90,7 +90,7 @@ public class GeocodingController {
         // 모델에 위치 정보를 추가하여 JSP로 전달
         model.addAttribute("locations", locations);
         System.out.println("위치정보:"+locations);
-        return "users/usersWallet/getCoordinates"; // 위치 정보를 JSP로 전달
+        return "mobile/Wallet/getCoordinates"; // 위치 정보를 JSP로 전달
     }
 
     // Haversine 공식을 사용한 두 지점 간 거리 계산

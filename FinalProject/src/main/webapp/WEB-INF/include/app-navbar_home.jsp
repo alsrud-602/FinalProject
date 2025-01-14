@@ -10,6 +10,7 @@
         bottom: 0;
         left: 0;
         width: 100%;
+        height: 330px;
         z-index:  10000;
         box-sizing: border-box; 
         overflow-y: auto; 
@@ -42,12 +43,12 @@
 .bottom-nav-item img {
     display: block;
     margin-bottom: 5px; /* 이미지와 텍스트 간 간격을 조정 */
-    width: 24px; /* 이미지 크기 조정 */
+    width: 90PX; /* 이미지 크기 조정 */
     height: auto;
 }
 
 .bottom-nav-item span {
-     font-size: 12px; /* 텍스트 크기 */
+    font-size: 40px; /* 텍스트 크기 */
     color: white; /* 텍스트 색상 */
     margin-top: 4px; /* 텍스트와 이미지 간의 간격 */
     display: block;
@@ -78,7 +79,7 @@
     </div>
     <div class="bottom-nav-item">
         <a href="/Mobile/Users/Wallet" class="nav-link">
-            <img class="_6-10" src="/images/header/popcornfactory.png" style="width:18px;"/>
+            <img class="_6-10" src="/images/header/popcornfactory.png" style="width:75px; height: 105PX;"/>
             <span>팝콘팩토리</span>
         </a>
     </div>
@@ -89,7 +90,7 @@
         </a>
     </div>
     <div class="bottom-nav-item">
-        <a href="/Mobile/Reservation/User/List" class="nav-link">
+        <a href="/Mobile/Reservation/User/List"" class="nav-link">
             <img class="_6-11" src="/images/icon/insert.png" />
             <span>예약 내역</span>
         </a>
