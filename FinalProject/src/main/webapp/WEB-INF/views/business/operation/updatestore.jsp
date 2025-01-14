@@ -386,6 +386,7 @@ color:red;
     </main>
     
    </form> 
+		
 <script>
   $('.deleteImage').on('click',function(event){
 	
@@ -635,10 +636,8 @@ function validateInputs(inputs) {
 
 
 
-
    
-     
-     
+       
      
 
     </script>

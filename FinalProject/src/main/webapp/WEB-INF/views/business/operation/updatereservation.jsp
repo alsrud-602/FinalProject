@@ -167,6 +167,8 @@ color:red;
  <input type="hidden" name="store_idx" value="${store.store_idx}">      
  <input type="hidden" name="company_idx" value="${store.company_idx}">      
  <input type="hidden" name="operation_idx" value="${store.operation_idx}">      
+    
+    <div class="container">
     <main>
 
 
@@ -314,8 +316,9 @@ color:red;
   
 	     
     </main>
-    
+    </div>
    </form> 
+   	 
 <script>
   
 const linkElement = document.querySelector('input[name="link"]');

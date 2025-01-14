@@ -54,7 +54,7 @@ color:#fff;
 }
 }
 .bookmark-on {
-background-color: #006534;
+background-color: #FF8400;
 
 }
 main {
@@ -122,10 +122,7 @@ main {
           <div class="tag_option">${tag.tag_name}</div> 
         </c:forEach>
       </div>
-      <div class="title_click" >
-       <div class="bookmark"><img src="/images/icon/star.png"><p>찜하기</p></div>&nbsp;
-       <div class="share" onclick="clipboard()" ><img src="/images/icon/share1.png"><p>공유하기</p></div>&nbsp;
-      </div>
+
       </div>
       
       <div class="date_line">
@@ -607,7 +604,7 @@ if (Reservationstatus === '현장문의') {
     document.getElementById('reserveBtn').disabled = true; 
 } else if (Reservationstatus === '현장대기예약') {
     document.getElementById('reserveBtn').textContent = '현장대기예약';
-    document.getElementById('reserveBtn').disabled = true; 
+  
 }else {
    
    const openDateOrgin = '${StoreReservation.open_date}';
@@ -670,12 +667,17 @@ document.getElementById('reserveBtn').addEventListener('click', function() {
    
    console.log('status : ' + Reservationstatus)
    if(Reservationstatus == '사전예약'){
-    document.getElementById('modalBg').style.display = 'block';
-    
+    //document.getElementById('modalBg').style.display = 'block';   
+	 window.location.href = `/Mobile/Reservation/Advance?store_idx=\${store_idx}&user_idx=\${user_idx};`
+   }else if(Reservationstatus === '현장대기예약') {
+	 window.location.href = `/Mobile/Reservation/OnSite?store_idx=\${store_idx}&user_idx=\${user_idx};`
    }else {
+	   
     alert('예약기능을 사용할 수 없는 팝업니다.')   
-      
+	   
    }
+   
+   
     
 });
 
@@ -874,11 +876,8 @@ function LikeConfig(element){
       })
       .catch(error => {
           LikeUp(); 
-      });            
-   
-   
-   
-   
+      });                
+  
 }
 
 //2. 좋아요가 없다면  
@@ -1123,7 +1122,7 @@ function bookConfig(){
       });                  
 }
 
-const bookmarkElement = document.querySelector('.bookmark');
+const bookmarkElement = document.querySelector('.mobile_bookmark');
 function BookmarkUp(){
        
 const content = {
@@ -1151,6 +1150,8 @@ fetch(`/Popup/Bookmark/Write`, {
         console.log('추가 처리 결과:', data);
         const result = data
         bookmarkElement.classList.add('bookmark-on');        
+        bookmarkElement.classList.remove('bookmark-off');      
+       
     }
 })
 .catch(error => {
@@ -1180,17 +1181,21 @@ function BookmarkDown(data) {
    })
    .then(data => {
        console.log('삭제 상태 data:', data);
-       bookmarkElement.classList.remove('bookmark-on');      
+       bookmarkElement.classList.remove('bookmark-on'); 
+       bookmarkElement.classList.add('bookmark-off')
    })
    .catch(error => {
        console.error('리뷰좋아요 내역이 없습니다', error);
    });            
 }
 function bookmarkconfigg(){   
+	
    const content = {
           user_idx: user_idx, 
           store_idx: store_idx 
       };
+	console.log('user_idx : ' + user_idx);
+	console.log('store_idx : ' + store_idx);
       fetch(`/Popup/Bookmark/Config`, {
           method: 'POST', // POST 요청
           headers: {
@@ -1207,11 +1212,14 @@ function bookmarkconfigg(){
       .then(data => {
           console.log('BOOKMARK_IDX:', data);
           if (data) {
-              bookmarkElement.classList.add('bookmark-on');    
+        
+              bookmarkElement.classList.add('bookmark-on');
+               
           }
       })
       .catch(error => {
-         
+    	
+    	  bookmarkElement.classList.add('bookmark-off')
       });                  
 }
 
