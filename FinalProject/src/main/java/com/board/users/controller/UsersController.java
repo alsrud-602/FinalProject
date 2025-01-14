@@ -339,204 +339,205 @@ public class UsersController {
 	
 	
 	// 상세정보 페이지 
-	   @RequestMapping("Info")
-	   public ModelAndView info(UsersDto usersdto,
-	         Model model,HttpServletRequest request,
-	         @RequestParam(defaultValue = "1") int page,
-	         @RequestParam(defaultValue = "9") int size
-	         ){
-	      ModelAndView mv = new ModelAndView();
-	      
-	      // 유저 번호 가지고 오기
-	             Cookie[] cookies = request.getCookies();
-	                 String jwtToken = null;
-	                 boolean isKakaoUser = false;  // 카카오 사용자 여부를 판단하는 변수
+    @RequestMapping("Info")
+    public ModelAndView info(UsersDto usersdto,
+          Model model,HttpServletRequest request,
+          @RequestParam(defaultValue = "1") int page,
+          @RequestParam(defaultValue = "9") int size
+          ){
+       ModelAndView mv = new ModelAndView();
+       
+       // 유저 번호 가지고 오기
+              Cookie[] cookies = request.getCookies();
+                  String jwtToken = null;
+                  boolean isKakaoUser = false;  // 카카오 사용자 여부를 판단하는 변수
 
-	                 if (cookies != null) {
-	                     for (int i = cookies.length - 1; i >= 0; i--) {
-	                         Cookie cookie = cookies[i];
-	                         if ("userJwt".equals(cookie.getName()) || "kakaoAccessToken".equals(cookie.getName())) {
-	                             jwtToken = cookie.getValue();
-	                             System.out.println("토큰1 : " +jwtToken );
-	                             if ("kakaoAccessToken".equals(cookie.getName())) {
-	                                 isKakaoUser = true;  // kakaoAccessToken 쿠키가 있으면 카카오 로그인 사용자로 판단
-	                             }
-	                             System.out.println("토큰: " + jwtToken);
-	                             break; 
-	                         }
-	                     }
-	                 }
-	                 String username = null; // **여기에서 username 변수를 미리 선언**
-	                 Long kakaouseridx = null;
-	                 Long useruseridx = null;
-	                 
-	                 if (jwtToken != null) {
-	                     username = jwtUtil.extractUsername(jwtToken);
-	                     System.out.println("사용자 정보1: " + username);
+                  if (cookies != null) {
+                      for (int i = cookies.length - 1; i >= 0; i--) {
+                          Cookie cookie = cookies[i];
+                          if ("userJwt".equals(cookie.getName()) || "kakaoAccessToken".equals(cookie.getName())) {
+                              jwtToken = cookie.getValue();
+                              System.out.println("토큰1 : " +jwtToken );
+                              if ("kakaoAccessToken".equals(cookie.getName())) {
+                                  isKakaoUser = true;  // kakaoAccessToken 쿠키가 있으면 카카오 로그인 사용자로 판단
+                              }
+                              System.out.println("토큰: " + jwtToken);
+                              break; 
+                          }
+                      }
+                  }
+                  String username = null; // **여기에서 username 변수를 미리 선언**
+                  Long kakaouseridx = null;
+                  Long useruseridx = null;
+                  
+                  if (jwtToken != null) {
+                      username = jwtUtil.extractUsername(jwtToken);
+                      System.out.println("사용자 정보1: " + username);
 
-	                     if(username!=null) {
-	                     if (isKakaoUser) {
-	                         // 카카오 로그인 사용자라면 소셜 ID로 사용자 조회
-	                         Optional<User> kakaouser = userService.findBySocialId(username);  // 카카오 소셜 ID로 사용자 조회
-	                         System.out.println("카카오 사용자 정보: " + kakaouser);
-	                         model.addAttribute("user", kakaouser.orElse(null));  // 카카오 사용자가 없을 경우 null 반환
-	                         
-	                         // 유저 아이디당 한개씩 조회수 증가
-	                        int store_idx = usersdto.getStore_idx();
-	                       System.out.println("스토어 번호 : " + store_idx);
-	                       
-	                       // 카카오 회원의 ID 사용
-	                         username = kakaouser.get().getId();
-	                         useruseridx = kakaouser.get().getUserIdx();
-	                         System.out.println("useridx" + useruseridx);
-	                         
-	                         List<UsersDto> selectStoreHit = usersMapper.getSelectStoreHit(store_idx, username);
-	                         System.out.println("selectStoreHit" + selectStoreHit);
-	                         if (selectStoreHit.size() == 0) {
-	                             int insertStoreHit = usersMapper.insertStoreHit(store_idx, username);
-	                             System.out.println("insertStoreHit" + insertStoreHit);
-	                         }
-	                     } else {
-	                         // 일반 사용자라면 기존 방식으로 사용자 조회
-	                         Optional<User> user = userService.getUserByUsername(username);
-	                         System.out.println("사용자 정보: " + user);
-	                         model.addAttribute("user", user.orElse(null));  // 사용자가 없을 경우 null 반환
-	                         
-	                         // 유저 아이디당 한개씩 조회수 증가
-	                         int store_idx = usersdto.getStore_idx();
-	                         System.out.println("스토어 번호 : " + store_idx);
-	                         
-	                         useruseridx = user.get().getUserIdx();
-	                         
-	                         System.out.println("useruseridx : " + useruseridx);
-	                         
-	                         
-	                         // 일반 회원의 username 사용
-	                         List<UsersDto> selectStoreHit = usersMapper.getSelectStoreHit(store_idx, username);
-	                         System.out.println("selectStoreHit" + selectStoreHit);
-	                         if (selectStoreHit.size() == 0) {
-	                             int insertStoreHit = usersMapper.insertStoreHit(store_idx, username);
-	                             System.out.println("insertStoreHit" + insertStoreHit);
-	                         }
-	                     }
-	                 } else {
-	                     model.addAttribute("error", "JWT 토큰이 없습니다.");
-	                 }
-	                 }
+                      if(username!=null) {
+                      if (isKakaoUser) {
+                          // 카카오 로그인 사용자라면 소셜 ID로 사용자 조회
+                          Optional<User> kakaouser = userService.findBySocialId(username);  // 카카오 소셜 ID로 사용자 조회
+                          System.out.println("카카오 사용자 정보: " + kakaouser);
+                          model.addAttribute("user", kakaouser.orElse(null));  // 카카오 사용자가 없을 경우 null 반환
+                          
+                          // 유저 아이디당 한개씩 조회수 증가
+                         int store_idx = usersdto.getStore_idx();
+                        System.out.println("스토어 번호 : " + store_idx);
+                        
+                        // 카카오 회원의 ID 사용
+                          username = kakaouser.get().getId();
+                          useruseridx = kakaouser.get().getUserIdx();
+                          System.out.println("useridx" + useruseridx);
+                          
+                          List<UsersDto> selectStoreHit = usersMapper.getSelectStoreHit(store_idx, username);
+                          System.out.println("selectStoreHit" + selectStoreHit);
+                          if (selectStoreHit.size() == 0) {
+                              int insertStoreHit = usersMapper.insertStoreHit(store_idx, username);
+                              System.out.println("insertStoreHit" + insertStoreHit);
+                          }
+                      } else {
+                          // 일반 사용자라면 기존 방식으로 사용자 조회
+                          Optional<User> user = userService.getUserByUsername(username);
+                          System.out.println("사용자 정보: " + user);
+                          model.addAttribute("user", user.orElse(null));  // 사용자가 없을 경우 null 반환
+                          
+                          // 유저 아이디당 한개씩 조회수 증가
+                          int store_idx = usersdto.getStore_idx();
+                          System.out.println("스토어 번호 : " + store_idx);
+                          
+                          useruseridx = user.get().getUserIdx();
+                          
+                          System.out.println("useruseridx : " + useruseridx);
+                          
+                          
+                          // 일반 회원의 username 사용
+                          List<UsersDto> selectStoreHit = usersMapper.getSelectStoreHit(store_idx, username);
+                          System.out.println("selectStoreHit" + selectStoreHit);
+                          if (selectStoreHit.size() == 0) {
+                              int insertStoreHit = usersMapper.insertStoreHit(store_idx, username);
+                              System.out.println("insertStoreHit" + insertStoreHit);
+                          }
+                      }
+                  } else {
+                      model.addAttribute("error", "JWT 토큰이 없습니다.");
+                  }
+                  }
 
-	   
-	       if (useruseridx == null || username == null) {
-	           mv.addObject("needLoginMessage", "이 기능을 사용하기 위해선 로그인이 필요합니다.");
-	           mv.setViewName("/login");
-	           return mv;
-	       }
-	      
-	      //System.out.println("스토어 HIT : " + insertStoreHit);
-	      System.out.println("usersdto  : " + usersdto);
-	      
-	        // store_idx로 스토어 디테일 데이터 불러오기
-	      UsersDto storedetail = usersMapper.getStoredetail(usersdto);
-	      System.out.println("storedetail : " + storedetail);
-	      
-	      // 스토어 태그
-	      List<UsersDto> storetag = usersMapper.getStoretag(usersdto);
-	      System.out.println("storetag : " + storetag);
-	      
-	      //스토어 예약 구분
-	      UsersDto StoreReservation = usersMapper.getStoreReservation(usersdto);
-	      System.out.println("StoreReservation : " + StoreReservation);
-	      
-	      //운영시간 
-	      UsersDto StoreOperation = usersMapper.getStoreOperation(usersdto);
-	      System.out.println("StoreOperation : " + StoreOperation);
-	      
-	      // 카데고리
-	      List<UsersDto> StoreCategory = usersMapper.getStoreCategory(usersdto);
-	      System.out.println("StoreCategory : " + StoreCategory);
-	      
-	      // 조회수
-	      UsersDto StoreHit = usersMapper.getStoreHit(usersdto);
-	      System.out.println("StoreHit : " + StoreHit);
-	      
-	      //좋아요
-	      UsersDto StoreLike = usersMapper.getStoreLike(usersdto);
-	      System.out.println("StoreLike : " + StoreLike);
+    
+        if (useruseridx == null || username == null) {
+            mv.addObject("needLoginMessage", "이 기능을 사용하기 위해선 로그인이 필요합니다.");
+            mv.setViewName("/login");
+            return mv;
+        }
+       
+       //System.out.println("스토어 HIT : " + insertStoreHit);
+       System.out.println("usersdto  : " + usersdto);
+       
+         // store_idx로 스토어 디테일 데이터 불러오기
+       UsersDto storedetail = usersMapper.getStoredetail(usersdto);
+       System.out.println("storedetail : " + storedetail);
+       
+       // 스토어 태그
+       List<UsersDto> storetag = usersMapper.getStoretag(usersdto);
+       System.out.println("storetag : " + storetag);
+       
+       //스토어 예약 구분
+       UsersDto StoreReservation = usersMapper.getStoreReservation(usersdto);
+       System.out.println("StoreReservation : " + StoreReservation);
+       
+       //운영시간 
+       UsersDto StoreOperation = usersMapper.getStoreOperation(usersdto);
+       System.out.println("StoreOperation : " + StoreOperation);
+       
+       // 카데고리
+       List<UsersDto> StoreCategory = usersMapper.getStoreCategory(usersdto);
+       System.out.println("StoreCategory : " + StoreCategory);
+       
+       // 조회수
+       UsersDto StoreHit = usersMapper.getStoreHit(usersdto);
+       System.out.println("StoreHit : " + StoreHit);
+       
+       //좋아요
+       UsersDto StoreLike = usersMapper.getStoreLike(usersdto);
+       System.out.println("StoreLike : " + StoreLike);
 
-	      //전체 리뷰 페이징
-	      int start = (page - 1) * size; 
-	      int totalStorePosts = usersMapper.gettotalPosts(usersdto);
-	      int totalPages = (int) Math.ceil((double)totalStorePosts / size);
-	      
-	      int store_idx = usersdto.getStore_idx();
-	      //전체 리뷰
-	      List<UsersDto> totalreviews = usersMapper.gettotalreviews(store_idx,start,size);
-	      for (UsersDto dto : totalreviews) {
-	           String imagePath = dto.getImage_path().replace("\\", "/"); // 경로 수정
-	         dto.setImage_path(imagePath); // 수정된 경로 다시 설정
-	      }
-	      System.out.println("전체리뷰 페이징후 : " + totalreviews);
-	      
-	      
-	      //핫 리뷰 (조회수 기반 3개)
-	      List<UsersDto> HotReviews = usersMapper.getHotReviews(usersdto);
-	      for (UsersDto dto : HotReviews) {
-	           String imagePath = dto.getImage_path().replace("\\", "/"); // 경로 수정
-	         dto.setImage_path(imagePath); // 수정된 경로 다시 설정
-	      }
-	      System.out.println("핫리뷰 기준 : " + HotReviews);
-	      
-	      // 전체 리뷰 & 조회수
-	      UsersDto totalcount = usersMapper.getotalcount(usersdto);
-	      System.out.println("totalcount : " + totalcount);
-	      
-	      // 내가 쓴 리뷰 개수
-	      UsersDto MyTotalReview = usersMapper.getMyTotalReview(usersdto,useruseridx);
-	      System.out.println("내가 쓴 리뷰 데이터" + usersdto);
-	      System.out.println("MyTotalReview : " + MyTotalReview);
+       int store_idx = usersdto.getStore_idx();
+       //전체 리뷰 페이징
+       int start = (page - 1) * size; 
+       int totalStorePosts = usersMapper.gettotalPosts(store_idx);
+       int totalPages = (int) Math.ceil((double)totalStorePosts / size);
+       
+       //전체 리뷰
+       List<UsersDto> totalreviews = usersMapper.gettotalreviews(store_idx,start,size);
+       for (UsersDto dto : totalreviews) {
+            String imagePath = dto.getImage_path().replace("\\", "/"); // 경로 수정
+          dto.setImage_path(imagePath); // 수정된 경로 다시 설정
+       }
+       System.out.println("전체리뷰 페이징후 : " + totalreviews);
+       
+       
+       //핫 리뷰 (조회수 기반 3개)
+       List<UsersDto> HotReviews = usersMapper.getHotReviews(usersdto);
+       for (UsersDto dto : HotReviews) {
+            String imagePath = dto.getImage_path().replace("\\", "/"); // 경로 수정
+          dto.setImage_path(imagePath); // 수정된 경로 다시 설정
+       }
+       System.out.println("핫리뷰 기준 : " + HotReviews);
+       
+       // 전체 리뷰 & 조회수
+       UsersDto totalcount = usersMapper.getotalcount(usersdto);
+       System.out.println("totalcount : " + totalcount);
+       
+       // 내가 쓴 리뷰 개수
+       UsersDto MyTotalReview = usersMapper.getMyTotalReview(usersdto,useruseridx);
+       System.out.println("내가 쓴 리뷰 데이터" + usersdto);
+       System.out.println("MyTotalReview : " + MyTotalReview);
 
-	      //  팝콘 보유 수
-	      UsersDto TotalPopcorn = usersMapper.getTotalPopcorn(username);
-	      System.out.println("TotalPopcorn : " + TotalPopcorn);
-	      
+       //  팝콘 보유 수
+       UsersDto TotalPopcorn = usersMapper.getTotalPopcorn(username);
+       System.out.println("TotalPopcorn : " + TotalPopcorn);
+       
 
 
-	      //이미지
-	      List<UsersDto> PopupImgList = usersMapper.getPopupImgList(usersdto);
-	      System.out.println("PopupImgList : " + PopupImgList);
+       //이미지
+       List<UsersDto> PopupImgList = usersMapper.getPopupImgList(usersdto);
+       System.out.println("PopupImgList : " + PopupImgList);
 
-	      List<String> PopImgPath = new ArrayList<>();
-	      
-	      for(UsersDto dto : PopupImgList) {
-	         String imagePath = dto.getImage_path().replace("\\", "/");
-	         System.out.println("리뷰 상세 이미지 패스 imagePath : " + imagePath);
-	         PopImgPath.add(imagePath);
-	      }
-	      
+       List<String> PopImgPath = new ArrayList<>();
+       
+       for(UsersDto dto : PopupImgList) {
+          String imagePath = dto.getImage_path().replace("\\", "/");
+          System.out.println("리뷰 상세 이미지 패스 imagePath : " + imagePath);
+          PopImgPath.add(imagePath);
+       }
+       
 
-	      
-	      
+       
+       
+       
 
-	      mv.addObject("storedetail", storedetail);
-	      mv.addObject("user_idx", useruseridx);
-	      mv.addObject("storetag", storetag);
-	      mv.addObject("store_idx", store_idx);
-	      mv.addObject("StoreReservation", StoreReservation);
-	      mv.addObject("StoreOperation", StoreOperation);
-	      mv.addObject("StoreCategory", StoreCategory);
-	      mv.addObject("StoreHit", StoreHit);
-	      mv.addObject("StoreLike", StoreLike);
-	      mv.addObject("currentPage", page);
-	      mv.addObject("totalPages", totalPages);
-	      mv.addObject("totalreviews", totalreviews);
-	      mv.addObject("HotReviews", HotReviews);
-	      mv.addObject("totalcount", totalcount);
-	      mv.addObject("MyTotalReview", MyTotalReview);
-	      mv.addObject("TotalPopcorn", TotalPopcorn);
-	      mv.addObject("PopImgPath", PopImgPath);
-	      mv.setViewName("users/popup/info");
-	      return mv;
-	   }
-	   
+       mv.addObject("storedetail", storedetail);
+       mv.addObject("user_idx", useruseridx);
+       mv.addObject("storetag", storetag);
+       mv.addObject("store_idx", store_idx);
+       mv.addObject("StoreReservation", StoreReservation);
+       mv.addObject("StoreOperation", StoreOperation);
+       mv.addObject("StoreCategory", StoreCategory);
+       mv.addObject("StoreHit", StoreHit);
+       mv.addObject("StoreLike", StoreLike);
+       mv.addObject("currentPage", page);
+       mv.addObject("totalPages", totalPages);
+       mv.addObject("totalreviews", totalreviews);
+       mv.addObject("HotReviews", HotReviews);
+       mv.addObject("totalcount", totalcount);
+       mv.addObject("MyTotalReview", MyTotalReview);
+       mv.addObject("TotalPopcorn", TotalPopcorn);
+       mv.addObject("PopImgPath", PopImgPath);
+       mv.setViewName("users/popup/info");
+       return mv;
+    }
+    
 	
 	// 리뷰 상세 페이지 데이터(AJAX)
 	// 리뷰 상세 페이지 데이터(AJAX)

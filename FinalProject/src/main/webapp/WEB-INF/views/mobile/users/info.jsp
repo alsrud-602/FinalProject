@@ -4,7 +4,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-
 <meta charset="UTF-8">
 <title>pop corn</title>
 <link rel="icon" type="image/png" href="/img/favicon.png" />
@@ -55,7 +54,7 @@ color:#fff;
 }
 }
 .bookmark-on {
-background-color: #FF8400;
+background-color: #006534;
 
 }
 main {
@@ -122,6 +121,10 @@ main {
         <c:forEach var = "tag" items="${storetag}" >
           <div class="tag_option">${tag.tag_name}</div> 
         </c:forEach>
+      </div>
+      <div class="title_click" >
+       <div class="bookmark"><img src="/images/icon/star.png"><p>찜하기</p></div>&nbsp;
+       <div class="share" onclick="clipboard()" ><img src="/images/icon/share1.png"><p>공유하기</p></div>&nbsp;
       </div>
       </div>
       
@@ -268,7 +271,8 @@ main {
     
   </div> <!-- contents -->
   </main>
-   <%@include file="/WEB-INF/include/mobile_info_footer.jsp" %>
+  <%@include file="/WEB-INF/include/mobile_info_footer.jsp" %>
+   
   
   
 
@@ -419,13 +423,14 @@ const infoPage = `<div class="content">
      <div class="review_sub">
        <p>전체리뷰수&nbsp; | &nbsp;${totalcount.review_idx} &nbsp;&nbsp; 평균&nbsp; |&nbsp; ${totalcount.score}</p>
        <div class="review_filter">
-       <div id="review_slike">좋아요순</div>
-       <div id="review_sscore">평점순</div>
-       <div id="review_snew">최신순</div>
+       <div id="review_slike" data-value="like">좋아요순</div>
+       <div id="review_sscore" data-value="score">평점순</div>
+       <div id="review_snew" data-value="first">최신순</div>
        </div>
       </div>
      
       <!-- review body-->
+      <div class="review_filter">
    <div class="review_body">
      <c:forEach  var = "review" items="${totalreviews}" >
      <div class="review_box" onclick="moveHotReviewDetail(this)"
@@ -447,7 +452,8 @@ const infoPage = `<div class="content">
         <div class="review_cdate">${review.review_date}</div>
         </div>        
         </c:forEach>  
-      </div> 
+      </div>
+      </div>
      `;
      
  
@@ -486,6 +492,8 @@ const mapPage = `
        const reviewData = response.ReviewDetail; // 서버에서 받아온 데이터
        const rLikeCount = response.rLikeCount; 
        const reviewimg = response.ReviewImgList
+       const ReviewImgListee = response.ReviewImgList; 
+       
        $('#contents').html('');
        const reviewDetail = "<div class='review_header'>" +
         "<div class='review_title'>" +
@@ -494,9 +502,9 @@ const mapPage = `
     "</div>" +
     "<div class='swiper-container2'>" +
         "<div class='swiper-wrapper'>" +
-            "<c:forEach var='img' items='${reviewData}'>"+
-            "<div class='swiper-slide ss'><img src='/image/read?path=${img.img_path}' alt='User Image' class='profileSize'></div>"+
-          "</c:forEach>"+
+        ReviewImgListee.map(img => 
+        "<div class='swiper-slide ss'><img src='/image/read?path=" + img.image_path + "' alt='User Image' class='profileSize'></div>"
+    ).join("") + 
         "</div>" +
         "<div class='swiper-button-next'></div>" +
         "<div class='swiper-button-prev'></div>" +
@@ -604,6 +612,7 @@ if (Reservationstatus === '현장문의') {
     document.getElementById('reserveBtn').disabled = true; 
 } else if (Reservationstatus === '현장대기예약') {
     document.getElementById('reserveBtn').textContent = '현장대기예약';
+    document.getElementById('reserveBtn').disabled = true; 
 }else {
    
    const openDateOrgin = '${StoreReservation.open_date}';
@@ -666,17 +675,12 @@ document.getElementById('reserveBtn').addEventListener('click', function() {
    
    console.log('status : ' + Reservationstatus)
    if(Reservationstatus == '사전예약'){
-    //document.getElementById('modalBg').style.display = 'block';   
-	 window.location.href = `/Mobile/Reservation/Advance?store_idx=\${store_idx}&user_idx=\${user_idx}`
-   }else if(Reservationstatus === '현장대기예약') {
-	 window.location.href = `/Mobile/Reservation/OnSite?store_idx=\${store_idx}&user_idx=\${user_idx}`
+    document.getElementById('modalBg').style.display = 'block';
+    
    }else {
-	   
     alert('예약기능을 사용할 수 없는 팝업니다.')   
-	   
+      
    }
-   
-   
     
 });
 
@@ -875,8 +879,11 @@ function LikeConfig(element){
       })
       .catch(error => {
           LikeUp(); 
-      });                
-  
+      });            
+   
+   
+   
+   
 }
 
 //2. 좋아요가 없다면  
@@ -1121,7 +1128,7 @@ function bookConfig(){
       });                  
 }
 
-const bookmarkElement = document.querySelector('.mobile_bookmark');
+const bookmarkElement = document.querySelector('.bookmark');
 function BookmarkUp(){
        
 const content = {
@@ -1149,8 +1156,6 @@ fetch(`/Popup/Bookmark/Write`, {
         console.log('추가 처리 결과:', data);
         const result = data
         bookmarkElement.classList.add('bookmark-on');        
-        bookmarkElement.classList.remove('bookmark-off');      
-       
     }
 })
 .catch(error => {
@@ -1180,8 +1185,7 @@ function BookmarkDown(data) {
    })
    .then(data => {
        console.log('삭제 상태 data:', data);
-       bookmarkElement.classList.remove('bookmark-on'); 
-       bookmarkElement.classList.add('bookmark-off')
+       bookmarkElement.classList.remove('bookmark-on');      
    })
    .catch(error => {
        console.error('리뷰좋아요 내역이 없습니다', error);
@@ -1192,8 +1196,6 @@ function bookmarkconfigg(){
           user_idx: user_idx, 
           store_idx: store_idx 
       };
-	console.log('user_idx : ' + user_idx);
-	console.log('store_idx : ' + store_idx);
       fetch(`/Popup/Bookmark/Config`, {
           method: 'POST', // POST 요청
           headers: {
@@ -1210,14 +1212,11 @@ function bookmarkconfigg(){
       .then(data => {
           console.log('BOOKMARK_IDX:', data);
           if (data) {
-        
-              bookmarkElement.classList.add('bookmark-on');
-               
+              bookmarkElement.classList.add('bookmark-on');    
           }
       })
       .catch(error => {
-    	
-    	  bookmarkElement.classList.add('bookmark-off')
+         
       });                  
 }
 
@@ -1250,11 +1249,57 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 
 <script>
-$(function(){
-   $('#review_slike').on('click',function(){
-      alert('ok')
-   })
-})
+/*
+$(document).on('click', '#review_slike, #review_sscore, #review_snew', function () {
+    let value = $(this).data('value');
+    let urlParams = new URLSearchParams(window.location.search);
+    let store_idx = urlParams.get('store_idx');
+    
+    $.ajax({
+        url: '/Mobile/Users/ReviewFilter',
+        type: 'GET',
+        data: { value: value, store_idx: store_idx },
+        dataType: 'json' 
+    }).done(function (data) {
+        console.log('응답 데이터:', data);
+        console.log('응답 데이터 data:', data.ReviewList);
+        console.log('응답 데이터 data:', data.ReviewList[0].store_idx);
+        // 기존 리뷰 필터 내용 제거
+        $('.review_filter').html("");
+
+        // HTML 생성
+        let html = "";
+html += "<div class='review_body'>";
+
+data.ReviewList.forEach(function (review) {
+    html += `<div class='review_box' onclick='moveHotReviewDetail(this)' 
+               data-idx='${review.store_idx}' 
+               data-user-idx='${review.user_idx}' 
+               data-login-idx='${user.userIdx}' 
+               data-review-idx='${review.review_idx}'>`;
+    html += "<div class='review_preview'>";
+    html += `<img class='review_img' src='/image/read?path=${review.image_path}' alt='Store Image'>`;
+    html += "<div class='review_like'>";
+    html += "<img src='/images/icon/heart.png'>";
+    html += `<p>${review.like_count}</p>`;
+    html += "</div>";
+    html += "</div>";
+    html += "<div class='review_info'>";
+    html += `<p>${review.name} 님</p>`;
+    html += "</div>";
+    html += `<div class='review_score'>평점 ${review.score}</div>`;
+    html += `<div class='review_cdate'>${review.review_date}</div>`;
+    html += "</div>";
+
+    html += "</div>"; 
+});
+html += "</div>";
+
+        // 생성된 HTML을 추가
+        $('.review_filter').append(html);
+    })
+});
+*/
 </script>
 <!-- <script src="/js/authuser.js" defer></script> -->
 </body>

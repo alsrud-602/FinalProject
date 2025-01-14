@@ -142,22 +142,20 @@
 <script>
 $(function(){
 
-	$('.filter').on('click', function(){
-		
-		let search = $('.box_search').val();
+   $('.filter').on('click', function(){
+      
+      let search = $('#box_search').val();
         let filter = $('#box_sort option:selected').val();
-        
         window.location.href = "/Admin/Listpagination?search=" + encodeURIComponent(search) + "&filter=" + encodeURIComponent(filter);
-	})
+   })
 })
 
 $(function(){
-	$('.resetbutton').on('click',function(){
-		window.location.href = "/Admin/Store/List";
-	})
+   $('.resetbutton').on('click',function(){
+      window.location.href = "/Admin/Store/List";
+   })
 
 })
-
 
 </script>
 
