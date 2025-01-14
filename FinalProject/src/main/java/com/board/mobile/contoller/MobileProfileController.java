@@ -56,7 +56,6 @@ public class MobileProfileController {
 	
 	@Autowired
 	private UserService userService;
-
 	
 	@Autowired
 	private UserCategoryMapper userCategoryMapper;

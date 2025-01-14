@@ -5,6 +5,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <link rel="icon" type="image/png" href="/img/favicon.png" />
@@ -21,23 +22,23 @@
     .header {
         display: flex;
         align-items: center;
-        padding: 50px 23px;
+        padding: 15px 15px;
         background-color: #000;
         color: #fff;
         border-bottom: 1px solid #757575;
     }
     .header p {
         font-weight:400;
-        font-size: 50px;
+        font-size: 20px;
     }
     .header span {
-        font-size: 50px;
+        font-size: 25px;
     }
     .title {
         background-color: #000;
     }
     .title-box {
-        padding: 30px 70px;
+        padding: 16px 35px;
     }
     #category {
         font-size: 15px;
@@ -45,7 +46,7 @@
         color: #757575;
     }
     #title-name {
-        font-size: 40px;
+        font-size: 22px;
         font-weight: 600;
         margin: 5px 0;
     }
@@ -55,77 +56,80 @@
         color: #757575;
     }   
     .sizebox1 {
-        height: 25px;
+        height: 8px;
         background: #262626;
     }   
     .booking-box {
-        padding: 50px 70px;
+        padding: 30px 30px;
     }  
     .booking-title {
-        font-size: 25px;
+        font-size: 20px;
         font-weight: 500;
         color: #00FF84;
-        margin: 10px 0;
+        margin: 10px 0 3px 0;
     }
     .booking-option select {
-    padding-left:20px;
-        height: 100px;
+        padding-left:20px;
+        height: 40px;
         width: 100%;
         border-radius: 10px;
-        font-size: 40px;   
-        margin: 10px 0;
+        font-size: 20px;   
+        font-weight: 600;
+        margin: 5px 0;
         option{
         
         font-size: 20px;   
-font-weight: 300;
+
         }
         
         }
     
    
    .caution-box{
-   padding: 50px 70px;
+   padding: 22px 22px;
    
    } 
    .caution-opion p:first-child {
-font-size: 25px;   
-font-weight: 700;
-margin: 10px 0;
+font-size: 20px;   
+font-weight: 600;
+margin: 8px 0;
 }
    .caution-opion p:nth-child(2) {
-font-size: 15px;   
+font-size: 14px;   
 font-weight: 400;
 margin: 5px;
 }
    .caution-opion p:nth-child(3) {
-font-size: 15px;   
+font-size: 14px;  
 font-weight: 400;
 margin: 5px;
 }
    .caution-opion p:nth-child(4) {
-font-size: 15px;   
+font-size: 14px;   
 font-weight: 400;
 margin: 5px;
 }
 hr {
-margin: 60px 0;
+margin: 43px 0;
 }
 .btn-res{
-font-size: 40px;   
+font-size: 20px;   
+font-weight: 700;
 background-color: #00FF84;
-padding:40px;
+padding:20px;
 color: #121212;
 font-weight: 400;
 border-radius: 15px;
 width: 500px;
+margin: 15px 20px 70px 20px;
 
 
 }
 .booking-detail{
 margin-top:10px;
 text-align:right;
- font-size: 13px;  
- font-weight: 300;
+ font-size: 14px;  
+ font-weight: 200;
  
 }
 #btn-center{
@@ -214,7 +218,7 @@ padding-bottom: 50px;
         </div>
     </main>
 </div>	
-
+	<%@include file="/WEB-INF/include/app-navbar.jsp" %>
 <script>
 const store_idx = ${store_idx};
 const user_idx = ${user_idx};
@@ -306,12 +310,14 @@ function reservationComplete(selectedDataRp,formattedDate,person){
 	        }
 	        alert('예약완료')
 	        return response
+	        
+	       
 	    })
 	    .catch(error => {
 	        console.error('예약내역이 없습니다', error);
 	    });	
 	
-	
+	 window.location.href = `/Mobile/Users/Info?store_idx=\${store_idx}`;
 }
 
 function dateTimeSlot(element) {
