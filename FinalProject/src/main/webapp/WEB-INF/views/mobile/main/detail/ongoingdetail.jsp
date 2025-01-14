@@ -90,6 +90,7 @@
     width: 100%; /* 부모 요소에 맞춰 너비 설정 */
     display: block; /* 블록 요소로 변경 */
 }
+
 .popup-actions {
     display: flex;
     justify-content: space-between;
@@ -287,6 +288,7 @@
                         <!--  onShare('${popup.title}', '${popup.start_date} ~ ${popup.end_date}', '${popup.image_path}', '${popup.store_idx}')" -->
                         	<img src="/images/detail/share.svg"> 공유하기
                     	</span>
+                        <span class="share" onclick="onShare()"> <img src="/images/detail/share.svg">공유하기</span>
                     </span>
                 </div>
             </div>

@@ -97,15 +97,15 @@ public class BusinessController {
 		System.out.println("!!!!!!!!"+ map);
 		System.out.println("!!!!!!!!"+ map.get("title"));
 		
-		int company_idx =1;
-        map.put("company_idx", company_idx );
-       
+
+		//int company_idx = Integer.valueOf(map.get("company_idx").toString());
+      
 		businessService.setRegistration(map,tag_name,category_id);
 		pdsService.serWrite(map,uploadfiles);
 		businessService.setReservation(map,start_time,end_time,max_number,rp_plan,rd_plan,reservation_end_date,reservation_start_date);
 		
 		ModelAndView mv = new ModelAndView();
-		mv.setViewName("business/registration/write");		
+		mv.setViewName("redirect:/Business/Management/Main/List");		
 		return mv;
 	}
 	@RequestMapping("/Registraion/Writefrom")
@@ -291,7 +291,7 @@ public class BusinessController {
 	businessService.updateReservation(map,start_time,end_time,max_number,rp_plan,rd_plan,reservation_end_date,reservation_start_date);
 	ModelAndView mv = new ModelAndView();
 	int company_idx = Integer.valueOf(map.get("company_idx").toString());
-	mv.setViewName("redirect:/Business/Management/Main/List?company_idx="+company_idx);
+	mv.setViewName("redirect:/Business/Management/Main/List");
 	return mv;
 			
 	}
@@ -315,7 +315,7 @@ public class BusinessController {
 	int company_idx = businessService.getCompanyIdxByStoreIdx(requstDto.getStore_idx());	
 		
 	ModelAndView mv = new ModelAndView();
-	mv.setViewName("redirect:/Business/Management/Main/List?company_idx="+company_idx);
+	mv.setViewName("redirect:/Business/Management/Main/List");
 	return mv;	
 		
 	}
@@ -362,7 +362,7 @@ public class BusinessController {
 	public ModelAndView managementInfoupdate(CompanyDto companydto) {
 		businessService.updateCompany(companydto);
 	ModelAndView mv = new ModelAndView();
-	mv.setViewName("redirect:/Business/Management/Main/List?company_idx="+companydto.getCompany_idx());
+	mv.setViewName("redirect:/Business/Management/Main/List");
 	return mv;	
 		
 	}
@@ -425,18 +425,18 @@ public class BusinessController {
 	            String username = jwtUtil.extractUsername(jwtToken);
 	            System.out.println("사용자 정보1: " + username);
 
-	                // 일반 사용자라면 기존 방식으로 사용자 조회
-	                Optional<Company> company = companyService.findByUserId(username);  // DB에서 사용자 정보 조회
-	                System.out.println("사용자 정보: " + company);
-	                model.addAttribute("user", company.orElse(null));  // 사용자가 없을 경우 null 반환
-	        		
-	                Long company_idx_long = company.get().getCompanyIdx();
-	                int company_idx = company_idx_long.intValue();	 
-	            	List<StoreListDto> sovList = businessService.getStoreOperationView(company_idx);
-	            	System.out.println("sovList 정보: " + sovList);
-	            	mv.addObject("storeList",sovList);
-	            	mv.setViewName("business/operation/view");
-	            	
+                // 일반 사용자라면 기존 방식으로 사용자 조회
+                Optional<Company> company = companyService.findByUserId(username);  // DB에서 사용자 정보 조회
+                System.out.println("사용자 정보: " + company);
+                model.addAttribute("user", company.orElse(null));  // 사용자가 없을 경우 null 반환
+        		
+                Long company_idx_long = company.get().getCompanyIdx();
+                int company_idx = company_idx_long.intValue();	 
+            	List<StoreListDto> sovList = businessService.getStoreOperationView(company_idx);
+            	System.out.println("sovList 정보: " + sovList);
+            	mv.addObject("storeList",sovList);
+            	mv.setViewName("business/operation/view");
+            	
 	            } else {
 	            model.addAttribute("error", "JWT 토큰이 없습니다.");
 	        }			

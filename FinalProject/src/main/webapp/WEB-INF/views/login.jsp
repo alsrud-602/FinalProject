@@ -113,6 +113,7 @@
 <a href="/oauth2/authorization/naver" id="naverLogin">
     <img src="/images/header/kakao_login_large_narrow.png" class="naverLogin">
 </a>
+
             <div class="sub-login">
             <a href="#" class="link">아이디 찾기</a> |
             <a href="#" class="link">비밀번호 찾기</a> |
@@ -233,11 +234,9 @@ window.onload = function() {
             .then(data => {
                 const accessToken = data.access_token; // 백엔드에서 반환한 토큰
                 const expirationTime = Date.now() + 24 * 60 * 60 * 1000; // 24시간 후
-                const platform = window.location.pathname.includes('kakao') ? 'kakao' : 'naver';
-
-                localStorage.setItem(`${platform}TokenExpiration`, expirationTime); // localStorage에 저장
-                localStorage.setItem(`${platform}AccessToken`, accessToken); // localStorage에 저장
-                console.log(`${platform} 토큰이 localStorage에 저장되었습니다:`, accessToken);
+                localStorage.setItem('kakaoTokenExpiration', expirationTime); // localStorage에 저장
+                localStorage.setItem('kakaoAccessToken', accessToken); // localStorage에 저장
+                console.log('토큰이 localStorage에 저장되었습니다:', accessToken);
                 // 홈 화면으로 리다이렉트 (필요 시)
                 window.location.href = "/";
             })

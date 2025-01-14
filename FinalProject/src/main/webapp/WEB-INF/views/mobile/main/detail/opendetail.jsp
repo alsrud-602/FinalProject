@@ -10,7 +10,6 @@
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
 
-
 <style>
    body{
    background-color: #121212 !important;
@@ -298,6 +297,7 @@ window.onscroll = function() {
         button.style.display = "none"; // 100px 이하로 스크롤하면 버튼 숨김
     }
 };
+
 
 $(function() {
     $('.regionfilter, .agefilter, .mainfilter').on('change', function() {

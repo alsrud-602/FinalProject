@@ -51,7 +51,6 @@ public class LikeBookApiController {
 
 	@DeleteMapping("/Like/Delete")
 	public ResponseEntity <String> LikeDelete(@RequestBody HashMap<String, Object> map) {
-		System.out.println("map: "+map);
 		String LikeCount = likeBookService.deleteLikeStore(map);	
 		return    ResponseEntity.status(HttpStatus.OK).body( LikeCount );
 	}

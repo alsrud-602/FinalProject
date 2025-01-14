@@ -163,6 +163,7 @@ color:red;
  <img id="icon_back" src="/images/icon/back2.png" alt="뒤로가기" onclick="goBack()">
  <form action="/Business/Registraion/Write" method="POST" enctype="multipart/form-data" 
        onsubmit="return validateForm()">
+       <input type="hidden" name="company_idx" value ="${company_idx}" />
     <main>
 
 
@@ -181,7 +182,7 @@ color:red;
       <table class="sub_table">
         <tr>
            <td>팝업스토어명칭</td>
-           <td><input value="스텐리x메시"type="text" required name="title" class="sub_link" placeholder="팝업스토어명을 입력하세요"></td>
+           <td><input type="text" required name="title" class="sub_link" placeholder="팝업스토어명을 입력하세요"></td>
         </tr>
         <tr>
            <td>카테고리</td>
@@ -207,7 +208,7 @@ color:red;
            <td>
              메인 
              <span id="brand_red">*</span>
-             <input value="스텐리"name="brand1"  required type="text" class="sub_brand" placeholder="메인브랜드를 작성하세요" >
+             <input name="brand1"  required type="text" class="sub_brand" placeholder="메인브랜드를 작성하세요" >
              콜라보 브랜드
              <input name="brand2" type="text"  class="sub_brand" placeholder="콜라보 브랜드를 작성하세요" >
            </td>
@@ -217,7 +218,7 @@ color:red;
            <td><select name="age" class="sub_select" required>
              <option>연령대</option>
              <option>어린이</option>
-             <option selected="selected">10대</option>
+             <option >10대</option>
              <option>10~20대</option>
              <option>20~30대</option>
              <option>30대~40대</option>
@@ -238,7 +239,7 @@ color:red;
            <td>
            
            <div id="sub_adress">
-             <input value="서울 성수동"   name="address"  required type="text"  id="roadFullAddr" class="sub_link" placeholder="주소검색 버튼을 눌러주세요" style="width:620px; margin: 0 10px 0 0;">
+             <input  name="address"  required type="text"  id="roadFullAddr" class="sub_link" placeholder="주소검색 버튼을 눌러주세요" style="width:620px; margin: 0 10px 0 0;">
              <div class="btn3" onclick="searchAddress()" >주소검색</div>
            </div>
           
@@ -248,9 +249,9 @@ color:red;
         <td>운영기간</td>
          <td> 
          <div class="sub_day">
-          <input   value="2024-12-30" name="start_date" required onchange="vailddateOperation(this,document.getElementById('pop_end'))"  id="pop_start"class="sub_input_date"type="date" placeholder="시작날짜"> 
+          <input   name="start_date" required onchange="vailddateOperation(this,document.getElementById('pop_end'))"  id="pop_start"class="sub_input_date"type="date" placeholder="시작날짜"> 
           &nbsp;&nbsp;<p>-</p>&nbsp;&nbsp;
-           <input   value="2025-01-15" name="end_date" required onchange="vailddateOperation(document.getElementById('pop_start'),this)"  id="pop_end"class="sub_input_date"type="date" placeholder="마감날짜">              
+           <input    name="end_date" required onchange="vailddateOperation(document.getElementById('pop_start'),this)"  id="pop_end"class="sub_input_date"type="date" placeholder="마감날짜">              
              
                </div> 
           </td>
@@ -286,11 +287,11 @@ color:red;
         </tr>        
         <tr>
            <td>홈페이지 링크</td>
-           <td><input value="https"name="homepage" class="sub_link"type="text" placeholder="홈페이지 링크를 복사해 주세요"></td>
+           <td><input name="homepage" class="sub_link"type="text" placeholder="홈페이지 링크를 복사해 주세요 (예- https)"></td>
         </tr>        
         <tr>
            <td>SNS 링크</td>
-           <td><input value="https"name="sns" class="sub_link"type="text" placeholder="SNS 링크를 복사해 주세요"></td>
+           <td><input name="sns" class="sub_link"type="text" placeholder="SNS 링크를 복사해 주세요 (예- https)"></td>
         </tr>        
         <tr>
            <td>해시태그</td>
@@ -311,7 +312,7 @@ color:red;
       <table class="sub_table">
        <tr>
          <td>소개 한 줄</td>      
-         <td><input value="하하" required name="introduction" class="sub_link"  type="text" placeholder="팝업을 소개할 문구를 완성해 보세요">
+         <td><input required name="introduction" class="sub_link"  type="text" placeholder="팝업을 소개할 문구를 완성해 보세요">
          <p class="sub_guide" >소개 한줄은 목록상단에 기재되어 고객들에게 안내될 예정입니다</p></td>      
        </tr>
        <tr >
@@ -320,31 +321,31 @@ color:red;
        </tr>
        <tr>
          <td>굿즈 특이사항</td>      
-         <td><input value="하하" name="goods" class="sub_link"  type="text" placeholder="강조하고 싶은 굿즈가 있다면 작성하세요"></td>      
+         <td><input  name="goods" class="sub_link"  type="text" placeholder="강조하고 싶은 굿즈가 있다면 작성하세요"></td>      
        </tr>
        <tr>
          <td>팝업환경</td>      
          <td>
            <select name="parking" class="sub_select">
              <option>주차정보</option>
-             <option selected>주차불가</option>
+             <option >주차불가</option>
              <option>주차가능</option>
            </select>
            <select name="fare" class="sub_select">
              <option>요금</option>
-             <option selected>무료</option>
+             <option >무료</option>
              <option>유료</option>
            </select>
            <select name="age_limit"  class="sub_select">
              <option>연령제한</option>
-             <option selected>19세 이상</option>
+             <option >19세 이상</option>
              <option>15세 이상</option>
              <option>전 연령 가능</option>
              <option>노키즈 존</option>
            </select>
            <select name="shooting"  class="sub_select">
              <option>사진촬영여부</option>
-             <option selected>촬영 가능</option>
+             <option >촬영 가능</option>
              <option>촬영 불가</option>
            </select>        
          </td>      
@@ -1042,6 +1043,6 @@ function resetSubButtons() {
      
      // 운영시간 - 예약시간 - 예약 오픈 시간 유효성 검사
 </script>
-
+ <script src="/js/authcompany.js" defer></script> 
 </body>
 </html>

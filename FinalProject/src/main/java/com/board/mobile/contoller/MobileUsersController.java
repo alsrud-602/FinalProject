@@ -397,7 +397,7 @@ public class MobileUsersController {
 	                         System.out.println("스토어 번호 : " + store_idx);
 	                         
 	                         useruseridx = user.get().getUserIdx();
-	                         
+	                         mv.addObject("user_idx", useruseridx);
 	                         System.out.println("useruseridx : " + useruseridx);
 	                         
 	                         

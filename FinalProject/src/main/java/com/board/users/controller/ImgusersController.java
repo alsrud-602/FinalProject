@@ -38,7 +38,6 @@ public class ImgusersController {
             System.out.println("파일경로2:"+filePath);
            
             Resource resource = new UrlResource(filePath.toUri());
-            System.out.println("파일경로3:"+resource);
                        
             // 파일의 MIME 타입 동적으로 설정
             String contentType = Files.probeContentType(filePath);

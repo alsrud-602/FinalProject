@@ -636,9 +636,6 @@ function validateInputs(inputs) {
 
 
 
-   
-     
-     
      
 
     </script>

@@ -112,6 +112,7 @@
 
 .popup-share {
 }
+
    .mainfilter {    
     cursor: pointer;
     padding: 10px;
@@ -294,6 +295,7 @@ window.onscroll = function() {
         button.style.display = "none"; // 100px 이하로 스크롤하면 버튼 숨김
     }
 };
+
 //지역,연령대,날짜 필터링
 $(function() {
     $('.regionfilter, .agefilter, .mainfilter').on('change', function() {
@@ -732,5 +734,4 @@ function clipboard(text) {
         });
     }
 </script> -->
-
 </html>

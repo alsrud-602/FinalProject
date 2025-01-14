@@ -1,8 +1,10 @@
 package com.board.users.service;
 
-import java.util.Collections;	
+import java.util.Collections;		
 import java.util.Map;
 import java.util.Optional;
+import java.util.Collections;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,6 +88,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         //"카카오로그인과 연동하려면 팝콘회원가입이 필요해요~ 또는 기존정보로 로그인후 프로필에서 연동하세요" 회원가입시 카카오이메일,소셜아이디,타입 전달
         if (user == null) {
             logger.info("소셜 로그인 사용자 회원가입 필요: email={}", email);
+
             User tempUser = new User();
             tempUser.setEmail(email);
             tempUser.setSocialType(socialType);
@@ -93,6 +96,9 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             tempUser.setName(name);
             tempUser.setPhone(phoneNumber);
             tempUser.setRole("USER");
+
+            // 사용자 정의 예외로 User 객체 전달
+            logger.error("소셜 로그인 사용자 회원가입 필요: email={}", email);
             throw new UserNotFoundOAuth2Exception("회원가입 필요합니다", tempUser);
         }
 
@@ -132,6 +138,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
             attributes,
             key
+
         );
         logger.info("OAuth2 요청: clientName={}", userRequest.getClientRegistration().getClientName());
         logger.info("OAuth2 사용자 정보: {}", attributes);
@@ -160,6 +167,5 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         return formattedNumber.toString();
     }
-
 
 }

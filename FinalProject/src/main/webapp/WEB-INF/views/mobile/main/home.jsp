@@ -573,6 +573,7 @@ const swiper = new Swiper('.swiper-container', {
     loop: true, // 슬라이드 반복
 });
 
+
 //검색창 클릭했을때 
 $(function (){
   // 클릭 이벤트

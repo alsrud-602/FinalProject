@@ -546,6 +546,7 @@ const swiper = new Swiper('.swiper-container', {
     },
     loop: true, // 슬라이드 반복
 });
+
     const carousels = document.querySelectorAll('.carousel1');
 
     carousels.forEach(carousel => {
@@ -676,4 +677,5 @@ $(function() {
     });
 });
 </script>
+
 </html>
