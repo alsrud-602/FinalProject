@@ -36,7 +36,10 @@ FROM (
         img.imagename, 
         img.imageext, 
         img.image_path,
-        ROW_NUMBER() OVER (PARTITION BY st.store_idx ORDER BY img.is_idx ASC) AS rn
+        ROW_NUMBER() OVER (PARTITION BY st.store_idx ORDER BY img.is_idx ASC) AS rn,
+        (SELECT COUNT(user_idx) 
+         FROM LIKE_STORES ls 
+         WHERE ls.store_idx = st.store_idx) AS like_count
     FROM
         stores st
     JOIN stores_detail std ON st.store_idx = std.store_idx
@@ -45,7 +48,7 @@ FROM (
         st.ban = 'N' AND 
         st.status = '승인' AND 
         TRUNC(std.start_date) &lt;= TRUNC(SYSDATE) AND 
-        TRUNC(std.end_date) >= TRUNC(SYSDATE)
+        TRUNC(std.end_date) &gt;= TRUNC(SYSDATE)
 )
 WHERE rn = 1
 ORDER BY store_idx ASC
@@ -68,7 +71,10 @@ SELECT
     std.detail_idx,std.address,TO_CHAR(std.start_date, 'YYYY-MM-DD') AS start_date,
     TO_CHAR(std.end_date, 'YYYY-MM-DD') AS end_date,std.homepage, std.sns,std.introduction,
     std.content,std.parking,std.fare,std.age_limit,std.shooting, std.igdate,
-    std."LIKE",std.goods,COUNT(h.user_id) AS user_count,img.image_path
+    std."LIKE",std.goods,COUNT(h.user_id) AS user_count,img.image_path, 
+            (SELECT COUNT(user_idx) 
+         FROM LIKE_STORES ls 
+         WHERE ls.store_idx = st.store_idx) AS like_count
 FROM
     stores st
 JOIN 
@@ -190,6 +196,9 @@ WITH RankedStores AS (
         img.imageext,
         img.image_path,
         ROW_NUMBER() OVER (PARTITION BY st.store_idx ORDER BY st.store_idx ASC) AS rn
+   	    (SELECT COUNT(user_idx) 
+         FROM LIKE_STORES ls 
+         WHERE ls.store_idx = st.store_idx) AS like_count
     FROM
         stores st
     JOIN 
@@ -260,6 +269,9 @@ FROM (
         im.imageext,
         im.image_path,
         ROW_NUMBER() OVER (PARTITION BY st.store_idx ORDER BY im.is_idx ASC) AS rn
+    	(SELECT COUNT(user_idx) 
+         FROM LIKE_STORES ls 
+         WHERE ls.store_idx = st.store_idx) AS like_count
     FROM
         stores st
     JOIN
@@ -631,7 +643,7 @@ OFFSET #{start} ROWS FETCH NEXT #{size} ROWS ONLY
         WHERE user_idx = #{user_idx}
    </update>
 
-   <delete id="deleteUser" parameterType="int">
+   <delete id="deleteUser">
         DELETE FROM Users WHERE user_idx = #{user_idx}
     </delete>
     

@@ -1,6 +1,6 @@
 package com.board.mobile.contoller;
 
-import java.util.ArrayList;
+import java.util.ArrayList;	
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,6 +44,7 @@ import com.board.util.JwtUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/Mobile/Users/Profile")
@@ -161,37 +163,81 @@ public class MobileProfileController {
 
 
     @RequestMapping("/DeleteUser")
-    public ResponseEntity<?> deleteUser(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<?> deleteUser(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
         Cookie[] cookies = request.getCookies();
         String jwtToken = null;
-
-        boolean isKakaoUser = false;  // 카카오 사용자 여부를 판단하는 변수
-
+        boolean isKakaoUser = false;
 
         if (cookies != null) {
-            for (Cookie cookie : cookies) {
+            for (int i = cookies.length - 1; i >= 0; i--) {
+                Cookie cookie = cookies[i];
                 if ("userJwt".equals(cookie.getName()) || "kakaoAccessToken".equals(cookie.getName())) {
                     jwtToken = cookie.getValue();
                     if ("kakaoAccessToken".equals(cookie.getName())) {
                         isKakaoUser = true;  // kakaoAccessToken 쿠키가 있으면 카카오 로그인 사용자로 판단
                     }
-                    break; 	
+
+                    System.out.println("토큰: " + jwtToken);
+                    break; 
                 }
             }
         }
 
+        Optional<User> userObject = null;
         if (jwtToken != null) {
-            String userId = jwtUtil.extractUsername(jwtToken);
-            UsersDto user = usersMapper.getUserById(userId);
+            String username = jwtUtil.extractUsername(jwtToken);
+            if (isKakaoUser) {
+                // 카카오 로그인 사용자라면 소셜 ID로 사용자 조회
+                Optional<User> kakaouser = userService.findBySocialId(username);  // 카카오 소셜 ID로 사용자 조회
+                userObject = kakaouser;
+            } else {
+                Optional<User> user = userService.getUserByUsername(username);  // DB에서 사용자 정보 조회
+                userObject = user;
+            }
 
-            if (user != null) {
-                usersMapper.deleteUser(user.getUser_idx()); 
+            if (userObject != null) {
+                usersMapper.deleteUser(userObject.get().getUserIdx()); 
                 // 쿠키 삭제
-                Cookie cookie = new Cookie("userJwt", null);
-                cookie.setMaxAge(0);
-                cookie.setPath("/");
-                response.addCookie(cookie);
+                for (Cookie cookie : cookies) {
+                    if (cookie.getName().equals("jwt")||cookie.getName().equals("userJwt")||cookie.getName().equals("kakaoAccessToken")) {
+                        cookie.setMaxAge(0); // 쿠키의 만료시간을 0으로 설정하여 삭제
+                        cookie.setHttpOnly(true); // HttpOnly 설정
+                        cookie.setSecure(true);
+                        cookie.setPath("/");
+                        response.addCookie(cookie);
+                        break;
+                    }
+                }
 
+        		Cookie jwt = new Cookie("jwt", null);
+        		jwt.setMaxAge(0);
+        		jwt.setValue(null);
+        		jwt.setPath("/");
+        		jwt.setHttpOnly(true);
+        		jwt.setSecure(true);
+        		response.addCookie(jwt);
+        		
+        		Cookie userJwtCookie = new Cookie("userJwt", null);
+        		userJwtCookie.setMaxAge(0);
+        		userJwtCookie.setValue(null);
+        		userJwtCookie.setPath("/");
+        		userJwtCookie.setHttpOnly(true);
+        		userJwtCookie.setSecure(true);
+        		response.addCookie(userJwtCookie);
+
+                // kakaoAccessToken 쿠키 삭제
+                Cookie kakaoAccessTokenCookie = new Cookie("kakaoAccessToken", null);
+                kakaoAccessTokenCookie.setMaxAge(0); // 즉시 만료
+                kakaoAccessTokenCookie.setPath("/"); // 쿠키 경로 설정
+                kakaoAccessTokenCookie.setValue(null);
+                kakaoAccessTokenCookie.setHttpOnly(true);
+                kakaoAccessTokenCookie.setSecure(true);
+                response.addCookie(kakaoAccessTokenCookie);
+        	    SecurityContextHolder.clearContext();
+        	    session = request.getSession(false);
+        	    if (session != null) {
+        	        session.invalidate();
+        	    }
                 return ResponseEntity.ok().body("User deleted successfully");
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");

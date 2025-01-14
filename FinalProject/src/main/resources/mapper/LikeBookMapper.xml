@@ -23,7 +23,7 @@
     <select id="getIsIdx">
     SELECT LS_IDX
 	FROM LIKE_STORES
-	WHERE  STORE_IDX = #{store_idx} AND user_idX = #{user_idx}   
+	WHERE  STORE_IDX = #{store_idx} AND USER_IDX = #{user_idx}   
     </select>
 
    <delete id="deleteLikeStore">
@@ -40,7 +40,7 @@
    <select id="getLrIdx">
     SELECT LR_IDX
 	FROM LIKE_REVIEWS
-	WHERE  REVIEW_IDX = #{review_idx} AND user_idX = #{user_idx}    	
+	WHERE  REVIEW_IDX = #{review_idx} AND USER_IDX = #{user_idx}    	
     </select>
     
     <insert id="insertLikeReview">

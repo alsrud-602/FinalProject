@@ -122,7 +122,6 @@ main {
           <div class="tag_option">${tag.tag_name}</div> 
         </c:forEach>
       </div>
-
       </div>
       
       <div class="date_line">
@@ -604,7 +603,6 @@ if (Reservationstatus === '현장문의') {
     document.getElementById('reserveBtn').disabled = true; 
 } else if (Reservationstatus === '현장대기예약') {
     document.getElementById('reserveBtn').textContent = '현장대기예약';
-  
 }else {
    
    const openDateOrgin = '${StoreReservation.open_date}';
@@ -1189,7 +1187,6 @@ function BookmarkDown(data) {
    });            
 }
 function bookmarkconfigg(){   
-	
    const content = {
           user_idx: user_idx, 
           store_idx: store_idx 

@@ -64,6 +64,15 @@ public class RestUserSignController {
     @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
     private String kakaoRedirectUri;
     
+    @Value("${spring.security.oauth2.client.registration.naver.client-id}")
+    private String naverClientId;
+    
+    @Value("${spring.security.oauth2.client.registration.naver.client-secret}")
+    private String naverClientSecret;
+    
+    @Value("${spring.security.oauth2.client.registration.naver.redirect-uri}")
+    private String naverRedirectUri;
+    
    
     
     @Autowired
@@ -259,6 +268,115 @@ public class RestUserSignController {
         );
     }
     
+
+    @GetMapping("/oauth2/callback/naver")
+    public ResponseEntity<Map<String, String>> naverCallback(@RequestParam String code, HttpServletResponse response, HttpServletRequest request) {
+        System.out.println("Naver code received: " + code); // 요청 확인 로그
+        try {
+            // 1. 액세스 토큰 요청
+            String accessToken = getNaverAccessToken(code);
+
+            System.out.println("accessToken:"+accessToken);
+            // 2. OAuth2UserRequest 객체 생성
+            OAuth2UserRequest oAuth2UserRequest = createNaverOAuth2UserRequest(accessToken);
+            System.out.println("oAuth2UserRequest:"+oAuth2UserRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName());
+
+            // 3. CustomOAuth2UserService를 사용하여 사용자 정보 가져오기
+            OAuth2User oAuth2User = customOAuth2UserService.loadUser(oAuth2UserRequest);
+            System.out.println("oAuth2User:"+oAuth2User);
+
+
+            
+            // 4. OAuth2 인증 객체 생성
+            OAuth2AuthenticationToken authenticationToken = new OAuth2AuthenticationToken(
+                oAuth2User,
+                oAuth2User.getAuthorities(),
+                "naver"
+            );
+            HttpSession session = request.getSession();
+
+            // 5. ClientRegistration과 OAuth2AccessToken 저장
+            session.setAttribute("clientRegistration", createNaverOAuth2UserRequest(accessToken).getClientRegistration());
+            session.setAttribute("accessToken", accessToken);
+
+            // 6. SecurityContext에 인증 설정
+            SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+            securityContext.setAuthentication(authenticationToken);
+            SecurityContextHolder.setContext(securityContext);
+
+            // 7. JWT 토큰 생성
+            String jwt = jwtUtil.generateToken(oAuth2User.getName(), "user", false);
+
+            // JWT를 쿠키에 저장
+            Cookie jwtCookie = new Cookie("kakaoAccessToken", jwt);
+            jwtCookie.setHttpOnly(true);
+            jwtCookie.setSecure(true); // HTTPS에서만 사용
+            jwtCookie.setMaxAge(60 * 60 * 10); // 10시간
+            jwtCookie.setPath("/");
+            response.addCookie(jwtCookie);
+
+            // 8. 세션에 값을 저장
+            session.setAttribute("token", jwt);
+
+            // 클라이언트 페이지로 리다이렉트
+            HttpHeaders headers = new HttpHeaders();
+            // 클라이언트 페이지로 리다이렉트
+            headers.setLocation(URI.create("/Users/KakaoCallBack"));
+            return ResponseEntity.status(HttpStatus.FOUND)
+                    .headers(headers)
+                    .build();
+        }
+        catch (UserNotFoundOAuth2Exception e){
+        	throw e;
+        }
+        catch (UserAlreadyLinkedToSocialException e) {
+            throw e;
+        }
+    }
+
+    // 네이버 액세스 토큰 요청
+    private String getNaverAccessToken(String code) {
+        String tokenUrl = "https://nid.naver.com/oauth2.0/token";
+        RestTemplate restTemplate = new RestTemplate();
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "authorization_code");
+        params.add("client_id", naverClientId);
+        params.add("client_secret", naverClientSecret);
+        params.add("redirect_uri", naverRedirectUri);
+        params.add("code", code);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+
+        ResponseEntity<Map> response = restTemplate.postForEntity(tokenUrl, request, Map.class);
+        return (String) response.getBody().get("access_token");
+    }
+
+    // 네이버 OAuth2UserRequest 생성
+    private OAuth2UserRequest createNaverOAuth2UserRequest(String accessToken) {
+        OAuth2AccessToken oAuth2AccessToken = new OAuth2AccessToken(
+            OAuth2AccessToken.TokenType.BEARER,
+            accessToken,
+            null,
+            null
+        );
+
+        return new OAuth2UserRequest(
+            ClientRegistration.withRegistrationId("naver")
+                .clientId(naverClientId)
+                .clientSecret(naverClientSecret)
+                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                .redirectUri(naverRedirectUri)
+                .authorizationUri("https://nid.naver.com/oauth2.0/authorize")
+                .tokenUri("https://nid.naver.com/oauth2.0/token")
+                .userInfoUri("https://openapi.naver.com/v1/nid/me")
+                .userNameAttributeName("response")
+                .clientName("Naver")
+                .build(),
+            oAuth2AccessToken
+        );
+    }
 
  
 

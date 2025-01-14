@@ -1295,7 +1295,6 @@ margin: 30px 42px;
     	  waitingconfig(wc);
     	  waitingTime(storeIdx)
     	  
-    	  
     	}
     
     function updateButton(){

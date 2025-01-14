@@ -436,7 +436,6 @@ public class BusinessController {
             	mv.addObject("storeList",sovList);
             	mv.setViewName("business/operation/view");
             	
-	            	
 	            } else {
 	            model.addAttribute("error", "JWT 토큰이 없습니다.");
 	        }			

@@ -110,6 +110,9 @@
 	</c:if>
 </form>
 <a href="/oauth2/authorization/kakao" id="kakaoLogin"><img src="/images/header/kakao_login_large_narrow.png" class="kakaoLogin"></a>
+<a href="/oauth2/authorization/naver" id="naverLogin">
+    <img src="/images/header/kakao_login_large_narrow.png" class="naverLogin">
+</a>
 
             <div class="sub-login">
             <a href="#" class="link">아이디 찾기</a> |
@@ -209,12 +212,17 @@ window.onload = function() {
     console.log('window.onload 실행됨'); // 디버깅 로그 추가
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code'); // 인가 코드 가져오기
+    const state = params.get('state'); // 네이버 로그인 시 필요한 상태 값 가져오기
 
     console.log('인가 코드:', code); // 인가 코드 로그 추가
 
     if (code) {
+        const redirectUri = window.location.pathname.includes('kakao') 
+            ? 'http://localhost:9090/oauth2/callback/kakao'
+            : 'http://localhost:9090/oauth2/callback/naver';
+        
         // 액세스 토큰 요청
-        fetch('http://localhost:9090/oauth2/callback/kakao?code=' + code)
+        fetch(`${redirectUri}?code=${code}${state ? '&state=' + state : ''}`)
             .then(response => {
                 console.log('응답:', response); // 응답 로그 추가
                 if (response.ok) {

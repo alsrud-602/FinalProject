@@ -38,7 +38,7 @@ public interface UsersMapper {
    
    int updateUserProfile(UsersDto usersDto);
    
-   void deleteUser(int userIdx);
+   void deleteUser(Long userIdx);
 
    UsersDto getUserById(String userId);
 

@@ -90,7 +90,6 @@
 function goBack() {
     window.history.back();  // 이전 페이지로 돌아가기
 }
-
 const container = document.querySelector('.container');
 const mainTag = document.querySelector('main');
 const mainHeight = mainTag.offsetHeight;

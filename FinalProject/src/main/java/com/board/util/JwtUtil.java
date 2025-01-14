@@ -38,7 +38,7 @@ public class JwtUtil {
         		.setClaims(claims)
                 .setSubject(username)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 2)) //거의 일주일,,?
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) //10시간
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
     }
@@ -49,12 +49,19 @@ public class JwtUtil {
                     .setSigningKey(SECRET_KEY)
                     .parseClaimsJws(token)
                     .getBody();
-            return claims.getSubject();
+            Object username = claims.getSubject();
+
+            if (username instanceof Map) {
+                Map<String, Object> userMap = (Map<String, Object>) username;
+                if (userMap.containsKey("id")) {
+                    return (String) userMap.get("id");
+                }
+            }
+            return (String) username;  // Return as-is if it's not a Map
+
         } catch (ExpiredJwtException e) {
-            // JWT가 만료된 경우 null 반환
             return null;
         } catch (Exception e) {
-            // 다른 예외 처리
             return null;
         }
     }
