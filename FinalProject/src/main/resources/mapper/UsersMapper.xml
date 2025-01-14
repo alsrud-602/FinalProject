@@ -195,7 +195,7 @@ WITH RankedStores AS (
         img.imagename,
         img.imageext,
         img.image_path,
-        ROW_NUMBER() OVER (PARTITION BY st.store_idx ORDER BY st.store_idx ASC) AS rn
+        ROW_NUMBER() OVER (PARTITION BY st.store_idx ORDER BY st.store_idx ASC) AS rn,
    	    (SELECT COUNT(user_idx) 
          FROM LIKE_STORES ls 
          WHERE ls.store_idx = st.store_idx) AS like_count
