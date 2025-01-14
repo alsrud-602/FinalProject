@@ -103,7 +103,7 @@ FROM
 <update id="updateUserStatus">
  UPDATE USERS
  SET STATUS = #{status}
- WHERE USER_ID = #{userId}
+ WHERE ID = #{userId}
 
 </update>
 

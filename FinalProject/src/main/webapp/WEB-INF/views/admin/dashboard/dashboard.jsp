@@ -59,7 +59,7 @@ margin-right: 20%;
 <main>
  	<div class="inner">
  	 <aside>
- 	 <%@include file="/WEB-INF/include/admin-slidebartest.jsp" %>
+ 	 <%@include file="/WEB-INF/include/admin-slidebar.jsp" %>
  	 </aside>
  	 <div class="container">
       <div class="chart-wrapper">

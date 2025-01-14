@@ -76,6 +76,14 @@
     color: white; /* 글자 색상 */
     font-size: 12px;
 }
+.admin-slide a {
+    color: white; /* 기본 글자 색상 */
+    text-decoration: none; /* 링크 장식 제거 */
+}
+
+.admin-slide a:hover {
+    color: #EAFFDC; /* 마우스 오버 시 색상 */
+}
 /*드롭다운*/
 .dropdown-menu{
     padding:0px;
@@ -92,6 +100,10 @@
     font-weight: 800;
     font-size: 18px;
     color:#EAFFDC;
+    width: 200px;
+}
+.dropdown-menu.show{
+width:212px;
 }
 </style>
 
@@ -102,7 +114,7 @@
       <p style="font-size: 32px;">${user.nickname}</p>
     </div>
     
-    <div class="admin-slide"><img src="/images/admin/user/admin-slidebar1.png">&nbsp;&nbsp;&nbsp;대시보드</div>
+    <div class="admin-slide"><a href="/Admin/Dashboard"><img src="/images/admin/user/admin-slidebar1.png">&nbsp;&nbsp;&nbsp;대시보드</a></div>
     <div class="dropdown">
 		  <!-- 버튼 -->
 		  <button class="admin-slide" type="button" data-toggle="dropdown" id="dropdownBtn">
@@ -110,13 +122,12 @@
 		  </button>
 		  <!-- 드롭다운 -->
 		  <div class="dropdown-menu">
-		    <a class="dropdown-item" href="/">-&nbsp;&nbsp;스토어 승인 관리</a>
-		    <a class="dropdown-item" href="/">-&nbsp;&nbsp;스토어 통계</a>
-		    <a class="dropdown-item" href="/">-&nbsp;&nbsp;스토어 담당자 관리</a>
+		    <a class="dropdown-item" href="/Admin/Store/List">-&nbsp;&nbsp;스토어 승인 관리</a>
+		    <a class="dropdown-item" href="/Admin/Managerlist">-&nbsp;&nbsp;스토어 담당자 관리</a>
 		  </div>
     </div>
-    <div class="admin-slide"><img src="/images/admin/user/admin-slidebar3.png">&nbsp;&nbsp;&nbsp;유저 관리</div>
-    <div class="admin-slide"><img src="/images/admin/user/admin-slidebar4.png">&nbsp;&nbsp;&nbsp;광고 관리</div>
+    <div class="admin-slide"><a href="/Admin/User"><img src="/images/admin/user/admin-slidebar3.png">&nbsp;&nbsp;&nbsp;유저 관리</a></div>
+    <div class="admin-slide"><a href="/Admin/Advertise"><img src="/images/admin/user/admin-slidebar4.png">&nbsp;&nbsp;&nbsp;광고 관리</a></div>
     <div class="admin-slidesite">
         <a href="/"  class="admin-slide-href">
             <img src="/images/admin/user/admin-slidebar5.png">

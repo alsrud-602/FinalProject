@@ -88,7 +88,7 @@ public class MobileReservationController {
        
        //int user_idx = useruseridx.intValue();
         int user_idx = 100;
-        int store_idx =  90;	
+        int store_idx =  94;	
         
     	ModelAndView mv = new ModelAndView();
     	StoreAddNoteDto anDTO = waitingService.getStoreAddressNote(store_idx);
@@ -142,7 +142,7 @@ public class MobileReservationController {
 	       }
 	       
 	    //int user_idx = useruseridx.intValue();				
-		int user_idx = 100;
+		int user_idx = 43;
         
 	   	WaitingDto wDTO =waitingService.getUserWaiting(user_idx);
 	   	List<WaitingDto> wList = waitingService.getUserWaitingList(user_idx);

@@ -25,7 +25,7 @@
 <body>
   <%@include file="/WEB-INF/include/admin-header.jsp" %>
   <div class="container">  
-  <%@include file="/WEB-INF/include/admin-slidebar2.jsp" %>
+  <%@include file="/WEB-INF/include/admin-slidebar.jsp" %>
   <main>
   <div class="content_box">
      <table id="box_table">
@@ -104,7 +104,6 @@
        <th>팝업스토어 명</th>
        <th>요청일</th>
        <th>이메일</th>
-       <th>지역</th>
        <th>상태</th>
      </tr>
 
@@ -144,9 +143,8 @@ $(function(){
 
 	$('.filter').on('click', function(){
 		
-		let search = $('.box_search').val();
+		let search = $('#box_search').val();
         let filter = $('#box_sort option:selected').val();
-        
         window.location.href = "/Admin/Listpagination?search=" + encodeURIComponent(search) + "&filter=" + encodeURIComponent(filter);
 	})
 })

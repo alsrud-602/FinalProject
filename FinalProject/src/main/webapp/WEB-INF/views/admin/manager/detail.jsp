@@ -135,7 +135,10 @@
   padding:20px;
   background: white;
 }
-
+.action a{
+  text-decoration: none;
+   color: inherit;
+}
 
 </style>
 </head>
@@ -155,15 +158,13 @@
  	<div class="upmenu" style="display: flex; ">
 		    <div style="border: 1px solid black;  margin-right: 10px;  height: 500px; width: 500px;"> <!-- 너비 조정 -->
               <p>아이디</p>
-              <input type="text" style="width: 80%;"> 
-               <p>비밀번호</p>
-               <input type="text" style="width: 80%;">
+              <input type="text" style="width: 80%;" value="${CompanyDetail.id}"> 
                <p>사업자코드</p>
-               <input type="text" style="width: 80%;">
+               <input type="text" style="width: 80%;"value="${CompanyDetail.code}">
                 <p>이메일</p>
-                <input type="text" style="width: 80%;">
+                <input type="text" style="width: 80%;"value="${CompanyDetail.email}">
                 <p>전화번호</p>
-                <input type="text" style="width: 80%;">
+                <input type="text" style="width: 80%;"value="${CompanyDetail.phone}">
         </div>
 <div style="border: 1px solid black;">   
     <div class="chart-container">
@@ -216,7 +217,7 @@
 			    
 			    <div class="remote" data-store-idx="${popup.store_idx}">Remote</div> <!-- 원격 조작 관련 정보 -->
 			</div>
-	      <div class="action">광고 등록</div> <!-- 광고 등록 버튼 -->
+	      <div class="action"><a href="/Admin/Advertise">광고 등록</a></div> <!-- 광고 등록 버튼 -->
 	    </div>
 	  </c:forEach>
 	</div>
@@ -409,12 +410,7 @@ const fetchPerformanceData = (startDate, endDate) => {
     });
 
 });
-$(function(){
-	$('.resetbutton').on('click',function(){
-		let company_idx = ${CompanyDetail.company_idx}
-		window.location.href = "/Admin/Detail?company_idx="+company_idx;
-	})
-})
+
 
 };
 const fetchStorePerformanceRank = (companyIdx, startDate, endDate) => {
@@ -431,8 +427,8 @@ const fetchStorePerformanceRank = (companyIdx, startDate, endDate) => {
     });
 };
 
-
-
+</script>
+<script>
 $(function(){
     $('.buttonsearch').on('click', function(){
         let company_idx = ${CompanyDetail.company_idx}; // JSP 표현식으로 company_idx를 가져옴
@@ -447,7 +443,12 @@ $(function(){
 		window.location.href = "/Admin/Detail?company_idx="+company_idx;
 	})
 })
-
+$(function(){
+    $('.remote').on('click', function(){
+        let store_idx = $(this).data('store-idx'); // data-store-idx에서 값 가져오기
+         window.location.href = "/Users/Info?store_idx=" + store_idx; // URL로 이동
+    });
+});
 
 </script>
     <%@include file="/WEB-INF/include/admin-footer.jsp" %>

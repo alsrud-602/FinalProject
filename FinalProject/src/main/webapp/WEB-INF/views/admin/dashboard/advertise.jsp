@@ -390,7 +390,7 @@ height: auto;
 <main>
 <div class="inner">
    <aside>
-    <%@include file="/WEB-INF/include/admin-slidebartest.jsp" %>
+    <%@include file="/WEB-INF/include/admin-slidebar2.jsp" %>
    </aside>
    <div class="content">
 	<div class="swiper-container">

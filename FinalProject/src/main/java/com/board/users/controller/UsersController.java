@@ -462,12 +462,12 @@ public class UsersController {
 	      UsersDto StoreLike = usersMapper.getStoreLike(usersdto);
 	      System.out.println("StoreLike : " + StoreLike);
 
+	      int store_idx = usersdto.getStore_idx();
 	      //전체 리뷰 페이징
 	      int start = (page - 1) * size; 
-	      int totalStorePosts = usersMapper.gettotalPosts(usersdto);
+	      int totalStorePosts = usersMapper.gettotalPosts(store_idx);
 	      int totalPages = (int) Math.ceil((double)totalStorePosts / size);
 	      
-	      int store_idx = usersdto.getStore_idx();
 	      //전체 리뷰
 	      List<UsersDto> totalreviews = usersMapper.gettotalreviews(store_idx,start,size);
 	      for (UsersDto dto : totalreviews) {
@@ -515,6 +515,7 @@ public class UsersController {
 
 	      
 	      
+	      
 
 	      mv.addObject("storedetail", storedetail);
 	      mv.addObject("user_idx", useruseridx);
@@ -538,7 +539,6 @@ public class UsersController {
 	   }
 	   
 	
-	// 리뷰 상세 페이지 데이터(AJAX)
 	// 리뷰 상세 페이지 데이터(AJAX)
 	   @RequestMapping("/ReviewDetail")
 	   @ResponseBody

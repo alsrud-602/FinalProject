@@ -440,11 +440,11 @@ public class MobileUsersController {
 	      System.out.println("StoreLike : " + StoreLike);
 	      
 	    //전체 리뷰 페이징
+	      int store_idx = usersdto.getStore_idx();
 	          int start = (page - 1) * size; 
-	          int totalStorePosts = usersMapper.gettotalPosts(usersdto);
+	          int totalStorePosts = usersMapper.gettotalPosts(store_idx);
 	          int totalPages = (int) Math.ceil((double)totalStorePosts / size);
 	          
-	          int store_idx = usersdto.getStore_idx();
 	          //전체 리뷰
 	          List<UsersDto> totalreviews = usersMapper.gettotalreviews(store_idx,start,size);
 	          for (UsersDto dto : totalreviews) {
@@ -555,6 +555,30 @@ public class MobileUsersController {
 	      HashMap<String, Object> response = new HashMap<>();
 	      response.put("ReviewDetail", ReviewDetail);
 	      return response;
+	   }
+	   
+	   // 리뷰 필터링
+	   @RequestMapping("/ReviewFilter")
+	   @ResponseBody
+	   public Map<String, Object> reviewfilter(
+			   @RequestParam(required = false,value="value") String value,
+			   @RequestParam(required = false,value="store_idx") int store_idx){
+		   System.out.println("리뷰 필터링값" + value);
+		   System.out.println("리뷰 필터링값" + store_idx);
+		   
+		   Map<String,Object> response = new HashMap<>();
+		   
+		   
+		   List<UsersDto> ReviewList = usersMapper.getReviewList(value,store_idx);
+		   for (UsersDto dto : ReviewList) {
+			     String imagePath = dto.getImage_path().replace("\\", "/"); // 경로 수정
+				dto.setImage_path(imagePath); // 수정된 경로 다시 설정
+			    System.out.println("수정된 이미지 패스 : " + imagePath);
+			}
+		   System.out.println("리뷰 필터링"+ReviewList);
+		   
+		   response.put("ReviewList", ReviewList);
+		   return response;
 	   }
 	   
 	   // 리뷰 작성 폼 페이지

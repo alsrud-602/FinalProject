@@ -53,11 +53,21 @@
 .admin-slidesite img {
     margin-right: 10px; /* 이미지와 텍스트 사이의 여백 */
 }
-.admin-slide-href{
+.admin-slide a{
     text-decoration: none; /* 링크 장식 제거 */
     color: white; /* 글자 색상 */
     font-size: 12px;
+    
 }
+.admin-slide-href{
+text-decoration: none; /* 링크 장식 제거 */
+color: inherit;
+}
+.admin-slide-href:hover{
+text-decoration: none; /* 링크 장식 제거 */
+color: inherit;
+}
+
 </style>
 
 <footer>
@@ -66,10 +76,10 @@
       <p>${user.name}</p>
       <p>${user.nickname}</p>
     </div>
-    <div class="admin-slide"><img src="/images/admin/user/admin-slidebar1.png">&nbsp;&nbsp;&nbsp;대시보드</div>
-    <div class="admin-slide"><img src="/images/admin/user/admin-slidebar2.png">&nbsp;&nbsp;&nbsp;스토어 관리</div>
-    <div class="admin-slide"><img src="/images/admin/user/admin-slidebar3.png">&nbsp;&nbsp;&nbsp;유저 관리</div>
-    <div class="admin-slide"><img src="/images/admin/user/admin-slidebar4.png">&nbsp;&nbsp;&nbsp;광고 관리</div>
+    <div class="admin-slide"><a href="/Admin/Dashboard"><img src="/images/admin/user/admin-slidebar1.png">&nbsp;&nbsp;&nbsp;대시보드</a></div>
+    <div class="admin-slide"><a href="/Admin/Store/List"><img src="/images/admin/user/admin-slidebar2.png">&nbsp;&nbsp;&nbsp;스토어 관리</a></div>
+    <div class="admin-slide"><a href="/Admin/User"><img src="/images/admin/user/admin-slidebar3.png">&nbsp;&nbsp;&nbsp;유저 관리</a></div>
+    <div class="admin-slide"><a href="/Admin/Advertise"><img src="/images/admin/user/admin-slidebar4.png">&nbsp;&nbsp;&nbsp;광고 관리</a></div>
     <div class="admin-slidesite">
         <a href="/"  class="admin-slide-href">
             <img src="/images/admin/user/admin-slidebar5.png">

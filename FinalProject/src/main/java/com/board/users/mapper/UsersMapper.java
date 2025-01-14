@@ -165,12 +165,15 @@ public interface UsersMapper {
    List<UsersDto> getMobileHotReviews(UsersDto usersdto);
 
    // 상세페이지 전체 리뷰 페이징용
-   int gettotalPosts(UsersDto usersdto);
+   int gettotalPosts(@Param("store_idx") int store_idx);
    
    //이미지 삽입
    List<ImageReivewDTO> getImageReview(int review_idx);
 
    ImageReivewDTO getImageReviewus(int review_idx);
+
+   // 리뷰 필터링 
+   List<UsersDto> getReviewList(@Param("value") String value,@Param("store_idx") int store_idx);
 
 
 

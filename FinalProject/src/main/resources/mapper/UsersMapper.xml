@@ -771,7 +771,7 @@ FROM (
         ir.image_path
 ) 
 WHERE rn = 1
-OFFSET #{start} ROWS FETCH NEXT #{size} ROWS ONLY    
+OFFSET #{start} ROWS FETCH NEXT #{size} ROWS ONLY
   </select>
   
   <!-- 전체 리뷰,평점 계산 -->
@@ -1078,12 +1078,13 @@ FETCH FIRST 2 ROWS ONLY
 <!-- 상세페이지 전체 리뷰 페이징용 -->
 <select id="gettotalPosts">
 SELECT
-    COUNT(review_idx) AS review_count
+    NVL(COUNT(r.review_idx), 0) AS review_count
 FROM
-    reviews
-WHERE store_idx = #{store_idx}
+    (SELECT #{store_idx} AS store_idx FROM dual) s
+LEFT JOIN
+    reviews r ON s.store_idx = r.store_idx
 GROUP BY
-    store_idx
+    s.store_idx
 </select>
 
 <!-- 리뷰 이미지  가져 오기  -->
@@ -1099,4 +1100,68 @@ FROM REVIEWS
 WHERE REVIEW_IDX = #{review_idx}
 </select>
 
+<!-- 리뷰 필터링 -->
+<select id="getReviewList">
+SELECT *
+FROM (
+    SELECT
+        us.name,
+        us.user_idx,
+        re.review_idx,
+        re.user_idx AS review_user_idx,
+        re.store_idx,
+        re.score,
+        re.content,
+        TO_CHAR(re.cdate, 'YYYY-MM-DD') AS review_date,
+        NVL(rh.hit, 0) AS hit,  -- 조회 수가 없으면 0으로 반환
+        ir.is_idx,
+        ir.imagename,
+        ir.imageext,
+        ir.image_path,
+        COUNT(lr.lr_idx) AS like_count,  -- LIKE_REVIEWS의 LR_IDX 개수 추가
+        ROW_NUMBER() OVER (PARTITION BY re.review_idx ORDER BY re.cdate ASC) AS rn
+    FROM
+        reviews re
+    JOIN 
+        users us ON re.user_idx = us.user_idx
+    LEFT JOIN (
+        SELECT
+            user_idx,
+            review_idx,
+            COUNT(review_idx) AS hit,
+            store_idx
+        FROM
+            REVIEW_HIT
+        GROUP BY
+            user_idx, review_idx, store_idx
+    ) rh ON re.user_idx = rh.user_idx AND re.review_idx = rh.review_idx AND re.store_idx = rh.store_idx
+    LEFT JOIN image_review ir ON re.review_idx = ir.review_idx
+    LEFT JOIN LIKE_REVIEWS lr ON re.review_idx = lr.review_idx  -- LIKE_REVIEWS 테이블 조인
+    WHERE 
+        re.store_idx = #{store_idx} -- store_idx는 동적으로 입력받음
+    GROUP BY
+        us.name,
+        us.user_idx,
+        re.review_idx,
+        re.user_idx,
+        re.store_idx,
+        re.score,
+        re.content,
+        re.cdate,
+        rh.hit,
+        ir.is_idx,
+        ir.imagename,
+        ir.imageext,
+        ir.image_path
+) 
+WHERE rn = 1
+ORDER BY
+    CASE 
+        WHEN #{value} = 'first' THEN review_date END DESC,
+    CASE 
+        WHEN #{value} = 'like' THEN like_count END DESC,
+    CASE 
+        WHEN #{value} = 'score' THEN score END DESC
+
+</select>
 </mapper>

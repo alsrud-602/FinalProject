@@ -225,8 +225,8 @@
 
 </body>
   <script>
-  const store_idx = 90;
-  const user_idx = 44; 
+  const store_idx = 94;
+  const user_idx = 47; 
   document.getElementById("reserveButton").addEventListener("click", function() {
           
  	 $('#overlay').fadeIn(); // 오버레이를 나타냄

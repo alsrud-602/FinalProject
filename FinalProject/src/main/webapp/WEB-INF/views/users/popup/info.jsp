@@ -157,7 +157,6 @@ background-color: #006534;
       <div onclick="moveInfo()">팝업정보</div>
       <div onclick="moveReiview()">리뷰</div>
       <div onclick="moveMap()">위치</div>
-      <div onclick="moveInstagram()">instgram피드</div>
     </div>
     
     <div id="contents">  
@@ -467,81 +466,7 @@ const infoPage = `<div class="content">
       <%@include file="/WEB-INF/include/info-pagination.jsp" %>
      `;
      
-  const instagramPage = ` 
-     <!-- instagram header-->
-     <div class="review_header">
-       <div class="review_title">
-         <p>인스타그램 </p><p>조회수 기반 HOT 리뷰</p>
-       </div>
-     </div>
-     
-      <!-- instagram body-->
-      <div class="review_body">
-      <c:forEach  var = "HotReviews" items="${HotReviews}" >
-      <div class="review_box" onclick="moveHotReviewDetail(this)" 
-           data-idx="${HotReviews.store_idx}" 
-           data-user-idx="${HotReviews.user_idx}"
-           data-login-idx = "${user.userIdx}"
-           data-review-idx = "${HotReviews.review_idx}">
-        <div class ="review_preview">
-        <img class= "review_img"src="/images/example/exampleimg6.png">     
-        <div class="review_like">
-        <img src="/images/icon/heart.png">
-        <p>${HotReviews.review_count}</p>
-        </div>
-        </div>
-        <div class="review_info">
-          <p>${HotReviews.name} 님</p>
-          <div><img src="/images/icon/eye2.png">&nbsp;${HotReviews.score}&nbsp;</div>
-        </div>
-        <div class="review_score">평점 ${HotReviews.score}</div>
-        <div class="review_time"><div><a></a></div></div>
-        <div class="review_cdate">${HotReviews.review_date}</div>
-        </div>
-        </c:forEach> 
-      </div> 
-     
-     <!-- instagram header-->
-       <div class="review_header">
-       <div class="review_title">
-         <p>전체 리뷰</p>
-       </div>
-     </div>
-     <div class="review_sub">
-       <p>전체리뷰수&nbsp; | &nbsp;${totalcount.review_idx} &nbsp;&nbsp; 평균&nbsp; |&nbsp; ${totalcount.score}</p>
-       <div class="review_filter">
-       <div id="review_slike">좋아요순</div>
-       <div id="review_sscore">평점순</div>
-       <div id="review_snew">최신순</div>
-       </div>
-      </div>
-     
-      <!-- instagram body-->
-   <div class="review_body">
-     <c:forEach  var = "review" items="${totalreviews}" >
-     <div class="review_box" onclick="moveHotReviewDetail(this)"
-     data-idx="${review.store_idx}" 
-           data-user-idx="${review.user_idx}"
-              data-login-idx = "${user.userIdx}"
-              data-review-idx = "${review.review_idx}">
-        <div class ="review_preview">
-        <img class= "review_img"src="/images/example/exampleimg6.png">     
-        <div class="review_like">
-        <img src="/images/icon/heart.png">
-        <p>${review.like}</p>
-        </div>
-        </div>
-        <div class="review_info">
-          <p>${review.name} 님</p>
-          <div><img src="/images/icon/eye2.png">&nbsp;${review.hit}&nbsp;</div>
-        </div>
-        <div class="review_score">평점 ${review.score}</div>
-        <div class="review_time"><div>3시간 전</div></div>
-        <div class="review_cdate">${review.review_date}</div>
-        </div>        
-        </c:forEach>  
-      </div> 
-     `;
+
   
 const mapPage = `
     <div class="review_header">
@@ -558,6 +483,7 @@ const mapPage = `
 
 ` 
 
+         console.log('ReviewImgListee:');
 //핫리뷰 디테일
  function moveHotReviewDetail(element){
    const storeIdx = element.getAttribute('data-idx');
@@ -571,49 +497,57 @@ const mapPage = `
     $.ajax({
        url : '/Users/ReviewDetail',
        type : 'GET',
-       data : { storeidx:storeIdx, useridx:userIdx,review_idx:reviewIdx,loginidx:loginIdx}
+       data : { storeidx:storeIdx, useridx:userIdx,review_idx:reviewIdx,loginidx:loginIdx},
+       dataType: 'json' 
     })
     .done(function(response){
        const reviewData = response.ReviewDetail; // 서버에서 받아온 데이터
        const rLikeCount = response.rLikeCount; 
+       const ReviewImgListee = response.ReviewImgList; 
+        
+       //console.log('orgin :' +orgin);
+         console.log('ReviewImgListee:', ReviewImgListee);
        console.log(response);
+       console.log('리뷰이미지:',ReviewImgListee[0].image_path);
        $('#contents').html('');
        const reviewDetail = "<div class='review_header'>" +
-        "<div class='review_title'>" +
-            "<p>리뷰상세보기</p><p>유저들의 생생한 후기를 확인하세요</p>" +
-        "</div>" +
-    "</div>" +
-    "<div class='swiper-container2'>" +
-        "<div class='swiper-wrapper'>" +
-            "<c:forEach var='img' items='${ReviewImgList}'>"+
-            "<div class='swiper-slide ss'><img src='/image/read?path=${img}' alt='User Image' class='profileSize'></div>"+
-          "</c:forEach>"+
-        "</div>" +
-        "<div class='swiper-button-next'></div>" +
-        "<div class='swiper-button-prev'></div>" +
-    "</div>" +
-    "<div class='review_line'>" +
-        "<div class='review_score2'>" +
-            "<p>평점 " + reviewData.score + "점</p>" +
-        "</div>" +
-        "<div class='review_nld'>" +
-            "<img src='/images/icon/calender.png'>&nbsp;&nbsp;&nbsp; <p>" + reviewData.review_date + "</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
-            "<img src='/images/icon/eye1.png'> &nbsp;&nbsp;&nbsp;<p>" + reviewData.hit + "</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
-            "<div id='review_like_btn' onclick='LikeReviewConfig(this)' data-lr="+reviewData.review_idx +"><img src='/images/icon/heart.png'>&nbsp;&nbsp;&nbsp; <p id='like-review-count'>" + rLikeCount + "</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>" +
-        "</div>" +
-    "</div>" +
-    "<div class='content'>" +
-        "<div class='content_title'><img src='/images/icon/msg.png'><p>코멘트</p></div>" +
-        "<p class='content_detail'>" + reviewData.content + "</p>" +
-    "</div>" +
-    "<div class='sizebox'></div>" +
-    "<div class='btn_line'>" +
-        (loginIdx === userIdx ? 
-            "<a class='btn3' href='/Users/Updateform?store_idx=" + reviewData.store_idx + "&user_idx=" + reviewData.user_idx + "&review_idx="+reviewIdx+"'>수정</a>" +
-            "<a class='btn3' href='/Users/Delete?store_idx=" + reviewData.store_idx + "&user_idx=" + reviewData.user_idx + "&review_idx="+reviewIdx+"'>삭제</a>" : "") +
-        "<a class='btn3' href='#' onclick='moveReviewBack(event)'>돌아가기</a>" +
-    "</div>";
+       "<div class='review_title'>" +
+           "<p>리뷰상세보기</p><p>유저들의 생생한 후기를 확인하세요</p>" +
+       "</div>" +
+   "</div>" +
+   "<div class='swiper-container2'>" +
+       "<div class='swiper-wrapper'>" +
+           ReviewImgListee.map(img => 
+               "<div class='swiper-slide ss'><img src='/image/read?path=" + img.image_path + "' alt='User Image' class='profileSize'></div>"
+           ).join("") + 
+       "</div>" +
+       "<div class='swiper-button-next'></div>" +
+       "<div class='swiper-button-prev'></div>" +
+   "</div>" +
+   "<div class='review_line'>" +
+       "<div class='review_score2'>" +
+           "<p>평점 " + reviewData.score + "점</p>" +
+       "</div>" +
+       "<div class='review_nld'>" +
+           "<img src='/images/icon/calender.png'>&nbsp;&nbsp;&nbsp; <p>" + reviewData.review_date + "</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
+           "<img src='/images/icon/eye1.png'> &nbsp;&nbsp;&nbsp;<p>" + reviewData.hit + "</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
+           "<div id='review_like_btn' onclick='LikeReviewConfig(this)' data-lr=" + reviewData.review_idx + "><img src='/images/icon/heart.png'>&nbsp;&nbsp;&nbsp; <p id='like-review-count'>" + rLikeCount + "</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>" +
+       "</div>" +
+   "</div>" +
+   "<div class='content'>" +
+       "<div class='content_title'><img src='/images/icon/msg.png'><p>코멘트</p></div>" +
+       "<p class='content_detail'>" + reviewData.content + "</p>" +
+   "</div>" +
+   "<div class='sizebox'></div>" +
+   "<div class='btn_line'>" +
+       (loginIdx === userIdx ? 
+           "<a class='btn3' href='/Users/Updateform?store_idx=" + reviewData.store_idx + "&user_idx=" + reviewData.user_idx + "&review_idx=" + reviewIdx + "'>수정</a>" +
+           "<a class='btn3' href='/Users/Delete?store_idx=" + reviewData.store_idx + "&user_idx=" + reviewData.user_idx + "&review_idx=" + reviewIdx + "'>삭제</a>" : "") +
+       "<a class='btn3' href='#' onclick='moveReviewBack(event)'>돌아가기</a>" +
+   "</div>";
+
         $('#contents').append(reviewDetail); // 업데이트된 내용을 HTML에 삽입
+        $('#contents').append(ReviewImgListee); // 업데이트된 내용을 HTML에 삽입
         var swiper2 = new Swiper('.swiper-container2', {
             slidesPerView: 1,
             slidesPerGroup: 1,
@@ -650,17 +584,6 @@ function moveReviewBack(e) {
      $('#contents').html(reviewPage);
 }
 
-function moveInstagram() {
-   $('#contents').html('');
-     $('#contents').html(instagramPage);
-}
-
-function moveInstagramBack(e) {
-   
-    e.preventDefault();
-   $('#contents').html('');
-     $('#contents').html(instagramPage);
-}
 
 function initMap() {
     // 지도 객체 생성

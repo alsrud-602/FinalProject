@@ -68,7 +68,7 @@ aside {
   <div class="mobileside-layout">
   <div class="mobileside_box">
  <div class="mobiletitle_click">
-       <div class="mobile_atag_div"><img src="/images/icon/reviews-write.png"><a class="btn2" href="/Mobile/Users/Writeform?store_idx=${storedetail.store_idx}">리뷰 작성하기</a></div>
+       <div class="mobile_atag_div"><img src="/images/icon/review-write.png"><a class="btn2" href="/Mobile/Users/Writeform?store_idx=${storedetail.store_idx}">리뷰 작성하기</a></div>
        <div class="mobile_share" onclick="clipboard()"><img src="/images/icon/share1.png"><p>공유하기</p></div>
        <div class="mobile_bookmark"><img src="/images/icon/star.png"><p>찜하기</p></div>
       </div>
