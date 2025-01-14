@@ -241,7 +241,7 @@ main {
  <!-- AJAX 스크립트 -->
 <script>
 $(document).ready(function() {
-    var userIdx = ${user.userIdx}; // JSP에서 사용자 idx를 JavaScript 변수로 설정
+    var userIdx = ${userIdx}; // JSP에서 사용자 idx를 JavaScript 변수로 설정
     
     // 페이지 로드 시 사용자의 카테고리 가져오기
     $.ajax({
@@ -338,11 +338,6 @@ function addCategory(userIdx, categoryId) {
                 type: "POST",
                 success: function(response) {
                     alert('회원탈퇴가 완료되었습니다.');
-                    localStorage.removeItem('userJwt');
-                    localStorage.removeItem('adminjwt');
-                    localStorage.removeItem('userJwtExpiration');
-                    localStorage.removeItem('kakaoAccessToken');
-                    localStorage.removeItem('kakaoTokenExpiration');
                     window.location.href = '/'; // 홈페이지로 리다이렉트
                 },
                 error: function(xhr, status, error) {

@@ -25,10 +25,8 @@ aside {
     margin-bottom: 40px;
 }
 
-.bookmark-off {
- background: #F9FF40; 
-}
 .mobile_bookmark {
+    background: #F9FF40; /* 북마크 배경색 */
     width: 250px;
     height: 80px;
     margin-right: 40px;
@@ -72,7 +70,7 @@ aside {
  <div class="mobiletitle_click">
        <div class="mobile_atag_div"><img src="/images/icon/reviews-write.png"><a class="btn2" href="/Mobile/Users/Writeform?store_idx=${storedetail.store_idx}">리뷰 작성하기</a></div>
        <div class="mobile_share" onclick="clipboard()"><img src="/images/icon/share1.png"><p>공유하기</p></div>
-       <div class="mobile_bookmark" onclick="bookConfig()"><img src="/images/icon/star.png"><p>찜하기</p></div>
+       <div class="mobile_bookmark"><img src="/images/icon/star.png"><p>찜하기</p></div>
       </div>
   </div>
   </div>

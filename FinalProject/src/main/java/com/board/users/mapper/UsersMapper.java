@@ -38,7 +38,7 @@ public interface UsersMapper {
    
    int updateUserProfile(UsersDto usersDto);
    
-   void deleteUser(Long userIdx);
+   void deleteUser(int userIdx);
 
    UsersDto getUserById(String userId);
 
@@ -157,8 +157,8 @@ public interface UsersMapper {
 
    
    //Wallet 코스추천
+   List<UsersDto> getallRegionlist();
    List<UsersDto> getallStorelist();
-
    List<UsersDto> getAddressesByStoreIdx();
    
    // 모바일 핫리뷰(조회수 기준 2개)
@@ -171,6 +171,11 @@ public interface UsersMapper {
    List<ImageReivewDTO> getImageReview(int review_idx);
 
    ImageReivewDTO getImageReviewus(int review_idx);
+
+   //user idx 로 ID 가져오기
+   String getID(UsersDto usersdto);
+
+
 
 
 

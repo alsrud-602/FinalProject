@@ -36,10 +36,7 @@ FROM (
         img.imagename, 
         img.imageext, 
         img.image_path,
-        ROW_NUMBER() OVER (PARTITION BY st.store_idx ORDER BY img.is_idx ASC) AS rn,
-        (SELECT COUNT(user_idx) 
-         FROM LIKE_STORES ls 
-         WHERE ls.store_idx = st.store_idx) AS like_count
+        ROW_NUMBER() OVER (PARTITION BY st.store_idx ORDER BY img.is_idx ASC) AS rn
     FROM
         stores st
     JOIN stores_detail std ON st.store_idx = std.store_idx
@@ -48,7 +45,7 @@ FROM (
         st.ban = 'N' AND 
         st.status = '승인' AND 
         TRUNC(std.start_date) &lt;= TRUNC(SYSDATE) AND 
-        TRUNC(std.end_date) &gt;= TRUNC(SYSDATE)
+        TRUNC(std.end_date) >= TRUNC(SYSDATE)
 )
 WHERE rn = 1
 ORDER BY store_idx ASC
@@ -71,10 +68,7 @@ SELECT
     std.detail_idx,std.address,TO_CHAR(std.start_date, 'YYYY-MM-DD') AS start_date,
     TO_CHAR(std.end_date, 'YYYY-MM-DD') AS end_date,std.homepage, std.sns,std.introduction,
     std.content,std.parking,std.fare,std.age_limit,std.shooting, std.igdate,
-    std."LIKE",std.goods,COUNT(h.user_id) AS user_count,img.image_path, 
-            (SELECT COUNT(user_idx) 
-         FROM LIKE_STORES ls 
-         WHERE ls.store_idx = st.store_idx) AS like_count
+    std."LIKE",std.goods,COUNT(h.user_id) AS user_count,img.image_path
 FROM
     stores st
 JOIN 
@@ -195,10 +189,7 @@ WITH RankedStores AS (
         img.imagename,
         img.imageext,
         img.image_path,
-        ROW_NUMBER() OVER (PARTITION BY st.store_idx ORDER BY st.store_idx ASC) AS rn,
-   	    (SELECT COUNT(user_idx) 
-         FROM LIKE_STORES ls 
-         WHERE ls.store_idx = st.store_idx) AS like_count
+        ROW_NUMBER() OVER (PARTITION BY st.store_idx ORDER BY st.store_idx ASC) AS rn
     FROM
         stores st
     JOIN 
@@ -269,9 +260,6 @@ FROM (
         im.imageext,
         im.image_path,
         ROW_NUMBER() OVER (PARTITION BY st.store_idx ORDER BY im.is_idx ASC) AS rn
-    	(SELECT COUNT(user_idx) 
-         FROM LIKE_STORES ls 
-         WHERE ls.store_idx = st.store_idx) AS like_count
     FROM
         stores st
     JOIN
@@ -643,7 +631,7 @@ OFFSET #{start} ROWS FETCH NEXT #{size} ROWS ONLY
         WHERE user_idx = #{user_idx}
    </update>
 
-   <delete id="deleteUser">
+   <delete id="deleteUser" parameterType="int">
         DELETE FROM Users WHERE user_idx = #{user_idx}
     </delete>
     
@@ -722,7 +710,7 @@ OFFSET #{start} ROWS FETCH NEXT #{size} ROWS ONLY
   
   <!-- 좋아요 조회 -->
   <select id="getStoreLike">
-   SELECT store_idx, COUNT(store_idx) AS storelike
+  SELECT store_idx, COUNT(user_idx) AS storelike
    FROM like_stores
    WHERE store_idx = #{store_idx}
    GROUP BY store_idx
@@ -956,6 +944,10 @@ JOIN (
    SELECT * FROM STORES_DETAIL
 </select>
 
+<!-- 자역 정보 가져오기-->
+<select id="getallRegionlist">
+	SELECT * FROM REGION
+</select>
 
  <!-- 내가 쓴 리뷰 개수 -->
  <select id="getMyTotalReview">
@@ -1109,6 +1101,13 @@ WHERE REVIEW_IDX = #{review_idx}
 SELECT REVIEW_IDX, USER_IDX, STORE_IDX
 FROM REVIEWS
 WHERE REVIEW_IDX = #{review_idx}
+</select>
+
+
+<select id="getID">
+SELECT ID
+FROM USERS
+WHERE USER_IDX =#{user_idx}
 </select>
 
 </mapper>

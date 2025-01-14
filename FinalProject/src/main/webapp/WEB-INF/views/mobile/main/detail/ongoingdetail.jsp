@@ -8,7 +8,7 @@
 <link rel="icon" type="image/png" href="/img/favicon.png" />
 <link rel="stylesheet"  href="/css/mobile-common.css" />
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+<script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
 <style>
    body{
    background-color: #121212 !important;
@@ -55,7 +55,7 @@
 }
 
   .popup-image {
-    width: 300px;
+    width: 250px;
     height: auto;
 }
 
@@ -71,24 +71,18 @@
     font-size: 40px;
     font-weight: bold;
     margin-bottom: 10px;
-    width: 600px;
-    white-space: nowrap;
-    text-overflow: ellipsis;
 }
 
 .popup-info {
     font-size: 35px;
     line-height: 2;
-    width: 600px;
 }
 
 .popup-location,
 .popup-date {
-    overflow: hidden; /* 넘치는 내용 숨김 */
-    white-space: nowrap; /* 줄 바꿈 방지 */
-    text-overflow: ellipsis; /* 넘치는 부분을 ...으로 표시 */
-    width: 100%; /* 부모 요소에 맞춰 너비 설정 */
-    display: block; /* 블록 요소로 변경 */
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .popup-actions {
@@ -267,7 +261,7 @@
     <c:forEach var="popup" items="${popuplist}">
         <a href="/Mobile/Users/Info?store_idx=${popup.store_idx}" class="card">
         <span class="popup-like" >
-            <span class="likebtn"  data-store-idx="${popup.store_idx}"  onclick="event.preventDefault(); event.stopPropagation(); LikeConfig(this);"><img src="/images/detail/noHeart.svg" class="heartimg"> <span class="like-count">${popup.like_count}</span></span>
+            <span class="likebtn"  data-store-idx="${popup.store_idx}"  onclick="event.preventDefault(); event.stopPropagation(); LikeConfig(this);"><img src="/images/detail/noHeart.svg" id="heartimg"> <span id="like-count">${popup.like}</span></span>
         </span>
             <img src="/image/read?path=${popup.image_path}" alt="Store Image" class="popup-image">
             <div class="popup-content">
@@ -284,10 +278,6 @@
                 <span></span>
                     <span class="popup-share">
                         <span class="bookmark"  data-store-idx="${popup.store_idx}"  onclick="event.preventDefault(); event.stopPropagation(); bookConfig(this);"><img src="/images/detail/noStar.svg"> 찜하기</span> | 
-                        <span class="share" onclick="event.preventDefault(); event.stopPropagation(); clipboard(window.location.href);">
-                        <!--  onShare('${popup.title}', '${popup.start_date} ~ ${popup.end_date}', '${popup.image_path}', '${popup.store_idx}')" -->
-                        	<img src="/images/detail/share.svg"> 공유하기
-                    	</span>
                         <span class="share" onclick="onShare()"> <img src="/images/detail/share.svg">공유하기</span>
                     </span>
                 </div>
@@ -341,10 +331,7 @@ $(function() {
                     data.filterlist.forEach(function(a) {
                     	html += "<a href='/Mobile/Users/Info?store_idx=" + a.store_idx + "' class='card' onclick='handleCardClick(event)'>" +
                         "<span class='popup-like'>" +
-                            "<span class='likebtn' data-store-idx='" + a.store_idx + "' onclick='event.preventDefault(); event.stopPropagation(); LikeConfig(this);'>" +
-                                "<img src='/images/detail/noHeart.svg' class='heartimg'> " + 
-                                "<span class='like-count'>" + a.like_count + "</span>" +
-                            "</span>" +
+                            "<i class='fa fa-heart'></i> 100" +
                         "</span>" +
                         "<img src='/image/read?path=" + a.image_path + "' alt='Store Image' class='popup-image'>" +
                         "<div class='popup-content'>" +
@@ -360,12 +347,10 @@ $(function() {
                             "<div class='popup-actions'>" +
                                 "<span></span>" +
                                 "<span class='popup-share'>" +
-                                    "<span class='bookmark' data-store-idx='" + a.store_idx + "' onclick='event.preventDefault(); event.stopPropagation(); bookConfig(this);'>" +
+                                    "<span class='bookmark' onclick='event.preventDefault(); event.stopPropagation(); bookConfig(this);'>" +
                                         "<img src='/images/detail/noStar.svg'> 찜하기" +
                                     "</span> | " +
-                                    "<span class='share' onclick='event.preventDefault(); event.stopPropagation(); bookmark(window.location.href)'>" +
-                                        "<img src='/images/detail/share.svg'> 공유하기" +
-                                    "</span>" +
+                                    "<img src='/images/detail/share.svg'> 공유하기" +
                                 "</span>" +
                             "</div>" +
                         "</div>" +
@@ -388,243 +373,160 @@ $(function() {
 
 </script>
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-    // 모든 좋아요 버튼에 대해 LikeConfig 실행 (상태 확인만)
-    const likeButtons = document.querySelectorAll('.likebtn');
-    likeButtons.forEach(button => {
-        LikeConfig(button);  // 페이지 로드 시 상태 확인만 실행
-    });
-
-    // 좋아요 버튼 클릭 시 처리
-    likeButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            // 좋아요 상태를 클릭 시에만 토글
-            toggleLike(button);
-        });
-    });
-});
-
-function LikeConfig(likeElement) {
-    const store_idx = likeElement.getAttribute('data-store-idx');
-
-    const content = {
-        store_idx: store_idx
-    };
-
-    fetch(`/Popup/Mobile/Like/Config`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(content),
-    })
-    .then(response => {
-	    if (!response.ok) {
-	        // 상태 코드가 2xx가 아닐 경우 오류 처리
-	        return response.text().then(text => {
-	            throw new Error(`로그인 실패: ${text}`);
-	        });
-	    }
-	    
-	    // 응답 본문이 비어있지 않은지 확인
-	    return response.json().catch(err => {
-	        // JSON 변환 실패 시 처리
-	        return null; // null 반환
-	    });
-	})
-    .then(data => {
-        // data가 null인 경우는 좋아요가 안 눌려져 있는 상태로 처리
-        if (data == null) {
-        	const imgElement = likeElement.querySelector('img');
-            imgElement.src = '/images/detail/noHeart.svg';
-        } else {
-        	const imgElement = likeElement.querySelector('img');
-            imgElement.src = '/images/detail/heart.svg';
-        }
-    })
-    .catch(error => {
-        console.error('에러:', error);
-    });
+//1. 좋아요를 이미 했는지 여부 
+function LikeConfig(likeElement){
+	const store_idx = likeElement.getAttribute('data-store-idx');
+	
+	const content = {
+		    store_idx: store_idx 
+		};
+		fetch(`/Popup/Mobile/Like/Config`, {
+		    method: 'POST', // POST 요청
+		    headers: {
+		        'Content-Type': 'application/json', // JSON 데이터임을 명시
+		    },
+		    body: JSON.stringify(content), // 객체를 JSON 문자열로 변환하여 전송
+		})
+	    .then(response => {
+	        if (response.status === 401) {
+	            // 리다이렉션 처리
+	            window.location.href = '/Mobile/Users/LoginForm';
+	        } else {
+	            return response.json(); // 다른 정상 응답 처리
+	        }
+	    })
+		.then(data => {
+		    console.log('datais_idx:', data);
+		    if (data) {
+		      LikeDown(data, likeElement);
+		    }else{		    	
+		   LikeUp(likeElement); 	
+		    }
+		})
+		.catch(error => {
+			 LikeUp(likeElement); 
+		});				
+	
+	
+	
+	
 }
 
-// 좋아요 상태를 변경하는 함수 (클릭 시 호출됨)
-function toggleLike(likeElement) {
-    const store_idx = likeElement.getAttribute('data-store-idx');
-    const content = { store_idx: store_idx };
+//2. 좋아요가 없다면  
+function LikeUp(likeElement) {	
+	const store_idx = likeElement.getAttribute('data-store-idx');
+	const content = {
+		    store_idx: store_idx 
+		};
+	
+		fetch(`/Popup/Mobile/Like/Write`, {
+		    method: 'POST', // POST 요청
+		    headers: {
+		        'Content-Type': 'application/json', // JSON 데이터임을 명시
+		    },
+		    body: JSON.stringify(content), // 객체를 JSON 문자열로 변환하여 전송
+		})
+	    .then(response => {
+	        if (response.status === 401) {
+	            // 리다이렉션 처리
+	            window.location.href = '/Mobile/Users/LoginForm';
+	        } else {
+	            return response.json(); // 다른 정상 응답 처리
+	        }
+	    })
+		.then(data => {
+		    console.log('data:', data);
+		    if (data) {
+		        // 서버에서 반환한 데이터 처리
+		        console.log('처리 결과:', data);
+		        const imgElement = likeElement.querySelector('img');
 
-    // 서버에서 좋아요 상태를 가져옴
-    fetch(`/Popup/Mobile/Like/Config`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(content),
-    })
-    .then(response => {
-        if (response.status === 401) {
-            window.location.href = '/Mobile/Users/LoginForm';
-        } else {
-            // 응답 본문이 비어있지 않은지 확인
-            return response.json().catch(err => {
-                // JSON 변환 실패 시 처리
-                return null; // null 반환
-            });
-        }
-    })
-    .then(data => {
-        if (data == null) {
-            // 좋아요가 안 눌린 상태이면 좋아요 추가
-            LikeUp(likeElement);
-        } else {
-            // 이미 좋아요가 눌린 상태이면 좋아요 취소
-            LikeDown(data, likeElement);
-        }
-    })
-    .catch(error => {
-        console.error('좋아요 상태 확인 실패:', error);
-    });
+	            // img 요소의 src 속성 변경
+	            if (imgElement) {
+	                imgElement.src = '/images/detail/heart.svg'; // 원하는 이미지 경로로 변경
+	            }
+		        const LikeCount = data
+		        document.getElementById('like-count').innerHTML = LikeCount;
+		        
+		    }
+		})
+		.catch(error => {
+		    console.error('좋아요 내역이 없습니다', error);
+		});				
 }
+//3.좋아요를 했다면
+function LikeDown(ls_idx, likeElement) {	
+	const store_idx = likeElement.getAttribute('data-store-idx');
+	const content = {
+			ls_idx: ls_idx,
+		    store_idx: store_idx 
+		};
+	
+		fetch(`/Popup/Like/Delete`, {
+		    method: 'DELETE', 
+		    headers: {
+		        'Content-Type': 'application/json', // JSON 데이터임을 명시
+		    },
+		    body: JSON.stringify(content), // 객체를 JSON 문자열로 변환하여 전송
+		})
+		.then(response => {
+		    if (!response.ok) {
+		        throw new Error(`HTTP error! status: ${response.status}`);
+		    }
+		    return response.json();
+		})
+		.then(data => {
+		    console.log('data:', data);
+		    
+		        // 서버에서 반환한 데이터 처리
+		        console.log('처리 결과:', data);
+		        const imgElement = likeElement.querySelector('img');
 
-// 좋아요 추가
-function LikeUp(likeElement) {
-    const store_idx = likeElement.getAttribute('data-store-idx');
-    const content = { store_idx: store_idx };
-
-    fetch(`/Popup/Mobile/Like/Write`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(content),
-    })
-    .then(response => {
-        if (response.status === 401) {
-            window.location.href = '/Mobile/Users/LoginForm';
-        } else {
-            return response.json();
-        }
-    })
-    .then(data => {
-        if (data) {
-            const imgElement = likeElement.querySelector('img');
-            if (imgElement) imgElement.src = '/images/detail/heart.svg';
-
-            const likeCountElement = likeElement.querySelector('.like-count');
-            if (likeCountElement) likeCountElement.textContent = data;
-        }
-    })
-    .catch(error => console.error('좋아요 처리 실패:', error));
-}
-
-// 좋아요 취소
-function LikeDown(ls_idx, likeElement) {
-    const store_idx = likeElement.getAttribute('data-store-idx');
-    const content = { ls_idx: ls_idx, store_idx: store_idx };
-
-    fetch(`/Popup/Like/Delete`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(content),
-    })
-    .then(response => {
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        return response.json();
-    })
-    .then(data => {
-        const imgElement = likeElement.querySelector('img');
-        if (imgElement) imgElement.src = '/images/detail/noHeart.svg';
-
-        const likeCountElement = likeElement.querySelector('.like-count');
-        if (likeCountElement) likeCountElement.textContent = data;
-    })
-    .catch(error => console.error('좋아요 삭제 실패:', error));
-}
+	            // img 요소의 src 속성 변경
+	            if (imgElement) {
+	                imgElement.src = '/images/detail/noHeart.svg'; // 원하는 이미지 경로로 변경
+	            }
+		        const LikeCount = data
+		        document.getElementById('like-count').innerHTML = LikeCount;		        
+		   
+		})
+		.catch(error => {
+		    console.error('좋아요 내역이 없습니다', error);
+		});				
+}    
 </script>
 <script>
-
-document.addEventListener("DOMContentLoaded", () => {
-    // 모든 좋아요 버튼에 대해 LikeConfig 실행 (상태 확인만)
-    const bookmarkButtons = document.querySelectorAll('.bookmark');
-    bookmarkButtons.forEach(button => {
-    	bookConfig(button);  // 페이지 로드 시 상태 확인만 실행
-    });
-
-    // 좋아요 버튼 클릭 시 처리
-    bookmarkButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            // 좋아요 상태를 클릭 시에만 토글
-            toggleBookmark(button);
-        });
-    });
-});
-
 function bookConfig(bookmarkElement) {
-    const store_idx = bookmarkElement.getAttribute('data-store-idx');
-
+const store_idx = bookmarkElement.getAttribute('data-store-idx');
     const content = {
-        store_idx: store_idx
+        store_idx: store_idx 
     };
 
     fetch(`/Popup/Mobile/Bookmark/Config`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(content),
-    })
-    .then(response => {
-	    if (!response.ok) {
-	        // 상태 코드가 2xx가 아닐 경우 오류 처리
-	        return response.text().then(text => {
-	            throw new Error(`로그인 실패: ${text}`);
-	        });
-	    }
-	    
-	    // 응답 본문이 비어있지 않은지 확인
-	    return response.json().catch(err => {
-	        // JSON 변환 실패 시 처리
-	        return null; // null 반환
-	    });
-	})
-    .then(data => {
-        // data가 null인 경우는 좋아요가 안 눌려져 있는 상태로 처리
-        if (data == null) {
-        	const imgElement = bookmarkElement.querySelector('img');
-            imgElement.src = '/images/detail/noStar.svg';
-        } else {
-        	const imgElement = bookmarkElement.querySelector('img');
-            imgElement.src = '/images/detail/star.svg';
-        }
-    })
-    .catch(error => {
-        console.error('에러:', error);
-    });
-}
-//좋아요 상태를 변경하는 함수 (클릭 시 호출됨)
-function toggleBookmark(bookmarkElement) {
-    const store_idx = bookmarkElement.getAttribute('data-store-idx');
-    const content = { store_idx: store_idx };
-
-    // 서버에서 좋아요 상태를 가져옴
-    fetch(`/Popup/Mobile/Bookmark/Config`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+        },
         body: JSON.stringify(content),
     })
     .then(response => {
         if (response.status === 401) {
+            // 리다이렉션 처리
             window.location.href = '/Mobile/Users/LoginForm';
         } else {
-            // 응답 본문이 비어있지 않은지 확인
-            return response.json().catch(err => {
-                // JSON 변환 실패 시 처리
-                return null; // null 반환
-            });
+            return response.json(); // 다른 정상 응답 처리
         }
     })
     .then(data => {
-        if (data == null) {
-            // 좋아요가 안 눌린 상태이면 좋아요 추가
-            BookmarkUp(bookmarkElement);
-        } else {
-            // 이미 좋아요가 눌린 상태이면 좋아요 취소
+        console.log('BOOKMARK_IDX:', data);
+        if (data) {
             BookmarkDown(data, bookmarkElement);
+        } else {
+            BookmarkUp(bookmarkElement);
         }
     })
     .catch(error => {
-        console.error('좋아요 상태 확인 실패:', error);
+        BookmarkUp(bookmarkElement); 
     });
 }
 
@@ -650,6 +552,7 @@ function BookmarkUp(bookmarkElement) {
         }
     })
     .then(data => {
+        console.log('data:', data);
         if (data) {
             // bookmarkElement의 자식 img 요소 찾기
             const imgElement = bookmarkElement.querySelector('img');
@@ -668,6 +571,7 @@ function BookmarkUp(bookmarkElement) {
 }
 
 function BookmarkDown(data, bookmarkElement) {
+    console.log('북마크 삭제: BOOKMARK_IDX', data);
     const content = {
         bookmark_idx: data 
     };
@@ -686,6 +590,7 @@ function BookmarkDown(data, bookmarkElement) {
         return response.json(); // 응답을 JSON으로 변환
     })
     .then(data => {
+        console.log('삭제 상태 data:', data);
         // bookmarkElement의 자식 img 요소 찾기
         const imgElement = bookmarkElement.querySelector('img');
 
@@ -699,63 +604,36 @@ function BookmarkDown(data, bookmarkElement) {
         console.error('북마크 내역이 없습니다', error);
     });
 }
-
-</script>
-<script>
-function clipboard(text) {
-    navigator.clipboard.writeText(text)
-        .then(() => {
-            console.log('클립보드에 복사되었습니다:', text);
-            alert('클립보드에 복사되었습니다: ' + text);
-        })
-        .catch(err => {
-            console.error('클립보드 복사 실패:', err);
-            alert('클립보드 복사에 실패했습니다. 다시 시도해주세요');
-        });
+function bookmarkconfigg(){	
+	const content = {
+		    store_idx: store_idx 
+		};
+		fetch(`/Popup/Bookmark/Config`, {
+		    method: 'POST', // POST 요청
+		    headers: {
+		        'Content-Type': 'application/json', // JSON 데이터임을 명시
+		    },
+		    body: JSON.stringify(content), // 객체를 JSON 문자열로 변환하여 전송
+		})
+		.then(response => {
+		    if (!response.ok) {
+		        alert('확인확인')
+		    }
+		    return response.json();
+		})
+		.then(data => {
+		    console.log('BOOKMARK_IDX:', data);
+		    if (data) {
+		    	 bookmarkElement.classList.add('bookmark-on');    
+		    }
+		})
+		.catch(error => {
+			
+		});						
 }
+
+bookmarkconfigg();
+
 </script>
-<!-- <script>
-    // Kakao SDK 초기화
-    Kakao.init('4c54ad5ba758bf789727f818ba5af518'); // Replace with your actual JavaScript Key
-    console.log(Kakao.isInitialized()); // 초기화 확인
-
-    function onShare(title, description, imagePath, storeIdx) {
-        if (!Kakao.isInitialized()) {
-            alert('Kakao SDK가 초기화되지 않았습니다.');
-            return;
-        }
-
-        const imageUrl = `http://localhost:9090/image/read?path=\${encodeURIComponent(imagePath)}`;
-        const linkUrl = `http://localhost:9090/Popup/StoreDetails?store_idx=\${storeIdx}`;
-
-        Kakao.Link.sendDefault({
-            objectType: 'feed',
-            content: {
-                title: title,
-                description: description,
-                imageUrl: imageUrl,
-                link: {
-                    mobileWebUrl: linkUrl,
-                    webUrl: linkUrl,
-                },
-            },
-            buttons: [
-                {
-                    title: '상세보기',
-                    link: {
-                        mobileWebUrl: linkUrl,
-                        webUrl: linkUrl,
-                    },
-                },
-            ],
-        })
-        .then(() => {
-            console.log('공유 성공');
-        })
-        .catch((err) => {
-            console.error('공유 실패', err);
-        });
-    }
-</script> -->
 
 </html>

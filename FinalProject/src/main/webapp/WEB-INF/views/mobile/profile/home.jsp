@@ -377,6 +377,7 @@ aside {
    </aside>
   </div>
   </main>
+  <%@include file="/WEB-INF/include/app-navbar_profile.jsp" %>
  <script src="/js/authmobileuser.js" defer></script>
  
  <!-- AJAX 스크립트 -->

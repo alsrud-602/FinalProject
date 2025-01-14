@@ -4,8 +4,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+     <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?govClientId=&submodules=geocoder"></script>
+     
     <title>주소 위치 정보</title>
-   
      <style>
         * {
             margin: 0;
@@ -34,12 +35,25 @@
             max-width: 600px;
             margin: auto;
             text-align: left;
+            padding-bottom: 100px; /* 네비게이션 바의 높이만큼 여백 추가 */
+    		overflow-y: auto; 
         }
         
 		.content-text{       
-			text-align:left;
+			text-align:center;
+			margin-bottom: 20px;
+		}
+		
+		.contentTitle-text{       
+			text-align:center;
+			margin-bottom: 40px;
+			color: #00FF84;
 		}
 	
+	.button-group{
+	text-align: center;
+	
+	}
 
         /* 필터 버튼 */
         .filter-select {
@@ -52,6 +66,10 @@
             text-align: center;
             margin-right: 10px; 
         }
+
+
+
+
 
         /* 검색하기 버튼 */
         .search-btn {
@@ -67,13 +85,16 @@
             cursor: pointer;
         }
 
+
         button:hover {
             background-color: #33ff33;
         }
 
+
+
         .store-name {
             display: flex;
-   			justify-content: flex-start;
+   			justify-content:flex-start;
             padding: 10px;
             margin: 10px 0; 
             border: 2px solid #00FF84;
@@ -105,14 +126,16 @@
         
         /* 기본 네모칸(이해 못할까봐)*/
          .default-store-name {
-            display: block;
-            padding: 10px;
-            margin: 10px 0; 
-            border: 2px dashed #00FF84; /* 기본 테두리 스타일 */
-            border-radius: 5px;
+            display:block;
+            width: 30px;
+            padding: 5px;
+            margin: 10px 45%; 
+            border-radius: 50%;
+            border: 2px solid white;
             background-color: #121212;
             color: white;
             text-align: center; /* 중앙 정렬 */
+            font-size: 16px;
         }
 
     .leftResult {
@@ -156,14 +179,46 @@ fontSize : 16px;
  margin-right:5px;
 }
 
+ /* 반응형 처리 */
+    @media (max-width: 768px) {
+        .filter-select {
+            width: 100px;
+        }
 
+        .search-btn {
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        .store-name {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .store-address-text {
+            font-size: 12px;
+        }
+
+        .store-list {
+            max-width: 100%;
+            flex-direction: column;
+        }
+
+        /* 버튼 및 요소 크기 조정 */
+        .flex-container {
+            padding: 0 20px;
+            width: 100%;
+            max-width: 100%;
+        }
+    }
+   
     </style>
 </head>
 <body>
-<%@include file="/WEB-INF/include/header.jsp" %>
+
 <div class="container">
+    <h2 class="contentTitle-text">코스정하기</h2>
     <h2 class="content-text">원하는 팝업 매장 선택하기</h2>
-    <h2 class="content-text">${address.address}</h2>
 
     <div class="button-group">
     <select class="filter-select" id="region-select">
@@ -172,26 +227,28 @@ fontSize : 16px;
             <option value="${region.region_name}">${region.region_name}</option>
         </c:forEach>
     </select>
+    
      
-     
-     
-
-        <select class="filter-select" id="popup-select" style="width:320px;">
+        <select class="filter-select" id="popup-select" >
     <option value="" >팝업</option>
     <c:forEach var="entry" items="${storeInfoMap}">
         <c:forEach var="address" items="${entry.value.addresses}">
             <option  value="${address.address}" data-region="${address.address}" name="${entry.value.storeTitle}" 
-             data-storeIdx="${address.store_idx}"> ${entry.value.storeTitle} </option>
+             data-storeIdx="${address.store_idx}" > ${entry.value.storeTitle} </option>
         </c:forEach>
     </c:forEach>
 </select>
     </div>
     
    
+    <div class="flex-container">
+        <div class="store-list" ></div>
+        <button type="button" class="search-btn" id="search-btn">경로 검색</button>
+    </div>
 
 
 	<!-- 숨긴상태로 위도경도 가져오는 form -->
-	<form action="/GetCoordinates" method="post" id="address-form">
+	<form action="/M.GetCoordinates" method="post" id="address-form">
     <div id="hidden-fields"></div> <!-- 숨겨진 필드 컨테이너 추가 -->
     <button type="submit" style="display:none;">검색</button>
 	</form>
@@ -200,59 +257,68 @@ fontSize : 16px;
     <div class="store-list" class="store-name" id="store-list"></div>                 <!-- 여기에 선택한거 들어옵니다! 7개까지 가능하게 해야함 -->  
 	<div class="default-store-name" id="default-store">+</div>
 	
-    <div class="flex-container">
-        <div class="store-list" ></div>
-        <button type="button" class="search-btn" id="search-btn">경로 검색</button>
-    </div>
 
 </div>
 
+ 
+
+
+
+
+<%@include file="/WEB-INF/include/app-navbar.jsp" %>
+
+
 <script>
-        window.onload = function() {
-            var url = "https://map.naver.com/p/directions/";
-            var locationCount = 0;
+var url = "nmap://route/walk?";  // 앱 링크로 시작
 
-            // JSP에서 처리된 데이터를 JavaScript로 삽입하여 URL 생성
-            <c:forEach var="location" items="${locations}" varStatus="status">
-                <c:if test="${location.lat != null && location.lon != null}">
-                    locationCount = ${status.index + 1};
+var locationCount = 0;
 
-                    // location.name을 사용하여 URL에 추가
-                    var locationName = "${location.name}";
-                    var encodedLocationName = encodeURIComponent(locationName); // URL 인코딩
+// locations 데이터를 JavaScript 배열로 변환
+var locationsData = [];
+<c:forEach var="location" items="${locations}" varStatus="status">
+    <c:if test="${location.lat != null && location.lon != null}">
+        locationsData.push({
+            lon: parseFloat("${location.lon}"),
+            lat: parseFloat("${location.lat}"),
+            name: "${location.name}",
+            address: "${location.address}" // address로 수정
+        });
+    </c:if>
+</c:forEach>
+
+// 출발지 및 도착지 정보를 URL에 추가
+locationsData.forEach(function(location, index) {
+    locationCount++;
+
+    if (index === 0) {
+        // 첫 번째 위치는 출발지 정보 (slng, slat)
+        url += "slng=" + location.lon.toFixed(7) + "&slat=" + location.lat.toFixed(7) + "&sname=" + encodeURIComponent(location.name) + "&";
+    } else if (index === 1) {
+        // 두 번째 위치는 도착지 정보 (elng, elat)
+        url += "dlng=" + location.lon.toFixed(7) + "&dlat=" + location.lat.toFixed(7) + "&dname=" + encodeURIComponent(location.name) + "&";
+    } else if(index>= 2) {
+    	  // 세 번째 위치부터는 경유지 정보 (via0Lng, via0Lat, via0Text)
+        var viaIndex = index - 1; // 경유지 인덱스는 0부터 시작
+        url += "v" + viaIndex + "lng=" + location.lon.toFixed(7) + "&v" + viaIndex + "lat=" + location.lat.toFixed(7) + "&v" + viaIndex + "name=" + encodeURIComponent(location.name) + "&";
+    }
+});
+// 추가적인 고정값들
+url += "appname=com.example.myapp";
+
+// URL을 알림창으로 확인
+// alert(url);
+
+// 앱에서 열기 시도
+window.location = url;
 
 
-                    // URL에 출발지와 도착지 추가
-                    if (${status.index} == 0) {
-                        url += "${location.lon},${location.lat}," + encodedLocationName + "/";
-                    } else {
-                        url += "${location.lon},${location.lat}," + encodedLocationName + "/";
-                    }
-                    // 마지막 바로 전 애는 마지막에 ":" 붙이기
-                    if (${status.index} == ${locations.size() - 2}) {
-                        url = url.slice(0, -1) + ":";  // 마지막 "/"를 ":"로 변경
-                    }
-                    
-                </c:if>
-            </c:forEach>
+window.location.href = "/Mobile/Users/RouteRecommend";
+console.log(url);
+</script>
 
-            // URL 끝에 /walk 추가
-            if (url !== "" && url !== "https://map.naver.com/p/directions/") {
-                if (locationCount === 2) {
-                    url += "-/walk";  // 2개의 위치일 경우
-                } else if (locationCount > 2) {
-                    url += "walk";  // 3개 이상의 위치일 경우
-                }
 
-               
-                
-                window.open(url, "_blank");
-                window.location.href = "/Users/RouteRecommend";
-            } else {
-                console.log("출발지와 도착지가 제대로 설정되지 않았습니다.");
-            }
-        };
-    </script>
+
+
 
 </body>
 </html>

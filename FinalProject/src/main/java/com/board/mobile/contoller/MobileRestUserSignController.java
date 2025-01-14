@@ -66,7 +66,7 @@ public class MobileRestUserSignController {
 	@Value("${spring.security.oauth2.client.registration.kakao.client-id}")
 	private String kakaoClientId;
 
-	private String kakaoRedirectUri = "http://192.168.100.133:9090/Mobile/oauth2/callback/kakao";
+	private String kakaoRedirectUri = "http://192.168.0.195:9090/Mobile/oauth2/callback/kakao";
 
 	@Autowired
 	private UserRepository userRepository;

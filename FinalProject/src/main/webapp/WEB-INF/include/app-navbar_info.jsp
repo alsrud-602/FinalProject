@@ -10,6 +10,7 @@
         bottom: 0;
         left: 0;
         width: 100%;
+        height: 257px;
         z-index:  10000;
         box-sizing: border-box; 
         overflow-y: auto; 
@@ -18,7 +19,7 @@
     
     
       .content {
-        padding-bottom: 70px; /* 하단 네비게이션 바 높이만큼 여백 추가 */
+        padding-bottom: 300px; /* 하단 네비게이션 바 높이만큼 여백 추가 */
         
     }
     
@@ -42,12 +43,12 @@
 .bottom-nav-item img {
     display: block;
     margin-bottom: 5px; /* 이미지와 텍스트 간 간격을 조정 */
-    width: 24px; /* 이미지 크기 조정 */
+    width: 70PX; /* 이미지 크기 조정 */
     height: auto;
 }
 
 .bottom-nav-item span {
-     font-size: 12px; /* 텍스트 크기 */
+    font-size: 31px; /* 텍스트 크기 */
     color: white; /* 텍스트 색상 */
     margin-top: 4px; /* 텍스트와 이미지 간의 간격 */
     display: block;
@@ -64,8 +65,28 @@
     padding: 5px;
 }
 
+/* 첫 번째 footer */
+footer:first-of-type {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #121212;
+    color: white;
+    text-align: center;
+    z-index: 1000; /* 더 높은 값 */
+}
 
-   
+/* 두 번째 footer (하단 네비게이션) */
+footer:last-of-type {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #333;
+    z-index: 500; /* 낮은 값 */
+    padding-bottom: 257px;
+}
 </style>
 <footer>
 <!-- 하단 네비게이션 바 -->
@@ -78,7 +99,7 @@
     </div>
     <div class="bottom-nav-item">
         <a href="/Mobile/Users/Wallet" class="nav-link">
-            <img class="_6-10" src="/images/header/popcornfactory.png" style="width:18px;"/>
+            <img class="_6-10" src="/images/header/popcornfactory.png" style="width:55px; height: 80PX;"/>
             <span>팝콘팩토리</span>
         </a>
     </div>

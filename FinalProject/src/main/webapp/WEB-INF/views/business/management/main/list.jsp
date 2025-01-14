@@ -44,7 +44,7 @@
     </c:otherwise>
     </c:choose>  
   
-  </p><a href="/Business/Operation/View">운영페이지 > </a>
+  </p><a href="">운영페이지 > </a>
   </div> 
   <br>
      <c:if test="${!status.last}">

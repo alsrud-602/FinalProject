@@ -146,8 +146,74 @@ INSERT INTO POPCORN_LOG (
 )
 </insert>
 
+<!-- 안만들어진 유저들 변수차단 -->
+<insert id="newuserWallet" >
+INSERT INTO POPCORN_WALLET (
+    USER_ID,
+    TOTAL_POINTS
+) VALUES (
+    #{useruserid},
+    1000
+)
+</insert>
+
+<!-- 회원가입시 출석생성 -->
+<insert id="newuserAttend" >
+INSERT INTO ATTENDANCE (
+    USER_ID
+) VALUES (
+	#{useruserid}
+)
+</insert>
+
+<!-- 회원가입시 팝콘 내역 생성 최초 가입1000 -->
+<insert id="newuserLog" >
+INSERT INTO POPCORN_LOG (
+    LOG_ID,
+    USER_ID,
+    CONTENT,
+    CONTENT_INFO,
+    EARNED_POINTS,
+    TOTAL_POINTS,
+    ADD_DATE
+) VALUES (
+    (SELECT NVL(MAX(LOG_ID),0)+1 FROM POPCORN_LOG),  
+    #{useruserid},
+    '최초 가입',
+    '지급',
+    1000,
+    (SELECT TOTAL_POINTS FROM POPCORN_WALLET WHERE USER_ID = #{useruserid}),
+    SYSDATE
+)
+</insert>
 <!--                 회원가입완료                         -->
 
+<update id="giveReviewPopcorn">
+UPDATE POPCORN_WALLET
+SET TOTAL_POINTS = TOTAL_POINTS + 100
+WHERE USER_ID = #{getID}
+</update>
+
+
+<insert id="ReviewPopcornLog" >
+INSERT INTO POPCORN_LOG (
+    LOG_ID,
+    USER_ID,
+    CONTENT,
+    CONTENT_INFO,
+    EARNED_POINTS,
+    TOTAL_POINTS,
+    ADD_DATE
+) VALUES (
+    (SELECT NVL(MAX(LOG_ID),0)+1 FROM POPCORN_LOG),  
+    #{getID},
+    '리뷰 작성',
+    '지급',
+    100,
+    (SELECT TOTAL_POINTS FROM POPCORN_WALLET WHERE USER_ID = #{getID}),
+    SYSDATE
+)
+</insert>
 
 </mapper>
 

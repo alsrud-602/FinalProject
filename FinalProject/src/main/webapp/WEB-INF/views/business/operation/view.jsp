@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -733,10 +732,7 @@ margin: 30px 42px;
 						</div>
 						<div class="title_footer">
 							<div class="tags">
-							<c:set var="tags" value="${fn:split(store.tag_name, '|')}" />							
-							<c:forEach var="tag" items="${tags}">
-							   <div class="tag_option">${tag.trim()}</div>
-							</c:forEach>
+								<div class="tag_option">${store.tag_name}</div>
 								<div class="tag_option">포토부스</div>
 							</div>
 							<div class="title_click"></div>
@@ -896,7 +892,7 @@ margin: 30px 42px;
 					<option value="현재순번">현재순번</option>
 					<option value="대기">대기</option>
 				</select>
-				<p id="waiting-count">대기 0팀</p>
+				<p id="waiting-count">대기 2팀</p>
 			</div>
 			<table id="reservation-table">
 				<tr>
@@ -943,9 +939,14 @@ margin: 30px 42px;
 		</section>
 
 		<div class="buttons-footer">
-			<a id="infoMove"href="/Users/Info">팝업 페이지 이동하기</a> 
+			<a href="/Mobile/Reservation/Profile/BookMark?user_idx=136">예약 일정 수정하기</a> 
 			<a id="infoUpdate" href="/Business/Operation/UpdateFormStore?store_idx=91">기본정보 수정하기</a>
-		    <a id="reservationUpdate" href="/Business/Operation/UpdateFormReservation">예약 일정 수정하기</a>
+		    <a id="reservationUpdate" href="/Business/Operation/UpdateFormReservation">팝업 페이지 이동하기</a>
+			<c:if test="">
+				<button>예약 기능 사용하기</button>
+				<button>기본정보 수정하기</button>
+				<button>팝업 페이지 이동하기</button>
+			</c:if>
 		</div>
 	</main>
 	<%@include file="/WEB-INF/include/footer_company.jsp"%>
@@ -1301,13 +1302,11 @@ margin: 30px 42px;
     	const currentSlide = slides[currentIndex];
     	let store_idx = currentSlide.getAttribute('data-storeIdx'); 
     	let infoUpdateLink = document.querySelector('#infoUpdate');
-    	let infoMoveLink = document.querySelector('#infoMove');
     	let reservationUpdateLink = document.querySelector('#reservationUpdate');
 
     	// href 속성 변경
     	infoUpdateLink.href = `/Business/Operation/UpdateFormStore?store_idx=\${store_idx}`;    	
     	reservationUpdateLink.href = `/Business/Operation/UpdateFormReservation?store_idx=\${store_idx}`;    	
-    	infoMoveLink.href = `/Users/Info?store_idx=\${store_idx}`;    	
     }
     
     
@@ -1347,11 +1346,6 @@ margin: 30px 42px;
         	document.querySelector('#advanceReservation').style.display = "none";
         	
         }
-    	if(rstaus ==='현장 문의') {
-    		
-    		
-    		
-    	}
     	
     	
     } 
@@ -1819,7 +1813,9 @@ $(function() {
     });
 })
 
-</script>
+
+
+    </script>
 
 </body>
 </html>

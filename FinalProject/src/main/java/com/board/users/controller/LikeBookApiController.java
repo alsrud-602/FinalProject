@@ -161,113 +161,125 @@ public class LikeBookApiController {
 	}
 	@PostMapping("/Mobile/Like/Config")
 	public ResponseEntity<?> MobileLikeConfig(@RequestBody HashMap<String, Object> map, HttpServletRequest request, Model model) {
-	    Cookie[] cookies = request.getCookies();
-	    String jwtToken = null;
-	    boolean isKakaoUser = false;
-	    
-	    if (cookies != null) {
-	        for (int i = cookies.length - 1; i >= 0; i--) {
-	            Cookie cookie = cookies[i];
-	            if ("userJwt".equals(cookie.getName()) || "kakaoAccessToken".equals(cookie.getName())) {
-	                jwtToken = cookie.getValue();
-	                if ("kakaoAccessToken".equals(cookie.getName())) {
-	                    isKakaoUser = true;
-	                }
-	                break;
-	            }
-	        }
-	    }
-	    
-	    String username = null;
-	    Long user_idx = null;
+		Cookie[] cookies = request.getCookies();
+		String jwtToken = null;
+		boolean isKakaoUser = false; // 카카오 사용자 여부를 판단하는 변수
+		if (cookies != null) {
+			for (int i = cookies.length - 1; i >= 0; i--) {
+				Cookie cookie = cookies[i];
+				if ("userJwt".equals(cookie.getName()) || "kakaoAccessToken".equals(cookie.getName())) {
+					jwtToken = cookie.getValue();
+					System.out.println("토큰1 : " + jwtToken);
+					if ("kakaoAccessToken".equals(cookie.getName())) {
+						isKakaoUser = true; // kakaoAccessToken 쿠키가 있으면 카카오 로그인 사용자로 판단
+					}
+					System.out.println("토큰: " + jwtToken);
+					break;
+				}
+			}
+		}
+		String username = null;
+		Long user_idx = null;
 
-	    if (jwtToken != null) {
-	        username = jwtUtil.extractUsername(jwtToken);
-	        if (username != null) {
-	            if (isKakaoUser) {
-	                Optional<User> kakaouser = userService.findBySocialId(username);
-	                if (kakaouser.isPresent()) {
-	                    username = kakaouser.get().getId();
-	                    user_idx = kakaouser.get().getUserIdx();
-	                } else {
-	                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No user found with provided Kakao ID");
-	                }
-	            } else {
-	                Optional<User> user = userService.getUserByUsername(username);
-	                if (user.isPresent()) {
-	                    user_idx = user.get().getUserIdx();
-	                } else {
-	                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No user found with provided username");
-	                }
-	            }
-	        }
-	    }
+		if (jwtToken != null) {
+			username = jwtUtil.extractUsername(jwtToken);
+			System.out.println("사용자 정보1: " + username);
+			if (username != null) {
+				if (isKakaoUser) {
+					// 카카오 로그인 사용자라면 소셜 ID로 사용자 조회
+					Optional<User> kakaouser = userService.findBySocialId(username); // 카카오 소셜 ID로 사용자 조회
+					System.out.println("카카오 사용자 정보: " + kakaouser);
+					model.addAttribute("user", kakaouser.orElse(null)); // 카카오 사용자가 없을 경우 null 반환
 
-	    if (user_idx == null || username == null) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized: User not found");
-	    }
+					// 카카오 회원의 ID 사용
+					username = kakaouser.get().getId();
+					user_idx = kakaouser.get().getUserIdx();
+					System.out.println("useridx" + user_idx);
 
-	    map.put("user_idx", user_idx);
-	    Integer ls_idx = likeBookService.getIsIdx(map);
-	    System.err.println("ls_idx"+ls_idx);
-	    // 좋아요가 눌리지 않은 상태일 경우
-	    if (ls_idx == null) {
-	        return ResponseEntity.status(HttpStatus.OK).body(null); // 좋아요가 눌러지지 않은 상태로 처리
-	    }
+				} else {
+					// 일반 사용자라면 기존 방식으로 사용자 조회
+					Optional<User> user = userService.getUserByUsername(username);
+					System.out.println("사용자 정보: " + user);
+					model.addAttribute("user", user.orElse(null)); // 사용자가 없을 경우 null 반환
 
-	    // 좋아요가 눌려 있는 경우
-	    return ResponseEntity.status(HttpStatus.OK).body(ls_idx); // 좋아요가 눌려 있으면 ls_idx 값 반환
+					user_idx = user.get().getUserIdx();
+
+					System.out.println("useruseridx : " + user_idx);
+				}
+			} else {
+				model.addAttribute("error", "JWT 토큰이 없습니다.");
+			}
+		}
+		if (user_idx == null || username == null) {
+            // 클라이언트에 리다이렉션 정보를 포함하여 401 상태 코드 반환
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Redirect to /Mobile/Users/LoginForm");
+        }
+
+		map.put("user_idx", user_idx);
+		Integer ls_idx = likeBookService.getIsIdx(map);		
+		return    ResponseEntity.status(HttpStatus.OK).body( ls_idx );
 	}
 	
 	@PostMapping("/Mobile/Bookmark/Config")
 	public ResponseEntity<?> MobileBookingConfig(@RequestBody HashMap<String, Object> map, HttpServletRequest request, Model model) {
-	    Cookie[] cookies = request.getCookies();
-	    String jwtToken = null;
-	    boolean isKakaoUser = false; // 카카오 사용자 여부를 판단하는 변수
-	    if (cookies != null) {
-	        for (int i = cookies.length - 1; i >= 0; i--) {
-	            Cookie cookie = cookies[i];
-	            if ("userJwt".equals(cookie.getName()) || "kakaoAccessToken".equals(cookie.getName())) {
-	                jwtToken = cookie.getValue();
-	                if ("kakaoAccessToken".equals(cookie.getName())) {
-	                    isKakaoUser = true; // kakaoAccessToken 쿠키가 있으면 카카오 로그인 사용자로 판단
-	                }
-	                break;
-	            }
-	        }
-	    }
+		Cookie[] cookies = request.getCookies();
+		String jwtToken = null;
+		boolean isKakaoUser = false; // 카카오 사용자 여부를 판단하는 변수
+		if (cookies != null) {
+			for (int i = cookies.length - 1; i >= 0; i--) {
+				Cookie cookie = cookies[i];
+				if ("userJwt".equals(cookie.getName()) || "kakaoAccessToken".equals(cookie.getName())) {
+					jwtToken = cookie.getValue();
+					System.out.println("토큰1 : " + jwtToken);
+					if ("kakaoAccessToken".equals(cookie.getName())) {
+						isKakaoUser = true; // kakaoAccessToken 쿠키가 있으면 카카오 로그인 사용자로 판단
+					}
+					System.out.println("토큰: " + jwtToken);
+					break;
+				}
+			}
+		}
+		String username = null;
+		Long user_idx = null;
 
-	    String username = null;
-	    Long user_idx = null;
+		if (jwtToken != null) {
+			username = jwtUtil.extractUsername(jwtToken);
+			System.out.println("사용자 정보1: " + username);
+			if (username != null) {
+				if (isKakaoUser) {
+					// 카카오 로그인 사용자라면 소셜 ID로 사용자 조회
+					Optional<User> kakaouser = userService.findBySocialId(username); // 카카오 소셜 ID로 사용자 조회
+					System.out.println("카카오 사용자 정보: " + kakaouser);
+					model.addAttribute("user", kakaouser.orElse(null)); // 카카오 사용자가 없을 경우 null 반환
 
-	    if (jwtToken != null) {
-	        username = jwtUtil.extractUsername(jwtToken);
-	        if (username != null) {
-	            if (isKakaoUser) {
-	                Optional<User> kakaouser = userService.findBySocialId(username); // 카카오 소셜 ID로 사용자 조회
-	                username = kakaouser.get().getId();
-	                user_idx = kakaouser.get().getUserIdx();
-	            } else {
-	                Optional<User> user = userService.getUserByUsername(username);
-	                user_idx = user.get().getUserIdx();
-	            }
-	        }
-	    }
+					// 카카오 회원의 ID 사용
+					username = kakaouser.get().getId();
+					user_idx = kakaouser.get().getUserIdx();
+					System.out.println("useridx" + user_idx);
 
-	    if (user_idx == null || username == null) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Redirect to /Mobile/Users/LoginForm");
-	    }
+				} else {
+					// 일반 사용자라면 기존 방식으로 사용자 조회
+					Optional<User> user = userService.getUserByUsername(username);
+					System.out.println("사용자 정보: " + user);
+					model.addAttribute("user", user.orElse(null)); // 사용자가 없을 경우 null 반환
 
+					user_idx = user.get().getUserIdx();
+
+					System.out.println("useruseridx : " + user_idx);
+				}
+			} else {
+				model.addAttribute("error", "JWT 토큰이 없습니다.");
+			}
+		}
+		if (user_idx == null || username == null) {
+            // 클라이언트에 리다이렉션 정보를 포함하여 401 상태 코드 반환
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Redirect to /Mobile/Users/LoginForm");
+        }
+
+        
 	    map.put("user_idx", user_idx); // Add user_idx to the map
 	    Integer bookmark_idx = likeBookService.getBookmarkIdx(map);
-	    
-	    // 좋아요가 눌리지 않은 상태일 경우
-	    if (bookmark_idx == null) {
-	        return ResponseEntity.status(HttpStatus.OK).body(null); // 좋아요가 눌러지지 않은 상태로 처리
-	    }
-
-	    // 좋아요가 눌려 있는 경우
-	    return ResponseEntity.status(HttpStatus.OK).body(bookmark_idx); // 좋아요가 눌려 있으면 ls_idx 값 반환
+	    return ResponseEntity.status(HttpStatus.OK).body(bookmark_idx);
 	}
 
 	@PostMapping("/Mobile/Bookmark/Write")

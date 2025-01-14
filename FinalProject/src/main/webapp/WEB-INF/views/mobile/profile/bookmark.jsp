@@ -4,8 +4,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Insert title here</title>
 <link rel="icon" type="image/png" href="/img/favicon.png" />
 <link rel="stylesheet"  href="/css/common.css" />
@@ -25,34 +25,27 @@
 body.loaded {
     opacity: 1; /* 페이지 로딩 후 나타나게 설정 */
 }
-
-
-     .header {
-        display: flex;
-        align-items: center;
-        padding: 15px 15px;
-        background-color: #000;
-        color: #fff;
-        border-bottom: 1px solid #757575;
-    }
-    .header p {
-        font-weight:400;
-        font-size: 20px;
-    }
-    .header span {
-        font-size: 25px;
+    .header {
+      display: flex;
+      align-items: center;
+      padding: 50px 23px;
+      
+      background-color: #000;
+      font-size: 35px;
+      color: #fff;
     }
     .content {
-      padding: 7px 20px;
+      padding: 20px 60px 40px 60px;
 }
     .section {
- margin: 5px;
-      padding: 5px;
+      margin-top: 20px;
+      margin-bottom:10px;
+      padding: 30px 50px;
       display: flex;
       justify-content: center;
     }
     .section-title {
-      font-size: 25px;
+      font-size: 50px;
       font-weight: bold;
       margin: 10px 0;
       color: #00FF84;
@@ -63,14 +56,13 @@ margin: 10px 0;
 }
 
 .img-size1{
-width: 100px;
+width: 300px;
 }
 .img-size2{
-width: 20px;
+width: 60px;
 }
 .img-size3{
-width: 14px;
-height: 14px;
+width: 32px;
 }
 .list-header{
 display: flex;
@@ -79,7 +71,7 @@ align-items: center;
 width:100%;
 
 p {
-  font-size: 15px;
+  font-size: 2.5rem;
   font-weight: 400;
 }
 }
@@ -95,29 +87,29 @@ background-color: #414141;
 } 
 .list-box{
 width:100%;
-padding: 10px;
+padding: 40px 30px 40px 30px;
 flex-direction: column;
 align-content: flex-start;
 } 
 .list-footer{
-margin-top:43px;
+margin-top:160px;
 display: flex;
 justify-content: flex-end;
-gap:3px;
+gap:5px;
 p {
-  font-size: 12px;
+  font-size: 2rem;
   font-weight: 400;
 }
 } 
 
 .btn-profile{
-padding: 20px 20px;
+padding: 20px 100px;
 background-color: #00FF84;
 color: #121212;
-font-size: 20px;
+font-size: 3rem;
 font-weight: 700;
+margin: 100px;
 border-radius: 15px;
-margin: 15px 15px 40px 15px;
 } 
   </style>
 </head>
@@ -130,7 +122,7 @@ margin: 15px 15px 40px 15px;
   
  <div class="header">
     <span onclick="backPage()">←</span> &nbsp;&nbsp;
-    <p>관심팝업</p>
+    <h1 style="margin: 0; font-size: 50px; ">관심팝업</h1>
   </div>
   <div class="content">
   
@@ -150,7 +142,7 @@ margin: 15px 15px 40px 15px;
          
        <td class="list-box">
          <div class="list-header">
-           <p><a href="/Mobile/Users/Info?store_idx=${book.store_idx}">${book.title}</a></p> 
+           <p><a href="path?store_idx=${book.store_idx}">${book.title}</a></p> 
            <div class="like-box" >
              <img class="img-size2"src="/images/icon/book1.png" onclick="bookmark(this)" 
              data-idx="${book.bookmark_idx}" data-off="/images/icon/book2.png"
@@ -171,13 +163,13 @@ margin: 15px 15px 40px 15px;
     </table>
     </c:when>    
     <c:otherwise>
-      <p style="font-size: 20px; display:flex; justify-content: center;"> 북마크 내역이 없습니다</p>
+      <p style="font-size: 60px; display:flex; justify-content: center;"> 북마크 내역이 없습니다</p>
     </c:otherwise>    
     </c:choose>
    
    
-    <div style=" display:flex; justify-content: center;">
-    <a class="btn-profile" href="/Mobile/Users/Profile/Home">프로필 돌아가기</a>
+    <div style=" display:flex; justify-content: center; width:100%">
+    <a class="btn-profile" href="path?user_idx=${user_idx}">프로필 돌아가기</a>
     </div>
     
     
@@ -192,10 +184,9 @@ margin: 15px 15px 40px 15px;
   
   
   </main>
-  
-
-<%@include file="/WEB-INF/include/app-navbar.jsp" %>	
+  <%@include file="/WEB-INF/include/app-navbar.jsp" %>
 </div>	
+
 </body>
 <script>
 //페이지 로드 완료 후 서서히 나타나게 설정

@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -312,96 +311,33 @@
  
   /*--------------------------------------------------------------*/
   /*부트스트랩 캐러셀(이미지 슬라이드)*/
-.swiper-container {
-    margin-bottom: 30px;
-    width: 100%; /* 부모 요소의 너비에 맞춤 */
-    max-width: 1400px; /* 최대 너비 제한 */
-    overflow: hidden; /* 넘치는 컨텐츠 숨김 */
-    position: relative; /* 내부 요소 위치를 조정 가능 */
-    margin: 0 auto; /* 중앙 정렬 */
+   
+.carousel-item img {
+    width: auto;  /* 너비 100% */
+    height: 1400px; /* 높이 100% */
+    object-fit: contain; /* 비율 유지하며 크기 조정 */
 }
+  .carousel-inner {
+    position: relative;
+  }
+  .carousel-item {
+    text-align: center; /* 텍스트 중앙 정렬 */
+  }
+  .carousel-caption {
+    position: absolute; /* 캡션 위치 조정 */
+    bottom: 20px; /* 아래 여백 */
+    left: 50%; /* 중앙 정렬 */
+    transform: translateX(-50%); /* 중앙 정렬 보정 */
+  }
+  .carousel-control-prev {
+    left: -7% !important; /* 왼쪽 여백 조정 */}
 
-/* Swiper-slide 스타일 수정 */
-div > .swiper-slide {
-    display: flex;
-    justify-content: center; /* 슬라이드 컨텐츠를 수평 가운데 정렬 */
-    align-items: center; /* 슬라이드 컨텐츠를 수직 가운데 정렬 */
-    width: 100%; /* 부모 요소에 맞춤 */
-    height: auto; /* 비율 유지 */
-    box-sizing: border-box; /* padding 포함한 크기 계산 */
-    padding: 10px; /* 간격 추가 */
-}
-
-/* Swiper-slide 이미지 스타일 */
-div > .swiper-slide img {
-    width: 1200px; /* 이미지 너비 제한 */
-    height: auto; /* 비율 유지하며 크기 조정 */
-    border-radius: 10px; /* 둥근 모서리 */
-}
-
-/* Swiper-controls 스타일 */
-div > .swiper-controls {
-    display: flex;
-    justify-content: space-between; /* 버튼을 양쪽 끝으로 배치 */
-    align-items: center;
-    width: 100%;
-    position: absolute; /* 슬라이드 위에 겹쳐 배치 */
-    top: 50%; /* 슬라이드 가운데에 위치 */
-    transform: translateY(-50%); /* 수직 정렬 */
-    z-index: 10; /* 슬라이드 위에 표시되도록 설정 */
-}
-
-/* 버튼 스타일 */
-div > .swiper-button-prev,
-div > .swiper-button-next {
-    background-color: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
-    color: #fff; /* 버튼 색상 */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    position: absolute;
-    z-index: 20;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%; /* 동그란 모양 */
-    font-size: 18px;
-}
-
-/* 이전 버튼 위치 */
-div > .swiper-button-prev {
-    left: 10px;
-}
-
-/* 다음 버튼 위치 */
-div > .swiper-button-next {
-    right: 10px;
-}
-
-/* 페이지네이션 스타일 */
-div > .swiper-pagination {
-    position: absolute;
-    bottom: 10px; /* 슬라이드 하단에 위치 */
-    transform: translate(45%, 330px);
-    display: flex;
-    gap: 8px; /* 점 사이 간격 */
-    z-index: 1000; /* 버튼 위에 표시되도록 설정 */
-}
-
-/* 페이지네이션 점 스타일 */
-div > .swiper-pagination .swiper-pagination-bullet {
-    width: 10px;
-    height: 10px;
-    background-color: rgba(0, 255, 132, 0.7); /* 점 색상 */
-    border-radius: 50%; /* 동그란 모양 */
-    cursor: pointer;
-    transition: background-color 0.3s ease; /* 색상 변화 애니메이션 */
-}
-
-/* 활성화된 점 스타일 */
-.swiper-pagination .swiper-pagination-bullet-active {
-    background-color: rgba(255, 255, 255, 0.9); /* 활성화된 점 색상 */
-}
+   .carousel-control-next {
+    right: -7% !important; /* 오른쪽 여백 조정 */}
+   .carousel {
+    margin: 20px auto; /* 중앙 정렬 */
+    width: 55%; /* 너비 설정 */
+  }
   
 .ongoingfilter {
     position: relative; /* 요소를 고정 */
@@ -420,7 +356,9 @@ div > .swiper-pagination .swiper-pagination-bullet {
 @media (max-width: 780px) {
   body {
     font-size: 16px; /* 기본 폰트 크기 증가 */
+    
   }
+  
 }
 .main-pagination{
 font-size:60px;
@@ -443,23 +381,32 @@ color: white;
 	            <img class="imgsearch" src="/images/main/search.png" alt="검색">
 	        </button>
 	    </div>
-	<div class="swiper-container">
-	    <div class="swiper-wrapper">
-	        <c:forEach var="banner" items="${banners}" varStatus="status">
-	            <div class="swiper-slide">
-	        <a href="/Users/Info?store_idx=${banner.store_idx}">
-	                <img src="/image/read?path=${fn:replace(banner.image_path, '\\', '/')}" 
-	                     alt="${banner.image_path}">
-	            </a>
-	            </div>
-	        </c:forEach>
-	    </div>
-	    <div class="swiper-controls">
-	        <div class="swiper-button-prev"></div>
-	        <div class="swiper-button-next"></div>
-	        <div class="swiper-pagination"></div>
-	    </div>
-	</div>
+		<div id="carouselExampleIndicators" class="carousel-slide" data-bs-ride="carousel">
+		  <div class="carousel-indicators">
+		    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+		    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+		    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+		  </div>
+		  <div class="carousel-inner">
+		    <div class="carousel-item active">
+		      <img src="/images/main/main-banner4.png" class="d-block w-100" alt="/images/main/main-banner4.png">
+		    </div>
+		    <div class="carousel-item">
+		      <img src="/images/main/main-banner3.png" class="d-block w-100" alt="/images/main/main-banner3.png">
+		    </div>
+		    <div class="carousel-item">
+		      <img src="/images/main/main-banner5.png" class="d-block w-100" alt="/images/main/main-banner5.png">
+		    </div>
+		  </div>
+		  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+		    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+		    <span class="visually-hidden">Previous</span>
+		  </button>
+		  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+		    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+		    <span class="visually-hidden">Next</span>
+		  </button>
+		</div>
 
 			<div class="carousel1">
 				<div class="maintext">
@@ -548,30 +495,13 @@ color: white;
 		    </c:forEach>
 		  </div>
 		  <%@include file="/WEB-INF/include/main-pagination.jsp" %>
-		  
+		    <%@include file="/WEB-INF/include/app-navbar_home.jsp" %>
 		</div>
 	</div>
   </main>
 
 </body>
 <script>
-const swiper = new Swiper('.swiper-container', {
-    slidesPerView: 1, // 한 번에 보여줄 슬라이드 수
-    slidesPerGroup: 1, // 버튼 클릭 시 넘어가는 슬라이드 수
-    autoplay: {
-        delay: 5000, // 3초마다 전환
-        disableOnInteraction: false, // 사용자가 슬라이드를 조작해도 자동 전환 유지
-      },
-    navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
-    },
-    pagination: {
-        el: '.swiper-pagination',
-        clickable: true,
-    },
-    loop: true, // 슬라이드 반복
-});
 
 
 //검색창 클릭했을때 

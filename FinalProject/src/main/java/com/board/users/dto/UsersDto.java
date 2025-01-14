@@ -105,7 +105,9 @@ public class UsersDto {
     
     private int review_count;
 
-    
+    private int region_idx;
+    private String region_name; 
+    private int region_id;    
 
 
   

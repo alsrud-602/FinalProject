@@ -17,7 +17,7 @@ public class StoreService {
     private UserCategoryMapper userCategoryMapper;
 
     public List<StoreListDto> getRandomStoresByUserCategories(Long userIdx) {
-       List<Integer> categoryIds = userCategoryMapper.getUserCategories(userIdx);
+        List<Integer> categoryIds = userCategoryMapper.getUserCategories(userIdx);
         Collections.shuffle(categoryIds); // 카테고리 ID 랜덤화
 
         List<StoreListDto> randomStores = new ArrayList<>();

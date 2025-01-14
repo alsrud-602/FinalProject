@@ -5,7 +5,6 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Insert title here</title>
 <link rel="icon" type="image/png" href="/img/favicon.png" />
 <link rel="stylesheet"  href="/css/common.css" />
@@ -13,35 +12,28 @@
 <script src="https://cdn.jsdelivr.net/npm/browser-scss@1.0.3/dist/browser-scss.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-
   <style>
     body {
       margin: 0;
       background-color: #121212;
       color: #fff;
     }
-     .header {
-        display: flex;
-        align-items: center;
-        padding: 15px 15px;
-        background-color: #000;
-        color: #fff;
-        border-bottom: 1px solid #757575;
-    }
-    .header p {
-        font-weight:400;
-        font-size: 20px;
-    }
-    .header span {
-        font-size: 25px;
+    .header {
+      display: flex;
+      align-items: center;
+      padding: 50px 23px;
+      
+      background-color: #000;
+      font-size: 35px;
+      color: #fff;
     }
     .content {
-      padding: 20px;
+      padding: 40px;
     }
     .waiting {
       background-color: #00FF84;
       color: #000;
-      padding: 20px 20px;
+      padding: 30px 50px;
       border-radius: 5px;
       text-align: center;
       display: flex;
@@ -50,18 +42,19 @@
     }
     .section {
       margin-top: 20px;
-      margin-bottom:7px;
-      padding: 16px 25px;
+      margin-bottom:10px;
+      padding: 30px 50px;
       background-color: #333;
       border-radius: 25px;
     }
     .section-title {
-      font-size:18px;
+      font-size: 50px;
       font-weight: bold;
+      margin-bottom: 10px;
     }
     .section-content {
-      padding: 20px 20px;
-      font-size: 16px;
+      padding: 60px 50px;
+      font-size: 40px;
       line-height: 1.5;
       background-color: #fff;
        border-radius: 25px;
@@ -69,15 +62,16 @@
     }
     
     #reserveButton {
-     font-size: 18px;
+          font-size: 45px;
       font-weight: 600;
-      padding: 9px;   
+      padding: 30px;
+    
        border-radius: 50px;
-       border: 2px solid #333;
+       border: 3px solid #333;
     
     }
     #waiting-count{
-       font-size: 25px;
+       font-size: 55px;
       font-weight: bold;
     }
     
@@ -93,42 +87,45 @@
     }
 
     #delay-popup {
-        width: 320px;
-        height: 340px;
+        width: 850px;
+        height: 700px;
         background-color: #fff;
         position: absolute;
         top: 50%; /* 중앙 정렬을 위한 초기 위치 */
         left: 50%;
         transform: translate(-50%, -50%); /* 중앙 정렬 */
         display: none; /* 처음에는 숨김 */
-        padding: 30px;
+        padding: 50px;
         display: flex;
         border-radius: 20px;
 
     }
     #delay-title{
     color:#121212;
-    font-size: 34px;
+    font-size: 70px;
     font-weight: 800;
     margin: 10px 0;
     display: flex;
     justify-content: center;
     
     }
-    #delay-select{
+     #delay-select{
     width: 80%;
-    font-size: 30px;
+    font-size: 80px;
     font-weight: 700 ;
-    padding: 10px;    
+    padding: 10px 30px;
     
-    margin: 20px;
+    
+    margin: 60px 60px;
     border: 1px solid #A5A5A5;
     border-radius: 10px;
     }
 	#delay-select option {
+	    font-size: 30px;
+	    font-weight: 500; /* 원하는 굵기로 변경 (예: 700은 굵은 글씨) */
 	}   
-	 #delay-info{
-    font-size: 20px;
+	    #delay-info{
+    font-size: 34px;
     font-weight: 500;    
     color: #00875F;
     display: flex;
@@ -136,11 +133,11 @@
     margin: 20px 0 0 0;
     }
     .btn-basic{
-	width: 150px;
-	height: 60px;
+	width: 350px;
+	height: 150px;
 	display: flex;
 	justify-content: center;
-	font-size: 20px;
+	font-size: 50px;
 	 font-weight: 700 ;
 	 align-items: center;
 	 border-radius: 15px;
@@ -154,7 +151,7 @@
 	#btn-back{
 	background: #fff;
 	color:#121212;
-	border: 1px solid #121212;
+	border: 2px solid #121212;
 	}
     #btn-ok{
 	background: #00FF84;
@@ -172,7 +169,7 @@
   
  <div class="header">
     <span onclick="backPage()">←</span> &nbsp;&nbsp;
-    <p >매장 대기 현황</p>
+    <h1 style="margin: 0; font-size: 50px; ">매장 대기 현황</h1>
   </div>
   <div class="content">
     <div class="waiting"><p id ="waiting-count"></p>  <button id="reserveButton"> 대기불가 </button>   </div>
@@ -225,11 +222,11 @@
   
 
 </div>	
-	<%@include file="/WEB-INF/include/app-navbar.jsp" %>
+
 </body>
   <script>
-  const store_idx = ${store_idx};
-  const user_idx = ${user_idx}; 
+  const store_idx = 90;
+  const user_idx = 44; 
   document.getElementById("reserveButton").addEventListener("click", function() {
           
  	 $('#overlay').fadeIn(); // 오버레이를 나타냄

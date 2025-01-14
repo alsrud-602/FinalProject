@@ -37,7 +37,7 @@ public class CustomOAuth2AuthorizationRequestResolver implements OAuth2Authoriza
 
         // User-Agent에 따라 리다이렉트 URI 변경
         if (userAgent != null && userAgent.contains("wv")||userAgent.contains("Dart")) {
-            redirectUri = "http://192.168.100.133:9090/Mobile/oauth2/callback/kakao";
+            redirectUri = "http://192.168.0.195:9090/Mobile/oauth2/callback/kakao";
         }
         
         // 디버깅 로그 추가

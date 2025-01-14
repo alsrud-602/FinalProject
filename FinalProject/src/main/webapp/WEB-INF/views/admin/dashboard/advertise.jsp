@@ -58,7 +58,7 @@ a {
  /*--------------------------------------------------------------*/
  /*부트스트랩 캐러셀(이미지 슬라이드)*/
 .swiper-container{
-margin-bottom: 30px;
+margin-bottom: 20px;
 }
 .swiper-slide {
     display: flex;
@@ -85,7 +85,7 @@ max-height: 100%;
   align-items: center;
   width: 100%;
   position: absolute; /* 이미지 위에 겹쳐 배치 */
-  top: 18%; /* 컨트롤 영역을 이미지 위로 올림 */
+  top: 20%; /* 컨트롤 영역을 이미지 위로 올림 */
   z-index: 10; /* 이미지 위에 표시되도록 설정 */
 }
 
@@ -99,8 +99,8 @@ max-height: 100%;
   cursor: pointer;
   position: absolute; /* 상대적 위치 조정 */
   z-index: 20; /* 페이지네이션 위에 배치 */
-  width:60px;
-  height:60px;
+  width:50px;
+  height:50px;
   border-radius: 50%;
 }
 
@@ -118,8 +118,9 @@ max-height: 100%;
 
 .swiper-pagination {
   position: absolute;
+  bottom: 20px; /* 페이지네이션 위치 조정 */
   left: 50%;
-  transform: translate(45%, 300px); /* 가운데 정렬하고 30px 아래로 이동 */
+  transform: translateX(-50%); /* 가운데 정렬 */
   display: flex;
   gap: 8px; /* 점 간격 */
   z-index: 15; /* 버튼보다 아래 배치 */
@@ -128,7 +129,7 @@ max-height: 100%;
 .swiper-pagination .swiper-pagination-bullet {
   width: 10px;
   height: 10px;
-  background-color: rgba(0, 255, 132, 0.7); /* 점의 색상 */
+  background-color: rgba(255, 255, 255, 0.7); /* 점의 색상 */
   border-radius: 50%; /* 점을 동그랗게 */
   cursor: pointer;
   transition: background-color 0.3s ease; /* 점의 색상 변화 애니메이션 */
@@ -138,12 +139,6 @@ max-height: 100%;
   background-color: rgba(0, 0, 0, 0.9); /* 활성화된 점의 색상 */
 }
 
-.preview{
-color: black;
-display:flex;
-transform: translate(48%,120px);
-margin-bottom: 50px;
-}
 
 .breakdown {
   width:100%;
@@ -414,8 +409,8 @@ height: auto;
 	        <div class="swiper-button-next"></div>
 	        <div class="swiper-pagination"></div>
 	    </div>
+	    <div>미리보기</div>
 	</div>
-	    <div class="preview">미리보기</div>
 	
 	<div class="breakdown">
 	 <div class="blank">광고 내역</div>

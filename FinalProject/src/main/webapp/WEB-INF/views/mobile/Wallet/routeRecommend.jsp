@@ -1,14 +1,23 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="ko">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <head>
     <meta charset="UTF-8">
     <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?govClientId=&submodules=geocoder"></script>
+   
     <title>팝콘</title>
     
      <style>
+     
+         #map {
+            width: 100%;
+            height: 500px;
+        }
+     
+     
         * {
             margin: 0;
             padding: 0;
@@ -36,12 +45,25 @@
             max-width: 600px;
             margin: auto;
             text-align: left;
+             padding-bottom: 100px; /* 네비게이션 바의 높이만큼 여백 추가 */
+    		overflow-y: auto; 
         }
         
 		.content-text{       
-			text-align:left;
+			text-align:center;
+			margin-bottom: 20px;
+		}
+		
+		.contentTitle-text{       
+			text-align:center;
+			margin-bottom: 40px;
+			color: #00FF84;
 		}
 	
+	.button-group{
+	text-align: center;
+	
+	}
 
         /* 필터 버튼 */
         .filter-select {
@@ -51,9 +73,15 @@
             border-radius: 5px;
             color: white;
             background-color: #121212;
-            text-align: center;
+            text-align: center; 
+            font-family:'Pretendard';
+            font-weight: 700;        
             margin-right: 10px; 
         }
+
+
+
+
 
         /* 검색하기 버튼 */
         .search-btn {
@@ -69,13 +97,16 @@
             cursor: pointer;
         }
 
+
         button:hover {
             background-color: #33ff33;
         }
 
+
+
         .store-name {
             display: flex;
-   			justify-content: flex-start;
+   			justify-content:flex-start;
             padding: 10px;
             margin: 10px 0; 
             border: 2px solid #00FF84;
@@ -83,6 +114,8 @@
             background-color: #121212;
             color: white;
             position: relative; 
+            font-family: 'Pretendard';
+            font-weight: 700;
         }
 
         .remove-btn {
@@ -107,14 +140,16 @@
         
         /* 기본 네모칸(이해 못할까봐)*/
          .default-store-name {
-            display: block;
-            padding: 10px;
-            margin: 10px 0; 
-            border: 2px dashed #00FF84; /* 기본 테두리 스타일 */
-            border-radius: 5px;
+            display:block;
+            width: 30px;
+            padding: 5px;
+            margin: 10px 45%; 
+            border-radius: 50%;
+            border: 2px solid white;
             background-color: #121212;
             color: white;
             text-align: center; /* 중앙 정렬 */
+            font-size: 16px;
         }
 
     .leftResult {
@@ -158,14 +193,45 @@ fontSize : 16px;
  margin-right:5px;
 }
 
+ /* 반응형 처리 */
+    @media (max-width: 768px) {
+        .filter-select {
+            width: 100px;
+        }
 
+        .search-btn {
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        .store-name {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .store-address-text {
+            font-size: 12px;
+        }
+
+        .store-list {
+            max-width: 100%;
+            flex-direction: column;
+        }
+
+        /* 버튼 및 요소 크기 조정 */
+        .flex-container {
+            padding: 0 20px;
+            width: 100%;
+            max-width: 100%;
+        }
+    }
     </style>
 </head>
 <body>
-<%@include file="/WEB-INF/include/header.jsp" %>
+
 <div class="container">
+    <h2 class="contentTitle-text">코스정하기</h2>
     <h2 class="content-text">원하는 팝업 매장 선택하기</h2>
-    <h2 class="content-text">${address.address}</h2>
 
     <div class="button-group">
     <select class="filter-select" id="region-select">
@@ -174,26 +240,27 @@ fontSize : 16px;
             <option value="${region.region_name}">${region.region_name}</option>
         </c:forEach>
     </select>
+    
      
-     
-     
-
-        <select class="filter-select" id="popup-select" style="width:320px;">
+        <select class="filter-select" id="popup-select" >
     <option value="" >팝업</option>
     <c:forEach var="entry" items="${storeInfoMap}">
         <c:forEach var="address" items="${entry.value.addresses}">
             <option  value="${address.address}" data-region="${address.address}" name="${entry.value.storeTitle}" 
-             data-storeIdx="${address.store_idx}"> ${entry.value.storeTitle} </option>
+             data-storeIdx="${address.store_idx}" > ${entry.value.storeTitle} </option>
         </c:forEach>
     </c:forEach>
 </select>
     </div>
-    
    
+    <div class="flex-container">
+        <div class="store-list" ></div>
+        <button type="button" class="search-btn" id="search-btn">경로 검색</button>
+    </div>
 
 
 	<!-- 숨긴상태로 위도경도 가져오는 form -->
-	<form action="/GetCoordinates" method="post" id="address-form">
+	<form action="/M.GetCoordinates" method="post" id="address-form">
     <div id="hidden-fields"></div> <!-- 숨겨진 필드 컨테이너 추가 -->
     <button type="submit" style="display:none;">검색</button>
 	</form>
@@ -202,10 +269,6 @@ fontSize : 16px;
     <div class="store-list" class="store-name" id="store-list"></div>                 <!-- 여기에 선택한거 들어옵니다! 7개까지 가능하게 해야함 -->  
 	<div class="default-store-name" id="default-store">+</div>
 	
-    <div class="flex-container">
-        <div class="store-list" ></div>
-        <button type="button" class="search-btn" id="search-btn">경로 검색</button>
-    </div>
 
 </div>
 
@@ -214,7 +277,9 @@ fontSize : 16px;
 
 
 
-<%-- <%@include file="/WEB-INF/include/footer.jsp" %> --%>
+<%@include file="/WEB-INF/include/app-navbar.jsp" %>
+
+
 
 <script>
 
@@ -453,7 +518,12 @@ document.getElementById("region-select").addEventListener("change", function() {
     }
 });
 
-
+document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', function() {
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+    });
+});
 
 </script>
 

@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.board.business.dto.BookMarkListDto;
@@ -46,7 +45,7 @@ public class MobileReservationController {
    // 현장대기 예약 화면
    @RequestMapping("/OnSite")
    public ModelAndView OnSite(         
-         Model model,HttpServletRequest request , @RequestParam("store_idx") int store_idx, @RequestParam("user_idx") int user_idx) {
+         Model model,HttpServletRequest request) {
       
        Cookie[] cookies = request.getCookies();
        String jwtToken = null;
@@ -88,13 +87,14 @@ public class MobileReservationController {
        }
        
        //int user_idx = useruseridx.intValue();
+        int user_idx = 100;
+        int store_idx =  90;	
         
     	ModelAndView mv = new ModelAndView();
     	StoreAddNoteDto anDTO = waitingService.getStoreAddressNote(store_idx);
     	System.out.println("!!!!!!!값 anDto"+ anDTO);
     	mv.addObject("anDTO",anDTO);
     	mv.addObject("user_idx",user_idx);
-    	mv.addObject("store_idx",store_idx);
 	   	mv.setViewName("mobile/onsite");
         return mv;
    }
@@ -141,24 +141,27 @@ public class MobileReservationController {
 	           model.addAttribute("error", "JWT 토큰이 없습니다.");
 	       }
 	       
-	    int user_idx = useruseridx.intValue();				
-		//int user_idx = 100;
+	    //int user_idx = useruseridx.intValue();				
+		int user_idx = 100;
         
-	   	WaitingDto wDTO = waitingService.getUserWaiting(user_idx);
+	   	WaitingDto wDTO =waitingService.getUserWaiting(user_idx);
 	   	List<WaitingDto> wList = waitingService.getUserWaitingList(user_idx);
+	   	
 	   	
 	   	ModelAndView mv = new ModelAndView();
 	   	mv.addObject("wList",wList);
 	   	mv.addObject("wDTO",wDTO);
 	   	mv.addObject("user_idx",user_idx);
-	    mv.setViewName("mobile/reservation/list");
+	mv.setViewName("mobile/reservation/list");
 	return mv;	
 		
 	}
    
 	@RequestMapping("/Advance")
-	public ModelAndView Advance(@RequestParam("store_idx") int store_idx, @RequestParam("user_idx") int user_idx) {
+	public ModelAndView Advance() {
 	ModelAndView mv = new ModelAndView();	
+	int user_idx = 100;
+	int store_idx = 90;
 	List<ReservationTimeSlotDto> rDateList = waitingService.getadvanceDateList(store_idx);
 	StoreListDto sDTO =  waitingService.getStoreShort(store_idx);
 	List<StoreListDto> scDTOList =  waitingService.getStoreCategory(store_idx);
@@ -190,7 +193,7 @@ public class MobileReservationController {
 	}
 	
 	@RequestMapping("/Profile/BookMark")
-	public ModelAndView ProfileBookMark(@RequestParam("user_idx") int user_idx) {
+	public ModelAndView UserView(int user_idx) {
 		ModelAndView mv = new ModelAndView();	
 		List<BookMarkListDto> bmList = watingMapper.getBookMarkList(user_idx);
 		
