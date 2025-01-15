@@ -17,7 +17,6 @@ public class UsersBookmarkDto {
 	private int user_idx;
 	private String start_date;
 	private String end_date;
-	private int is_idx;
-	private String image_path;
+
 
 }

@@ -22,8 +22,6 @@ public class UsersReviewListDto {
 	private int like;
 	private int hit;
 	private String cdate;
-	private String image_path;
-	private int is_idx;
 	
 
 
