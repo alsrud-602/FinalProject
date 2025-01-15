@@ -5,45 +5,87 @@
 <mapper namespace="com.board.users.mapper.UserBookmarkMapper">
 	
 <select id="getbookmark">
+SELECT
+    BOOKMARK_IDX,
+    USER_IDX,
+    STORE_IDX,
+    TITLE,
+    START_DATE,
+    END_DATE,
+    IS_IDX,
+    IMAGE_PATH
+FROM (
     SELECT
         B.BOOKMARK_IDX,
         B.USER_IDX,
         B.STORE_IDX,
         S.TITLE,
         TO_CHAR(SD.START_DATE, 'YYYY-MM-DD') AS START_DATE,
-        TO_CHAR(SD.END_DATE, 'YYYY-MM-DD') AS END_DATE
+        TO_CHAR(SD.END_DATE, 'YYYY-MM-DD') AS END_DATE,
+        IMG.IS_IDX,
+        IMG.IMAGE_PATH,
+        ROW_NUMBER() OVER (PARTITION BY B.STORE_IDX ORDER BY B.BOOKMARK_IDX) AS RN
     FROM 
         BOOKMARKS B
     JOIN 
         STORES S ON B.STORE_IDX = S.STORE_IDX
     JOIN 
         STORES_DETAIL SD ON B.STORE_IDX = SD.STORE_IDX
+    LEFT JOIN 
+        IMAGE_STORE IMG ON B.STORE_IDX = IMG.STORE_IDX
     WHERE 
         B.USER_IDX = #{user_idx}
+) FILTERED
+WHERE RN = 1
+
 </select>
 
+
 <select id="getReview">
-	SELECT 
-    R.REVIEW_IDX,
-    R.USER_IDX,
-    R.STORE_IDX,
-    R.SCORE,
-    R.CONTENT,
-    R."LIKE",
-    R.HIT,
-    TO_CHAR(R.CDATE, 'YYYY-MM-DD') AS CDATE,
-    S.TITLE,
-    TO_CHAR(SD.START_DATE, 'YYYY-MM-DD') AS START_DATE,
-    TO_CHAR(SD.END_DATE, 'YYYY-MM-DD') AS END_DATE
-FROM 
-    REVIEWS R
-JOIN 
-    STORES S ON R.STORE_IDX = S.STORE_IDX
-JOIN 
-    STORES_DETAIL SD ON R.STORE_IDX = SD.STORE_IDX
-WHERE 
-	R.USER_IDX = #{user_idx}
-	
+    SELECT 
+        REVIEW_IDX,
+        USER_IDX,
+        STORE_IDX,
+        SCORE,
+        CONTENT,
+        "LIKE",
+        HIT,
+        CDATE,
+        TITLE,
+        START_DATE,
+        END_DATE,
+        IS_IDX,
+        IMAGE_PATH
+    FROM (
+        SELECT 
+            R.REVIEW_IDX,
+            R.USER_IDX,
+            R.STORE_IDX,
+            R.SCORE,
+            R.CONTENT,
+            R."LIKE",
+            R.HIT,
+            TO_CHAR(R.CDATE, 'YYYY-MM-DD') AS CDATE,
+            S.TITLE,
+            TO_CHAR(SD.START_DATE, 'YYYY-MM-DD') AS START_DATE,
+            TO_CHAR(SD.END_DATE, 'YYYY-MM-DD') AS END_DATE,
+            IR.IS_IDX,
+            IR.IMAGE_PATH,
+            ROW_NUMBER() OVER (PARTITION BY R.STORE_IDX ORDER BY R.REVIEW_IDX) AS RN
+        FROM 
+            REVIEWS R
+        JOIN 
+            STORES S ON R.STORE_IDX = S.STORE_IDX
+        JOIN 
+            STORES_DETAIL SD ON R.STORE_IDX = SD.STORE_IDX
+        LEFT JOIN 
+            IMAGE_REVIEW IR ON R.REVIEW_IDX = IR.REVIEW_IDX 
+                             AND R.USER_IDX = IR.USER_IDX 
+                             AND R.STORE_IDX = IR.STORE_IDX
+        WHERE 
+            R.USER_IDX = #{user_idx}
+    ) FILTERED
+    WHERE RN = 1
 </select>
 
 <select id="countReviewsByUserId">
@@ -52,6 +94,42 @@ WHERE
     FROM REVIEWS R
     WHERE R.USER_IDX = #{user_idx}
     
+</select>
+
+<select id="getSuggestion">
+
+
+</select>
+
+<select id="getcategory">
+SELECT *
+FROM
+    USERS_CATEGORY
+WHERE USER_IDX = #{user_idx}
+
+</select>
+
+<select id="getstorelist">
+   SELECT 
+      SD.STORE_IDX,
+      TO_CHAR(SD.START_DATE, 'yyyy-mm-dd') AS START_DATE,
+      TO_CHAR(SD.END_DATE, 'yyyy-mm-dd') AS END_DATE,
+      S.TITLE,
+      (SELECT IR.IMAGE_PATH
+       FROM IMAGE_STORE IR
+       WHERE IR.STORE_IDX = SD.STORE_IDX
+       AND ROWNUM = 1) AS IMAGE_PATH
+   FROM (
+      SELECT DISTINCT SC.STORE_IDX
+      FROM STORES_CATEGORY SC
+      JOIN USERS_CATEGORY UC
+      ON SC.CATEGORY_ID = UC.CATEGORY_ID
+      WHERE UC.USER_IDX = #{user_idx}
+      ORDER BY DBMS_RANDOM.VALUE
+   ) R
+   JOIN STORES_DETAIL SD ON R.STORE_IDX = SD.STORE_IDX
+   JOIN STORES S ON R.STORE_IDX = S.STORE_IDX
+   WHERE ROWNUM &lt;= 10
 </select>
 
 

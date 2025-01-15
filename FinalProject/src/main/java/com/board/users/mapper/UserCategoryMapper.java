@@ -25,6 +25,7 @@ public interface UserCategoryMapper {
 		List<Long> findCategoryIdsByUserId(Long userIdx);
 		
 		List<StoreListDto> getStoresByCategoryId(@Param("categoryId") int categoryId);
+
 	}
 
 

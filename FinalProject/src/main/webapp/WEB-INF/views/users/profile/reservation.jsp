@@ -81,11 +81,11 @@ main {
 }
 
 .reserve-table th:nth-child(2) {
-  width:450px;
+  width:520px;
 }
 
 .reserve-table th:nth-child(3) {
-  width:250px;
+  width:230px;
 }
 
 .reserve-table td {
@@ -100,24 +100,30 @@ main {
 }
 
 .reserve-table img {
-  height:140px;
+  height: 140px;
+  width: 140px; /* 가로세로 비율 유지 */
 }
+
 
 .span-flex {
-  display:flex;
-  flex-direction:column;
-  padding-left:10px;
-  text-align:left;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  padding-left: 10px;
+  text-align: left;
 }
 
-.span-flex span:nth-child(1) {
-  font-size:18px;
-  font-weight:750;
-  margin-bottom:35px;
+.span-flex span {
+  margin-bottom: 10px;
 }
 
-.span-flex span:nth-child(3) {
-  font-weight:750;
+.span-flex span:last-child {
+  margin-bottom: 0;
+}
+
+.reserve-table td:nth-child(2) {
+  display: flex;
 }
 
 .span-flex2 {
@@ -146,36 +152,38 @@ main {
                     </thead>
                     <tbody>
                         <c:forEach var="reservation" items="${TestList}">
-              <tr>
-    <td>
-        <c:set var="dateString" value="${reservation.reservation_cdate}" />
-        <fmt:parseDate value="${dateString}" pattern="${fn:contains(dateString, '/') ? 'dd/MM/yy' : 'yyyy-MM-dd HH:mm:ss'}" var="parsedDate" />
-        <fmt:formatDate value="${parsedDate}" pattern="yyyy.MM.dd"/>
-    </td>
-    <td>
-        <img src="/image/read?path=${reservation.image_path}" alt="팝업 이미지">
-        <span>${reservation.title}</span>
-        <span>
-            <c:set var="startDateString" value="${reservation.start_date}" />
-            <c:set var="endDateString" value="${reservation.end_date}" />
-            <fmt:parseDate value="${startDateString}" pattern="${fn:contains(startDateString, '/') ? 'dd/MM/yy' : 'yyyy-MM-dd HH:mm:ss'}" var="parsedStartDate" />
-            <fmt:parseDate value="${endDateString}" pattern="${fn:contains(endDateString, '/') ? 'dd/MM/yy' : 'yyyy-MM-dd HH:mm:ss'}" var="parsedEndDate" />
-            <fmt:formatDate value="${parsedStartDate}" pattern="yyyy.MM.dd"/> ~ <fmt:formatDate value="${parsedEndDate}" pattern="yyyy.MM.dd"/>
-        </span>
-        <span>${reservation.address}</span>
-    </td>
-    <td>
-        <div class="span-flex2">
-            <span>방문일&nbsp;&nbsp;
-                <c:set var="reservationDateString" value="${reservation.reservation_date}" />
-                <fmt:parseDate value="${reservationDateString}" pattern="${fn:contains(reservationDateString, '/') ? 'yy/MM/dd' : 'yyyy-MM-dd HH:mm:ss'}" var="parsedReservationDate" />
-                <fmt:formatDate value="${parsedReservationDate}" pattern="yyyy.MM.dd"/>
-            </span>
-            <span>매수&nbsp;&nbsp;${reservation.reservation_number}</span>
-        </div>
-    </td>
-    <td><span>${reservation.reservation_status}</span></td>
-</tr>
+              			 <tr>
+   						  <td>
+					        <c:set var="dateString" value="${reservation.reservation_cdate}" />
+					        <fmt:parseDate value="${dateString}" pattern="${fn:contains(dateString, '/') ? 'dd/MM/yy' : 'yyyy-MM-dd HH:mm:ss'}" var="parsedDate" />
+					        <fmt:formatDate value="${parsedDate}" pattern="yyyy.MM.dd"/>
+    					  </td>
+    					  <td>
+        					<img src="/image/read?path=${reservation.image_path}" alt="팝업 이미지">
+        				    <span class="span-flex">
+       					    <span><a href="/Users/Info?store_idx=${reservation.store_idx}">${reservation.title}</a></span>
+      					    <span>
+					         <c:set var="startDateString" value="${reservation.start_date}" />
+					         <c:set var="endDateString" value="${reservation.end_date}" />
+					         <fmt:parseDate value="${startDateString}" pattern="${fn:contains(startDateString, '/') ? 'dd/MM/yy' : 'yyyy-MM-dd HH:mm:ss'}" var="parsedStartDate" />
+					         <fmt:parseDate value="${endDateString}" pattern="${fn:contains(endDateString, '/') ? 'dd/MM/yy' : 'yyyy-MM-dd HH:mm:ss'}" var="parsedEndDate" />
+					         <fmt:formatDate value="${parsedStartDate}" pattern="yyyy.MM.dd"/> ~ <fmt:formatDate value="${parsedEndDate}" pattern="yyyy.MM.dd"/>
+      					    </span>
+        					<span>${reservation.address}</span>
+        					</span>
+    					   </td>
+						   <td>
+						    <div class="span-flex2">
+						     <span>방문일&nbsp;&nbsp;
+						      <c:set var="reservationDateString" value="${reservation.reservation_date}" />
+						      <fmt:parseDate value="${reservationDateString}" pattern="${fn:contains(reservationDateString, '/') ? 'yy/MM/dd' : 'yyyy-MM-dd HH:mm:ss'}" var="parsedReservationDate" />
+						      <fmt:formatDate value="${parsedReservationDate}" pattern="yyyy.MM.dd"/>
+						     </span>
+					         <span>매수&nbsp;&nbsp;${reservation.reservation_number}</span>
+				            </div>
+						   </td>
+    					   <td><span>${reservation.reservation_status}</span></td>
+                          </tr>
                         </c:forEach>
                     </tbody>
                 </table>

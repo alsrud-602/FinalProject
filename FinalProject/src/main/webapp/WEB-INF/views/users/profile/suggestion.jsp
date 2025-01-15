@@ -84,6 +84,7 @@ main {
   margin-top:40px;
   display:flex;
   gap:20px;
+  flex-wrap:wrap;
 }
 
 .suggestion {
@@ -112,7 +113,7 @@ main {
 
 /* bookmark 팝업 날짜(위치css 수정 필요할수도..)*/
 .popup-date {
-  width:100%;
+  width:fit-content;
   height:100%;
   padding-left:210px;
   padding-top:100px;
@@ -158,6 +159,11 @@ main {
   align-items:center;
 }
 
+.suggestionimg {
+  width:150px;
+  height:150px;
+}
+
 
 
 </style>
@@ -170,34 +176,22 @@ main {
 	<h2 class="pagetitle">추천 팝업</h2>
 	<h3 class="subtitle"># 관심 카테고리별 추천 팝업 리스트</h3>
 	<div class="category">
-    <c:forEach var="categoryName" items="${categoryNames}">
-        <p class="categories">${categoryName}</p>
+    <c:forEach var="category" items="${categoryList}">
+        <p class="categories">${category.category_id}</p>
     </c:forEach>
 </div>
 	 <div class="liner"></div>
 	<div class="suggestions">
-	 <c:forEach var="store" items="${randomStores}">
-        <div class="suggestion">
-            <img src="/images/profile/bookmarkpost.png">
-            <div class="suggestion-content">
-                <div class="suggestion-header">
-                    <span>${store.title}</span>
-                    <div><p class="tag">${store.label}</p></div>
-                </div>
-                <div class="popup-date">${store.start_date} ~ ${store.end_date}</div>
-            </div>
-        </div>
-    </c:forEach>
-	 </div>
+	 <c:forEach var="storeList" items="${storeList}">
 	 <div class="suggestion">
-	  <img src="/images/profile/bookmarkpost.png">
+	  <img class="suggestionimg" src="/image/read?path=${storeList.image_path}">
 	  <div class="suggestion-content">
-	  <div class="suggestion-header"><span>다이노탱 코코컵 팝업스토어</span>
-	   <div><p class="tag">반려동물</p></div>
+	  <div class="suggestion-header"><span><a href="/Users/Info?store_idx=${storeList.store_idx}">${storeList.title}</a></span>
 	  </div>
-	  <div class="popup-date">2024.12.12 ~ 2024.12.24</div>
+	  <div class="popup-date">${storeList.start_date} ~<br> ${storeList.end_date}</div>
 	  </div>
 	 </div>
+	 </c:forEach>
 	</div>
    </div>
    <aside>
@@ -217,6 +211,44 @@ main {
   </div>
   </main>	
  <%@include file="/WEB-INF/include/footer.jsp" %>
- <script src="/js/authuser.js" defer></script> 
+ <script>
+//숫자 -> 텍스트 변환 매핑
+ function numberToText(categoryId) {
+     const categoryMap = {
+         10: "패션/뷰티",
+         20: "가전/디지털",
+         30: "식물",
+         40: "키친/리빙",
+         50: "완구",
+         60: "레저",
+         70: "도서/음반",
+         80: "반려동물",
+         90: "헬스/스포츠",
+         100: "연예인",
+         110: "아이돌",
+         120: "인플루언서",
+         130: "캐릭터",
+         140: "소품/굿즈",
+         150: "전시",
+         160: "공공",
+         170: "기타",
+         180: "브랜드"
+     };
+
+     // 매핑된 텍스트를 반환, 없으면 '기타'로 반환
+     return categoryMap[categoryId] || '기타';
+ }
+
+ // 페이지 로드 후 실행
+ $(document).ready(function() {
+     // category_id 값을 찾아서 텍스트로 변환
+     $('.categories').each(function() {
+         var categoryId = $(this).text().trim();  // category_id 값 가져오기
+         var categoryText = numberToText(parseInt(categoryId));  // 숫자 -> 텍스트 변환
+         $(this).text(categoryText);  // 변환된 텍스트로 업데이트
+     });
+ });
+
+ </script>
 </body>
 </html>

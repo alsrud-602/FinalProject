@@ -115,6 +115,11 @@ main {
   padding-top:100px;
 }
 
+.bookmark-img {
+  width:200px;
+  height:210px;
+}
+
 
 </style>
 </head>
@@ -129,10 +134,10 @@ main {
 	<div class="bookmarks">
 	 <c:forEach items="${BookmarkList}" var="bookmark">
                         <div class="bookmark">
-                            <img src="/images/profile/bookmarkpost.png">
+                            <img class="bookmark-img" src="/image/read?path=${bookmark.image_path}">
                             <div class="bookmark-content">
                                 <div class="bookmark-header">
-                                    <span>${bookmark.title}</span>
+                                    <span><a href="/Users/Info?store_idx=${bookmark.store_idx}">${bookmark.title}</a></span>
                                     <div><img src="/images/profile/hearticon.png"></div>
                                 </div>
                                 <div class="bookmark-date">${bookmark.start_date} ~ ${bookmark.end_date}</div>

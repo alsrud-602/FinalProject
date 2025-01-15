@@ -13,7 +13,7 @@
 
 main {
   background-color:#121212;
-  padding-bottom:400px;
+  padding-bottom:600px;
 }
 
 
@@ -106,6 +106,7 @@ main {
   height:inherit;
   display:flex;
   align-items:center;
+  width:220px;
 }
 
 .review-updown {
@@ -214,7 +215,7 @@ main {
 	<c:forEach items="${ReviewList}" var="review">
     <div class="myreview">
         <div class="review-img">
-            <img src="/images/profile/myreviewpost.png">
+            <img class="review-img" src="/image/read?path=${review.image_path}">
         </div>
         <div class="review-updown">
             <div class="review-above">
