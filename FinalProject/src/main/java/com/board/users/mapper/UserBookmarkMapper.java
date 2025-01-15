@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.board.users.dto.SuggestionDto;
 import com.board.users.dto.UsersBookmarkDto;
 import com.board.users.dto.UsersReviewListDto;
 
@@ -17,6 +18,12 @@ public interface UserBookmarkMapper {
 	List<UsersReviewListDto> getReview(int user_idx);
 	
 	int countReviewsByUserId(int user_idx);
+	
+	List<SuggestionDto> getSuggestion(int user_idx);
+
+	List<SuggestionDto> getcategory(int user_idx);
+
+	List<SuggestionDto> getstorelist(int user_idx);
 
 	
 }

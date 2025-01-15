@@ -32,6 +32,7 @@ import com.board.users.dto.ImageDto;
 
 import com.board.users.dto.CategoryRequest;
 import com.board.users.dto.ReservationUsersDto;
+import com.board.users.dto.SuggestionDto;
 import com.board.users.dto.User;
 import com.board.users.dto.UserCategory;
 import com.board.users.dto.UsersBookmarkDto;
@@ -41,7 +42,6 @@ import com.board.users.mapper.UserBookmarkMapper;
 import com.board.users.mapper.UserCategoryMapper;
 import com.board.users.mapper.UserReservationMapper;
 import com.board.users.mapper.UsersMapper;
-import com.board.users.service.StoreService;
 import com.board.users.service.UserService;
 import com.board.util.JwtUtil;
 
@@ -62,8 +62,6 @@ public class ProfileController {
 	@Autowired
 	private UserService userService;
 	
-	@Autowired
-	private StoreService storeService;
 
 	
 	@Autowired
@@ -290,6 +288,12 @@ public class ProfileController {
                 UsersDto userid = userReservationMapper.getUserByUsername(username);
                 int user_idx = userid.getUser_idx();
                 List<UsersBookmarkDto> BookmarkList = userBookmarkMapper.getbookmark(user_idx);
+                for (UsersBookmarkDto bookmarkdto : BookmarkList) {
+                	String imagePath = bookmarkdto.getImage_path().replace("\\", "/");
+                	bookmarkdto.setImage_path(imagePath);
+                }
+       
+                
                 System.out.println("이거나오나요?" + BookmarkList);
                 
                 model.addAttribute("BookmarkList", BookmarkList);
@@ -342,6 +346,11 @@ public class ProfileController {
                 UsersDto userid = userReservationMapper.getUserByUsername(username);
                 int user_idx = userid.getUser_idx();
                 List<UsersReviewListDto> ReviewList = userBookmarkMapper.getReview(user_idx);
+                for (UsersReviewListDto reviewdto : ReviewList) {
+                	String imagePath = reviewdto.getImage_path().replace("\\", "/");
+                	reviewdto.setImage_path(imagePath);
+                }
+                
                 System.out.println("이거뭘로나오나요?" + ReviewList);
                 int reviewCount = userBookmarkMapper.countReviewsByUserId(user_idx);
                 System.out.println("몇개인가요" + reviewCount);
@@ -358,32 +367,6 @@ public class ProfileController {
         ModelAndView mv = new ModelAndView();
         mv.setViewName("users/profile/myreview");
         return mv;
-    }
-    
-    @GetMapping("/getReviews")
-    @ResponseBody
-    public List<UsersReviewListDto> getReviews(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        String jwtToken = null;
-        int user_idx = -1; // 기본값 설정
-
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("userJwt".equals(cookie.getName())) {
-                    jwtToken = cookie.getValue();
-                    break;
-                }
-            }
-        }
-
-        if (jwtToken != null) {
-            String username = jwtUtil.extractUsername(jwtToken);
-            UsersDto userid = userReservationMapper.getUserByUsername(username);
-            user_idx = userid.getUser_idx();
-        }
-
-        // 사용자 ID로 리뷰 목록을 가져옵니다.
-        return userBookmarkMapper.getReview(user_idx);
     }
 
 
@@ -429,19 +412,7 @@ public class ProfileController {
                 System.out.println("이상한거" + stores);
                 // 스토어 인덱스 리스트를 이용해 이미지 데이터를 가져옴
                 
-                List<ImageStoreDTO> imageStores = userReservationMapper.getImagesForStores(user_idx);
-                System.out.println("1111"+imageStores);
-                System.out.println("타입이ㅣ 뭘까"+imageStores.getClass());
-                
-                
-                for (ImageStoreDTO dto : imageStores) {
-                	String imagePath = dto.getImage_path().replace("\\", "/");
-                	dto.setImage_path(imagePath);
-                }
-                System.out.println("수정된 이미지 패스 : "+imageStores);
-               
-                System.out.println("타입이ㅣ 뭘까23"+imageStores.getClass().getName());
-                
+           
                 List<ImageDto> TestList = userReservationMapper.getTestList(user_idx);
                 for (ImageDto testdto : TestList) {
                 	String imagePath = testdto.getImage_path().replace("\\", "/");
@@ -454,7 +425,6 @@ public class ProfileController {
                 model.addAttribute("TestList", TestList);
                 //model.addAttribute("imageStore", imageStores); // 이미지 데이터 추가
                 model.addAttribute("user", user);
-                mv.addObject("imageStore", imageStores);
             } else {
                 model.addAttribute("error", "사용자를 찾을 수 없습니다.");
             }
@@ -470,7 +440,7 @@ public class ProfileController {
 
     @RequestMapping("Suggestion")
     public ModelAndView suggestion(HttpServletRequest request, Model model) {
-        Cookie[] cookies = request.getCookies();
+    	Cookie[] cookies = request.getCookies();
         String jwtToken = null;
         boolean isKakaoUser = false;  // 카카오 사용자 여부를 판단하는 변수
 
@@ -491,36 +461,37 @@ public class ProfileController {
         if (jwtToken != null) {
             String username = jwtUtil.extractUsername(jwtToken);
             System.out.println("사용자 정보1: " + username);
-
-            Optional<User> userOptional;
-
+            
             if (isKakaoUser) {
                 // 카카오 로그인 사용자라면 소셜 ID로 사용자 조회
-                userOptional = userService.findBySocialId(username);
-                System.out.println("카카오 사용자 정보: " + userOptional);
+                Optional<User> kakaouser = userService.findBySocialId(username);  // 카카오 소셜 ID로 사용자 조회
+                System.out.println("카카오 사용자 정보: " + kakaouser);
+                model.addAttribute("user", kakaouser.orElse(null));  // 카카오 사용자가 없을 경우 null 반환
             } else {
                 // 일반 사용자라면 기존 방식으로 사용자 조회
-                userOptional = userService.getUserByUsername(username);
-                System.out.println("사용자 정보: " + userOptional);
-            }
-
-            User user = userOptional.orElse(null);  // 사용자가 없을 경우 null 반환
-            model.addAttribute("user", user);
-
-            if (user != null) {
-                Long userIdx = user.getUserIdx();  // userIdx를 Long 타입으로 가져옴
-                model.addAttribute("userIdx", userIdx);  // 모델에 userIdx 추가
+                Optional<User> user = userService.getUserByUsername(username);  // DB에서 사용자 정보 조회
+                System.out.println("사용자 정보: " + user);
                 
                 
-                // 사용자 카테고리 이름 가져오기
-                List<String> categoryNames = userService.getCategoryNamesByUserId(userIdx);
-                model.addAttribute("categoryNames", categoryNames); // 모델에 카테고리 이름 추가
+                UsersDto userid = userReservationMapper.getUserByUsername(username);
+                int user_idx = userid.getUser_idx();
                 
-                // 사용자의 카테고리를 기반으로 랜덤 스토어 가져오기
-                List<StoreListDto> randomStores = storeService.getRandomStoresByUserCategories(userIdx);
-                model.addAttribute("randomStores", randomStores); // 모델에 스토어 추가
-            } else {
-                model.addAttribute("error", "사용자를 찾을 수 없습니다.");
+                List<SuggestionDto> categoryList = userBookmarkMapper.getcategory(user_idx);
+                System.out.println("카테고리 잘 오나?" + categoryList);
+                
+                List<SuggestionDto> storeList = userBookmarkMapper.getstorelist(user_idx);
+                System.out.println("스토어 목록 잘 오나?" + storeList);
+                
+                for (SuggestionDto suggestdto : storeList) {
+                	String imagePath = suggestdto.getImage_path().replace("\\", "/");
+                	suggestdto.setImage_path(imagePath);
+                }
+                System.out.println("스토어 목록 잘 오나2?" + storeList);
+                
+                
+                model.addAttribute("storeList" , storeList);
+                model.addAttribute("categoryList", categoryList);
+                model.addAttribute("user", user.orElse(null));  // 사용자가 없을 경우 null 반환
             }
         } else {
             model.addAttribute("error", "JWT 토큰이 없습니다.");
@@ -538,6 +509,7 @@ public class ProfileController {
     public List<Integer> getCategories(@RequestParam int userIdx) {
         return userCategoryMapper.getUserCategories(userIdx);
     }
+
 
     @PostMapping("/addCategory")
     @ResponseBody
